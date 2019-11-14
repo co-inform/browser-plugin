@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "name": "Co-Inform",
+    "version": "1.0",
+    "description": "Context matters. Your sources too.",
+    "content_security_policy": "default-src 'none'; connect-src 'self';font-src 'self'; img-src 'self' data: https:; style-src 'self' ; script-src 'self'",
+    "icons": {
+      "16": "resources/coinform16.png",
+      "48": "resources/coinform48.png",
+      "96": "resources/coinform96.png",
+      "128": "resources/coinform128.png"
+    },
+    "options_ui": {
+      "page": "options.html",
+      "open_in_tab": false
+    },
+    "content_scripts": [
+        {
+          "matches": ["https://*.twitter.com/*", "https://*.facebook.com/*"],
+          "css": ["resources/coinform.css"],
+          "js": ["coinform.js"]
+        }
+    ],
+    "web_accessible_resources": [
+      "resources/config.json"
+    ],
+    "permissions": [
+      "storage",
+      "https://localhost:8443/*"
+    ]
+}
