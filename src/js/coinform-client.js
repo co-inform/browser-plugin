@@ -58,7 +58,7 @@ function postEvaluate(path, tweet_id, evaluation) {
 
 function postCheckTweet(path, tweetId, author, tweetText) {
   
-  var data = { tweet_id: Number(tweetId), tweet_author: author, tweet_text: tweetText };
+  var data = { tweet_id: tweetId, tweet_author: author, tweet_text: tweetText };
 
   return new Promise ((resolve, reject) => {
     f(path, {
