@@ -19,6 +19,27 @@ const thresholdLevels = {
   low: 80
 };
 
+var opts = {
+  lines: 20, // The number of lines to draw
+  length: 40, // The length of each line
+  width: 20, // The line thickness
+  radius: 35, // The radius of the inner circle
+  scale: 1, // Scales overall size of the spinner
+  corners: 1, // Corner roundness (0..1)
+  color: '#ff0000', // CSS color or array of colors
+  fadeColor: 'transparent', // CSS color or array of colors
+  speed: 2.2, // Rounds per second
+  rotate: 90, // The rotation offset
+  animation: 'spinner-line-fade-more', // The CSS animation name for the lines
+  direction: 1, // 1: clockwise, -1: counterclockwise
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  className: 'spinner', // The CSS class to assign to the spinner
+  top: '50%', // Top position relative to parent
+  left: '50%', // Left position relative to parent
+  shadow: '0 0 1px transparent', // Box-shadow for the lines
+  position: 'absolute' // Element positioning
+};
+
 const usersCache = {};
 
 /*
@@ -69,7 +90,7 @@ const start = () => {
 };
 
 const newTweetCallback = (tweetInfo) => {
-  
+
   tweetData = tweetInfo;
   if (tweetInfo.links.length > 0) {
     const score = {};
@@ -80,9 +101,16 @@ const newTweetCallback = (tweetInfo) => {
 
     } else {
 
-      usersCache[tweetInfo.username] = 60;
+      usersCache[tweetInfo.username] = 30;
       score.username = tweetInfo.username;
-      score.misinformationScore = 60;
+      score.misinformationScore = 30;
+
+      /* Create spinner that show that the tweet is being analized */
+      const node = tweetInfo.domObject;
+      const div = document.createElement('div');
+      div.setAttribute('class', 'loader');
+      div.setAttribute("id", "loader");
+      node.append(div);
 
       // First API call to the endpoint /twitter/tweet/
       client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function(res) {
@@ -97,7 +125,7 @@ const newTweetCallback = (tweetInfo) => {
         if (firstCallStatus.localeCompare('done') !== 0) {
 
           // Add random sleep time between 0 and 2 seconds
-          sleep(randomInt(0, 2000));
+          sleep(randomInt(500, 2500));
 
           var firstQueryId = JSON.stringify(res.query_id);
 
@@ -111,17 +139,21 @@ const newTweetCallback = (tweetInfo) => {
               var secondCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
               // Result from second api call
               if (secondCallStatus.localeCompare('done') === 0) {
-                // var secondRes = JSON.stringify(res);
+                var secondRes = JSON.stringify(res);
+                console.log(secondRes);
               }
 
             }).catch(err => console.log(err))
           }
         } else {
           // Result from the first api call
-          // var firstRes = JSON.stringify(res);
+          var firstRes = JSON.stringify(res);
+          console.log(firstRes);
         }
-      }).catch(err => console.log(err));       
+      }).catch(err => console.log(err));     
+        
     }
+  
     classifyTweet(tweetInfo, score);
   }
 };
@@ -148,6 +180,10 @@ const classifyTweet = (tweet, score) => {
     return;
 
   } else if (misinformationScore >= configuration.coinform.hideThreshold) {
+
+    /* Delete spinner 
+    var loader = document.getElementById('loader');
+    loader.parentNode.removeChild(loader); */
 
     node.setAttribute(parser.untrustedAttribute, misinformationScore);
     node.append(createWhyButton('tweet'));

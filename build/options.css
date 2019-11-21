@@ -1,0 +1,39 @@
+body {
+  font-size: 100%;
+  margin: 0;
+  padding: 1em;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.form-control-group {
+  margin: 2em 2em 3em;
+}
+
+.form-control-group input,
+.form-control-group label {
+  cursor: pointer;
+}
+
+.form-control:not(:last-child) {
+  margin-bottom: .5em;
+}
+
+.coinform-button {
+  height: 3em;
+  line-height: 3em;
+  padding: 0 2em;
+  margin: 0;
+  border-radius: 2em;
+  border: none;
+  font-size: 1em;
+  color: rgba(0,0,0,.87);
+  cursor: pointer;
+}
+
+.coinform-button.coinform-button-primary {
+  background-color: #1da1f2;
+  color: #fff;
+}
