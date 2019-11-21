@@ -246,10 +246,8 @@ const createWhyButton = (publicationName, addPaddingTop = false) => {
         else {
           // url comment resultDropdown
           // make api call here
-          var evaluation = { 
-            'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
-          }
-          
+          var evaluation = { 'label': resultDropdown, 'url': url, 'comment': comment};
+
           client.postTwitterEvaluate(tweetData.id, evaluation)
           .then(res => {
             
