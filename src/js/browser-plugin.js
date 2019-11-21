@@ -80,15 +80,9 @@ const newTweetCallback = (tweetInfo) => {
 
     } else {
 
-      client.getTwitterUserScore(tweetInfo.username)
-        .then(res => {
-
-          usersCache[res.username] = res.misinformationScore;
-          score.username = res.username;
-          score.misinformationScore = res.misinformationScore;
-
-        })
-        .catch(err => console.log(err));
+      usersCache[tweetInfo.username] = 60;
+      score.username = tweetInfo.username;
+      score.misinformationScore = 60;
 
       // First API call to the endpoint /twitter/tweet/
       client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function(res) {
@@ -277,4 +271,9 @@ const createWhyButton = (publicationName, addPaddingTop = false) => {
 
 function randomInt(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low)
+}
+
+function sleep(delay) {
+  var start = new Date().getTime();
+  while (new Date().getTime() < start + delay);
 }
