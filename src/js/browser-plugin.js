@@ -13,12 +13,6 @@ let client;
 let configuration;
 let parser;
 
-const thresholdLevels = {
-  high: 20,
-  medium: 50,
-  low: 80
-};
-
 const usersCache = {};
 
 /*
@@ -35,10 +29,6 @@ fetch(browser.extension.getURL('/resources/config.json'), {
   .then(res => {    
 
     configuration = res;
-    chrome.storage.local.get(['treshold'], (data) => {
-      configuration.coinform.hideThreshold = thresholdLevels[data.treshold] || thresholdLevels.medium;
-  
-    });
 
     if (window.location.hostname.includes('twitter.com')) {
       parser = new TweetParser();
@@ -69,60 +59,88 @@ const start = () => {
 };
 
 const newTweetCallback = (tweetInfo) => {
-  
+
   tweetData = tweetInfo;
+  dom = tweetInfo.domObject;
   if (tweetInfo.links.length > 0) {
-    const score = {};
 
-    if (usersCache.hasOwnProperty(tweetInfo.username)) {
-      score.username = tweetInfo.username;
-      score.misinformationScore = usersCache[tweetInfo.username];
+    if (usersCache[tweetInfo.id] == null) usersCache[tweetInfo.id] = false; 
 
-    } else {
+    // If the tweet has already been analized then skip
+    if (usersCache[tweetInfo.id]) {
+      return;
+    } 
 
-      usersCache[tweetInfo.username] = 60;
-      score.username = tweetInfo.username;
-      score.misinformationScore = 60;
+    createSpinner(tweetInfo);
 
-      // First API call to the endpoint /twitter/tweet/
-      client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function(res) {
-        var firstCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+    // First API call to the endpoint /twitter/tweet/
+    client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function(res) {
+
+      var firstCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
       
-        // Discard request with 400 http error return codes
-        if (firstCallStatus.localeCompare('400') === 0) {
+      // Discard requests with 400 http return codes
+      if (firstCallStatus.localeCompare('400') === 0) {
+        return;
+      }
+
+      // If the result status has not reached the 'done' status then make a second API call to retrieve the 
+      // result with a maximum of 10 retries
+      if(firstCallStatus.localeCompare('done') !== 0) {
+
+        // Add random sleep time between 0 and 2 seconds
+        sleep(randomInt(500, 2500));
+        var firstQueryId = JSON.stringify(res.query_id);
+
+        if (counter > MAX_RETRIES) {
+          counter = 1;
           return;
-        }
-
-        // If the result status is not "done" then make a second API call with maximum 10 retries
-        if (firstCallStatus.localeCompare('done') !== 0) {
-
-          // Add random sleep time between 0 and 2 seconds
-          sleep(randomInt(0, 2000));
-
-          var firstQueryId = JSON.stringify(res.query_id);
-
-          if (counter > MAX_RETRIES) {
-            counter = 1;
-            return;
-          } else {
-            counter++;
-            client.getResponseTweetInfo(firstQueryId).then(function(res) {
-
-              var secondCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-              // Result from second api call
-              if (secondCallStatus.localeCompare('done') === 0) {
-                // var secondRes = JSON.stringify(res);
-              }
-
-            }).catch(err => console.log(err))
-          }
         } else {
-          // Result from the first api call
-          // var firstRes = JSON.stringify(res);
+          counter++;
+          client.getResponseTweetInfo(firstQueryId).then(function(res) {
+            
+            // Result from second API call
+            var secondCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+
+            if (secondCallStatus.localeCompare('done') === 0) {
+              // As the tweet has been analized then remove the loading spinner
+
+              var secondRes = JSON.stringify(res);
+
+             // console.log("SECOND REPLY = " + secondRes);
+
+              var acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
+
+              // Remove spinner 
+
+              // Tweet analized
+              usersCache[tweetInfo.id] = true;
+              tweetInfo.analyzed = true;
+              classifyTweet(tweetInfo, acurracyLabel);
+
+            } else {
+              // Keep showing spinner, close the request and make another request
+              return;
+            }
+          }).catch(err => console.log(err));
         }
-      }).catch(err => console.log(err));       
-    }
-    classifyTweet(tweetInfo, score);
+      } else {
+        // Remove spinner
+
+        // Result from first API call
+        var firstRes = JSON.stringify(res);
+        
+        // console.log("FIRST REPLY = " + firstRes);
+
+        var acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
+
+        // Remove spinner
+
+        // Tweet analized
+        usersCache[tweetInfo.id] = true;
+        tweetInfo.analyzed = true;
+        classifyTweet(tweetInfo, acurracyLabel);
+      }
+    }).catch(err => console.log(err));
   }
 };
 
@@ -138,22 +156,26 @@ const newFacebookPostCallback = (post) => {
   }
 };
 
-const classifyTweet = (tweet, score) => {
+const classifyTweet = (tweet, label) => {
 
-  const misinformationScore = score.misinformationScore;
   const node = tweet.domObject;
+  var myLabel = label.replace(/['"]+/g, '');
 
   if (node.hasAttribute(parser.untrustedAttribute) && node.getAttribute(parser.untrustedAttribute)!=='undefined') {
-
     return;
-
-  } else if (misinformationScore >= configuration.coinform.hideThreshold) {
-
-    node.setAttribute(parser.untrustedAttribute, misinformationScore);
-    node.append(createWhyButton('tweet'));
+  } else {
     
+    var a = configuration.coinform.misinformation;
+    for (i = 0; i < a.length; ++i) {
+      if (myLabel.localeCompare(a[i]) == 0) {
+        node.setAttribute(parser.untrustedAttribute, 0);
+        node.append(createInfoButton('tweet'));
+        node.append(createViewTweetButton(tweet));
+        node.append(createLabelButton(label));
+        node.append(createFeedbackButton());
+      }
+    }
   }
-
 };
 
 const classifyPost = (post, score) => {
@@ -165,20 +187,25 @@ const classifyPost = (post, score) => {
   dom.prepend(createWhyButton(score, 'post', true));
 };
 
-
-const createWhyButton = (publicationName, addPaddingTop = false) => {
-
+const createLabelButton = (label) => {
   const div = document.createElement('div');
-  div.setAttribute('class', 'coinform-button-container');
-
-  if (addPaddingTop) {
-
-    div.addClass('coinform-padding-top-10');
-
-  }
+  div.setAttribute('class', 'label-button-container');
 
   const button = document.createElement('button');
-  button.innerText=`This ${publicationName} contains misinformation, do you want to provide feedback?`;
+  button.innerText = `Accuracy = ${label}`;
+  button.setAttribute('type', 'button');
+  button.setAttribute('class', 'coinform-button coinform-button-primary');
+
+  div.append(button);
+  return div;
+}
+
+const createFeedbackButton = () => {
+  const div = document.createElement('div');
+  div.setAttribute('class', 'feedback-button-container');
+
+  const button = document.createElement('button');
+  button.innerText = `Feedback`;
   button.setAttribute('type', 'button');
   button.setAttribute('class', 'coinform-button coinform-button-primary');
 
@@ -246,8 +273,10 @@ const createWhyButton = (publicationName, addPaddingTop = false) => {
         else {
           // url comment resultDropdown
           // make api call here
-          var evaluation = { 'label': resultDropdown, 'url': url, 'comment': comment};
-
+          var evaluation = { 
+            'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
+          }
+          
           client.postTwitterEvaluate(tweetData.id, evaluation)
           .then(res => {
             
@@ -261,11 +290,73 @@ const createWhyButton = (publicationName, addPaddingTop = false) => {
       })
     });
   });
+
+
+  div.append(button);
+  return div;
+}
+
+const createInfoButton = (publicationName, addPaddingTop = false) => {
+
+  const div = document.createElement('div');
+  div.setAttribute('class', 'info-button-container');
+
+  if (addPaddingTop) {
+
+    div.addClass('coinform-padding-top-10');
+
+  }
+
+  const button = document.createElement('button');
+  button.innerText=`This ${publicationName} contains misinformation`;
+  button.setAttribute('type', 'button');
+  button.setAttribute('class', 'coinform-button coinform-button-primary');
   
+  div.addEventListener('click', (event) => {
+
+    event.preventDefault();
+    Swal2.fire({
+      type: 'info',
+      title: `Misinformation`,
+      text: `False information that is spread, regardless of whether there is intent to mislead`,
+      showCloseButton: true,
+    })
+  });
+
+
   div.append(button);
 
   return div;
 };
+
+const createViewTweetButton = (tweet) => {
+  const div = document.createElement('div');
+  div.setAttribute('class', 'view-tweet-button-container');
+
+  const button = document.createElement('button');
+  button.innerText=`View tweet?`;
+  button.setAttribute('type', 'button');
+  button.setAttribute('class', 'coinform-button coinform-button-primary');  
+  const node = tweet.domObject;
+
+  div.addEventListener('click', (event) => {
+    event.preventDefault();
+    node.removeAttribute(parser.untrustedAttribute);
+  });
+
+
+  div.append(button);
+  return div;
+}
+
+const createSpinner = (tweetInfo) => {
+  const node = tweetInfo.domObject;
+  const div = document.createElement('div');
+  div.setAttribute('class', 'loader');
+  div.setAttribute("id", "loader");
+  node.append(div);
+  return div;
+}
 
 function randomInt(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low)
@@ -275,3 +366,4 @@ function sleep(delay) {
   var start = new Date().getTime();
   while (new Date().getTime() < start + delay);
 }
+
