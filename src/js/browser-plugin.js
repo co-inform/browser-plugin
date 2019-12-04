@@ -71,7 +71,7 @@ const newTweetCallback = (tweetInfo) => {
       return;
     } 
 
-    createSpinner(tweetInfo);
+    // createSpinner(tweetInfo);
 
     // First API call to the endpoint /twitter/tweet/
     client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function(res) {
@@ -109,7 +109,7 @@ const newTweetCallback = (tweetInfo) => {
              // console.log("SECOND REPLY = " + secondRes);
 
               var acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
-
+              console.log("LABEL = " + acurracyLabel);
               // Remove spinner 
 
               // Tweet analized
@@ -132,6 +132,7 @@ const newTweetCallback = (tweetInfo) => {
         // console.log("FIRST REPLY = " + firstRes);
 
         var acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
+        console.log("LABEL = " + acurracyLabel);
 
         // Remove spinner
 
@@ -242,7 +243,7 @@ const createFeedbackButton = () => {
         'unsubstantiated': 'unsubstantiated',
         'inaccurate with considerations': 'inaccurate with considerations', 
         'inaccurate': 'inaccurate',
-        'not verifiable': 'not verifiable'
+        'not verifiable post': 'not verifiable post'
       },
       inputValidator: (value) => {
         return new Promise((resolve) => {
