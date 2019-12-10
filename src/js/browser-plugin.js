@@ -12,13 +12,9 @@ const browser = chrome || browser;
 let client;
 let configuration;
 let parser;
-var totalTweets = 0;
-
 const usersCache = {};
 
-/*
-  Read the configuration file and if it was successful, start
-*/
+//Read the configuration file and if it was successful, start
 fetch(browser.extension.getURL('/resources/config.json'), {
       mode: 'cors',
       header: {
@@ -72,8 +68,6 @@ const newTweetCallback = (tweetInfo) => {
       return;
     } 
 
-    // createSpinner(tweetInfo);
-
     // First API call to the endpoint /twitter/tweet/
     client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function(res) {
 
@@ -104,14 +98,10 @@ const newTweetCallback = (tweetInfo) => {
 
             if (secondCallStatus.localeCompare('done') === 0) {
               // As the tweet has been analized then remove the loading spinner
-
               var secondRes = JSON.stringify(res);
-
-             // console.log("SECOND REPLY = " + secondRes);
 
               var acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
               console.log("LABEL = " + acurracyLabel);
-              // Remove spinner 
 
               // Tweet analized
               usersCache[tweetInfo.id] = true;
@@ -125,22 +115,13 @@ const newTweetCallback = (tweetInfo) => {
           }).catch(err => console.log(err));
         }
       } else {
-        // Remove spinner
-
         // Result from first API call
         var firstRes = JSON.stringify(res);
-        
-        // console.log("FIRST REPLY = " + firstRes);
-
         var acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
-        console.log("LABEL = " + acurracyLabel);
-
-        // Remove spinner
 
         // Tweet analized
         usersCache[tweetInfo.id] = true;
         tweetInfo.analyzed = true;
-
         classifyTweet(tweetInfo, acurracyLabel);
       }
     }).catch(err => console.log(err));
@@ -149,7 +130,7 @@ const newTweetCallback = (tweetInfo) => {
 
 const newFacebookPostCallback = (post) => {
   if (post.links.length > 0) {
-    //just for the proof of concept, use Twitter's score (even though we're in Facebook)
+    // Just for the proof of concept, use Twitter's score (even though we're in Facebook)
     client.getTwitterUserScore(post.username)
       .then(res => {
         classifyPost(post, res);
@@ -162,10 +143,9 @@ const newFacebookPostCallback = (post) => {
 const classifyTweet = (tweet, label) => {
 
   const node = tweet.domObject;
-
   var myLabel = label.replace(/['"]+/g, '');
 
-  if (node.hasAttribute(parser.untrustedAttribute) && node.getAttribute(parser.untrustedAttribute)!=='undefined') {
+  if (node.hasAttribute(parser.untrustedAttribute) && node.getAttribute(parser.untrustedAttribute) !== 'undefined') {
     return;
   } else {
 
@@ -392,15 +372,6 @@ const whyCannotSeeTweetButton = (tweet, label) => {
   });
 
   div.append(button);
-  return div;
-}
-
-const createSpinner = (tweetInfo) => {
-  const node = tweetInfo.domObject;
-  const div = document.createElement('div');
-  div.setAttribute('class', 'loader');
-  div.setAttribute("id", "loader");
-  node.append(div);
   return div;
 }
 

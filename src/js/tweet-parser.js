@@ -47,7 +47,7 @@ const getTweetInfo = (tweet) => {
   const user = tweet.querySelector(usernameSelector) ? tweet.querySelector(usernameSelector).textContent : null;
   const text = tweet.querySelector(textSelector) ? tweet.querySelector(textSelector).textContent : null;
   const tweetid = tweet.querySelector(tweetIdSelector) ? tweet.querySelector(tweetIdSelector).href.match(/\d+\b/g)[0] : null;
-  const isAnalyzed  = false;
+  const isAnalyzed = false;
 
   const mock = {
     username: user,
