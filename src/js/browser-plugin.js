@@ -61,7 +61,9 @@ const newTweetCallback = (tweetInfo) => {
   dom = tweetInfo.domObject;
   if (tweetInfo.links.length > 0) {
 
-    if (usersCache[tweetInfo.id] == null) usersCache[tweetInfo.id] = false; 
+    if (usersCache[tweetInfo.id] == null) {
+      usersCache[tweetInfo.id] = false; 
+    } 
 
     // If the tweet has already been analized then skip
     if (usersCache[tweetInfo.id]) {
@@ -195,7 +197,7 @@ const addCoinformLogo = (tweet) => {
         return [
           document.getElementById('swal-input1').value,
           document.getElementById('swal-input2').value
-        ]
+        ];
       },
       input: 'select',
       inputPlaceholder: '*',
@@ -217,7 +219,7 @@ const addCoinformLogo = (tweet) => {
           }
 
           resolve();
-        })
+        });
       }
     }).then(function(result) {
       if (result.value) {
@@ -228,19 +230,19 @@ const addCoinformLogo = (tweet) => {
           var url = array[0], comment = array[1];
 
           if (url.localeCompare('') === 0) {
-            alert('You need to insert an URL!');
+            alert('Please provide a valid URL');
           }
           else if (comment.localeCompare('') === 0) {
-            alert('You need to insert a comment!');
+            alert('Please provide some comment');
           }
           else {
             
-            Swal2.fire('Sent!', 'Your feedback has been sent.', 'success')
+            Swal2.fire('Sent!', 'Your feedback has been sent.', 'success');
 
             // url comment resultDropdown
             var evaluation = { 
               'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
-            }
+            };
             
             client.postTwitterEvaluate(tweetData.id, evaluation)
             .then(res => {
@@ -252,7 +254,7 @@ const addCoinformLogo = (tweet) => {
 
             resolve();
           }  
-        })
+        });
       }
     });
   });
@@ -260,7 +262,7 @@ const addCoinformLogo = (tweet) => {
   const node = tweet.domObject;
   node.append(x);
   return x;
-}
+};
 
 const classifyPost = (post, score) => {
 
@@ -303,7 +305,7 @@ const whyCannotSeeTweetButton = (tweet, label) => {
         return [
           document.getElementById('swal-input1').value,
           document.getElementById('swal-input2').value
-        ]
+        ];
       },
       input: 'select',
       inputPlaceholder: '*',
@@ -325,7 +327,7 @@ const whyCannotSeeTweetButton = (tweet, label) => {
           }
 
           resolve();
-        })
+        });
       }
     }).then(function(result) {
       if (result.value) {
@@ -343,12 +345,12 @@ const whyCannotSeeTweetButton = (tweet, label) => {
           }
           else {
             
-            Swal2.fire('Sent!', 'Your feedback has been sent.', 'success')
+            Swal2.fire('Sent!', 'Your feedback has been sent.', 'success');
 
             // url comment resultDropdown
             var evaluation = { 
               'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
-            }
+            };
             
             client.postTwitterEvaluate(tweetData.id, evaluation)
             .then(res => {
@@ -360,8 +362,8 @@ const whyCannotSeeTweetButton = (tweet, label) => {
 
             resolve();
           }  
-        })
-      } else if (result.dismiss == 'cancel') {
+        });
+      } else if (result.dismiss === 'cancel') {
         
         // function when cancel button is clicked
         const node = tweet.domObject;
@@ -373,10 +375,10 @@ const whyCannotSeeTweetButton = (tweet, label) => {
 
   div.append(button);
   return div;
-}
+};
 
 function randomInt(low, high) {
-  return Math.floor(Math.random() * (high - low + 1) + low)
+  return Math.floor(Math.random() * (high - low + 1) + low);
 }
 
 function sleep(delay) {
