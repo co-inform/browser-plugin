@@ -12,6 +12,7 @@ const browser = chrome || browser;
 let client;
 let configuration;
 let parser;
+var totalTweets = 0;
 
 const usersCache = {};
 
@@ -87,7 +88,7 @@ const newTweetCallback = (tweetInfo) => {
       // result with a maximum of 10 retries
       if(firstCallStatus.localeCompare('done') !== 0) {
 
-        // Add random sleep time between 0 and 2 seconds
+        // Add random sleep time between 0.5 and 2.5 seconds
         sleep(randomInt(500, 2500));
         var firstQueryId = JSON.stringify(res.query_id);
 
@@ -139,6 +140,7 @@ const newTweetCallback = (tweetInfo) => {
         // Tweet analized
         usersCache[tweetInfo.id] = true;
         tweetInfo.analyzed = true;
+
         classifyTweet(tweetInfo, acurracyLabel);
       }
     }).catch(err => console.log(err));
@@ -160,74 +162,54 @@ const newFacebookPostCallback = (post) => {
 const classifyTweet = (tweet, label) => {
 
   const node = tweet.domObject;
+
   var myLabel = label.replace(/['"]+/g, '');
 
   if (node.hasAttribute(parser.untrustedAttribute) && node.getAttribute(parser.untrustedAttribute)!=='undefined') {
     return;
   } else {
-    
+
+    var x = 0;
     var a = configuration.coinform.misinformation;
     for (i = 0; i < a.length; ++i) {
       if (myLabel.localeCompare(a[i]) == 0) {
+        //if (myLabel.localeCompare('not verifiable post') != 0) 
         node.setAttribute(parser.untrustedAttribute, 0);
-        node.append(createInfoButton('tweet'));
-        node.append(createViewTweetButton(tweet));
-        node.append(createLabelButton(label));
-        node.append(createFeedbackButton());
+        node.append(whyCannotSeeTweetButton(tweet, label));
+        x = 1;
       }
+    }
+
+    if (x == 0) {
+      node.append(addCoinformLogo(tweet));
     }
   }
 };
 
-const classifyPost = (post, score) => {
+const addCoinformLogo = (tweet) => {
+  var x = document.createElement("img");
+  x.setAttribute("src", 'https://en.gravatar.com/userimage/157153645/613b113e876d7942df3056fe07436977?size=200');
+  x.setAttribute("width", "50");
+  x.setAttribute("height", "60");
+  x.setAttribute("position", "relative");
+  x.setAttribute("align-items", "flex-end");
+  x.setAttribute("id", "coinformLogo");
 
-  const misinformationScore = score.misinformationScore;
-  const dom = post.domObject;
-
-  $(dom.find('._3ccb')[0]).css('opacity', `${1 - misinformationScore/100}`);
-  dom.prepend(createWhyButton(score, 'post', true));
-};
-
-const createLabelButton = (label) => {
-  const div = document.createElement('div');
-  div.setAttribute('class', 'label-button-container');
-
-  const button = document.createElement('button');
-  button.innerText = `Accuracy = ${label}`;
-  button.setAttribute('type', 'button');
-  button.setAttribute('class', 'coinform-button coinform-button-primary');
-
-  div.append(button);
-  return div;
-}
-
-const createFeedbackButton = () => {
-  const div = document.createElement('div');
-  div.setAttribute('class', 'feedback-button-container');
-
-  const button = document.createElement('button');
-  button.innerText = `Feedback`;
-  button.setAttribute('type', 'button');
-  button.setAttribute('class', 'coinform-button coinform-button-primary');
-
-  var resultDropdown;
-  div.addEventListener('click', (event) => {
-
+  x.addEventListener('click', (event) => {
     event.preventDefault();
-    Swal2.fire({
 
+    Swal2.fire({
       type: 'info',
-      title: `Provide any refuting/supporting links, comments and accuracy label`,
-      text: `Provide any refuting/supporting links and any comments`,
+      title: `Explanatory text`,
       showCloseButton: true,
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Submit',
-      cancelButtonColor: '#d33',
-      footer: '<a>Thank you for your feedback</a>',
+      cancelButtonColor: '#f11606',
+      cancelButtonText: 'Cancel',
       html:
       '<input id="swal-input1" placeholder="URL" class="swal2-input">' +
-      '<input id="swal-input2" placeholder="comment" class="swal2-input">',
+      '<input id="swal-input2" placeholder="Comment" class="swal2-input">',
       focusConfirm: true,
       preConfirm: () => {
         return [
@@ -236,14 +218,14 @@ const createFeedbackButton = () => {
         ]
       },
       input: 'select',
-      inputPlaceholder: 'required',
+      inputPlaceholder: '*',
       inputOptions: {
-        'accurate': 'accurate',
-        'accurate with considerations': 'accurate with considerations',
-        'unsubstantiated': 'unsubstantiated',
-        'inaccurate with considerations': 'inaccurate with considerations', 
-        'inaccurate': 'inaccurate',
-        'not verifiable post': 'not verifiable post'
+        'accurate': 'Reputable source with no disagreement and no related false claims',
+        'accurate with considerations': 'Reputable source with little disagreement and related false claims',
+        'unsubstantiated': 'Mixture of reputability and disagreement associated to claim reviews',
+        'inaccurate with considerations': 'Not credible', 
+        'inaccurate': 'Not credible source with high disagreement',
+        'not verifiable post': 'Absolutely not a credible source with highly-biased content'
       },
       inputValidator: (value) => {
         return new Promise((resolve) => {
@@ -257,94 +239,157 @@ const createFeedbackButton = () => {
           resolve();
         })
       }
-    }).then(function (result) {
+    }).then(function(result) {
+      if (result.value) {
+        return new Promise((resolve) => {
+          var returned = result[Object.keys(result)[0]];
+          returned = returned.toString();
+          var array = returned.split(',');
+          var url = array[0], comment = array[1];
 
-      return new Promise((resolve) => {
-        var returned = result[Object.keys(result)[0]];
-        returned = returned.toString();
-        var array = returned.split(',');
-        var url = array[0], comment = array[1];
-
-        if (url.localeCompare('') === 0) {
-          alert('You need to insert an URL!');
-        }
-        else if (comment.localeCompare('') === 0) {
-          alert('You need to insert a comment!');
-        }
-        else {
-          // url comment resultDropdown
-          // make api call here
-          var evaluation = { 
-            'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
+          if (url.localeCompare('') === 0) {
+            alert('You need to insert an URL!');
           }
-          
-          client.postTwitterEvaluate(tweetData.id, evaluation)
-          .then(res => {
+          else if (comment.localeCompare('') === 0) {
+            alert('You need to insert a comment!');
+          }
+          else {
             
-            console.log('Query ID = ' + JSON.stringify(res));
-            
-          })
-          .catch(err => console.log(err));
+            Swal2.fire('Sent!', 'Your feedback has been sent.', 'success')
 
-          resolve();
-        }
-      })
+            // url comment resultDropdown
+            var evaluation = { 
+              'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
+            }
+            
+            client.postTwitterEvaluate(tweetData.id, evaluation)
+            .then(res => {
+              
+              console.log('Query ID = ' + JSON.stringify(res));
+              
+            })
+            .catch(err => console.log(err));
+
+            resolve();
+          }  
+        })
+      }
     });
   });
 
-
-  div.append(button);
-  return div;
+  const node = tweet.domObject;
+  node.append(x);
+  return x;
 }
 
-const createInfoButton = (publicationName, addPaddingTop = false) => {
+const classifyPost = (post, score) => {
 
-  const div = document.createElement('div');
-  div.setAttribute('class', 'info-button-container');
+  const misinformationScore = score.misinformationScore;
+  const dom = post.domObject;
 
-  if (addPaddingTop) {
-
-    div.addClass('coinform-padding-top-10');
-
-  }
-
-  const button = document.createElement('button');
-  button.innerText=`This ${publicationName} contains misinformation`;
-  button.setAttribute('type', 'button');
-  button.setAttribute('class', 'coinform-button coinform-button-primary');
-  
-  div.addEventListener('click', (event) => {
-
-    event.preventDefault();
-    Swal2.fire({
-      type: 'info',
-      title: `Misinformation`,
-      text: `False information that is spread, regardless of whether there is intent to mislead`,
-      showCloseButton: true,
-    })
-  });
-
-
-  div.append(button);
-
-  return div;
+  $(dom.find('._3ccb')[0]).css('opacity', `${1 - misinformationScore/100}`);
+  dom.prepend(createWhyButton(score, 'post', true));
 };
 
-const createViewTweetButton = (tweet) => {
+const whyCannotSeeTweetButton = (tweet, label) => {
   const div = document.createElement('div');
-  div.setAttribute('class', 'view-tweet-button-container');
+  div.setAttribute('class', 'feedback-button-container');
 
   const button = document.createElement('button');
-  button.innerText=`View tweet?`;
+  button.innerText = `Why I cannot see this?`;
   button.setAttribute('type', 'button');
-  button.setAttribute('class', 'coinform-button coinform-button-primary');  
-  const node = tweet.domObject;
+  button.setAttribute('class', 'coinform-button coinform-button-primary');
+  button.setAttribute("id", "whyButton");
 
+  var resultDropdown;
   div.addEventListener('click', (event) => {
-    event.preventDefault();
-    node.removeAttribute(parser.untrustedAttribute);
-  });
 
+    event.preventDefault();
+
+    Swal2.fire({
+      type: 'warning',
+      title: `${label}` + `\n` + `This tweet contains misinformation, do you want to provide any refuting/supporting links, comments and accuracy label`,
+      showCloseButton: true,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Submit',
+      cancelButtonColor: '#118f1b',
+      cancelButtonText: 'See tweet anyways',
+      html:
+      '<input id="swal-input1" placeholder="URL" class="swal2-input">' +
+      '<input id="swal-input2" placeholder="Comment" class="swal2-input">',
+      focusConfirm: true,
+      preConfirm: () => {
+        return [
+          document.getElementById('swal-input1').value,
+          document.getElementById('swal-input2').value
+        ]
+      },
+      input: 'select',
+      inputPlaceholder: '*',
+      inputOptions: {
+        'accurate': 'Reputable source with no disagreement and no related false claims',
+        'accurate with considerations': 'Reputable source with little disagreement and related false claims',
+        'unsubstantiated': 'Mixture of reputability and disagreement associated to claim reviews',
+        'inaccurate with considerations': 'Not credible', 
+        'inaccurate': 'Not credible source with high disagreement',
+        'not verifiable post': 'Absolutely not a credible source with highly-biased content'
+      },
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value.localeCompare('') !== 0) {
+            resultDropdown = value;
+          }  
+          else {
+            resolve('You need to select an accuracy label!');
+          }
+
+          resolve();
+        })
+      }
+    }).then(function(result) {
+      if (result.value) {
+        return new Promise((resolve) => {
+          var returned = result[Object.keys(result)[0]];
+          returned = returned.toString();
+          var array = returned.split(',');
+          var url = array[0], comment = array[1];
+
+          if (url.localeCompare('') === 0) {
+            alert('You need to insert an URL!');
+          }
+          else if (comment.localeCompare('') === 0) {
+            alert('You need to insert a comment!');
+          }
+          else {
+            
+            Swal2.fire('Sent!', 'Your feedback has been sent.', 'success')
+
+            // url comment resultDropdown
+            var evaluation = { 
+              'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
+            }
+            
+            client.postTwitterEvaluate(tweetData.id, evaluation)
+            .then(res => {
+              
+              console.log('Query ID = ' + JSON.stringify(res));
+              
+            })
+            .catch(err => console.log(err));
+
+            resolve();
+          }  
+        })
+      } else if (result.dismiss == 'cancel') {
+        
+        // function when cancel button is clicked
+        const node = tweet.domObject;
+        node.removeAttribute(parser.untrustedAttribute);
+        document.getElementById("whyButton").remove();
+      }
+    });
+  });
 
   div.append(button);
   return div;
