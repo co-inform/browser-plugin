@@ -150,8 +150,8 @@ const classifyTweet = (tweet, label) => {
   if (node.hasAttribute(parser.untrustedAttribute) && node.getAttribute(parser.untrustedAttribute) !== 'undefined') {
     return;
   } else {
-
-    var x = 0;
+    
+    var x = 0; 
     var a = configuration.coinform.misinformation;
     for (i = 0; i < a.length; ++i) {
       if (myLabel.localeCompare(a[i]) == 0) {
@@ -162,20 +162,22 @@ const classifyTweet = (tweet, label) => {
       }
     }
 
-    if (x == 0) {
+    if (x === 0) {
       node.append(addCoinformLogo(tweet));
     }
   }
 };
 
 const addCoinformLogo = (tweet) => {
-  var x = document.createElement("img");
-  x.setAttribute("src", 'https://en.gravatar.com/userimage/157153645/613b113e876d7942df3056fe07436977?size=200');
-  x.setAttribute("width", "50");
+  var x = document.createElement("IMG");
+  x.setAttribute("width", "60");
   x.setAttribute("height", "60");
   x.setAttribute("position", "relative");
   x.setAttribute("align-items", "flex-end");
   x.setAttribute("id", "coinformLogo");
+
+  var imgURL = chrome.extension.getURL("/resources/coinform128.png");
+  x.setAttribute("src", imgURL);
 
   x.addEventListener('click', (event) => {
     event.preventDefault();
