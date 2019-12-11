@@ -9,6 +9,37 @@
 }
 
 .coinform-button-container {
+  position: relative;
+  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  cursor: default;
+}
+
+.info-button-container {
+  position: relative;
+  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  align-items: baseline;
+  justify-content: baseline;
+  cursor: default;
+}
+
+.label-button-container {
+  position: relative;
+  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  align-items: baseline;
+  justify-content: baseline;
+  cursor: default;
+}
+
+.feedback-button-container {
   position: absolute;
   z-index: 99999;
   width: 100%;
@@ -19,15 +50,34 @@
   cursor: default;
 }
 
+.view-tweet-button-container {
+  position: relative;
+  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  align-items: baseline;
+  justify-content: baseline;
+  cursor: default;
+}
+
+.hide-tweet-button-container {
+  position: relative;
+  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  align-items: baseline;
+  justify-content: baseline;
+  cursor: default;
+}
+
 .coinform-button {
   height: 2em;
   line-height: 2em;
   padding: 0 1em;
   margin: 0;
-  border-radius: 1.5em;
-  box-shadow: 1px 2px 4px 0px rgba(0, 0, 0, .54);
+  border-radius: 1em;
   border: none;
-  font-size: 1em;
+  font-size: 0.9em;
   color: rgba(0,0,0,.87);
   cursor: pointer;
 }
@@ -55,4 +105,40 @@
 
 .coinform-padding-top-10 {
   padding-top: 10px;
+}
+
+.loader {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #1a91da; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.coinform-icon-container {
+  position: absolute;
+  z-index: 99999;
+  width: 100%;
+  height: 100%;
+  align-items: flex-end;
+  display: flex;
+  justify-content: flex-end;
+  cursor: default;
+}
+
+.logo {
+  background: url("resources/logo.png") no-repeat;
+  background-size: 250px 250px;
+  display: block;
+  width: 250px;
+  height: 250px;
+  margin-top: 35px;
+  margin-bottom: 65px;
 }

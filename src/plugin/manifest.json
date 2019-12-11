@@ -22,7 +22,8 @@
         }
     ],
     "web_accessible_resources": [
-      "resources/config.json"
+      "resources/config.json",
+      "resources/coinform128.png"
     ],
     "permissions": [
       "storage",

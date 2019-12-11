@@ -12,18 +12,9 @@ const browser = chrome || browser;
 let client;
 let configuration;
 let parser;
-
-const thresholdLevels = {
-  high: 20,
-  medium: 50,
-  low: 80
-};
-
 const usersCache = {};
 
-/*
-  Read the configuration file and if it was successful, start
-*/
+//Read the configuration file and if it was successful, start
 fetch(browser.extension.getURL('/resources/config.json'), {
       mode: 'cors',
       header: {
@@ -35,10 +26,6 @@ fetch(browser.extension.getURL('/resources/config.json'), {
   .then(res => {    
 
     configuration = res;
-    chrome.storage.local.get(['treshold'], (data) => {
-      configuration.coinform.hideThreshold = thresholdLevels[data.treshold] || thresholdLevels.medium;
-  
-    });
 
     if (window.location.hostname.includes('twitter.com')) {
       parser = new TweetParser();
@@ -69,66 +56,83 @@ const start = () => {
 };
 
 const newTweetCallback = (tweetInfo) => {
-  
+
   tweetData = tweetInfo;
+  dom = tweetInfo.domObject;
   if (tweetInfo.links.length > 0) {
-    const score = {};
 
-    if (usersCache.hasOwnProperty(tweetInfo.username)) {
-      score.username = tweetInfo.username;
-      score.misinformationScore = usersCache[tweetInfo.username];
+    if (usersCache[tweetInfo.id] == null) {
+      usersCache[tweetInfo.id] = false; 
+    } 
 
-    } else {
+    // If the tweet has already been analized then skip
+    if (usersCache[tweetInfo.id]) {
+      return;
+    } 
 
-      usersCache[tweetInfo.username] = 60;
-      score.username = tweetInfo.username;
-      score.misinformationScore = 60;
+    // First API call to the endpoint /twitter/tweet/
+    client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function(res) {
 
-      // First API call to the endpoint /twitter/tweet/
-      client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function(res) {
-        var firstCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      var firstCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
       
-        // Discard request with 400 http error return codes
-        if (firstCallStatus.localeCompare('400') === 0) {
+      // Discard requests with 400 http return codes
+      if (firstCallStatus.localeCompare('400') === 0) {
+        return;
+      }
+
+      // If the result status has not reached the 'done' status then make a second API call to retrieve the 
+      // result with a maximum of 10 retries
+      if(firstCallStatus.localeCompare('done') !== 0) {
+
+        // Add random sleep time between 0.5 and 2.5 seconds
+        sleep(randomInt(500, 2500));
+        var firstQueryId = JSON.stringify(res.query_id);
+
+        if (counter > MAX_RETRIES) {
+          counter = 1;
           return;
-        }
-
-        // If the result status is not "done" then make a second API call with maximum 10 retries
-        if (firstCallStatus.localeCompare('done') !== 0) {
-
-          // Add random sleep time between 0 and 2 seconds
-          sleep(randomInt(0, 2000));
-
-          var firstQueryId = JSON.stringify(res.query_id);
-
-          if (counter > MAX_RETRIES) {
-            counter = 1;
-            return;
-          } else {
-            counter++;
-            client.getResponseTweetInfo(firstQueryId).then(function(res) {
-
-              var secondCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-              // Result from second api call
-              if (secondCallStatus.localeCompare('done') === 0) {
-                // var secondRes = JSON.stringify(res);
-              }
-
-            }).catch(err => console.log(err))
-          }
         } else {
-          // Result from the first api call
-          // var firstRes = JSON.stringify(res);
+          counter++;
+          client.getResponseTweetInfo(firstQueryId).then(function(res) {
+            
+            // Result from second API call
+            var secondCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+
+            if (secondCallStatus.localeCompare('done') === 0) {
+              // As the tweet has been analized then remove the loading spinner
+              var secondRes = JSON.stringify(res);
+
+              var acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
+              console.log("LABEL = " + acurracyLabel);
+
+              // Tweet analized
+              usersCache[tweetInfo.id] = true;
+              tweetInfo.analyzed = true;
+              classifyTweet(tweetInfo, acurracyLabel);
+
+            } else {
+              // Keep showing spinner, close the request and make another request
+              return;
+            }
+          }).catch(err => console.log(err));
         }
-      }).catch(err => console.log(err));       
-    }
-    classifyTweet(tweetInfo, score);
+      } else {
+        // Result from first API call
+        var firstRes = JSON.stringify(res);
+        var acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
+
+        // Tweet analized
+        usersCache[tweetInfo.id] = true;
+        tweetInfo.analyzed = true;
+        classifyTweet(tweetInfo, acurracyLabel);
+      }
+    }).catch(err => console.log(err));
   }
 };
 
 const newFacebookPostCallback = (post) => {
   if (post.links.length > 0) {
-    //just for the proof of concept, use Twitter's score (even though we're in Facebook)
+    // Just for the proof of concept, use Twitter's score (even though we're in Facebook)
     client.getTwitterUserScore(post.username)
       .then(res => {
         classifyPost(post, res);
@@ -138,84 +142,74 @@ const newFacebookPostCallback = (post) => {
   }
 };
 
-const classifyTweet = (tweet, score) => {
+const classifyTweet = (tweet, label) => {
 
-  const misinformationScore = score.misinformationScore;
   const node = tweet.domObject;
+  var myLabel = label.replace(/['"]+/g, '');
 
-  if (node.hasAttribute(parser.untrustedAttribute) && node.getAttribute(parser.untrustedAttribute)!=='undefined') {
-
+  if (node.hasAttribute(parser.untrustedAttribute) && node.getAttribute(parser.untrustedAttribute) !== 'undefined') {
     return;
-
-  } else if (misinformationScore >= configuration.coinform.hideThreshold) {
-
-    node.setAttribute(parser.untrustedAttribute, misinformationScore);
-    node.append(createWhyButton('tweet'));
+  } else {
     
-  }
+    var x = 0; 
+    var a = configuration.coinform.misinformation;
+    for (i = 0; i < a.length; ++i) {
+      if (myLabel.localeCompare(a[i]) == 0) {
+        //if (myLabel.localeCompare('not verifiable post') != 0) 
+        node.setAttribute(parser.untrustedAttribute, 0);
+        node.append(whyCannotSeeTweetButton(tweet, label));
+        x = 1;
+      }
+    }
 
+    if (x === 0) {
+      node.append(addCoinformLogo(tweet));
+    }
+  }
 };
 
-const classifyPost = (post, score) => {
+const addCoinformLogo = (tweet) => {
+  var x = document.createElement("IMG");
+  x.setAttribute("width", "60");
+  x.setAttribute("height", "60");
+  x.setAttribute("position", "relative");
+  x.setAttribute("align-items", "flex-end");
+  x.setAttribute("id", "coinformLogo");
 
-  const misinformationScore = score.misinformationScore;
-  const dom = post.domObject;
+  var imgURL = chrome.extension.getURL("/resources/coinform128.png");
+  x.setAttribute("src", imgURL);
 
-  $(dom.find('._3ccb')[0]).css('opacity', `${1 - misinformationScore/100}`);
-  dom.prepend(createWhyButton(score, 'post', true));
-};
-
-
-const createWhyButton = (publicationName, addPaddingTop = false) => {
-
-  const div = document.createElement('div');
-  div.setAttribute('class', 'coinform-button-container');
-
-  if (addPaddingTop) {
-
-    div.addClass('coinform-padding-top-10');
-
-  }
-
-  const button = document.createElement('button');
-  button.innerText=`This ${publicationName} contains misinformation, do you want to provide feedback?`;
-  button.setAttribute('type', 'button');
-  button.setAttribute('class', 'coinform-button coinform-button-primary');
-
-  var resultDropdown;
-  div.addEventListener('click', (event) => {
-
+  x.addEventListener('click', (event) => {
     event.preventDefault();
-    Swal2.fire({
 
+    Swal2.fire({
       type: 'info',
-      title: `Provide any refuting/supporting links, comments and accuracy label`,
-      text: `Provide any refuting/supporting links and any comments`,
+      title: `Explanatory text`,
       showCloseButton: true,
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Submit',
-      cancelButtonColor: '#d33',
-      footer: '<a>Thank you for your feedback</a>',
+      cancelButtonColor: '#f11606',
+      cancelButtonText: 'Cancel',
       html:
       '<input id="swal-input1" placeholder="URL" class="swal2-input">' +
-      '<input id="swal-input2" placeholder="comment" class="swal2-input">',
+      '<input id="swal-input2" placeholder="Comment" class="swal2-input">',
       focusConfirm: true,
       preConfirm: () => {
         return [
           document.getElementById('swal-input1').value,
           document.getElementById('swal-input2').value
-        ]
+        ];
       },
       input: 'select',
-      inputPlaceholder: 'required',
+      inputPlaceholder: '*',
       inputOptions: {
-        'accurate': 'accurate',
-        'accurate with considerations': 'accurate with considerations',
-        'unsubstantiated': 'unsubstantiated',
-        'inaccurate with considerations': 'inaccurate with considerations', 
-        'inaccurate': 'inaccurate',
-        'not verifiable': 'not verifiable'
+        'accurate': 'Reputable source with no disagreement and no related false claims',
+        'accurate with considerations': 'Reputable source with little disagreement and related false claims',
+        'unsubstantiated': 'Mixture of reputability and disagreement associated to claim reviews',
+        'inaccurate with considerations': 'Not credible', 
+        'inaccurate': 'Not credible source with high disagreement',
+        'not verifiable post': 'Absolutely not a credible source with highly-biased content'
       },
       inputValidator: (value) => {
         return new Promise((resolve) => {
@@ -227,51 +221,170 @@ const createWhyButton = (publicationName, addPaddingTop = false) => {
           }
 
           resolve();
-        })
+        });
       }
-    }).then(function (result) {
+    }).then(function(result) {
+      if (result.value) {
+        return new Promise((resolve) => {
+          var returned = result[Object.keys(result)[0]];
+          returned = returned.toString();
+          var array = returned.split(',');
+          var url = array[0], comment = array[1];
 
-      return new Promise((resolve) => {
-        var returned = result[Object.keys(result)[0]];
-        returned = returned.toString();
-        var array = returned.split(',');
-        var url = array[0], comment = array[1];
-
-        if (url.localeCompare('') === 0) {
-          alert('You need to insert an URL!');
-        }
-        else if (comment.localeCompare('') === 0) {
-          alert('You need to insert a comment!');
-        }
-        else {
-          // url comment resultDropdown
-          // make api call here
-          var evaluation = { 'label': resultDropdown, 'url': url, 'comment': comment};
-
-          client.postTwitterEvaluate(tweetData.id, evaluation)
-          .then(res => {
+          if (url.localeCompare('') === 0) {
+            alert('Please provide a valid URL');
+          }
+          else if (comment.localeCompare('') === 0) {
+            alert('Please provide some comment');
+          }
+          else {
             
-            console.log('Query ID = ' + JSON.stringify(res));
-            
-          })
-          .catch(err => console.log(err));
+            Swal2.fire('Sent!', 'Your feedback has been sent.', 'success');
 
-          resolve();
-        }
-      })
+            // url comment resultDropdown
+            var evaluation = { 
+              'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
+            };
+            
+            client.postTwitterEvaluate(tweetData.id, evaluation)
+            .then(res => {
+              
+              console.log('Query ID = ' + JSON.stringify(res));
+              
+            })
+            .catch(err => console.log(err));
+
+            resolve();
+          }  
+        });
+      }
     });
   });
-  
-  div.append(button);
 
+  const node = tweet.domObject;
+  node.append(x);
+  return x;
+};
+
+const classifyPost = (post, score) => {
+
+  const misinformationScore = score.misinformationScore;
+  const dom = post.domObject;
+
+  $(dom.find('._3ccb')[0]).css('opacity', `${1 - misinformationScore/100}`);
+  dom.prepend(createWhyButton(score, 'post', true));
+};
+
+const whyCannotSeeTweetButton = (tweet, label) => {
+  const div = document.createElement('div');
+  div.setAttribute('class', 'feedback-button-container');
+
+  const button = document.createElement('button');
+  button.innerText = `Why I cannot see this?`;
+  button.setAttribute('type', 'button');
+  button.setAttribute('class', 'coinform-button coinform-button-primary');
+  button.setAttribute("id", "whyButton");
+
+  var resultDropdown;
+  div.addEventListener('click', (event) => {
+
+    event.preventDefault();
+
+    Swal2.fire({
+      type: 'warning',
+      title: `${label}` + `\n` + `This tweet contains misinformation, do you want to provide any refuting/supporting links, comments and accuracy label`,
+      showCloseButton: true,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Submit',
+      cancelButtonColor: '#118f1b',
+      cancelButtonText: 'See tweet anyways',
+      html:
+      '<input id="swal-input1" placeholder="URL" class="swal2-input">' +
+      '<input id="swal-input2" placeholder="Comment" class="swal2-input">',
+      focusConfirm: true,
+      preConfirm: () => {
+        return [
+          document.getElementById('swal-input1').value,
+          document.getElementById('swal-input2').value
+        ];
+      },
+      input: 'select',
+      inputPlaceholder: '*',
+      inputOptions: {
+        'accurate': 'Reputable source with no disagreement and no related false claims',
+        'accurate with considerations': 'Reputable source with little disagreement and related false claims',
+        'unsubstantiated': 'Mixture of reputability and disagreement associated to claim reviews',
+        'inaccurate with considerations': 'Not credible', 
+        'inaccurate': 'Not credible source with high disagreement',
+        'not verifiable post': 'Absolutely not a credible source with highly-biased content'
+      },
+      inputValidator: (value) => {
+        return new Promise((resolve) => {
+          if (value.localeCompare('') !== 0) {
+            resultDropdown = value;
+          }  
+          else {
+            resolve('You need to select an accuracy label!');
+          }
+
+          resolve();
+        });
+      }
+    }).then(function(result) {
+      if (result.value) {
+        return new Promise((resolve) => {
+          var returned = result[Object.keys(result)[0]];
+          returned = returned.toString();
+          var array = returned.split(',');
+          var url = array[0], comment = array[1];
+
+          if (url.localeCompare('') === 0) {
+            alert('You need to insert an URL!');
+          }
+          else if (comment.localeCompare('') === 0) {
+            alert('You need to insert a comment!');
+          }
+          else {
+            
+            Swal2.fire('Sent!', 'Your feedback has been sent.', 'success');
+
+            // url comment resultDropdown
+            var evaluation = { 
+              'evaluation': [ { 'label': resultDropdown, 'url': url, 'comment': comment}]
+            };
+            
+            client.postTwitterEvaluate(tweetData.id, evaluation)
+            .then(res => {
+              
+              console.log('Query ID = ' + JSON.stringify(res));
+              
+            })
+            .catch(err => console.log(err));
+
+            resolve();
+          }  
+        });
+      } else if (result.dismiss === 'cancel') {
+        
+        // function when cancel button is clicked
+        const node = tweet.domObject;
+        node.removeAttribute(parser.untrustedAttribute);
+        document.getElementById("whyButton").remove();
+      }
+    });
+  });
+
+  div.append(button);
   return div;
 };
 
 function randomInt(low, high) {
-  return Math.floor(Math.random() * (high - low + 1) + low)
+  return Math.floor(Math.random() * (high - low + 1) + low);
 }
 
 function sleep(delay) {
   var start = new Date().getTime();
   while (new Date().getTime() < start + delay);
 }
+
