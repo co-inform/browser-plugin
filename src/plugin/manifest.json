@@ -3,7 +3,7 @@
     "name": "Co-Inform",
     "version": "1.0",
     "description": "Context matters. Your sources too.",
-    "content_security_policy": "default-src 'none'; connect-src 'self';font-src 'self'; img-src 'self' data: https:; style-src 'self' ; script-src 'self'",
+    "content_security_policy": "default-src 'none'; connect-src 'https://api.coinform.eu';font-src 'self'; img-src 'self' data: https:; style-src 'self' ; script-src 'self'",
     "icons": {
       "16": "resources/coinform16.png",
       "48": "resources/coinform48.png",
@@ -26,7 +26,6 @@
       "resources/coinform128.png"
     ],
     "permissions": [
-      "storage",
-      "https://localhost:8443/*"
+      "storage"
     ]
 }

@@ -17,7 +17,8 @@ const textSelector = "[data-testid='tweet'] > div:nth-child(2) >  div:nth-child(
 const $ = jQuery;
 let tweetsList = [];
 
-function TweetParser() { }
+function TweetParser() {
+}
 
 TweetParser.prototype = {
 
@@ -34,7 +35,7 @@ TweetParser.prototype = {
 
     mainObserver.listenSubtree(true);
     mainObserver.observe();
-  
+
   },
   usernameAttribute: usernameAttribute,
   trustedAttribute: "coinform-trusted",
@@ -49,17 +50,14 @@ const getTweetInfo = (tweet) => {
   const tweetid = tweet.querySelector(tweetIdSelector) ? tweet.querySelector(tweetIdSelector).href.match(/\d+\b/g)[0] : null;
   const isAnalyzed = false;
 
-
-  const mock = {
+  return {
     username: user,
     text: text,
     id: tweetid,
     links: getLinks(tweet),
     domObject: tweet,
-    analyzed: isAnalyzed 
+    analyzed: isAnalyzed
   };
-
-  return mock;
 
 };
 
@@ -88,13 +86,13 @@ const twitterMainChangeCallback = (change, callback) => {
     tweetsListUpdate();
     indexTweets(callback);
   }
- 
+
 };
 
 // TBD return links array
 const getLinks = (tweet) => {
 
-  return [1,2,3];
+  return [1, 2, 3];
 
 };
 
@@ -102,7 +100,7 @@ const tweetsListUpdate = () => {
 
   tweetsList = document.querySelectorAll(tweetJQuerySelector);
 
-}
+};
 
 const idAssignator = (node) => {
 

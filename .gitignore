@@ -34,3 +34,4 @@ typings/
 .serverless/
 .fusebox/
 .dynamodb/
+.idea/

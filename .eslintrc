@@ -1,0 +1,18 @@
+{
+  "env": {
+    "node": true,
+    "jasmine": true,
+    "es6": true
+  },
+  "globals": {},
+  "rules": {
+    "indent": [2, 2],
+    "no-var": 2,
+    "camelcase": [
+      1,
+      {
+        "properties": "always"
+      }
+    ]
+  }
+}

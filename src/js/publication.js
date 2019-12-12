@@ -1,6 +1,6 @@
 /* jshint esversion: 6, devel: true */
 
-module.exports = Publication
+module.exports = Publication;
 
 function Publication(username, text,  links, id, domObject) {
   this.username = username
