@@ -179,6 +179,8 @@ const createClickableLogo = (tweet, label) => {
     createTweetMenu(tweet, label, false);
   });
 
+  const node = tweet.domObject;
+  node.append(img);
   return img;
 };
 
@@ -215,7 +217,7 @@ function createTweetMenu(tweet, label, isTweetHidden) {
 
   let resultDropdown;
 
-  Swal2.fire({
+  return Swal2.fire({
     type: 'warning',
     title: `This tweet has been tagged as ${label}.\n`
       + `If you think this is not accurate please provide a claim and a URL to a post that supports that claim.`,
