@@ -150,7 +150,7 @@ const classifyTweet = (tweet, accuracyLabel) => {
       if (label.localeCompare(misinformationLabels[i]) === 0) {
         node.setAttribute(parser.untrustedAttribute, 0);
         button = createCannotSeeTweetButton(tweet, label);
-        return;
+        break;
       }
     }
 
