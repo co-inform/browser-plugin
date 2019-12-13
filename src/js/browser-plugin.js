@@ -176,7 +176,7 @@ const createClickableLogo = (tweet, label) => {
   img.addEventListener('click', (event) => {
     event.preventDefault();
 
-    createTweetMenu(tweet, label, false);
+    createExtendedTweetMenu(tweet, label, false);
   });
 
   const node = tweet.domObject;
@@ -197,7 +197,7 @@ const createCannotSeeTweetButton = (tweet, label) => {
   div.addEventListener('click', (event) => {
 
     event.preventDefault();
-    createTweetMenu(tweet, label, true);
+    createBasicTweetMenu(tweet, label);
   });
 
   div.append(button);
@@ -213,20 +213,37 @@ const classifyPost = (post, score) => {
   dom.prepend(createWhyButton(score, 'post', true));
 };
 
-function createTweetMenu(tweet, label, isTweetHidden) {
+function createBasicTweetMenu(tweet, label) {
+  return Swal2.fire({
+    type: 'info',
+    title: `This tweet has been tagged as ${label}.`,
+    showCloseButton: true,
+    showCancelButton: false,
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: 'See tweet anyways',
+    focusConfirm: true,
+  }).then(function (result) {
+    if (result.dismiss === 'cancel') {
+      // function when cancel button is clicked
+      const node = tweet.domObject;
+      node.removeAttribute(parser.untrustedAttribute);
+      document.getElementById("whyButton").remove();
+    }
+  });
+}
+
+function createExtendedTweetMenu(tweet, label, isTweetHidden) {
 
   let resultDropdown;
 
   return Swal2.fire({
-    type: 'warning',
+    type: 'info',
     title: `This tweet has been tagged as ${label}.\n`
       + `If you think this is not accurate please provide a claim and a URL to a post that supports that claim.`,
     showCloseButton: true,
-    showCancelButton: true,
+    showCancelButton: false,
     confirmButtonColor: '#3085d6',
     confirmButtonText: 'Submit',
-    cancelButtonColor: '#118f1b',
-    cancelButtonText: isTweetHidden ? 'See tweet anyways' : 'Cancel',
     html:
       '<input id="swal-input1" placeholder="URL" class="swal2-input">' +
       '<input id="swal-input2" placeholder="Comment" class="swal2-input">',
@@ -290,12 +307,6 @@ function createTweetMenu(tweet, label, isTweetHidden) {
           resolve();
         }
       });
-    } else if (result.dismiss === 'cancel') {
-
-      // function when cancel button is clicked
-      const node = tweet.domObject;
-      node.removeAttribute(parser.untrustedAttribute);
-      document.getElementById("whyButton").remove();
     }
   });
 }
