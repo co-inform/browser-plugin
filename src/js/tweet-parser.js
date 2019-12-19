@@ -49,14 +49,16 @@ const getTweetInfo = (tweet) => {
   const text = tweet.querySelector(textSelector) ? tweet.querySelector(textSelector).textContent : null;
   const tweetid = tweet.querySelector(tweetIdSelector) ? tweet.querySelector(tweetIdSelector).href.match(/\d+\b/g)[0] : null;
   const isAnalyzed = false;
-
+  const containsLogo = false;
+  
   return {
     username: user,
     text: text,
     id: tweetid,
     links: getLinks(tweet),
     domObject: tweet,
-    analyzed: isAnalyzed
+    analyzed: isAnalyzed,
+    logo: containsLogo
   };
 
 };

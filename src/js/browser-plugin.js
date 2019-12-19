@@ -1,5 +1,3 @@
-/* jshint esversion: 6, devel: true */
-
 const $ = require('jquery');
 const Swal2 = require('sweetalert2');
 const CoinformClient = require('./coinform-client');
@@ -150,6 +148,7 @@ const classifyTweet = (tweet, accuracyLabel) => {
       if (label.localeCompare(misinformationLabels[i]) === 0) {
         node.setAttribute(parser.untrustedAttribute, 0);
         button = createCannotSeeTweetButton(tweet, label);
+        // button = createClickableLogo(tweet, acurracyLabel);  
         break;
       }
     }
@@ -157,7 +156,8 @@ const classifyTweet = (tweet, accuracyLabel) => {
     if (!button) {
       button = createClickableLogo(tweet, label);
     }
-
+  
+    node.append(createClickableLogo(tweet, label));
     node.append(button);
   }
 };
@@ -175,12 +175,10 @@ const createClickableLogo = (tweet, label) => {
 
   img.addEventListener('click', (event) => {
     event.preventDefault();
-
+    
     createExtendedTweetMenu(tweet, label, false);
   });
 
-  const node = tweet.domObject;
-  node.append(img);
   return img;
 };
 
@@ -197,8 +195,11 @@ const createCannotSeeTweetButton = (tweet, label) => {
   div.addEventListener('click', (event) => {
 
     event.preventDefault();
+    event.stopPropagation();
     createBasicTweetMenu(tweet, label);
   });
+
+  // div.append(createClickableLogo(tweet, label));
 
   div.append(button);
   return div;
@@ -223,11 +224,13 @@ function createBasicTweetMenu(tweet, label) {
     confirmButtonText: 'See tweet anyways',
     focusConfirm: true,
   }).then(function (result) {
-    if (result.dismiss === 'cancel') {
-      // function when cancel button is clicked
-      const node = tweet.domObject;
-      node.removeAttribute(parser.untrustedAttribute);
-      document.getElementById("whyButton").remove();
+    // function when cancel button is clicked
+    const node = tweet.domObject;
+    node.removeAttribute(parser.untrustedAttribute);
+    document.getElementById("whyButton").remove();
+    if (!node.logo) {
+      node.logo = true;
+      //createClickableLogo(tweet, label);
     }
   });
 }
