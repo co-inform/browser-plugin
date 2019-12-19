@@ -157,7 +157,7 @@ const classifyTweet = (tweet, accuracyLabel) => {
       button = createClickableLogo(tweet, label);
     }
   
-    node.append(createClickableLogo(tweet, label));
+   // createClickableLogo(tweet, label);
     node.append(button);
   }
 };
@@ -178,7 +178,8 @@ const createClickableLogo = (tweet, label) => {
     
     createExtendedTweetMenu(tweet, label, false);
   });
-
+  let node = tweet.domObject;
+  node.append(img);
   return img;
 };
 
@@ -230,7 +231,7 @@ function createBasicTweetMenu(tweet, label) {
     document.getElementById("whyButton").remove();
     if (!node.logo) {
       node.logo = true;
-      //createClickableLogo(tweet, label);
+      createClickableLogo(tweet, label);
     }
   });
 }
