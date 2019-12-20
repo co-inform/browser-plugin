@@ -80,6 +80,7 @@ const newTweetCallback = (tweetInfo) => {
       // If the result status has not reached the 'done' status then make a second API call to retrieve the 
       // result with a maximum of 10 retries
       if (firstCallStatus.localeCompare('done') !== 0) {
+        console.log(`${tweetInfo.id} - Not Done response :(`);
 
         // Add random sleep time between 0.5 and 2.5 seconds
         sleep(randomInt(500, 2500));
@@ -95,11 +96,12 @@ const newTweetCallback = (tweetInfo) => {
             let secondCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
 
             if (secondCallStatus.localeCompare('done') === 0) {
+              console.log(`${tweetInfo.id} - ReDone response :)`);
               // As the tweet has been analized then remove the loading spinner
               let secondRes = JSON.stringify(res);
 
               let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
-              console.log("LABEL = " + acurracyLabel);
+              console.log(`${tweetInfo.id} LABEL = ` + acurracyLabel);
 
               // Tweet analyzed
               usersCache[tweetInfo.id] = true;
@@ -110,14 +112,16 @@ const newTweetCallback = (tweetInfo) => {
           }).catch(err => console.log(err));
         }
       } else {
+        console.log(`${tweetInfo.id} - Done response :)`);
         // Result from first API call
         let firstRes = JSON.stringify(res);
-        let accuracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
+        let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
+        console.log(`${tweetInfo.id} LABEL = ` + acurracyLabel);
 
         // Tweet analyzed
         usersCache[tweetInfo.id] = true;
         tweetInfo.analyzed = true;
-        classifyTweet(tweetInfo, accuracyLabel);
+        classifyTweet(tweetInfo, acurracyLabel);
       }
     }).catch(err => console.log(err));
   }
@@ -157,20 +161,17 @@ const classifyTweet = (tweet, accuracyLabel) => {
       button = createClickableLogo(tweet, label);
     }
   
-   // createClickableLogo(tweet, label);
+    // createClickableLogo(tweet, label);
     node.append(button);
   }
 };
 
 const createClickableLogo = (tweet, label) => {
   let img = document.createElement("IMG");
-  img.setAttribute("width", "60");
-  img.setAttribute("height", "60");
-  img.setAttribute("position", "relative");
-  img.setAttribute("align-items", "flex-end");
-  img.setAttribute("id", "coinformLogo");
+  img.setAttribute("class", "coinformTweetLogo");
+  img.setAttribute("id", `coinformTweetLogo-${tweet.id}`);
 
-  let imgURL = chrome.extension.getURL("/resources/coinform128.png");
+  let imgURL = chrome.extension.getURL("/resources/coinform48.png");
   img.setAttribute("src", imgURL);
 
   img.addEventListener('click', (event) => {
@@ -183,22 +184,35 @@ const createClickableLogo = (tweet, label) => {
   return img;
 };
 
+const createTweetLabel = (tweet, label) => {
+  let labelcat = document.createElement("SPAN");
+  labelcat.setAttribute("class", "coinformTweetLabel");
+  let txt = document.createTextNode(label);
+  labelcat.append(txt);
+  labelcat.setAttribute("id", `coinformTweetLabel-${tweet.id}`);
+  let node = tweet.domObject;
+  node.prepend(labelcat);
+  return labelcat;
+};
+
 const createCannotSeeTweetButton = (tweet, label) => {
   const div = document.createElement('div');
   div.setAttribute('class', 'feedback-button-container');
+  div.setAttribute('id', `feedback-button-container-${tweet.id}`);
 
   const button = document.createElement('button');
   button.innerText = `Why I cannot see this?`;
   button.setAttribute('type', 'button');
-  button.setAttribute('class', 'coinform-button coinform-button-primary');
-  button.setAttribute("id", "whyButton");
+  button.setAttribute('class', 'coinform-button coinform-button-primary whyButton');
+  button.setAttribute("id", `whyButton-${tweet.id}`);
 
-  div.addEventListener('click', (event) => {
-
+  button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
     createBasicTweetMenu(tweet, label);
   });
+
+  div.addEventListener('click', ignoreTweetClick);
 
   // div.append(createClickableLogo(tweet, label));
 
@@ -225,13 +239,17 @@ function createBasicTweetMenu(tweet, label) {
     confirmButtonText: 'See tweet anyways',
     focusConfirm: true,
   }).then(function (result) {
-    // function when cancel button is clicked
-    const node = tweet.domObject;
-    node.removeAttribute(parser.untrustedAttribute);
-    document.getElementById("whyButton").remove();
-    if (!node.logo) {
-      node.logo = true;
-      createClickableLogo(tweet, label);
+    if(result.value === true){
+      // function when confirm button is clicked
+      const node = tweet.domObject;
+      node.removeAttribute(parser.untrustedAttribute);
+      document.getElementById(`whyButton-${tweet.id}`).remove();
+      document.getElementById(`feedback-button-container-${tweet.id}`).remove();
+      if (!node.logo) {
+        node.logo = true;
+        createClickableLogo(tweet, label);
+        createTweetLabel(tweet, label);
+      }
     }
   });
 }
@@ -280,7 +298,7 @@ function createExtendedTweetMenu(tweet, label, isTweetHidden) {
       });
     }
   }).then(function (result) {
-    if (result.value) {
+    if (result.value === true) {
       return new Promise((resolve) => {
         let returned = result[Object.keys(result)[0]];
         returned = returned.toString();
@@ -313,6 +331,12 @@ function createExtendedTweetMenu(tweet, label, isTweetHidden) {
       });
     }
   });
+}
+
+function ignoreTweetClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  return false;
 }
 
 function randomInt(low, high) {
