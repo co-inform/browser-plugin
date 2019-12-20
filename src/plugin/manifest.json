@@ -23,9 +23,12 @@
     ],
     "web_accessible_resources": [
       "resources/config.json",
+      "resources/coinform48.png",
       "resources/coinform128.png"
     ],
     "permissions": [
-      "storage"
+      "storage",
+      "*://localhost/*",
+      "*://api.coinform.eu/*"
     ]
 }
