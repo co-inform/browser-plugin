@@ -9,6 +9,7 @@ const MAX_RETRIES = 10;
 const browser = chrome || browser;
 let client;
 let configuration;
+let LANG;
 let parser;
 const usersCache = {};
 
@@ -25,10 +26,34 @@ fetch(browser.extension.getURL('/resources/config.json'), {
 
     configuration = res;
 
-    if (window.location.hostname.includes('twitter.com')) {
+    //Read the language file
+    fetch(browser.extension.getURL('/resources/lang.en.json'), {
+      mode: 'cors',
+      header: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+
+        LANG = res.LANG;
+        Object.keys(res.CATEGORIES).forEach(function(key) {
+          LANG[key] = res.CATEGORIES[key]['label'];
+          LANG[key+'_info'] = res.CATEGORIES[key]['description'];
+        });
+
+      })
+      .catch(err => console.error('Could not load language file', err));
+
+    if (window.location.hostname.indexOf('twitter.com') >= 0) {
+
       parser = new TweetParser();
-    } else if (window.location.hostname.includes('facebook.com')) {
+
+    } else if (window.location.hostname.indexOf('facebook.com') >= 0) {
+
       parser = new FacebookParser();
+
     }
 
     setTimeout(start, 5000);
@@ -39,12 +64,12 @@ const start = () => {
 
   client = new CoinformClient(fetch, configuration.coinform.url);
 
-  if (window.location.hostname.includes('twitter.com')) {
+  if (window.location.hostname.indexOf('twitter.com') >= 0) {
 
     parser.listenForMainChanges(newTweetCallback);
     parser.triggerFirstTweetBatch(newTweetCallback);
 
-  } else if (window.location.hostname.includes('facebook.com')) {
+  } else if (window.location.hostname.indexOf('facebook.com') >= 0) {
 
     parser.fromBrowser(newFacebookPostCallback);
     parser.listenForNewPosts(newFacebookPostCallback);
@@ -56,6 +81,7 @@ const newTweetCallback = (tweetInfo) => {
 
   tweetData = tweetInfo;
   const dom = tweetInfo.domObject;
+  
   if (tweetInfo.links.length > 0) {
 
     if (usersCache[tweetInfo.id] == null) {
@@ -148,16 +174,13 @@ const classifyTweet = (tweet, accuracyLabel) => {
     const misinformationLabels = configuration.coinform.misinformation;
 
     let button;
-    for (let i = 0; i < misinformationLabels.length; i++) {
-      if (label.localeCompare(misinformationLabels[i]) === 0) {
-        node.setAttribute(parser.untrustedAttribute, 0);
-        button = createCannotSeeTweetButton(tweet, label);
-        // button = createClickableLogo(tweet, acurracyLabel);  
-        break;
-      }
-    }
 
-    if (!button) {
+    if (configuration.coinform.categories[label].localeCompare("misinformation") === 0) {
+      node.setAttribute(parser.untrustedAttribute, 0);
+      button = createCannotSeeTweetButton(tweet, label);
+      // button = createClickableLogo(tweet, acurracyLabel);  
+    }
+    else {
       button = createClickableLogo(tweet, label);
     }
   
@@ -187,7 +210,7 @@ const createClickableLogo = (tweet, label) => {
 const createTweetLabel = (tweet, label) => {
   let labelcat = document.createElement("SPAN");
   labelcat.setAttribute("class", "coinformTweetLabel");
-  let txt = document.createTextNode(label);
+  let txt = document.createTextNode(LANG[label]);
   labelcat.append(txt);
   labelcat.setAttribute("id", `coinformTweetLabel-${tweet.id}`);
   let node = tweet.domObject;
@@ -201,7 +224,7 @@ const createCannotSeeTweetButton = (tweet, label) => {
   div.setAttribute('id', `feedback-button-container-${tweet.id}`);
 
   const button = document.createElement('button');
-  button.innerText = `Why I cannot see this?`;
+  button.innerText = LANG['why cant see'];
   button.setAttribute('type', 'button');
   button.setAttribute('class', 'coinform-button coinform-button-primary whyButton');
   button.setAttribute("id", `whyButton-${tweet.id}`);
@@ -232,11 +255,11 @@ const classifyPost = (post, score) => {
 function createBasicTweetMenu(tweet, label) {
   return Swal2.fire({
     type: 'info',
-    title: `This tweet has been tagged as ${label}.`,
+    title: strParse(LANG['tweet tagged as'], LANG[label]),
     showCloseButton: true,
     showCancelButton: false,
     confirmButtonColor: '#3085d6',
-    confirmButtonText: 'See tweet anyways',
+    confirmButtonText: LANG['see tweet'],
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
@@ -258,17 +281,23 @@ function createExtendedTweetMenu(tweet, label, isTweetHidden) {
 
   let resultDropdown;
 
+  let categoryOptions = {};
+
+  Object.keys(configuration.coinform.categories).forEach(function(key) {
+    categoryOptions[key] = LANG[key + '_info'];
+  });
+
   return Swal2.fire({
     type: 'info',
-    title: `This tweet has been tagged as ${label}.\n`
-      + `If you think this is not accurate please provide a claim and a URL to a post that supports that claim.`,
+    title: strParse(LANG['tweet tagged as'], LANG[label]),
     showCloseButton: true,
     showCancelButton: false,
     confirmButtonColor: '#3085d6',
-    confirmButtonText: 'Submit',
+    confirmButtonText: LANG['submit'],
     html:
-      '<input id="swal-input1" placeholder="URL" class="swal2-input">' +
-      '<input id="swal-input2" placeholder="Comment" class="swal2-input">',
+      '<span>' + LANG['provide claim'] + '</span>' +
+      '<input id="swal-input1" placeholder="' + LANG['url'] + '" class="swal2-input">' +
+      '<input id="swal-input2" placeholder="' + LANG['comment'] + '" class="swal2-input">',
     focusConfirm: true,
     preConfirm: () => {
       return [
@@ -277,21 +306,14 @@ function createExtendedTweetMenu(tweet, label, isTweetHidden) {
       ];
     },
     input: 'select',
-    inputPlaceholder: 'Choose a claim',
-    inputOptions: {
-      'accurate': 'Reputable source with no disagreement and no related false claims',
-      'accurate with considerations': 'Reputable source with little disagreement and related false claims',
-      'unsubstantiated': 'Mixture of reputability and disagreement associated to claim reviews',
-      'inaccurate with considerations': 'Not credible',
-      'inaccurate': 'Not credible source with high disagreement',
-      'not verifiable post': 'Absolutely not a credible source with highly-biased content'
-    },
+    inputPlaceholder: LANG['choose claim'],
+    inputOptions: categoryOptions,
     inputValidator: (value) => {
       return new Promise((resolve) => {
         if (value.localeCompare('') !== 0) {
           resultDropdown = value;
         } else {
-          resolve('Please choose a claim');
+          resolve(LANG['please choose claim']);
         }
 
         resolve();
@@ -306,12 +328,12 @@ function createExtendedTweetMenu(tweet, label, isTweetHidden) {
         let url = array[0], comment = array[1];
 
         if (url.localeCompare('') === 0) {
-          alert('Please provide a URL');
+          alert(LANG['provide url']);
         } else if (comment.localeCompare('') === 0) {
-          alert('Please provide some additional information in the comment');
+          alert(LANG['provide additional info']);
         } else {
 
-          Swal2.fire('Sent!', 'Your feedback has been sent.', 'success');
+          Swal2.fire(LANG['sent'], LANG['feedback sent'], 'success');
 
           // url comment resultDropdown
           let evaluation = {
@@ -337,6 +359,11 @@ function ignoreTweetClick(event) {
   event.preventDefault();
   event.stopPropagation();
   return false;
+}
+
+function strParse(str) {
+  let args = [].slice.call(arguments, 1), i = 0;
+  return str.replace(/%s/g, () => args[i++]);
 }
 
 function randomInt(low, high) {

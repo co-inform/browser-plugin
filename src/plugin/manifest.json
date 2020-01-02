@@ -23,6 +23,7 @@
     ],
     "web_accessible_resources": [
       "resources/config.json",
+      "resources/lang.en.json",
       "resources/coinform48.png",
       "resources/coinform128.png"
     ],

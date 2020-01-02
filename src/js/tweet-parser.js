@@ -13,9 +13,12 @@ const tweetJQuerySelector = "article";
 const usernameSelector = "[data-testid='tweet'] > div:nth-child(2) > div:first-child > div:first-child a > div > div:nth-child(2)";
 const tweetIdSelector = "[data-testid='tweet'] > div:nth-child(2) > div:first-child > div:first-child  > a";
 const usernameAttribute = "coinform-username";
-const textSelector = "[data-testid='tweet'] > div:nth-child(2) >  div:nth-child(2)";
+const textSelector = "[data-testid='tweet'] > div:nth-child(2) > div:nth-child(2)";
+const textSelectorTweetPageCase = "article > div:first-child div[lang]";
+const textSelectorTweetPageResponsesCase = "[data-testid='tweet'] > div:nth-child(2) > div[lang]";
 const $ = jQuery;
 let tweetsList = [];
+let pageCase = null;
 
 function TweetParser() {
 }
@@ -43,13 +46,58 @@ TweetParser.prototype = {
 
 };
 
-const getTweetInfo = (tweet) => {
+const checkPageCase = () => {
+
+  // Case when we are in a Tweet Page, with its responses
+  if (window.location.href.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/[\w]+\/status\/[0-9]+/)) {
+    pageCase = "tweet";
+  }
+  // Case when we are in the Twitter Home Page
+  else if (window.location.href.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/home/)) {
+    pageCase = "home";
+  }
+  // Case when we are in a Twitter User Page
+  else if (window.location.href.match(/http(?:s)?:\/\/(?:www\.)?twitter\.com\/[\w]+/)) {
+    pageCase = "user";
+  }
+  else {
+    pageCase = "unknown";
+  }
+
+}
+
+const getTweetInfo = (tweet, num) => {
 
   const user = tweet.querySelector(usernameSelector) ? tweet.querySelector(usernameSelector).textContent : null;
-  const text = tweet.querySelector(textSelector) ? tweet.querySelector(textSelector).textContent : null;
-  const tweetid = (tweet.querySelector(tweetIdSelector) && tweet.querySelector(tweetIdSelector).href.match(/\d+\b/g)) ? tweet.querySelector(tweetIdSelector).href.match(/\d+\b/g)[0] : null;
+  let text = null;
+  const link = tweet.querySelector(tweetIdSelector) ? tweet.querySelector(tweetIdSelector) : null;
+  let tweetid = null;
+
+  // Case when we are in a Tweet Page, with its responses
+  if (pageCase == "tweet") {
+    // The first one is the main Tweet
+    if (num === 0) {
+      let auxMatch = window.location.href.match(/\d+\b/g);
+      if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
+      text = tweet.querySelector(textSelectorTweetPageCase) ? tweet.querySelector(textSelectorTweetPageCase).textContent : null;
+    }
+    // The other cases are the responses tweets
+    else {
+      let auxMatch = link.href.match(/\d+\b/g);
+      if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
+      text = tweet.querySelector(textSelectorTweetPageResponsesCase) ? tweet.querySelector(textSelectorTweetPageResponsesCase).textContent : null;
+    }
+  }
+  // Case when we are in the Tweeter Home Page, or a User Page
+  else if (link && link.href.match(/\d+\b/g)) {
+    let auxMatch = link.href.match(/\d+\b/g);
+    if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
+    text = tweet.querySelector(textSelector) ? tweet.querySelector(textSelector).textContent : null;
+  }
+
   const isAnalyzed = false;
   const containsLogo = false;
+
   
   return {
     username: user,
@@ -65,9 +113,9 @@ const getTweetInfo = (tweet) => {
 
 const indexTweets = (callback) => {
 
-  tweetsList.forEach(tweet => {
+  tweetsList.forEach((tweet, num) => {
 
-    const tweetInfo = getTweetInfo(tweet);
+    const tweetInfo = getTweetInfo(tweet, num);
 
     if (tweetInfo.username) {
 
@@ -100,6 +148,7 @@ const getLinks = (tweet) => {
 
 const tweetsListUpdate = () => {
 
+  checkPageCase();
   tweetsList = document.querySelectorAll(tweetJQuerySelector);
 
 };
