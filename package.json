@@ -5,7 +5,7 @@
   "main": "src/js/coinform-client.js",
   "scripts": {
     "test": "jasmine",
-    "build": "mkdir -p build/resources && browserify src/js/*.js -o build/coinform.js && cp -r src/plugin/. build/.",
+    "build": "mkdir -p build/resources && browserify src/js/browser-plugin.js -o build/coinform.js && browserify src/js/background-script.js -o build/background-coinform.js && cp -r src/plugin/. build/.",
     "mock": "node mock-api/index.js &"
   },
   "repository": {

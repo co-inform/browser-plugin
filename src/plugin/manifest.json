@@ -2,8 +2,12 @@
     "manifest_version": 2,
     "name": "Co-Inform",
     "version": "1.0",
+    "default_locale": "en",
     "description": "Context matters. Your sources too.",
-    "content_security_policy": "default-src 'none'; connect-src 'https://api.coinform.eu';font-src 'self'; img-src 'self' data: https:; style-src 'self' ; script-src 'self'",
+    "page_action": {
+      "default_icon": "resources/coinform16.png",
+      "default_title": "Co-Inform"
+    },
     "icons": {
       "16": "resources/coinform16.png",
       "48": "resources/coinform48.png",
@@ -14,22 +18,27 @@
       "page": "options.html",
       "open_in_tab": false
     },
+    "background": {
+      "persistent": false,
+      "scripts": ["background-coinform.js"]
+    },
     "content_scripts": [
         {
           "matches": ["https://*.twitter.com/*", "https://*.facebook.com/*"],
-          "css": ["resources/coinform.css"],
+          "css": ["resources/coinform.css", "resources/bootstrap.min.css"],
           "js": ["coinform.js"]
         }
     ],
     "web_accessible_resources": [
       "resources/config.json",
-      "resources/lang.en.json",
       "resources/coinform48.png",
       "resources/coinform128.png"
     ],
     "permissions": [
       "storage",
+      "tabs",
+      "webNavigation",
       "*://localhost/*",
-      "*://api.coinform.eu/*"
+      "https://api.coinform.eu/*"
     ]
 }

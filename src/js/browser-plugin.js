@@ -3,15 +3,19 @@ const Swal2 = require('sweetalert2');
 const CoinformClient = require('./coinform-client');
 const TweetParser = require('./tweet-parser');
 const FacebookParser = require('./facebook-parser');
-let counter = 1;
+const CoInformLogger = require('./coinform-logger');
+
+const pluginCache = {};
+
+// let counter = 1;
 let tweetData;
 const MAX_RETRIES = 10;
 const browser = chrome || browser;
+let logger;
 let client;
 let configuration;
-let LANG;
+// let LANG;
 let parser;
-const usersCache = {};
 
 //Read the configuration file and if it was successful, start
 fetch(browser.extension.getURL('/resources/config.json'), {
@@ -26,26 +30,6 @@ fetch(browser.extension.getURL('/resources/config.json'), {
 
     configuration = res;
 
-    //Read the language file
-    fetch(browser.extension.getURL('/resources/lang.en.json'), {
-      mode: 'cors',
-      header: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => res.json())
-      .then(res => {
-
-        LANG = res.LANG;
-        Object.keys(res.CATEGORIES).forEach(function(key) {
-          LANG[key] = res.CATEGORIES[key]['label'];
-          LANG[key+'_info'] = res.CATEGORIES[key]['description'];
-        });
-
-      })
-      .catch(err => console.error('Could not load language file', err));
-
     if (window.location.hostname.indexOf('twitter.com') >= 0) {
 
       parser = new TweetParser();
@@ -58,15 +42,28 @@ fetch(browser.extension.getURL('/resources/config.json'), {
 
     setTimeout(start, 5000);
   })
-  .catch(err => console.error('Could not load configuration file', err));
+  .catch(err => {
+    // logger.logConsoleDebug(logger.logTypes.error, 'Could not load configuration file');
+    console.error('Could not load configuration file', err)
+  });
 
 const start = () => {
 
-  client = new CoinformClient(fetch, configuration.coinform.url);
+  logger = new CoInformLogger();
+  logger.setLogLevel(logger.logTypes.all);
+  
+  client = new CoinformClient(fetch, configuration.coinform.apiUrl);
+
+  browser.runtime.sendMessage({
+    contentScriptQuery: "ConfigureBackground", 
+    coinformApiUrl: configuration.coinform.apiUrl
+  });
 
   if (window.location.hostname.indexOf('twitter.com') >= 0) {
 
+    parser.initContext();
     parser.listenForMainChanges(newTweetCallback);
+    parser.listenPublishTweet(publishTweetCallback);
     parser.triggerFirstTweetBatch(newTweetCallback);
 
   } else if (window.location.hostname.indexOf('facebook.com') >= 0) {
@@ -77,83 +74,222 @@ const start = () => {
   }
 };
 
+const publishTweetCallback = (clickEvent, targetButton) => {
+
+  // click situation when we already procesed the tweet and the await time has finished
+  if (targetButton.coInformed) {
+    logger.logConsoleDebug(logger.logTypes.info, `Publish button procesed!!`);
+    return true;
+  }
+
+  // prevent the submiting of the tweet
+  clickEvent.stopImmediatePropagation();
+  clickEvent.preventDefault();
+  clickEvent.stopPropagation();
+
+  // if disabled we are still waiting
+  if (targetButton.hasAttribute("disabled")) {
+    return true;
+  }
+
+  logger.logConsoleDebug(logger.logTypes.info, `Publish button clicked!!`);
+  
+  targetButton.setAttribute("disabled", "");
+  targetButton.setAttribute("aria-disabled", "true");
+
+  // replace the text of the button with a loading
+  let loadingSpinner = document.createElement("DIV");
+  loadingSpinner.classList.add("spinner-border");
+  loadingSpinner.setAttribute("role", "status");
+  let span = document.createElement("SPAN");
+  span.classList.add("sr-only");
+  let auxtxt = document.createTextNode("Loading...");
+  span.append(auxtxt);
+  loadingSpinner.append(span);
+  targetButton.children[0].style.display = "none";
+  targetButton.append(loadingSpinner);
+  
+  // attach text
+  let loadingMessage = document.createElement("SPAN");
+  loadingMessage.classList.add("publishTweetCoinformMessage");
+  loadingMessage.classList.add("blink_me");
+  let txt = document.createTextNode(browser.i18n.getMessage("checking_tweet_coinform"));
+  loadingMessage.append(txt);
+  loadingMessage.setAttribute("id", `coinformCheckingMessage`);
+  let toolBar = targetButton.offsetParent;
+  for ( ; toolBar && toolBar !== document; toolBar = toolBar.parentNode ) {
+    if ( toolBar.matches("[data-testid='toolBar']") ) break;
+  }
+  toolBar.offsetParent.append(loadingMessage);
+
+  // postpone the submiting of the tweet
+  setTimeout(function() {
+    publishTweetDoit(targetButton);
+  }, 5000);
+
+};
+
+const publishTweetDoit = (targetButton) => {
+  let msg = document.getElementById("coinformCheckingMessage");
+  msg.parentNode.removeChild(msg);
+  let load = targetButton.querySelector('.spinner-border');
+  load.parentNode.removeChild(load);
+  targetButton.children[0].style.display = "";
+  targetButton.removeAttribute("disabled");
+  targetButton.removeAttribute("aria-disabled");
+  targetButton.coInformed = true;
+  targetButton.click();
+};
+
 const newTweetCallback = (tweetInfo) => {
 
   tweetData = tweetInfo;
-  const dom = tweetInfo.domObject;
+  // const dom = tweetInfo.domObject;
+
+  if (!tweetInfo.domObject.coInfoAnalyzed) {
+    tweetInfo.domObject.coInfoAnalyzed = false;
+  }
+
+  // If the tweet has already been analyzed then skip
+  if (tweetInfo.domObject.coInfoAnalyzed) {
+    logger.logConsoleDebug(logger.logTypes.info, `Already treated tweet object`, tweetInfo.id);
+    return;
+  }
   
-  if (tweetInfo.links.length > 0) {
+  if (!pluginCache[tweetInfo.id]) {
+    pluginCache[tweetInfo.id] = false;
+  }
 
-    if (usersCache[tweetInfo.id] == null) {
-      usersCache[tweetInfo.id] = false;
-    }
+  if (!tweetInfo.domObject.coInfoLogo) {
+    createClickableLogo(tweetInfo);
+    tweetInfo.domObject.coInfoLogo = true;
+  }
 
-    // If the tweet has already been analyzed then skip
-    if (usersCache[tweetInfo.id]) {
+  // If the tweet has already been tagged then we directly classify it
+  if (pluginCache[tweetInfo.id]) {
+    logger.logConsoleDebug(logger.logTypes.info, `Already analyzed tweet`, tweetInfo.id);
+    tweetInfo.domObject.coInfoAnalyzed = true;
+    classifyTweet(tweetInfo, pluginCache[tweetInfo.id]);
+    return;
+  }
+
+  // First API call to the endpoint /twitter/tweet/
+  client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
+
+    let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+
+    // Discard requests with 400 http return codes
+    if (resStatus.localeCompare('400') === 0) {
+      logger.logConsoleDebug(logger.logTypes.error, `Request 400 Error`, tweetInfo.id);
       return;
     }
 
-    // First API call to the endpoint /twitter/tweet/
-    client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
+    // If the result status has not reached the 'done' status then make a second API call to retrieve the 
+    // result with a maximum of 10 retries
+    if (resStatus.localeCompare('done') !== 0) {
 
-      let firstCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      logger.logConsoleDebug(logger.logTypes.info, `Not Done (${resStatus}) response`, tweetInfo.id);
 
-      // Discard requests with 400 http return codes
-      if (firstCallStatus.localeCompare('400') === 0) {
-        return;
+      // Add random sleep time between 0.5 and 2.5 seconds
+      // sleep(randomInt(500, 2500));
+
+      tweetInfo.domObject.coInfoCounter = 0;
+
+      // Call retry in random (between 0.5 and 2.5) seconds
+      setTimeout(function() {
+        retryTweetQuery(tweetInfo, res.query_id);
+      }, randomInt(500, 2500));
+
+    } else {
+
+      logger.logConsoleDebug(logger.logTypes.info, `Done response`, tweetInfo.id);
+
+      // Result from first API call
+      // let firstRes = JSON.stringify(res);
+      let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility).replace(/\s+/g,'_');
+      // logger.logConsoleDebug(logger.logTypes.info, `LABEL = ${acurracyLabel}`, tweetInfo.id);
+
+      // Tweet analyzed
+      pluginCache[tweetInfo.id] = acurracyLabel;
+      tweetInfo.domObject.coInfoAnalyzed = true;
+      classifyTweet(tweetInfo, acurracyLabel);
+
+    }
+  }).catch(err => {
+    logger.logConsoleDebug(logger.logTypes.error, `Request Error: ${err}`, tweetInfo.id);
+    // console.error(err);
+  });
+
+};
+
+const retryTweetQuery = (tweetInfo, queryId) => {
+
+  if (tweetInfo.domObject.coInfoCounter === undefined) {
+    tweetInfo.domObject.coInfoCounter = 0;
+  }
+
+  if (tweetInfo.domObject.coInfoCounter > MAX_RETRIES) {
+
+    logger.logConsoleDebug(logger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet..`, tweetInfo.id);
+    return false;
+
+  } else {
+
+    tweetInfo.domObject.coInfoCounter++;
+
+    chrome.runtime.sendMessage({
+      contentScriptQuery: "RetryAPIQuery",
+      queryId: queryId
+    }, function(res) {
+
+      // Result from second API call
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+
+      if (resStatus.localeCompare('done') !== 0) {
+
+        logger.logConsoleDebug(logger.logTypes.info, `Not Done (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+
+        // Call retry in random (between 0.5 and 2.5) seconds
+        setTimeout(function() {
+          retryTweetQuery(tweetInfo, res.query_id);
+        }, randomInt(500, 2500));
+
       }
+      else {
 
-      // If the result status has not reached the 'done' status then make a second API call to retrieve the 
-      // result with a maximum of 10 retries
-      if (firstCallStatus.localeCompare('done') !== 0) {
-        console.log(`${tweetInfo.id} - Not Done response :(`);
-
-        // Add random sleep time between 0.5 and 2.5 seconds
-        sleep(randomInt(500, 2500));
-        let firstQueryId = JSON.stringify(res.query_id);
-
-        if (counter > MAX_RETRIES) {
-          counter = 1;
-        } else {
-          counter++;
-          client.getResponseTweetInfo(firstQueryId).then(function (res) {
-
-            // Result from second API call
-            let secondCallStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-
-            if (secondCallStatus.localeCompare('done') === 0) {
-              console.log(`${tweetInfo.id} - ReDone response :)`);
-              // As the tweet has been analized then remove the loading spinner
-              let secondRes = JSON.stringify(res);
-
-              let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
-              console.log(`${tweetInfo.id} LABEL = ` + acurracyLabel);
-
-              // Tweet analyzed
-              usersCache[tweetInfo.id] = true;
-              tweetInfo.analyzed = true;
-              classifyTweet(tweetInfo, acurracyLabel);
-
-            }
-          }).catch(err => console.log(err));
-        }
-      } else {
-        console.log(`${tweetInfo.id} - Done response :)`);
-        // Result from first API call
-        let firstRes = JSON.stringify(res);
-        let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility);
-        console.log(`${tweetInfo.id} LABEL = ` + acurracyLabel);
+        logger.logConsoleDebug(logger.logTypes.info, `Done response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+        
+        // let secondRes = JSON.stringify(res);
+        let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility).replace(/\s+/g,'_');
+        // logger.logConsoleDebug(logger.logTypes.info, `LABEL = ${acurracyLabel}`, tweetInfo.id);
 
         // Tweet analyzed
-        usersCache[tweetInfo.id] = true;
-        tweetInfo.analyzed = true;
+        pluginCache[tweetInfo.id] = acurracyLabel;
+        tweetInfo.domObject.coInfoAnalyzed = true;
         classifyTweet(tweetInfo, acurracyLabel);
+
       }
-    }).catch(err => console.log(err));
+
+    });
+
+    /*function (err) {
+
+      logger.logConsoleDebug(logger.logTypes.error, `Request Error (${tweetInfo.domObject.coInfoCounter}): ${err}`, tweetInfo.id);
+      // console.error(err);
+
+      // Call retry in random (between 0.5 and 2.5) seconds
+      setTimeout(function() {
+        retryTweetQuery(tweetInfo, queryId);
+      }, randomInt(500, 2500));
+
+    });*/
+
   }
+
 };
 
 const newFacebookPostCallback = (post) => {
+
   if (post.links.length > 0) {
     // Just for the proof of concept, use Twitter's score (even though we're in Facebook)
     client.getTwitterUserScore(post.username)
@@ -161,70 +297,83 @@ const newFacebookPostCallback = (post) => {
         classifyPost(post, res);
 
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        logger.logConsoleDebug(logger.logTypes.error, `Request error: ${err}`);
+        //console.error(err)
+      });
   }
+
 };
 
 const classifyTweet = (tweet, accuracyLabel) => {
 
   const node = tweet.domObject;
   const label = accuracyLabel.replace(/['"]+/g, '');
+  node.coInformLabel = label;
 
   if (!(node.hasAttribute(parser.untrustedAttribute) && node.getAttribute(parser.untrustedAttribute) !== 'undefined')) {
-    const misinformationLabels = configuration.coinform.misinformation;
-
     let button;
-
-    if (configuration.coinform.categories[label].localeCompare("misinformation") === 0) {
-      node.setAttribute(parser.untrustedAttribute, 0);
-      button = createCannotSeeTweetButton(tweet, label);
-      // button = createClickableLogo(tweet, acurracyLabel);  
+    let category = configuration.coinform.categories[label];
+    if (category) {
+      if (category.localeCompare("misinformation") === 0) {
+        node.setAttribute(parser.untrustedAttribute, 0);
+        button = createCannotSeeTweetButton(tweet, label);
+        createTweetLabel(tweet, label);
+        node.append(button);
+      }
     }
     else {
-      button = createClickableLogo(tweet, label);
+      logger.logConsoleDebug(logger.logTypes.warning, `Classifying Unknown Label (${label})`, tweet.id);
     }
-  
-    // createClickableLogo(tweet, label);
-    node.append(button);
   }
+
 };
 
-const createClickableLogo = (tweet, label) => {
+const createClickableLogo = (tweet) => {
+
+  let node = tweet.domObject;
   let img = document.createElement("IMG");
   img.setAttribute("class", "coinformTweetLogo");
   img.setAttribute("id", `coinformTweetLogo-${tweet.id}`);
 
-  let imgURL = chrome.extension.getURL("/resources/coinform48.png");
+  let imgURL = browser.extension.getURL("/resources/coinform48.png");
   img.setAttribute("src", imgURL);
 
   img.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
     event.preventDefault();
-    
-    createExtendedTweetMenu(tweet, label, false);
+    event.stopPropagation();
+    createExtendedTweetMenu(tweet);
   });
-  let node = tweet.domObject;
   node.append(img);
+
   return img;
+
 };
 
 const createTweetLabel = (tweet, label) => {
+
   let labelcat = document.createElement("SPAN");
   labelcat.setAttribute("class", "coinformTweetLabel");
-  let txt = document.createTextNode(LANG[label]);
+  let txt = document.createTextNode(browser.i18n.getMessage(label));
   labelcat.append(txt);
   labelcat.setAttribute("id", `coinformTweetLabel-${tweet.id}`);
   let node = tweet.domObject;
   node.prepend(labelcat);
+
   return labelcat;
+
 };
 
 const createCannotSeeTweetButton = (tweet, label) => {
+
   const div = document.createElement('div');
   div.setAttribute('class', 'feedback-button-container');
   div.setAttribute('id', `feedback-button-container-${tweet.id}`);
 
   const button = document.createElement('button');
-  button.innerText = LANG['why cant see'];
+  button.innerText = browser.i18n.getMessage('why_cant_see');
   button.setAttribute('type', 'button');
   button.setAttribute('class', 'coinform-button coinform-button-primary whyButton');
   button.setAttribute("id", `whyButton-${tweet.id}`);
@@ -237,10 +386,10 @@ const createCannotSeeTweetButton = (tweet, label) => {
 
   div.addEventListener('click', ignoreTweetClick);
 
-  // div.append(createClickableLogo(tweet, label));
-
   div.append(button);
+
   return div;
+
 };
 
 const classifyPost = (post, score) => {
@@ -250,16 +399,18 @@ const classifyPost = (post, score) => {
 
   $(dom.find('._3ccb')[0]).css('opacity', `${1 - misinformationScore / 100}`);
   dom.prepend(createWhyButton(score, 'post', true));
+
 };
 
 function createBasicTweetMenu(tweet, label) {
+
   return Swal2.fire({
     type: 'info',
-    title: strParse(LANG['tweet tagged as'], LANG[label]),
+    title: strParse(browser.i18n.getMessage('tweet_tagged_as'), browser.i18n.getMessage(label)),
     showCloseButton: true,
     showCancelButton: false,
     confirmButtonColor: '#3085d6',
-    confirmButtonText: LANG['see tweet'],
+    confirmButtonText: browser.i18n.getMessage('see_tweet'),
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
@@ -268,36 +419,42 @@ function createBasicTweetMenu(tweet, label) {
       node.removeAttribute(parser.untrustedAttribute);
       document.getElementById(`whyButton-${tweet.id}`).remove();
       document.getElementById(`feedback-button-container-${tweet.id}`).remove();
-      if (!node.logo) {
-        node.logo = true;
-        createClickableLogo(tweet, label);
-        createTweetLabel(tweet, label);
-      }
     }
   });
+
 }
 
-function createExtendedTweetMenu(tweet, label, isTweetHidden) {
+function createExtendedTweetMenu(tweet) {
+
+  let node = tweet.domObject;
 
   let resultDropdown;
 
   let categoryOptions = {};
 
   Object.keys(configuration.coinform.categories).forEach(function(key) {
-    categoryOptions[key] = LANG[key + '_info'];
+    categoryOptions[key] = browser.i18n.getMessage(key + '__info');
   });
+
+  let menuTitle = browser.i18n.getMessage('tweet_not_tagged');
+
+  if (node.coInformLabel) {
+    let auxlabel = browser.i18n.getMessage(node.coInformLabel);
+    if (!auxlabel) auxlabel = node.coInformLabel;
+    menuTitle = strParse(browser.i18n.getMessage('tweet_tagged_as'), auxlabel);
+  }
 
   return Swal2.fire({
     type: 'info',
-    title: strParse(LANG['tweet tagged as'], LANG[label]),
+    title: menuTitle,
     showCloseButton: true,
     showCancelButton: false,
     confirmButtonColor: '#3085d6',
-    confirmButtonText: LANG['submit'],
+    confirmButtonText: browser.i18n.getMessage('submit'),
     html:
-      '<span>' + LANG['provide claim'] + '</span>' +
-      '<input id="swal-input1" placeholder="' + LANG['url'] + '" class="swal2-input">' +
-      '<input id="swal-input2" placeholder="' + LANG['comment'] + '" class="swal2-input">',
+      '<span>' + browser.i18n.getMessage('provide_claim') + '</span>' +
+      '<input id="swal-input1" placeholder="' + browser.i18n.getMessage('url') + '" class="swal2-input">' +
+      '<input id="swal-input2" placeholder="' + browser.i18n.getMessage('comment') + '" class="swal2-input">',
     focusConfirm: true,
     preConfirm: () => {
       return [
@@ -306,14 +463,14 @@ function createExtendedTweetMenu(tweet, label, isTweetHidden) {
       ];
     },
     input: 'select',
-    inputPlaceholder: LANG['choose claim'],
+    inputPlaceholder: browser.i18n.getMessage('choose_claim'),
     inputOptions: categoryOptions,
     inputValidator: (value) => {
       return new Promise((resolve) => {
         if (value.localeCompare('') !== 0) {
           resultDropdown = value;
         } else {
-          resolve(LANG['please choose claim']);
+          resolve(browser.i18n.getMessage('please_choose_claim'));
         }
 
         resolve();
@@ -328,31 +485,37 @@ function createExtendedTweetMenu(tweet, label, isTweetHidden) {
         let url = array[0], comment = array[1];
 
         if (url.localeCompare('') === 0) {
-          alert(LANG['provide url']);
+          alert(browser.i18n.getMessage('provide_url'));
         } else if (comment.localeCompare('') === 0) {
-          alert(LANG['provide additional info']);
+          alert(browser.i18n.getMessage('provide_additional_info'));
         } else {
-
-          Swal2.fire(LANG['sent'], LANG['feedback sent'], 'success');
 
           // url comment resultDropdown
           let evaluation = {
             'evaluation': [{'label': resultDropdown, 'url': url, 'comment': comment}]
           };
 
-          client.postTwitterEvaluate(tweetData.id, evaluation)
-            .then(res => {
+          client.postTwitterEvaluate(tweetData.id, evaluation).then(function (res) {
+            
+            let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+            let resEvalId = JSON.stringify(res.evaluation_id).replace(/['"]+/g, '');
+            logger.logConsoleDebug(logger.logTypes.info, `Claim sent. Evaluation ID = ${resEvalId}`, tweet.id);
 
-              console.log('Query ID = ' + JSON.stringify(res));
+          }).catch(err => {
 
-            })
-            .catch(err => console.log(err));
+            logger.logConsoleDebug(logger.logTypes.error, `Request error: ${err}`, tweet.id);
+            //console.error(err);
+
+          });
+
+          Swal2.fire(browser.i18n.getMessage('sent'), browser.i18n.getMessage('feedback_sent'), 'success');
 
           resolve();
         }
       });
     }
   });
+
 }
 
 function ignoreTweetClick(event) {
@@ -370,8 +533,7 @@ function randomInt(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low);
 }
 
-function sleep(delay) {
+/*function sleep(delay) {
   let start = new Date().getTime();
   while (new Date().getTime() < start + delay) ;
-}
-
+}*/

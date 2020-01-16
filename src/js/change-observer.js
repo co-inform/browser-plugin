@@ -3,11 +3,13 @@
 module.exports = ChangeObserver;
 
 function ChangeObserver(domObject, onMutationCallback) {
+
   this.observer = newMutationObserver(onMutationCallback);
   this.domObject = domObject;
   this.observerConfig = {
     childList: true
   }
+  
 }
 
 ChangeObserver.prototype = {
@@ -16,9 +18,18 @@ ChangeObserver.prototype = {
     this.observerConfig.subtree = b
   },
 
+  listenChildList: function (b) {
+    this.observerConfig.childList = b
+  },
+
+  setAttributeFilter: function (list) {
+    this.observerConfig.attributeFilter = list;
+  },
+
   observe: function () {
     this.observer.observe(this.domObject, this.observerConfig)
   }
+
 };
 
 function newMutationObserver(onMutationCallback) {
@@ -27,7 +38,7 @@ function newMutationObserver(onMutationCallback) {
       const newNodes = mutation.addedNodes;
       if (newNodes !== null) {
         for (const newNode of newNodes) {
-          onMutationCallback(newNode)
+          onMutationCallback(newNode);
         }
       }
     }

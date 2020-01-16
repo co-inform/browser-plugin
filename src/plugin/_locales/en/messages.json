@@ -1,0 +1,83 @@
+{
+  "accurate": {
+    "message": "Accurate"
+  },
+  "accurate__info": {
+    "message": "Reputable source with no disagreement and no related false claims"
+  },
+  "accurate_with_considerations": {
+    "message": "Accurate With Considerations"
+  },
+  "accurate_with_considerations__info": {
+    "message": "Reputable source with little disagreement and related false claims"
+  },
+  "unsubstantiated": {
+    "message": "Unsubstantiated"
+  },
+  "unsubstantiated__info": {
+    "message": "Mixture of reputability and disagreement associated to claim reviews"
+  },
+  "inaccurate_with_considerations": {
+    "message": "Inaccurate With Considerations"
+  },
+  "inaccurate_with_considerations__info": {
+    "message": "Not credible"
+  },
+  "inaccurate": {
+    "message": "Inaccurate"
+  },
+  "inaccurate__info": {
+    "message": "Not credible source with high disagreement"
+  },
+  "not_verifiable_post": {
+    "message": "Not Verifiable Post"
+  },
+  "not_verifiable_post__info": {
+    "message": "Absolutely not a credible source with highly-biased content"
+  },
+  "tweet_not_tagged": {
+    "message": "This tweet is not tagged"
+  },
+  "checking_tweet_coinform": {
+    "message": "Checking tweet info with CoInform"
+  },
+  "why_cant_see": {
+    "message": "Why can't I see this?"
+  },
+  "tweet_tagged_as": {
+    "message": "This tweet has been tagged as %s"
+  },
+  "see_tweet": {
+    "message": "See tweet anyways"
+  },
+  "provide_claim": {
+    "message": "If you think this is not accurate please provide a claim and a URL to a post that supports that claim."
+  },
+  "submit": {
+    "message": "Submit"
+  },
+  "url": {
+    "message": "URL"
+  },
+  "comment": {
+    "message": "Comment"
+  },
+  "choose_claim": {
+    "message": "Choose a claim"
+  },
+  "please_choose_claim": {
+    "message": "Please choose a claim"
+  },
+  "provide_url": {
+    "message": "Please provide a URL"
+  },
+  "provide_additional_info": {
+    "message": "Please provide some additional information in the comment"
+  },
+  "sent": {
+    "message": "Sent!"
+  },
+  "feedback_sent": {
+    "message": "Your feedback has been sent."
+  }
+}

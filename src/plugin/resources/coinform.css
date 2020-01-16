@@ -13,10 +13,16 @@
   opacity: .6;
   position: relative;
 }
+/* Case for when we are not logged */
+[data-item-type='tweet'] > [coinform-untrusted] > div.content > div:not(:first-child):not(:last-child) {
+  filter: blur(4px);
+  opacity: .6;
+  position: relative;
+}
 
 .coinform-button-container {
   position: relative;
-  z-index: 99999;
+  z-index: 999;
   width: 100%;
   height: 100%;
   align-items: center;
@@ -27,7 +33,7 @@
 
 .info-button-container {
   position: relative;
-  z-index: 99999;
+  z-index: 999;
   width: 100%;
   height: 100%;
   align-items: baseline;
@@ -37,7 +43,7 @@
 
 .label-button-container {
   position: relative;
-  z-index: 99999;
+  z-index: 999;
   width: 100%;
   height: 100%;
   align-items: baseline;
@@ -47,7 +53,8 @@
 
 .feedback-button-container {
   position: absolute;
-  z-index: 99999;
+  top: 0px;
+  z-index: 999;
   width: 100%;
   height: 100%;
   align-items: center;
@@ -58,7 +65,7 @@
 
 .view-tweet-button-container {
   position: relative;
-  z-index: 99999;
+  z-index: 999;
   width: 100%;
   height: 100%;
   align-items: baseline;
@@ -68,7 +75,7 @@
 
 .hide-tweet-button-container {
   position: relative;
-  z-index: 99999;
+  z-index: 999;
   width: 100%;
   height: 100%;
   align-items: baseline;
@@ -96,6 +103,10 @@
 .coinform-button.coinform-button-primary:hover {
   background-color: #1a91da;
 }
+
+/*.swal2-container {
+  z-index: 99999;
+}*/
 
 .coinform-text,
 .coinform-header,
@@ -131,7 +142,7 @@
 
 .coinform-icon-container {
   position: absolute;
-  z-index: 99999;
+  z-index: 999;
   width: 100%;
   height: 100%;
   align-items: flex-end;
@@ -168,4 +179,34 @@
   padding: 2px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
   font-size: 0.8em;
+}
+
+[data-testid="toolBar"] [data-testid^="tweetButton"] .spinner-border {
+  width: 28px;
+  height: 28px;
+  top: 50%;
+  position: relative;
+  margin-top: -14px;
+}
+
+.publishTweetCoinformMessage {
+  position: relative;
+  align-self: flex-end;
+  margin-right: 10px;
+  margin-top: 5px;
+  /* background-color: #62b9af;
+  border-radius: 5%; */
+  color: #6c3b5d;
+  font-weight: bold;
+  padding: 2px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  font-size: 0.8em;
+}
+
+.blink_me {
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { opacity: 0; }
 }
