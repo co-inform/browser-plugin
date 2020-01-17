@@ -11,7 +11,7 @@ The `src` folder is divided in two:
     - `manifest.json`: this is the file the browsers use to know the details about the plugin, i.e, name, description, author, icons, etc. More information [here](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json).
     - `resources`: in this folder you can find the icons as well as the CSS the extension uses.
     - `config.json`: configuration for the behaviour of the plugin. This file, for example, specifies the URL of the API used.
-    - `_locales_`: in this folder you can find the messages of the plugin in different languages.
+    - `_locales`: in this folder you can find the messages of the plugin in different languages.
 
 Also, inside `spec` you may find the test files.
 
@@ -44,7 +44,7 @@ If you want to install the plugin from the distributed packed ZIP you can follow
 ### Chrome:
 1. Unzip the release in some folder in your computer
 2. Open Chrome, and go to the "Extensions" page. 2 options:
-    - Type the url [chrome://extensions/](chrome://extensions/)
+    - Type the url [`chrome://extensions/`](chrome://extensions/)
     - Go to the browser top right corner 3 dots options menu, and choose the submenu: `More tools > Extensions`
 3. Activate the "Developer mode" checkbox on the "Extensions" page top right corner
 4. Click on the sub-header menu `Load unpacked` left corner option
@@ -54,7 +54,7 @@ If you want to install the plugin from the distributed packed ZIP you can follow
  
 ### Firefox:
 1. Open Firefox, and go to the "Add-ons Manager" page. 3 options:
-    - Type the url [about:addons](about:addons)
+    - Type the url [`about:addons`](about:addons)
     - Press keys `Ctrl + Shift + A`
     - Go to the browser top right corner 3 lines options menu, and choose the menu option `Add-ons`
 2. Click on the cogwheel top page button
