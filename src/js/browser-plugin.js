@@ -7,45 +7,48 @@ const CoInformLogger = require('./coinform-logger');
 
 const pluginCache = {};
 
-// let counter = 1;
 let tweetData;
 const MAX_RETRIES = 10;
 const browser = chrome || browser;
 let logger;
 let client;
 let configuration;
-// let LANG;
 let parser;
 
-//Read the configuration file and if it was successful, start
-fetch(browser.extension.getURL('/resources/config.json'), {
-  mode: 'cors',
-  header: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }
-})
-  .then(res => res.json())
-  .then(res => {
+window.addEventListener("load", function(){
 
-    configuration = res;
+  // console.log("Page loaded!");
 
-    if (window.location.hostname.indexOf('twitter.com') >= 0) {
-
-      parser = new TweetParser();
-
-    } else if (window.location.hostname.indexOf('facebook.com') >= 0) {
-
-      parser = new FacebookParser();
-
+  //Read the configuration file and if it was successful, start
+  fetch(browser.extension.getURL('/resources/config.json'), {
+    mode: 'cors',
+    header: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     }
-
-    setTimeout(start, 5000);
   })
-  .catch(err => {
-    // logger.logConsoleDebug(logger.logTypes.error, 'Could not load configuration file');
-    console.error('Could not load configuration file', err)
-  });
+    .then(res => res.json())
+    .then(res => {
+
+      configuration = res;
+
+      if (window.location.hostname.indexOf('twitter.com') >= 0) {
+
+        parser = new TweetParser();
+
+      } else if (window.location.hostname.indexOf('facebook.com') >= 0) {
+
+        parser = new FacebookParser();
+
+      }
+
+      setTimeout(start, 1000);
+    })
+    .catch(err => {
+      console.error('Could not load configuration file', err)
+    });
+
+});
 
 const start = () => {
 
@@ -239,19 +242,29 @@ const retryTweetQuery = (tweetInfo, queryId) => {
 
     chrome.runtime.sendMessage({
       contentScriptQuery: "RetryAPIQuery",
+      coinformApiUrl: configuration.coinform.apiUrl,
       queryId: queryId
     }, function(res) {
 
       // Result from second API call
-      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      let resStatus = null;
 
-      if (resStatus.localeCompare('done') !== 0) {
+      if (res && res.status) {
+        resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      }
 
-        logger.logConsoleDebug(logger.logTypes.info, `Not Done (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+      if (!resStatus || (resStatus.localeCompare('done') !== 0)) {
+
+        if (!resStatus) {
+          logger.logConsoleDebug(logger.logTypes.error, `NULL response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+        }
+        else {
+          logger.logConsoleDebug(logger.logTypes.info, `Not Done (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+        }
 
         // Call retry in random (between 0.5 and 2.5) seconds
         setTimeout(function() {
-          retryTweetQuery(tweetInfo, res.query_id);
+          retryTweetQuery(tweetInfo, queryId);
         }, randomInt(500, 2500));
 
       }
