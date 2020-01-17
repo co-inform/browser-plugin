@@ -1,3 +1,6 @@
+
+/* Co-Inform project color: #693c5e*/
+
 [coinform-untrusted] > div > div:nth-child(2) > div:nth-child(2) > div:not(:first-child):not(:last-child) {
   filter: blur(4px);
   opacity: .6;
