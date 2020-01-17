@@ -1,3 +1,4 @@
+
 const $ = require('jquery');
 const Swal2 = require('sweetalert2');
 const CoinformClient = require('./coinform-client');
@@ -7,7 +8,6 @@ const CoInformLogger = require('./coinform-logger');
 
 const pluginCache = {};
 
-let tweetData;
 const MAX_RETRIES = 10;
 const browser = chrome || browser;
 let logger;
@@ -52,8 +52,7 @@ window.addEventListener("load", function(){
 
 const start = () => {
 
-  logger = new CoInformLogger();
-  logger.setLogLevel(logger.logTypes.all);
+  logger = new CoInformLogger(CoInformLogger.logTypes.warning);
   
   client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
@@ -81,7 +80,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
   // click situation when we already procesed the tweet and the await time has finished
   if (targetButton.coInformed) {
-    logger.logConsoleDebug(logger.logTypes.info, `Publish button procesed!!`);
+    logger.logConsoleDebug(CoInformLogger.logTypes.info, `Publish button procesed!!`);
     return true;
   }
 
@@ -95,7 +94,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
     return true;
   }
 
-  logger.logConsoleDebug(logger.logTypes.info, `Publish button clicked!!`);
+  logger.logConsoleDebug(CoInformLogger.logTypes.info, `Publish button clicked!!`);
   
   targetButton.setAttribute("disabled", "");
   targetButton.setAttribute("aria-disabled", "true");
@@ -146,8 +145,11 @@ const publishTweetDoit = (targetButton) => {
 
 const newTweetCallback = (tweetInfo) => {
 
-  tweetData = tweetInfo;
-  // const dom = tweetInfo.domObject;
+  if (!tweetInfo.id) {
+    // Detected tweet id NULL case, normally found when the Tweet is advertisment, or promoted
+    logger.logConsoleDebug(CoInformLogger.logTypes.warning, `Tweet with no ID found`);
+    return;
+  }
 
   if (!tweetInfo.domObject.coInfoAnalyzed) {
     tweetInfo.domObject.coInfoAnalyzed = false;
@@ -155,7 +157,7 @@ const newTweetCallback = (tweetInfo) => {
 
   // If the tweet has already been analyzed then skip
   if (tweetInfo.domObject.coInfoAnalyzed) {
-    logger.logConsoleDebug(logger.logTypes.info, `Already treated tweet object`, tweetInfo.id);
+    logger.logConsoleDebug(CoInformLogger.logTypes.info, `Already treated tweet object`, tweetInfo.id);
     return;
   }
   
@@ -170,7 +172,7 @@ const newTweetCallback = (tweetInfo) => {
 
   // If the tweet has already been tagged then we directly classify it
   if (pluginCache[tweetInfo.id]) {
-    logger.logConsoleDebug(logger.logTypes.info, `Already analyzed tweet`, tweetInfo.id);
+    logger.logConsoleDebug(CoInformLogger.logTypes.info, `Already analyzed tweet`, tweetInfo.id);
     tweetInfo.domObject.coInfoAnalyzed = true;
     classifyTweet(tweetInfo, pluginCache[tweetInfo.id]);
     return;
@@ -183,7 +185,7 @@ const newTweetCallback = (tweetInfo) => {
 
     // Discard requests with 400 http return codes
     if (resStatus.localeCompare('400') === 0) {
-      logger.logConsoleDebug(logger.logTypes.error, `Request 400 Error`, tweetInfo.id);
+      logger.logConsoleDebug(CoInformLogger.logTypes.error, `Request 400 Error`, tweetInfo.id);
       return;
     }
 
@@ -191,10 +193,7 @@ const newTweetCallback = (tweetInfo) => {
     // result with a maximum of 10 retries
     if (resStatus.localeCompare('done') !== 0) {
 
-      logger.logConsoleDebug(logger.logTypes.info, `Not Done (${resStatus}) response`, tweetInfo.id);
-
-      // Add random sleep time between 0.5 and 2.5 seconds
-      // sleep(randomInt(500, 2500));
+      logger.logConsoleDebug(CoInformLogger.logTypes.info, `Not Done (${resStatus}) response`, tweetInfo.id);
 
       tweetInfo.domObject.coInfoCounter = 0;
 
@@ -205,12 +204,12 @@ const newTweetCallback = (tweetInfo) => {
 
     } else {
 
-      logger.logConsoleDebug(logger.logTypes.info, `Done response`, tweetInfo.id);
+      logger.logConsoleDebug(CoInformLogger.logTypes.info, `Done response`, tweetInfo.id);
 
       // Result from first API call
       // let firstRes = JSON.stringify(res);
       let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility).replace(/\s+/g,'_');
-      // logger.logConsoleDebug(logger.logTypes.info, `LABEL = ${acurracyLabel}`, tweetInfo.id);
+      // logger.logConsoleDebug(CoInformLogger.logTypes.info, `LABEL = ${acurracyLabel}`, tweetInfo.id);
 
       // Tweet analyzed
       pluginCache[tweetInfo.id] = acurracyLabel;
@@ -219,7 +218,7 @@ const newTweetCallback = (tweetInfo) => {
 
     }
   }).catch(err => {
-    logger.logConsoleDebug(logger.logTypes.error, `Request Error: ${err}`, tweetInfo.id);
+    logger.logConsoleDebug(CoInformLogger.logTypes.error, `Request Error: ${err}`, tweetInfo.id);
     // console.error(err);
   });
 
@@ -233,7 +232,7 @@ const retryTweetQuery = (tweetInfo, queryId) => {
 
   if (tweetInfo.domObject.coInfoCounter > MAX_RETRIES) {
 
-    logger.logConsoleDebug(logger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet..`, tweetInfo.id);
+    logger.logConsoleDebug(CoInformLogger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet..`, tweetInfo.id);
     return false;
 
   } else {
@@ -256,10 +255,10 @@ const retryTweetQuery = (tweetInfo, queryId) => {
       if (!resStatus || (resStatus.localeCompare('done') !== 0)) {
 
         if (!resStatus) {
-          logger.logConsoleDebug(logger.logTypes.error, `NULL response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+          logger.logConsoleDebug(CoInformLogger.logTypes.error, `NULL response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
         }
         else {
-          logger.logConsoleDebug(logger.logTypes.info, `Not Done (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+          logger.logConsoleDebug(CoInformLogger.logTypes.info, `Not Done (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
         }
 
         // Call retry in random (between 0.5 and 2.5) seconds
@@ -270,11 +269,11 @@ const retryTweetQuery = (tweetInfo, queryId) => {
       }
       else {
 
-        logger.logConsoleDebug(logger.logTypes.info, `Done response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+        logger.logConsoleDebug(CoInformLogger.logTypes.info, `Done response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
         
         // let secondRes = JSON.stringify(res);
         let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility).replace(/\s+/g,'_');
-        // logger.logConsoleDebug(logger.logTypes.info, `LABEL = ${acurracyLabel}`, tweetInfo.id);
+        // logger.logConsoleDebug(CoInformLogger.logTypes.info, `LABEL = ${acurracyLabel}`, tweetInfo.id);
 
         // Tweet analyzed
         pluginCache[tweetInfo.id] = acurracyLabel;
@@ -287,7 +286,7 @@ const retryTweetQuery = (tweetInfo, queryId) => {
 
     /*function (err) {
 
-      logger.logConsoleDebug(logger.logTypes.error, `Request Error (${tweetInfo.domObject.coInfoCounter}): ${err}`, tweetInfo.id);
+      logger.logConsoleDebug(CoInformLogger.logTypes.error, `Request Error (${tweetInfo.domObject.coInfoCounter}): ${err}`, tweetInfo.id);
       // console.error(err);
 
       // Call retry in random (between 0.5 and 2.5) seconds
@@ -311,7 +310,7 @@ const newFacebookPostCallback = (post) => {
 
       })
       .catch(err => {
-        logger.logConsoleDebug(logger.logTypes.error, `Request error: ${err}`);
+        logger.logConsoleDebug(CoInformLogger.logTypes.error, `Request error: ${err}`);
         //console.error(err)
       });
   }
@@ -336,7 +335,7 @@ const classifyTweet = (tweet, accuracyLabel) => {
       }
     }
     else {
-      logger.logConsoleDebug(logger.logTypes.warning, `Classifying Unknown Label (${label})`, tweet.id);
+      logger.logConsoleDebug(CoInformLogger.logTypes.warning, `Classifying Unknown Label (${label})`, tweet.id);
     }
   }
 
@@ -508,15 +507,15 @@ function createExtendedTweetMenu(tweet) {
             'evaluation': [{'label': resultDropdown, 'url': url, 'comment': comment}]
           };
 
-          client.postTwitterEvaluate(tweetData.id, evaluation).then(function (res) {
+          client.postTwitterEvaluate(tweet.id, evaluation).then(function (res) {
             
             let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
             let resEvalId = JSON.stringify(res.evaluation_id).replace(/['"]+/g, '');
-            logger.logConsoleDebug(logger.logTypes.info, `Claim sent. Evaluation ID = ${resEvalId}`, tweet.id);
+            logger.logConsoleDebug(CoInformLogger.logTypes.info, `Claim sent. Evaluation ID = ${resEvalId}`, tweet.id);
 
           }).catch(err => {
 
-            logger.logConsoleDebug(logger.logTypes.error, `Request error: ${err}`, tweet.id);
+            logger.logConsoleDebug(CoInformLogger.logTypes.error, `Request error: ${err}`, tweet.id);
             //console.error(err);
 
           });
@@ -545,8 +544,3 @@ function strParse(str) {
 function randomInt(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low);
 }
-
-/*function sleep(delay) {
-  let start = new Date().getTime();
-  while (new Date().getTime() < start + delay) ;
-}*/

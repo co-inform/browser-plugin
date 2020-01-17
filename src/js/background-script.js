@@ -1,6 +1,4 @@
 
-
-
 const CoinformClient = require('./coinform-client');
 const CoInformLogger = require('./coinform-logger');
 
@@ -8,8 +6,7 @@ const CoInformLogger = require('./coinform-logger');
 let client;
 let logger;
 
-logger = new CoInformLogger();
-logger.setLogLevel(logger.logTypes.all);
+logger = new CoInformLogger(CoInformLogger.logTypes.warning);
 
 const listenerRuntime = function(request, sender, sendResponse) {
 
@@ -24,10 +21,10 @@ const listenerRuntime = function(request, sender, sendResponse) {
       client = new CoinformClient(fetch, request.coinformApiUrl);
     }
 
-    logger.logConsoleDebug(logger.logTypes.info, `Retrying API query (id ${request.queryId})`, sender.id);
+    logger.logConsoleDebug(CoInformLogger.logTypes.info, `Retrying API query (id ${request.queryId})`, sender.id);
 
     client.getResponseTweetInfo(request.queryId).then(res => sendResponse(res)).catch(err => {
-      logger.logConsoleDebug(logger.logTypes.error, `Request error: ${err}`, sender.id);
+      logger.logConsoleDebug(CoInformLogger.logTypes.error, `Request error: ${err}`, sender.id);
       // console.error(err);
     });
 

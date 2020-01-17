@@ -1,4 +1,3 @@
-/* jshint esversion: 6, devel: true */
 
 const jQuery = require('jquery')
 const Publication = require('./publication')

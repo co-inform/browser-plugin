@@ -1,4 +1,3 @@
-/* jshint esversion: 6, devel: true */
 
 module.exports = Publication;
 

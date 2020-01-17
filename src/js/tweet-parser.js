@@ -1,4 +1,3 @@
-/* jshint esversion: 6, devel: true */
 
 const jQuery = require('jquery');
 // const Publication = require('./publication');
@@ -51,6 +50,7 @@ let tweetsList = [];
 let pageCase = null;
 let userCase = null;
 
+// This listeners would help to detect page cases changes, but they dont seem to work from a content script
 /*window.addEventListener('locationchange', function(){
   checkPageCase();
 }, true);
@@ -158,17 +158,9 @@ const checkUserCase = () => {
 
 const getTweetInfo = (tweet, num) => {
 
-  let user = null;
   let tweetid = null;
+  let user = null;
   let text = null;
-
-  // Get the tweet User Id
-  if (userCase === null) {
-    user = tweet.querySelector(usernameAlternativeSelector) ? tweet.querySelector(usernameAlternativeSelector).textContent : null;
-  }
-  else {
-    user = tweet.querySelector(usernameSelector) ? tweet.querySelector(usernameSelector).textContent : null;
-  }
 
   // Get the tweet Id
   if (userCase === null) {
@@ -187,6 +179,18 @@ const getTweetInfo = (tweet, num) => {
         if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
       }
     }
+  }
+  if (!tweetid) {
+    // Detected tweet id NULL case when the Tweet is advertisment, or promoted
+    // console.log("Tweed ID NULL Error!!");
+  }
+
+  // Get the tweet User Id
+  if (userCase === null) {
+    user = tweet.querySelector(usernameAlternativeSelector) ? tweet.querySelector(usernameAlternativeSelector).textContent : null;
+  }
+  else {
+    user = tweet.querySelector(usernameSelector) ? tweet.querySelector(usernameSelector).textContent : null;
   }
 
   // Get the tweet content text
