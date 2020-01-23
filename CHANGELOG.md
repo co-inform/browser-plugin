@@ -1,7 +1,74 @@
 
 # Changelog
+All notable changes to this project will be documented in this file.
 
-## commit 17/01/2020
+## commit 23/01/2020 [branch: hackathon_stockholm]
+
+src/plugin/manifest.json
+- version 2.0.0
+- new folder structure with the distinct scripts
+- fixed the Content Security Policy
+- changed from "page action" to "browser action" plugin mode
+- specified the popup page and script for user logging in / registering
+- added new logo images
+
+package.json
+- fixed the main script reference
+- changed the build action so it distributes the scripts within the new folder structure
+
+src/plugin/resources/config.json
+- new configuration property to define the log level
+- updated the misinformation categories/labels with the ones specified in the API gateway
+
+src/plugin/_locales/en/messages.json
+- new text messages for the new categories/labels
+- new text messages for the new popup page for user logging in / registering
+
+src/plugin/content/
+- new folder structure. Folder for the content script and css
+
+src/plugin/options/
+- new folder structure. Folder for the options page script and css
+- html and css file with the structure and styles for the options page
+
+src/plugin/popup/
+- new folder structure. Folder for the popup page script and css for user logging in / registering
+- new html and css file with the structure and styles for the popup page
+
+src/plugin/resources/
+- new image with the coinform logo for popups footer
+
+src/js/background-script.js
+- adapted the code to the new workflow where a tweet must be classified if we get a "partly_done" response, but we have to keep querying the API to try to get the "done" response and, if necessary, reclassify it
+- removed the event listener por page load because it was not always raised, now it is set in the manifest to load the script after the page is loaded
+- new variable to store the coinform user if it is logged in
+- new constants to centralize some plugin images and colors setted during the script execution
+- new reference name to acces the browser API, to be able in the developing to test the both methods from the chrome vs browser APIs (chrome vs firefox)
+- new function parseApiResponse to centralize the parse of the both responses from the API queries about a tweet information
+- commented the not used facebook functions
+- refactor the classifyTweet function to check if the tweet was already classified before, so to remove the blurring and buttons or not
+- new individual functions to blur the tweet, to create the why button, to undo the tweet blurring, to remove the tweet button, to create the tweet labeling, to remove the twwet labeling, etc..
+- new common function for the logo click action that will call the apropiate popup depending if the user is a coinform user logged in or not
+- new function that opens a information popup when the user is not a coinform user logged in
+
+src/js/browser-plugin.js
+- now it reads the config.json for setting the api gateway url and the log level
+- fixed some configuration bugs and workflow
+
+src/js/coinform-client.js
+- new client methods for comunication with the API gateway to perform the user logging in and registering
+
+src/js/coinform-logger.js
+- new log type debug for more detailed messages than info
+
+src/js/options.js
+- script for the plugins options page adapted to new situations
+
+src/js/popup.js
+- new script for the plugin popup page to let the user log in or register to the coinform API, beta verison still not tested as the API gateway is still not ready
+
+
+## commit 17/01/2020 [branch: post_madrid_implementations]
 
 src/js/coinform-logger.js
 - log module calling minor changes
@@ -13,7 +80,7 @@ src/js/tweet-parser.js
 - detected and fixed bug when a tweet does not contain any ID to parse. Normaly the case of a promoted tweet or an advertisment tweet
 
 
-## commit 16/01/2020
+## commit 16/01/2020 [branch: post_madrid_implementations]
 
 package.json
 - changed the build task so it will browserify the background-script.js in a separate script
@@ -87,7 +154,7 @@ src/js/coinform-logger.js
 src/plugin/resources/bootstrap.min.css
 - new css from bootstrap to perform some visual efects like the loading spinner
 
-## commit 02/01/2020
+## commit 02/01/2020 [branch: post_madrid_implementations]
 
 package.json
 - fix the repository URL
@@ -114,6 +181,3 @@ src/js/tweet-parser.js
 - new selector constants to get the tweet data when we open an individual tweet page
 - new funcion "checkPageCase" for checking the case page where we are (home/user/tweet)
 - reimplemnt in "getTweetInfo" function the way of retrieveing the tweet metadata depending the page case where we are (home/user/tweet page), new parameter num with the tweet iteration, for tweet page case (the first tweet is different formated)
-
-
-

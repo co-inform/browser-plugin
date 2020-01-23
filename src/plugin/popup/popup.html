@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+
+  <title>Co-Inform</title>
+  <link type="text/css" rel="stylesheet" href="popup.css">
+
+  <script type="text/javascript" charset="utf-8" src="popup.js"></script>
+
+</head>
+
+<body>
+
+  <div id="popup-header">
+  </div>
+
+  <h1 id="popup-title">Co-Inform</h1>
+
+  <div id="login-messages">
+  </div>
+
+  <div class="form-control-group" id="login-form">
+
+    <div class="form-control">
+      <input type="email" id="login-auth-mail" name="login-usermail" required>
+      <label id="login-mail-label" for="login-auth-mail">User mail</label>
+    </div>
+    
+    <div class="form-control">
+      <input type="password" id="login-auth-pass" name="login-userpass" required>
+      <label id="login-pass-label" for="login-auth-pass">Password</label>
+    </div>
+
+    <br class="clearBoth" />
+
+  </div>
+
+  <div class="form-control-group" id="register-form">
+
+    <div class="form-control">
+      <input type="email" id="register-auth-mail" name="register-usermail" required>
+      <label id="register-mail-label" for="register-auth-mail">User mail</label>
+    </div>
+
+    <div class="form-control">
+      <input type="password" id="register-auth-pass" name="register-userpass" required>
+      <label id="register-pass-label" for="register-auth-pass">Password</label>
+    </div>
+
+    <div class="form-control">
+      <input type="password" id="register-auth-pass2" name="register-userpass2" required>
+      <label id="register-pass2-label" for="register-auth-pass2">Retype password</label>
+    </div>
+
+    <br class="clearBoth" />
+
+  </div>
+
+  <div class="form-buttons">
+    
+    <button class="coinform-button coinform-button-primary" type="button" id="login-button">Log in</button>
+    <button class="coinform-button coinform-button-primary" type="button" id="logout-button">Log out</button>
+    <button class="coinform-button coinform-button-primary" type="button" id="register-button">Register</button>
+
+    <button class="coinform-button coinform-button-secondary" type="button" id="registerStart-button">Register form</button>
+    <button class="coinform-button coinform-button-secondary" type="button" id="loginStart-button">Login form</button>
+  
+    <br class="clearBoth" />
+
+  </div>
+
+</body>
+</html

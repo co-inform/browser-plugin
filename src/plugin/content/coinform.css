@@ -1,5 +1,6 @@
 
-/* Co-Inform project color: #693c5e*/
+/* Co-Inform project main color: #693c5e */
+/* Co-Inform project secondary color: #62B9AF */
 
 [coinform-untrusted] > div > div:nth-child(2) > div:nth-child(2) > div:not(:first-child):not(:last-child) {
   filter: blur(4px);
@@ -122,6 +123,34 @@
   border: none;
   background-color: rgba(0,0,0, .54);
   color: white;
+}
+
+.swal2-popup .swal2-header .swal2-icon.swal2-info {
+  border-color: #693c5e;
+  color: #693c5e;
+}
+
+.swal2-popup .swal2-header .swal2-icon {
+  margin-bottom: 1.6em;
+  border-width: .40em;
+}
+
+.swal2-popup .swal2-title {
+  font-size: 1.7em;
+}
+
+.swal2-popup .swal2-content {
+  font-size: 1.4em;
+}
+
+.swal2-popup .swal2-content span {
+  display: block;
+  text-align: left;
+}
+
+.swal2-popup .swal2-footer img.coinformPopupLogo {
+  margin-left: auto;
+  height: 24px;
 }
 
 .coinform-padding-top-10 {

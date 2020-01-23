@@ -1,12 +1,14 @@
 {
     "manifest_version": 2,
     "name": "Co-Inform",
-    "version": "1.0",
+    "version": "2.0.0",
     "default_locale": "en",
     "description": "Context matters. Your sources too.",
-    "page_action": {
+    "content_security_policy": "default-src 'self'; connect-src *;",
+    "browser_action": {
       "default_icon": "resources/coinform16.png",
-      "default_title": "Co-Inform"
+      "default_title": "Co-Inform",
+      "default_popup": "popup/popup.html"
     },
     "icons": {
       "16": "resources/coinform16.png",
@@ -15,24 +17,27 @@
       "128": "resources/coinform128.png"
     },
     "options_ui": {
-      "page": "options.html",
+      "page": "options/options.html",
       "open_in_tab": false
     },
     "background": {
-      "persistent": false,
-      "scripts": ["background-coinform.js"]
+      "scripts": ["background/background-script.js"]
     },
     "content_scripts": [
-        {
-          "matches": ["https://*.twitter.com/*", "https://*.facebook.com/*"],
-          "css": ["resources/coinform.css", "resources/bootstrap.min.css"],
-          "js": ["coinform.js"]
-        }
+      {
+        "matches": ["https://*.twitter.com/*", "https://*.facebook.com/*"],
+        "css": ["content/coinform.css", "resources/bootstrap.min.css"],
+        "run_at": "document_idle",
+        "js": ["content/coinform.js"]
+      }
     ],
     "web_accessible_resources": [
       "resources/config.json",
+      "resources/coinform16.png",
       "resources/coinform48.png",
-      "resources/coinform128.png"
+      "resources/coinform128.png",
+      "resources/coinform_logotext.png",
+      "resources/coinform_logotext21.png"
     ],
     "permissions": [
       "storage",

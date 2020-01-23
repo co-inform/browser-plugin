@@ -61,11 +61,7 @@ window.addEventListener('hashchange', function(){
 
 window.addEventListener('popstate', function(){
   checkPageCase();
-}, true);
-
-chrome.tabs.onUpdated.addListener(function(){
-  checkPageCase();
-});*/
+}, true);*/
 
 function TweetParser() {
 

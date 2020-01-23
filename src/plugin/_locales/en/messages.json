@@ -1,39 +1,39 @@
 {
-  "accurate": {
-    "message": "Accurate"
+  "credible": {
+    "message": "Credible"
   },
-  "accurate__info": {
+  "credible__info": {
     "message": "Reputable source with no disagreement and no related false claims"
   },
-  "accurate_with_considerations": {
-    "message": "Accurate With Considerations"
+  "mostly_credible": {
+    "message": "Mostly credible"
   },
-  "accurate_with_considerations__info": {
+  "mostly_credible__info": {
     "message": "Reputable source with little disagreement and related false claims"
   },
-  "unsubstantiated": {
-    "message": "Unsubstantiated"
+  "credibility_uncertain": {
+    "message": "Credibility uncertain"
   },
-  "unsubstantiated__info": {
+  "credibility_uncertain__info": {
     "message": "Mixture of reputability and disagreement associated to claim reviews"
   },
-  "inaccurate_with_considerations": {
-    "message": "Inaccurate With Considerations"
+  "mostly_not_credible": {
+    "message": "Mostly not credible"
   },
-  "inaccurate_with_considerations__info": {
+  "mostly_not_credible__info": {
+    "message": "Not credible source"
+  },
+  "not_credible": {
     "message": "Not credible"
   },
-  "inaccurate": {
-    "message": "Inaccurate"
-  },
-  "inaccurate__info": {
+  "not_credible__info": {
     "message": "Not credible source with high disagreement"
   },
-  "not_verifiable_post": {
-    "message": "Not Verifiable Post"
+  "not_verifiable": {
+    "message": "Not verifiable"
   },
-  "not_verifiable_post__info": {
-    "message": "Absolutely not a credible source with highly-biased content"
+  "not_verifiable__info": {
+    "message": "Not verifiable"
   },
   "tweet_not_tagged": {
     "message": "This tweet is not tagged"
@@ -45,13 +45,22 @@
     "message": "Why can't I see this?"
   },
   "tweet_tagged_as": {
-    "message": "This tweet has been tagged as %s"
+    "message": "This tweet has been tagged as $1"
   },
   "see_tweet": {
     "message": "See tweet anyways"
   },
   "provide_claim": {
-    "message": "If you think this is not accurate please provide a claim and a URL to a post that supports that claim."
+    "message": "If you think this is not accurate please provide a claim and a URL to a post that supports that claim"
+  },
+  "provide_claim_with_login": {
+    "message": "If you think this is not accurate you can provide a claim by logging in with your Co-Inform user"
+  },
+  "login_register_instructions": {
+    "message": "Click on the Co-Inform logo on the top right corner of your browser to open the login/register popup"
+  },
+  "ok": {
+    "message": "Ok"
   },
   "submit": {
     "message": "Submit"
@@ -79,5 +88,80 @@
   },
   "feedback_sent": {
     "message": "Your feedback has been sent."
+  },
+  "login_title": {
+    "message": "Co-Inform Login"
+  },
+  "already_logged": {
+    "message": "You are already logged"
+  },
+  "register_title": {
+    "message": "Co-Inform Register"
+  },
+  "mail_password_not_found": {
+    "message": "User mail not found or wrong password"
+  },
+  "login_ok": {
+    "message": "User succesfully logged in"
+  },
+  "login_error": {
+    "message": "Login unknown error"
+  },
+  "login_not_valid": {
+    "message": "Login not valid"
+  },
+  "register_problem": {
+    "message": "Something went wrong during the registration. Try again"
+  },
+  "register_ok": {
+    "message": "User succesfully registered. Now you can log in"
+  },
+  "register_error": {
+    "message": "Register unknown error"
+  },
+  "register_not_valid": {
+    "message": "Register not valid. Check your data again"
+  },
+  "logout_ok": {
+    "message": "User succesfully logged out"
+  },
+  "log_in": {
+    "message": "Log In"
+  },
+  "log_out": {
+    "message": "Log Out"
+  },
+  "register": {
+    "message": "Register"
+  },
+  "register_form": {
+    "message": "Register form"
+  },
+  "login_form": {
+    "message": "Login form"
+  },
+  "user_mail": {
+    "message": "User mail"
+  },
+  "password": {
+    "message": "Password"
+  },
+  "retype_password": {
+    "message": "Retype password"
+  },
+  "misinformation_restriction_level": {
+    "message": "Misinforming restriction level"
+  },
+  "low": {
+    "message": "Low"
+  },
+  "medium": {
+    "message": "Medium"
+  },
+  "high": {
+    "message": "High"
+  },
+  "save": {
+    "message": "Save"
   }
 }
