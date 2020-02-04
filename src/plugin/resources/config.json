@@ -1,8 +1,14 @@
 {
   "coinform": {
-    "url": "https://api.coinform.eu/",
+    "apiUrl": "https://api.coinform.eu",
     "hideThreshold": 5,
-    "information": ["accurate", "accurate with considerations", "unsubstantiated" ],
-    "misinformation": ["inaccurate with considerations", "inaccurate", "not verifiable post" ]
+    "categories": {
+      "accurate": "information",
+      "accurate_with_considerations": "information",
+      "unsubstantiated": "information",
+      "inaccurate_with_considerations": "misinformation",
+      "inaccurate": "misinformation",
+      "not_verifiable_post": "misinformation"
+    }
   }
 }
