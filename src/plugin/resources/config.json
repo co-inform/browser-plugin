@@ -4,12 +4,19 @@
     "logLevel": "info",
     "hideThreshold": 5,
     "categories": {
-      "credible": "information", 
-      "mostly_credible": "information", 
-      "credibility_uncertain": "information", 
-      "mostly_not_credible": "misinformation", 
-      "not_credible": "misinformation", 
-      "not_verifiable": "information"
+      "credible": "label", 
+      "mostly_credible": "label", 
+      "credibility_uncertain": "label", 
+      "mostly_not_credible": "blur", 
+      "not_credible": "blur", 
+      "not_verifiable": "label"
+    },
+    "accuracy": {
+      "accurate": "", 
+      "accurate_with_considerations": "", 
+      "unsubstantiated": "", 
+      "inaccurate_with_considerations": "", 
+      "inaccurate": ""
     }
   }
 }

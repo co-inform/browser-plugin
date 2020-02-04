@@ -74,9 +74,31 @@ h1 {
   float: left;
 }
 
-#login-messages {
+#popup-messages {
   clear: both;
-  display: none;
+  display: block;
+}
+
+.popup-message {
+  display: block;
+  padding: 2px;
+  padding-left: 8px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.popup-message:last-child {
+  margin-bottom: 20px;
+}
+
+.popup-message.ok{
+  color: #4F8A10;
+  background-color: #DFF2BF;
+}
+
+.popup-message.err {
+  color: #D8000C;
+  background-color: #FFBABA;
 }
 
 .form-control-group {

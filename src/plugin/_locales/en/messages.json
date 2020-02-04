@@ -38,6 +38,36 @@
   "tweet_not_tagged": {
     "message": "This tweet is not tagged"
   },
+  "accurate": {
+    "message": "Accurate"
+  },
+  "accurate__info": {
+    "message": "Accurate"
+  },
+  "accurate_with_considerations": {
+    "message": "Accurate with considerations"
+  },
+  "accurate_with_considerations__info": {
+    "message": "Accurate with considerations"
+  },
+  "unsubstantiated": {
+    "message": "Unsubstantiated"
+  },
+  "unsubstantiated__info": {
+    "message": "Unsubstantiated"
+  },
+  "inaccurate_with_considerations": {
+    "message": "Inaccurate with considerations"
+  },
+  "inaccurate_with_considerations__info": {
+    "message": "Inaccurate with considerations"
+  },
+  "inaccurate": {
+    "message": "Inaccurate"
+  },
+  "inaccurate__info": {
+    "message": "Inaccurate"
+  },
   "checking_tweet_coinform": {
     "message": "Checking tweet info with CoInform"
   },
@@ -77,6 +107,9 @@
   "please_choose_claim": {
     "message": "Please choose a claim"
   },
+  "invalid_url": {
+    "message": "The url introduced is not valid"
+  },
   "provide_url": {
     "message": "Please provide a URL"
   },
@@ -87,7 +120,13 @@
     "message": "Sent!"
   },
   "feedback_sent": {
-    "message": "Your feedback has been sent."
+    "message": "Your feedback has been sent"
+  },
+  "error": {
+    "message": "Error!"
+  },
+  "feedback_not_sent": {
+    "message": "Your feedback was not sent"
   },
   "login_title": {
     "message": "Co-Inform Login"

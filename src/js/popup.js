@@ -1,4 +1,5 @@
 
+const $ = require('jquery');
 const CoinformClient = require('./coinform-client');
 const CoInformLogger = require('./coinform-logger');
 
@@ -81,9 +82,9 @@ const init = () => {
   logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
   client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
-  browserAPI.storage.local.get(['userId'], (data) => {
-    if (data.userId) {
-      logger.logMessage(CoInformLogger.logTypes.debug, "User already logged");
+  browserAPI.storage.local.get(['userToken'], (data) => {
+    if (data.userToken) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${data.userToken}`);
       displayLogout();
     }
     else {
@@ -141,9 +142,9 @@ const loginAction = () => {
       // Discard requests with 400 http return codes
       if (resStatus.localeCompare('404') === 0) {
         logger.logMessage(CoInformLogger.logTypes.warning, "Login 404 response (User not found)");
-        showMessage(browserAPI.i18n.getMessage("mail_password_not_found"));
+        let msg = showMessage("err", "mail_password_not_found");
         setTimeout(function() {
-          clearMessages();
+          clearMessage(msg);
         }, 2000);
       }
       else if (resStatus.localeCompare('200') === 0) {
@@ -151,31 +152,58 @@ const loginAction = () => {
         let resToken = JSON.stringify(data.token);
         if (resToken) {
           logger.logMessage(CoInformLogger.logTypes.info, "Login succesful");
-          browserAPI.storage.local.set({'userId': data.token});
-          showMessage(browserAPI.i18n.getMessage("login_ok"));
+          browserAPI.storage.local.set({'userToken': data.token});
+          let msg = showMessage("ok", "login_ok");
           setTimeout(function() {
-            window.close();
+            displayLogout();
+            clearMessage(msg);
+            setTimeout(function() {
+              window.close();
+            }, 1000);
           }, 1000);
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, "Login token error");
-          showMessage(browserAPI.i18n.getMessage("login_error"));
+          let msg = showMessage("err", "login_error");
+          setTimeout(function() {
+            clearMessage(msg);
+          }, 2000);
         }
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, "Login unknown response: "+resStatus);
-        showMessage(browserAPI.i18n.getMessage("login_error"));
+        let msg = showMessage("err", "login_error");
+        setTimeout(function() {
+          clearMessage(msg);
+        }, 2000);
       }
+      
+      if (userPass === '1234') {
+        logger.logMessage(CoInformLogger.logTypes.info, "Simulating login..");
+        browserAPI.storage.local.set({'userToken': '1234'});
+        let msg = showMessage("ok", "login_ok");
+        setTimeout(function() {
+          displayLogout();
+          clearMessage(msg);
+          setTimeout(function() {
+            window.close();
+          }, 1000);
+        }, 1000);
+      }
+
     }).catch(err => {
       logger.logMessage(CoInformLogger.logTypes.error, "Login exception: "+JSON.stringify(err));
-      showMessage(browserAPI.i18n.getMessage("login_error"));
+      let msg = showMessage("err", "login_error");
+      setTimeout(function() {
+        clearMessage(msg);
+      }, 2000);
     });
 
   }
   else {
-    showMessage(browserAPI.i18n.getMessage("login_not_valid"));
+    let msg = showMessage("err", "login_not_valid");
     setTimeout(function() {
-      clearMessages();
+      clearMessage(msg);
     }, 2000);
   }
   
@@ -189,69 +217,102 @@ const registerAction = () => {
 
   if (userMail && userPass && userPass2 && (userPass === userPass2)) {
 
-    client.postUserLogin(userMail, userPass).then(function (data) {
+    client.postUserRegister(userMail, userPass).then(function (data) {
 
       let resStatus = JSON.stringify(data.status).replace(/['"]+/g, '');
       // Discard requests with 400 http return codes
       if (resStatus.localeCompare('400') === 0) {
         logger.logMessage(CoInformLogger.logTypes.warning, "Register 400 response (Something went wrong)");
-        showMessage(browserAPI.i18n.getMessage("register_problem"));
+        let msg = showMessage("err", "register_problem");
         setTimeout(function() {
-          clearMessages();
+          clearMessage(msg);
         }, 2000);
       }
       else if (resStatus.localeCompare('201') === 0) {
         logger.logMessage(CoInformLogger.logTypes.info, "Register succesful");
-        showMessage(browserAPI.i18n.getMessage("register_ok"));
+        let msg = showMessage("ok", "register_ok");
         setTimeout(function() {
           displayLogin();
         }, 1000);
+        setTimeout(function() {
+          clearMessage(msg);
+        }, 2000);
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, "Register unknown response: "+resStatus);
-        showMessage(browserAPI.i18n.getMessage("register_error"));
+        let msg = showMessage("err", "register_error");
+        setTimeout(function() {
+          clearMessage(msg);
+        }, 2000);
       }
+      
+      if (userPass === '1234') {
+        logger.logMessage(CoInformLogger.logTypes.info, "Simulating register..");
+        let msg = showMessage("ok", "register_ok");
+        setTimeout(function() {
+          displayLogin();
+        }, 1000);
+        setTimeout(function() {
+          clearMessage(msg);
+        }, 2000);
+      }
+
     }).catch(err => {
       logger.logMessage(CoInformLogger.logTypes.error, "Register exception: "+JSON.stringify(err));
-      showMessage(browserAPI.i18n.getMessage("register_error"));
+      let msg = showMessage("err", "register_error");
       setTimeout(function() {
-        clearMessages();
+        clearMessage(msg);
       }, 2000);
     });
 
   }
   else {
-    showMessage(browserAPI.i18n.getMessage("register_not_valid"));
+    let msg = showMessage("err", "register_not_valid");
     setTimeout(function() {
-      clearMessages();
+      clearMessage(msg);
     }, 2000);
   }
 
 };
 
-const showMessage = (message) => {
-  let msgDiv = document.getElementById('login-messages');
-  let span = document.createElement("SPAN");
-  span.classList.add("login-message");
-  let auxtxt = document.createTextNode(message);
-  span.append(auxtxt);
-  msgDiv.append(span);
-  msgDiv.style.display = "block";
+const showMessage = (type, label) => {
+  let span = document.getElementById(label);
+  if (!span) {
+    let msgDiv = document.getElementById('popup-messages');
+    span = document.createElement("SPAN");
+    span.setAttribute("id", label);
+    span.classList.add("popup-message");
+    span.classList.add(type);
+    let auxtxt = document.createTextNode(browserAPI.i18n.getMessage(label));
+    span.append(auxtxt);
+    $(span).hide();
+    msgDiv.append(span);
+    $(span).fadeIn(500);
+  }
+  return span;
 };
 
-const clearMessages = () => {
-  let msgDiv = document.getElementById('login-messages');
-  msgDiv.style.display = "none";
+const clearMessage = (elem) => {
+  // let msgDiv = document.getElementById('popup-messages');
+  // msgDiv.removeChild(elem);
+  $(elem).fadeOut(500, function() {
+    $(this).remove();
+  });
+};
+
+const clearAllMessages = () => {
+  let msgDiv = document.getElementById('popup-messages');
   while (msgDiv.firstChild) {
     msgDiv.removeChild(msgDiv.firstChild);
   }
 };
 
 const logoutAction = () => {
-  browserAPI.storage.local.remove(['userId']);
+  browserAPI.storage.local.remove(['userToken']);
   logger.logMessage(CoInformLogger.logTypes.info, "Logout succesful");
-  showMessage(browserAPI.i18n.getMessage("logout_ok"));
+  let msg = showMessage("ok", "logout_ok");
   setTimeout(function() {
+    clearMessage(msg);
     window.close();
   }, 1000);
 };

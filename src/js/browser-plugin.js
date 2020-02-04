@@ -21,7 +21,7 @@ let logger;
 let client;
 let parser;
 
-let coinformUser = null;
+let coinformUserToken = null;
 
 //Read the configuration file and if it was successful, start
 fetch(browserAPI.runtime.getURL('../resources/config.json'), {
@@ -42,9 +42,29 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
     console.error('Could not load configuration file', err)
   });
 
-browserAPI.storage.local.get(['userId'], (data) => {
-  if (data.userId) {
-    coinformUser = data.userId;
+browserAPI.storage.local.get(['userToken'], (data) => {
+  if (data.userToken) {
+    coinformUserToken = data.userToken;
+  }
+});
+
+browserAPI.storage.onChanged.addListener(function(changes, namespace) {
+  for (let key in changes) {
+    if (key === "userToken") {
+      let storageChange = changes[key];
+      if (storageChange.newValue) {
+        if (logger) {
+          logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${storageChange.newValue}`);
+        }
+        coinformUserToken = storageChange.newValue;
+      }
+      else {
+        if (logger) {
+          logger.logMessage(CoInformLogger.logTypes.info, `User logged out: ${storageChange.oldValue}`);
+        }
+        coinformUserToken = null;
+      }
+    }
   }
 });
 
@@ -264,6 +284,7 @@ const retryTweetQuery = (tweetInfo, queryId) => {
 const parseApiResponse = (res, tweetInfo) => {
 
   let resStatus = null;
+  let acurracyLabel = null;
 
   if (res && res.status) {
     resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
@@ -280,7 +301,7 @@ const parseApiResponse = (res, tweetInfo) => {
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
 
     // Result from API call
-    let acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility).replace(/\s+/g,'_');
+    acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
     classifyTweet(tweetInfo, acurracyLabel);
 
   }
@@ -343,7 +364,7 @@ const classifyTweet = (tweet, accuracyLabel) => {
       logger.logMessage(CoInformLogger.logTypes.info, `ReClassifying Tweet Label: ${node.coInformLabel} -> ${label}`, tweet.id);
       removeTweetLabel(tweet);
       let previousCategory = configuration.coinform.categories[node.coInformLabel];
-      if (previousCategory && (previousCategory.localeCompare("misinformation") === 0)) {
+      if (previousCategory && (previousCategory.localeCompare("blur") === 0)) {
         removeTweetBlurry(tweet);
       }
     }
@@ -355,9 +376,12 @@ const classifyTweet = (tweet, accuracyLabel) => {
     if (!newCategory) {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`, tweet.id);
     }
-    else if (newCategory.localeCompare("misinformation") === 0) {
+    else if (newCategory.localeCompare("blur") === 0) {
       createTweetLabel(tweet, label);
       createTweetBlurry(tweet, label);
+    }
+    else if (newCategory.localeCompare("label") === 0) {
+      createTweetLabel(tweet, label);
     }
 
     node.coInformLabel = label;
@@ -471,8 +495,7 @@ function openCannotSeePopup(tweet, label) {
 
 function logoClickAction(tweet) {
 
-  let node = tweet.domObject;
-  if (coinformUser) {
+  if (coinformUserToken) {
     openClaimPopup(tweet);
   }
   else {
@@ -489,8 +512,8 @@ function openClaimPopup(tweet) {
 
   let categoryOptions = {};
 
-  Object.keys(configuration.coinform.categories).forEach(function(key) {
-    categoryOptions[key] = browserAPI.i18n.getMessage(key + '__info');
+  Object.keys(configuration.coinform.accuracy).forEach(function(key) {
+    categoryOptions[key] = browserAPI.i18n.getMessage(key);
   });
 
   let popupTitle = browserAPI.i18n.getMessage('tweet_not_tagged');
@@ -508,18 +531,21 @@ function openClaimPopup(tweet) {
     showCancelButton: false,
     confirmButtonColor: buttonColor,
     confirmButtonText: browserAPI.i18n.getMessage('submit'),
-    html:
-      '<span>' + browserAPI.i18n.getMessage('provide_claim') + '</span>' +
-      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('url') + '" class="swal2-input">' +
-      '<input id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('comment') + '" class="swal2-input">',
-    footer:
-      `<img class="coinformPopupLogo" src="${minlogoURL}"/>`,
     focusConfirm: true,
     preConfirm: () => {
-      return [
-        document.getElementById('swal-input1').value,
-        document.getElementById('swal-input2').value
-      ];
+      let url = document.getElementById('swal-input1').value;
+      let comment = document.getElementById('swal-input2').value;
+      if (!isURL(url)) {
+        Swal2.showValidationMessage(browserAPI.i18n.getMessage('invalid_url'));
+        return false;
+      }
+      else if (!comment) {
+        Swal2.showValidationMessage(browserAPI.i18n.getMessage('provide_additional_info'));
+        return false;
+      }
+      else {
+        return [ url, comment ];
+      }
     },
     input: 'select',
     inputPlaceholder: browserAPI.i18n.getMessage('choose_claim'),
@@ -533,45 +559,50 @@ function openClaimPopup(tweet) {
         }
         resolve();
       });
-    }
+    },
+    html:
+      '<span>' + browserAPI.i18n.getMessage('provide_claim') + '</span>' +
+      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('url') + '" class="swal2-input">' +
+      '<input id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('comment') + '" class="swal2-textarea">',
+    footer:
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>`
   }).then(function (result) {
-    if (result.value === true) {
+
+    if (result.value) {
+
       return new Promise((resolve) => {
         let returned = result[Object.keys(result)[0]];
         returned = returned.toString();
         let array = returned.split(',');
-        let url = array[0], comment = array[1];
-
-        if (url.localeCompare('') === 0) {
-          alert(browserAPI.i18n.getMessage('provide_url'));
-        } else if (comment.localeCompare('') === 0) {
-          alert(browserAPI.i18n.getMessage('provide_additional_info'));
-        } else {
-
-          // url comment resultDropdown
-          let evaluation = {
-            'evaluation': [{'label': resultDropdown, 'url': url, 'comment': comment}]
-          };
-
-          client.postTwitterEvaluate(tweet.id, evaluation).then(function (res) {
-            
-            let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+        let url = array[0];
+        let comment = array[1];
+        let evaluation = {
+          'label': resultDropdown, 
+          'url': url, 
+          'comment': comment
+        };
+        client.postTwitterEvaluate(tweet.id, evaluation).then(function (res) {
+          if (res.evaluation_id) {
             let resEvalId = JSON.stringify(res.evaluation_id).replace(/['"]+/g, '');
             logger.logMessage(CoInformLogger.logTypes.info, `Claim sent. Evaluation ID = ${resEvalId}`, tweet.id);
-
-          }).catch(err => {
-
-            logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweet.id);
-            //console.error(err);
-
-          });
-
-          Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
-
-          resolve();
-        }
+            Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
+          }
+          else {
+            let resStatus = "Unknown";
+            if (res.status) resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+            logger.logMessage(CoInformLogger.logTypes.error, `Claim sending ${resStatus} Error`, tweet.id);
+            Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+          }
+        }).catch(err => {
+          logger.logMessage(CoInformLogger.logTypes.error, `Claim sending error: ${err}`, tweet.id);
+          Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+          //console.error(err);
+        });
+        resolve();
       });
+
     }
+    
   });
 
 }
@@ -624,3 +655,14 @@ function ignoreClick(event) {
 function randomInt(low, high) {
   return Math.floor(Math.random() * (high - low + 1) + low);
 }
+
+function isURL(str) {
+  let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return pattern.test(str);
+}
+

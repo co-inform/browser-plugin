@@ -2,6 +2,53 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## commit 04/02/2020 [branch: hackathon_stockholm]
+
+src/js/background-script.js
+- added code to maintain the user logged or not logged status in the background script
+
+src/js/browser-plugin.js
+- changed the variable name where we store the user logged token
+- added listener to detect and maintain when a user has been logged in or out (when the local variable is changed)
+- fixed some bugs when parsing the tweet query responses accuracy label
+- implemented the new classifying tweet way to decide what action to take from the configuration object (for the moment just blur and label)
+- update the claim labels to the appropriate ones from the configuration object
+- add inputs verification code to the claim raising popup (url and comment)
+- fixed some bug when sending a claim
+- added the success and error popup when sending a claim
+
+src/js/popup.js
+- changed the name of the local stored variable used for the logged user token, from userId to userToken
+- new functions showMessage and clearMessage, to raise and remove timeout messages on the login and register popup
+- added demo code to simulate the user logging in and registering, by using the password "1234"
+
+src/js/tweet-parser.js
+- fixing bugs related to twitter changes to its html structure
+- changed the way of storing the selector variables, by using objects and properties with the different user or page cases (user logged/not-logged, home/user/tweet page)
+- new function querySelectorContains, to get some node elements that fit a selector and at the same time contain some text (by regular expression)
+- changed the way of getting the tweet Id by reaching the link "time" node, and from there climbing back to the parent link to get the Id
+- changed the way of getting the tweet user Id by getting the user screen name "span" node and removing the "@" from the content text
+- removed the special codes to parse tweet info when the user is not logged, as now it seems that the html structure is the same as when the user is logged
+- fixed bug that was not parsing the main tweet in the case of a tweet responses page
+- merged the 2 cases of user logged and not logged when new nodes are added (detected by the changeObserver)
+- replaced the try.. catch.. block with an if statement to avoid the treating of strange basic nodes like "text" node (which do not have the method querySelector)
+
+src/plugin/_locales/en/messages.json
+- new language messages for the claim accurracy labels
+- new language messages for the claim popup UI
+
+src/plugin/content/coinform.css
+- cursor pointer for the coinform logo
+
+src/plugin/popup/popup.html
+src/plugin/popup/popup.css
+- basic styles for the login and register popup success and error messages
+
+src/plugin/resources/config.json
+- changed the way of configuring the misinformation category actions by using the labels "blur" and "label", for blurring the post and for just labeling it, respectively
+- added the accuracy labels to the configuration file, for the raising of a claim
+
+
 ## commit 23/01/2020 [branch: hackathon_stockholm]
 
 src/plugin/manifest.json
