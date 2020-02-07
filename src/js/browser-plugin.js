@@ -562,8 +562,8 @@ function openClaimPopup(tweet) {
     },
     html:
       '<span>' + browserAPI.i18n.getMessage('provide_claim') + '</span>' +
-      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('url') + '" class="swal2-input">' +
-      '<input id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('comment') + '" class="swal2-textarea">',
+      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('url') + '" type="url" pattern="https?://.*" class="swal2-input">' +
+      '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('comment') + '" class="swal2-textarea">',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>`
   }).then(function (result) {

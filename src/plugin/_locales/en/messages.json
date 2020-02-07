@@ -137,6 +137,15 @@
   "register_title": {
     "message": "Co-Inform Register"
   },
+  "mail_not_valid": {
+    "message": "The text introduced is not a valid email"
+  },
+  "password_not_valid": {
+    "message": "Check again the password introduced"
+  },
+  "password_not_valid_info": {
+    "message": "Check again the passwords introduced. The minimum length is 6 characters, and the 2 password inputs must coincide"
+  },
   "mail_password_not_found": {
     "message": "User mail not found or wrong password"
   },
@@ -180,7 +189,7 @@
     "message": "Login form"
   },
   "user_mail": {
-    "message": "User mail"
+    "message": "User email"
   },
   "password": {
     "message": "Password"

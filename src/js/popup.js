@@ -134,7 +134,19 @@ const loginAction = () => {
   const userMail = document.querySelector('input[name="login-usermail"]').value || null;
   const userPass = document.querySelector('input[name="login-userpass"]').value || null;
 
-  if (userMail && userPass) {
+  if (!userMail || !validateEmail(userMail)) {
+    let msg = showMessage("err", "mail_not_valid");
+    setTimeout(function() {
+      clearMessage(msg);
+    }, 2000);
+  }
+  else if (!userPass || !validatePass(userPass)) {
+    let msg = showMessage("err", "password_not_valid");
+    setTimeout(function() {
+      clearMessage(msg);
+    }, 2000);
+  }
+  else {
 
     client.postUserLogin(userMail, userPass).then(function (data) {
 
@@ -178,9 +190,9 @@ const loginAction = () => {
         }, 2000);
       }
       
-      if (userPass === '1234') {
+      if (userPass === '123456') {
         logger.logMessage(CoInformLogger.logTypes.info, "Simulating login..");
-        browserAPI.storage.local.set({'userToken': '1234'});
+        browserAPI.storage.local.set({'userToken': 'demo_user_123456'});
         let msg = showMessage("ok", "login_ok");
         setTimeout(function() {
           displayLogout();
@@ -200,12 +212,12 @@ const loginAction = () => {
     });
 
   }
-  else {
+  /*else {
     let msg = showMessage("err", "login_not_valid");
     setTimeout(function() {
       clearMessage(msg);
     }, 2000);
-  }
+  }*/
   
 };
 
@@ -215,7 +227,19 @@ const registerAction = () => {
   const userPass = document.querySelector('input[name="register-userpass"]').value || null;
   const userPass2 = document.querySelector('input[name="register-userpass2"]').value || null;
 
-  if (userMail && userPass && userPass2 && (userPass === userPass2)) {
+  if (!userMail || !validateEmail(userMail)) {
+    let msg = showMessage("err", "mail_not_valid");
+    setTimeout(function() {
+      clearMessage(msg);
+    }, 2000);
+  }
+  else if (!userPass || !userPass2 || (userPass !== userPass2) || !validatePass(userPass)) {
+    let msg = showMessage("err", "password_not_valid_info");
+    setTimeout(function() {
+      clearMessage(msg);
+    }, 4000);
+  }
+  else {
 
     client.postUserRegister(userMail, userPass).then(function (data) {
 
@@ -246,7 +270,7 @@ const registerAction = () => {
         }, 2000);
       }
       
-      if (userPass === '1234') {
+      if (userPass === '123456') {
         logger.logMessage(CoInformLogger.logTypes.info, "Simulating register..");
         let msg = showMessage("ok", "register_ok");
         setTimeout(function() {
@@ -266,12 +290,12 @@ const registerAction = () => {
     });
 
   }
-  else {
+  /*else {
     let msg = showMessage("err", "register_not_valid");
     setTimeout(function() {
       clearMessage(msg);
     }, 2000);
-  }
+  }*/
 
 };
 
@@ -325,3 +349,12 @@ const loginStartAction = () => {
   displayLogin();
 };
 
+function validateEmail(email) {
+  let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
+function validatePass(pass) {
+  let re = /^.{6,}$/;
+  return re.test(pass);
+}

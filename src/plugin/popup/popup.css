@@ -5,6 +5,7 @@ body {
   margin: 0;
   padding: 1em;
   overflow: hidden;
+  /*background-color: #a0a4b2;*/
 }
 
 h1 {
@@ -44,7 +45,9 @@ h1 {
 .coinform-button {
   height: 2em;
   line-height: 2em;
-  padding: 0 1em;
+  padding: 0;
+  padding-left: 1em;
+  padding-right: 1.6em;
   margin: 0;
   border-radius: 2em;
   border: none;
@@ -64,14 +67,46 @@ h1 {
   float: right;
 }
 
+.coinform-button:hover {
+  background-color: #62b9afa6;
+}
+
+.coinform-button:after {
+  position: absolute;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+.coinform-button.coinform-button-primary:after {
+  content: "\003e";
+  font-family: cursive;
+  margin-left: -1em;
+}
+
+.coinform-button.coinform-button-secondary:after {
+  content: "\2039 \203a";
+  font-family: cursive;
+  margin-left: 0.2em;
+}
+
+.coinform-button:hover:after {
+  opacity: 1;
+}
+
+.coinform-button.coinform-button-primary:hover:after {
+  margin-left: 0.3em;
+}
+
 #popup-header {
   position: relative;
   float: right;
+  top: -8px;
 }
 
 #popup-title {
   position: relative;
   float: left;
+  font-size: x-large;
 }
 
 #popup-messages {

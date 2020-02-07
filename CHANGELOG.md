@@ -2,6 +2,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## commit 07/02/2020 [branch: hackathon_stockholm]
+
+src/js/background-script.js
+- fixed typo in log message
+
+src/js/browser-plugin.js
+- some minor change to the inputs for the accuracy claims popup
+
+src/js/popup.js
+- added basic email and password validations to the login and registering popup
+- password minimum length is now 6 chars, so demo password changed to 123456
+
+src/plugin/_locales/en/messages.json
+- new messages for login/registering validation errors
+
+src/plugin/popup/popup.css
+- added basic styles for login/registering buttons
+
+src/plugin/popup/popup.html
+- added some input restrictions and placeholders to the login/registering popup inputs
+
+
 ## commit 04/02/2020 [branch: hackathon_stockholm]
 
 src/js/background-script.js

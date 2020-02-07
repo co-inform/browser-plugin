@@ -63,7 +63,7 @@ const listenerRuntime = function(request, sender, sendResponse) {
   if (request.contentScriptQuery === "ConfigureBackground") {
     
     if (request.coinformApiUrl) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `Configuriong client API url: ${request.coinformApiUrl}`);
+      logger.logMessage(CoInformLogger.logTypes.debug, `Configuring client API url: ${request.coinformApiUrl}`);
       client = new CoinformClient(fetch, request.coinformApiUrl);
     }
     if (request.logLevel) {

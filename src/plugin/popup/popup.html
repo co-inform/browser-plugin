@@ -23,12 +23,12 @@
   <div class="form-control-group" id="login-form">
 
     <div class="form-control">
-      <input type="email" id="login-auth-mail" name="login-usermail" required>
-      <label id="login-mail-label" for="login-auth-mail">User mail</label>
+      <input type="email" id="login-auth-mail" name="login-usermail" minlength="6" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+      <label id="login-mail-label" for="login-auth-mail">User email</label>
     </div>
     
     <div class="form-control">
-      <input type="password" id="login-auth-pass" name="login-userpass" required>
+      <input type="password" id="login-auth-pass" name="login-userpass" minlength="6" required>
       <label id="login-pass-label" for="login-auth-pass">Password</label>
     </div>
 
@@ -39,17 +39,17 @@
   <div class="form-control-group" id="register-form">
 
     <div class="form-control">
-      <input type="email" id="register-auth-mail" name="register-usermail" required>
-      <label id="register-mail-label" for="register-auth-mail">User mail</label>
+      <input type="email" id="register-auth-mail" name="register-usermail" minlength="6" placeholder="example@domain.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+      <label id="register-mail-label" for="register-auth-mail">User email</label>
     </div>
 
     <div class="form-control">
-      <input type="password" id="register-auth-pass" name="register-userpass" required>
+      <input type="password" id="register-auth-pass" name="register-userpass" minlength="6" placeholder="123456" required>
       <label id="register-pass-label" for="register-auth-pass">Password</label>
     </div>
 
     <div class="form-control">
-      <input type="password" id="register-auth-pass2" name="register-userpass2" required>
+      <input type="password" id="register-auth-pass2" name="register-userpass2" minlength="6" placeholder="123456" required>
       <label id="register-pass2-label" for="register-auth-pass2">Retype password</label>
     </div>
 
