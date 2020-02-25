@@ -1,42 +1,72 @@
 {
+  "credible": {
+    "message": "Credible"
+  },
+  "credible__info": {
+    "message": "Reputable source with no disagreement and no related false claims"
+  },
+  "mostly_credible": {
+    "message": "Mostly credible"
+  },
+  "mostly_credible__info": {
+    "message": "Reputable source with little disagreement and related false claims"
+  },
+  "credibility_uncertain": {
+    "message": "Credibility uncertain"
+  },
+  "credibility_uncertain__info": {
+    "message": "Mixture of reputability and disagreement associated to claim reviews"
+  },
+  "mostly_not_credible": {
+    "message": "Mostly not credible"
+  },
+  "mostly_not_credible__info": {
+    "message": "Not credible source"
+  },
+  "not_credible": {
+    "message": "Not credible"
+  },
+  "not_credible__info": {
+    "message": "Not credible source with high disagreement"
+  },
+  "not_verifiable": {
+    "message": "Not verifiable"
+  },
+  "not_verifiable__info": {
+    "message": "Not verifiable"
+  },
+  "tweet_not_tagged": {
+    "message": "This tweet is not tagged"
+  },
   "accurate": {
     "message": "Accurate"
   },
   "accurate__info": {
-    "message": "Reputable source with no disagreement and no related false claims"
+    "message": "Accurate"
   },
   "accurate_with_considerations": {
-    "message": "Accurate With Considerations"
+    "message": "Accurate with considerations"
   },
   "accurate_with_considerations__info": {
-    "message": "Reputable source with little disagreement and related false claims"
+    "message": "Accurate with considerations"
   },
   "unsubstantiated": {
     "message": "Unsubstantiated"
   },
   "unsubstantiated__info": {
-    "message": "Mixture of reputability and disagreement associated to claim reviews"
+    "message": "Unsubstantiated"
   },
   "inaccurate_with_considerations": {
-    "message": "Inaccurate With Considerations"
+    "message": "Inaccurate with considerations"
   },
   "inaccurate_with_considerations__info": {
-    "message": "Not credible"
+    "message": "Inaccurate with considerations"
   },
   "inaccurate": {
     "message": "Inaccurate"
   },
   "inaccurate__info": {
-    "message": "Not credible source with high disagreement"
-  },
-  "not_verifiable_post": {
-    "message": "Not Verifiable Post"
-  },
-  "not_verifiable_post__info": {
-    "message": "Absolutely not a credible source with highly-biased content"
-  },
-  "tweet_not_tagged": {
-    "message": "This tweet is not tagged"
+    "message": "Inaccurate"
   },
   "checking_tweet_coinform": {
     "message": "Checking tweet info with CoInform"
@@ -45,13 +75,22 @@
     "message": "Why can't I see this?"
   },
   "tweet_tagged_as": {
-    "message": "This tweet has been tagged as %s"
+    "message": "This tweet has been tagged as $1"
   },
   "see_tweet": {
     "message": "See tweet anyways"
   },
   "provide_claim": {
-    "message": "If you think this is not accurate please provide a claim and a URL to a post that supports that claim."
+    "message": "If you think this is not accurate please provide a claim and a URL to a post that supports that claim"
+  },
+  "provide_claim_with_login": {
+    "message": "If you think this is not accurate you can provide a claim by logging in with your Co-Inform user"
+  },
+  "login_register_instructions": {
+    "message": "Click on the Co-Inform logo on the top right corner of your browser to open the login/register popup"
+  },
+  "ok": {
+    "message": "Ok"
   },
   "submit": {
     "message": "Submit"
@@ -68,6 +107,9 @@
   "please_choose_claim": {
     "message": "Please choose a claim"
   },
+  "invalid_url": {
+    "message": "The url introduced is not valid"
+  },
   "provide_url": {
     "message": "Please provide a URL"
   },
@@ -78,6 +120,96 @@
     "message": "Sent!"
   },
   "feedback_sent": {
-    "message": "Your feedback has been sent."
+    "message": "Your feedback has been sent"
+  },
+  "error": {
+    "message": "Error!"
+  },
+  "feedback_not_sent": {
+    "message": "Your feedback was not sent"
+  },
+  "login_title": {
+    "message": "Co-Inform Login"
+  },
+  "already_logged": {
+    "message": "You are already logged"
+  },
+  "register_title": {
+    "message": "Co-Inform Register"
+  },
+  "mail_not_valid": {
+    "message": "The text introduced is not a valid email"
+  },
+  "password_not_valid": {
+    "message": "Check again the password introduced"
+  },
+  "password_not_valid_info": {
+    "message": "Check again the passwords introduced. The minimum length is 6 characters, and the 2 password inputs must coincide"
+  },
+  "mail_password_not_found": {
+    "message": "User mail not found or wrong password"
+  },
+  "login_ok": {
+    "message": "User succesfully logged in"
+  },
+  "login_error": {
+    "message": "Login unknown error"
+  },
+  "login_not_valid": {
+    "message": "Login not valid"
+  },
+  "register_problem": {
+    "message": "Something went wrong during the registration. Try again"
+  },
+  "register_ok": {
+    "message": "User succesfully registered. Now you can log in"
+  },
+  "register_error": {
+    "message": "Register unknown error"
+  },
+  "register_not_valid": {
+    "message": "Register not valid. Check your data again"
+  },
+  "logout_ok": {
+    "message": "User succesfully logged out"
+  },
+  "log_in": {
+    "message": "Log In"
+  },
+  "log_out": {
+    "message": "Log Out"
+  },
+  "register": {
+    "message": "Register"
+  },
+  "register_form": {
+    "message": "Register form"
+  },
+  "login_form": {
+    "message": "Login form"
+  },
+  "user_mail": {
+    "message": "User email"
+  },
+  "password": {
+    "message": "Password"
+  },
+  "retype_password": {
+    "message": "Retype password"
+  },
+  "misinformation_restriction_level": {
+    "message": "Misinforming restriction level"
+  },
+  "low": {
+    "message": "Low"
+  },
+  "medium": {
+    "message": "Medium"
+  },
+  "high": {
+    "message": "High"
+  },
+  "save": {
+    "message": "Save"
   }
 }

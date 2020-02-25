@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8"/>
 
-  <title>Co-Inform Extension Options</title>
+  <title>Co-Inform</title>
   <link type="text/css" rel="stylesheet" href="options.css">
+
+  <script type="text/javascript" charset="utf-8" src="options.js"></script>
 
 </head>
 
 <body>
 
-  <h1>Misinforming restriction level</h1>
+  <h1 id="options-title">Misinforming restriction level</h1>
 
   <div class="form-control-group" id="treshold">
     <div class="form-control">
       <input type="radio" id="treshold_1" name="treshold" value="low">
-      <label for="treshold_1">Low</label>
+      <label id="treshold_1-label" for="treshold_1">Low</label>
     </div>
     <div class="form-control">
       <input type="radio" id="treshold_2" name="treshold" value="medium">
-      <label for="treshold_2">Medium</label>
+      <label id="treshold_2-label" for="treshold_2">Medium</label>
     </div>
     <div class="form-control">
       <input type="radio" id="treshold_3" name="treshold" value="high">
-      <label for="treshold_3">High</label>
+      <label id="treshold_3-label" for="treshold_3">High</label>
     </div>
   </div>
 
-  <div><button class="coinform-button coinform-button-primary" type="button" id="save_button">Save</button></div>
-
-  <script type="text/javascript" charset="utf-8" src="options.js"></script>
+  <div><button id="save-button" type="button" class="coinform-button coinform-button-primary">Save</button></div>
 
 </body>
 </html

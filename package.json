@@ -2,10 +2,10 @@
   "name": "coinform-extension",
   "version": "2.0.0",
   "description": "Helping combat misinformation",
-  "main": "src/js/coinform-client.js",
+  "main": "src/js/browser-plugin.js",
   "scripts": {
     "test": "jasmine",
-    "build": "mkdir -p build/resources && browserify src/js/browser-plugin.js -o build/coinform.js && browserify src/js/background-script.js -o build/background-coinform.js && cp -r src/plugin/. build/.",
+    "build": "mkdir -p build/resources build/popup build/options build/background build/content && cp -r src/plugin/. build/. && browserify src/js/browser-plugin.js -o build/content/coinform.js && browserify src/js/background-script.js -o build/background/background-script.js && browserify src/js/options.js -o build/options/options.js && browserify src/js/popup.js -o build/popup/popup.js",
     "mock": "node mock-api/index.js &"
   },
   "repository": {

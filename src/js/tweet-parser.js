@@ -10,34 +10,48 @@ const idAttribute = "coinform-id";
 const usernameAttribute = "coinform-username";
 
 // selector for main div
-// const mainWrapperSelector = "main";
-const mainWrapperSelector = "[role='main']"; // with this selector we reach both user logged and no user logged cases
+const mainWrapperSelector = "main[role='main']";
 
-// selector for tweets section div
-const sectionSelector = "[role='main'] [data-testid='primaryColumn'] section"; // user logged case
-const sectionAlternativeSelector = "[role='main'] #timeline"; // no user logged case
+// _Note: after some twitter changes, now the html structure seems to be the same for the both user cases. But anyway we leave this prepared for future changes that may differ again the user logged and user not logget html structure
+
+// selectors for tweets section div
+// for different user cases: user-logged and not-user-logged cases
+const sectionSelectors = {
+  "user-logged": "[role='main'] [data-testid='primaryColumn'] section",
+  "not-user-logged": "[role='main'] [data-testid='primaryColumn'] section"
+}
 
 // selectors for tweets divs
-const tweetSelector = "article"; // user logged case
-const tweetAlternativeSelector = "li[data-item-type='tweet'] > div[data-tweet-id]"; // no user logged case
+// for different user cases: user-logged and not-user-logged cases
+const tweetSelectors = {
+  "user-logged": "article",
+  "not-user-logged": "article"
+}
 
 // selectors for tweet username
-const usernameSelector = "[data-testid='tweet'] > div:nth-child(2) > div:first-child > div:first-child a > div > div:nth-child(2)";
-// selector for tweet username for no user logged case
-const usernameAlternativeSelector = "[data-tweet-id] > div:nth-child(2) > div:first-child > a:first-child > span:nth-child(3)";
+// for different user cases: user-logged and not-user-logged cases
+// _Note: the id is dynamically removed, so we can not use it ("[data-testid='tweet'] div#tweet-user-screen-name")
+const usernameSelectors = {
+  "user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href^='/'] span",
+  "not-user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href^='/'] span"
+};
 
 // selectors for tweet id
-const tweetIdSelector = "[data-testid='tweet'] > div:nth-child(2) > div:first-child > div:first-child  > a";
-// selector for tweet id for no user logged case
-const tweetIdAlternativeSelector = "[data-tweet-id]";
-const tweetIdAlternativeAttribute = "data-tweet-id";
+// for different user cases: user-logged and not-user-logged cases
+// _Note: the id is dynamically removed, so we can not use it ("[data-testid='tweet'] a#tweet-timestamp")
+const tweetIdSelectors = {
+  "user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href*='/status/'] > time",
+  "not-user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href*='/status/'] > time"
+}
+// const tweetIdAttribute = "data-tweet-id";
 
-//selectors for tweet text
-const textSelector = "[data-testid='tweet'] > div:nth-child(2) > div:nth-child(2)"; // home and user page case
-const textSelectorTweetPageCase = "article > div:first-child div[lang]"; // tweet page case (main tweet)
-const textSelectorTweetPageResponsesCase = "[data-testid='tweet'] > div:nth-child(2) > div[lang]"; // tweet page case (response tweets)
-// selector for tweet text for no user logged case
-const textAlternativeSelector = "[data-tweet-id] > div:nth-child(2) > div:nth-child(2)"
+// selectors for tweet text
+// for different page cases: tweet-page-main-tweet case, tweet-page-response-tweet case, and tweet-default (home and user page) case
+const textSelectors = {
+  "tweet-default": "[data-testid='tweet'] > div:nth-child(2) > div:nth-child(2)",
+  "tweet-page-main-tweet": "article > div:first-child div[lang]",
+  "tweet-page-response-tweet": "[data-testid='tweet'] > div:nth-child(2) > div[lang]"
+}
 
 // selector for publish tweet button
 const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetButton']"; // we detected 2 cases for the second data-testid (tweetButton and tweetButtonInline)
@@ -50,7 +64,7 @@ let tweetsList = [];
 let pageCase = null;
 let userCase = null;
 
-// This listeners would help to detect page cases changes, but they dont seem to work from a content script
+// _Note: This listeners would help to detect page cases changes, but they dont seem to work from a content script
 /*window.addEventListener('locationchange', function(){
   checkPageCase();
 }, true);
@@ -61,11 +75,7 @@ window.addEventListener('hashchange', function(){
 
 window.addEventListener('popstate', function(){
   checkPageCase();
-}, true);
-
-chrome.tabs.onUpdated.addListener(function(){
-  checkPageCase();
-});*/
+}, true);*/
 
 function TweetParser() {
 
@@ -162,18 +172,18 @@ const getTweetInfo = (tweet, num) => {
   let user = null;
   let text = null;
 
+  let selectorUserCase = (userCase === null) ? "not-user-logged" : "user-logged";
+
   // Get the tweet Id
-  if (userCase === null) {
-    tweetid = tweet.getAttribute(tweetIdAlternativeAttribute) ? tweet.getAttribute(tweetIdAlternativeAttribute) : null;
+  // Special case, when we are in a Tweet Page, with its responses, the first one is the main Tweet, and we do not have the tweet link to parse the id, so we get the id from the url
+  if ( (pageCase === "tweet") && (num === 0) ) {
+    let auxMatch = window.location.href.match(/\d+\b/g);
+    if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
   }
   else {
-    // Case when we are in a Tweet Page, with its responses, the first one is the main Tweet
-    if ( (pageCase === "tweet") && (num === 0) ) {
-      let auxMatch = window.location.href.match(/\d+\b/g);
-      if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
-    }
-    else {
-      let link = tweet.querySelector(tweetIdSelector) ? tweet.querySelector(tweetIdSelector) : null;
+    let timeNode = tweet.querySelector(tweetIdSelectors[selectorUserCase]) ? tweet.querySelector(tweetIdSelectors[selectorUserCase]) : null;
+    if (timeNode) {
+      link = timeNode.parentNode;
       if (link && link.href.match(/\d+\b/g)) {
         let auxMatch = link.href.match(/\d+\b/g);
         if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
@@ -186,33 +196,26 @@ const getTweetInfo = (tweet, num) => {
   }
 
   // Get the tweet User Id
-  if (userCase === null) {
-    user = tweet.querySelector(usernameAlternativeSelector) ? tweet.querySelector(usernameAlternativeSelector).textContent : null;
-  }
-  else {
-    user = tweet.querySelector(usernameSelector) ? tweet.querySelector(usernameSelector).textContent : null;
+  let userNode = querySelectorContains(tweet, usernameSelectors[selectorUserCase], /^\@/);
+  if (userNode) {
+    user = userNode[0].textContent.replace(/\@/, '');
   }
 
   // Get the tweet content text
-  if (userCase === null) {
-    text = tweet.querySelector(textAlternativeSelector) ? tweet.querySelector(textAlternativeSelector).textContent : null;
-  }
-  else {
-    // Case when we are in a Tweet Page, with its responses
-    if (pageCase === "tweet") {
-      // The first one is the main Tweet
-      if (num === 0) {
-        text = tweet.querySelector(textSelectorTweetPageCase) ? tweet.querySelector(textSelectorTweetPageCase).textContent : null;
-      }
-      // The other cases are the responses tweets
-      else {
-        text = tweet.querySelector(textSelectorTweetPageResponsesCase) ? tweet.querySelector(textSelectorTweetPageResponsesCase).textContent : null;
-      }
+  // Case when we are in a Tweet Page, with its responses
+  if (pageCase === "tweet") {
+    // The first one is the main Tweet
+    if (num === 0) {
+      text = tweet.querySelector(textSelectors['tweet-page-main-tweet']) ? tweet.querySelector(textSelectors['tweet-page-main-tweet']).textContent : null;
     }
-    // Case when we are in the Tweeter Home Page, or a User Page
+    // The other cases are the responses tweets
     else {
-      text = tweet.querySelector(textSelector) ? tweet.querySelector(textSelector).textContent : null;
+      text = tweet.querySelector(textSelectors['tweet-page-response-tweet']) ? tweet.querySelector(textSelectors['tweet-page-response-tweet']).textContent : null;
     }
+  }
+  // Case when we are in the Tweeter Home Page, or a User Page
+  else {
+    text = tweet.querySelector(textSelectors['tweet-default']) ? tweet.querySelector(textSelectors['tweet-default']).textContent : null;
   }
   
   return {
@@ -227,7 +230,8 @@ const getTweetInfo = (tweet, num) => {
 };
 
 const treatNewTweet = (tweet, num, callback) => {
-  const tweetInfo = getTweetInfo(tweet, null);
+
+  const tweetInfo = getTweetInfo(tweet, num);
 
   if (tweetInfo.username) {
 
@@ -236,6 +240,7 @@ const treatNewTweet = (tweet, num, callback) => {
     callback(tweetInfo);
 
   }
+
 };
 
 const indexTweets = (callback) => {
@@ -254,51 +259,34 @@ const mainChangeCallback = (newNode, callback) => {
   let auxSectionNode = null;
   let newTweetNode = null;
 
-  // we have to check if there was a new tweet, or a new section
-  // to check it we have to consider whick user case we are in (logged / not logged)
-  if (userCase === null) {
-    try {
-      // we check if the new node is a new tweet itself
-      if (newNode.matches(tweetAlternativeSelector)) {
-        newTweetNode = newNode;
+  // conditional to avoid exceptions when treating an strange element (like new text nodes)
+  if (newNode && (typeof newNode.querySelector !== "undefined")) {
+
+    // we have to check if there was a new tweet, or a new section
+    // to check it we have to consider whick user case we are in (logged / not logged)
+    let selectorCase = (userCase === null) ? "not-user-logged" : "user-logged";
+    // we check if the new node is a new tweet itself
+    if (newNode.matches(tweetSelectors[selectorCase])) {
+      newTweetNode = newNode;
+    }
+    else {
+      // we check if the new node contains a new tweet
+      auxTweetNode = newNode.querySelector(tweetSelectors[selectorCase]);
+      if (auxTweetNode) {
+        newTweetNode = auxTweetNode;
+        auxTweetNode = true;
       }
-      else {
-        // we check if the new node contains a new tweet
-        auxTweetNode = newNode.querySelector(tweetAlternativeSelector);
-        if (auxTweetNode) {
-          newTweetNode = auxTweetNode;
-          auxTweetNode = true;
-        }
-      }
-      // we check if the new node is a new section itself
-      auxSectionNode = newNode.matches(sectionAlternativeSelector);
-      if (!auxSectionNode) {
-        // we check if the new node contains a new section
-        auxSectionNode = newNode.querySelector(sectionAlternativeSelector);
-      }
-    } catch (e) {}
-  }
-  else {
-    try {
-      // we check if the new node is a new tweet itself
-      if (newNode.matches(tweetSelector)) {
-        newTweetNode = newNode;
-      }
-      else {
-        // we check if the new node contains a new tweet
-        auxTweetNode = newNode.querySelector(tweetSelector);
-        if (auxTweetNode) {
-          newTweetNode = auxTweetNode;
-          auxTweetNode = true;
-        }
-      }
-      // we check if the new node is a new section itself
-      auxSectionNode = newNode.matches(sectionSelector);
-      if (!auxSectionNode) {
-        // we check if the new node contains a new section
-        auxSectionNode = newNode.querySelector(sectionSelector);
-      }
-    } catch (e) {}
+    }
+    // we check if the new node is a new section itself
+    auxSectionNode = newNode.matches(sectionSelectors[selectorCase]);
+    if (!auxSectionNode) {
+      // we check if the new node contains a new section
+      auxSectionNode = newNode.querySelector(sectionSelectors[selectorCase]);
+    }
+
+  } else {
+    // Detected strange node
+    // console.log("Error: Strange node added: "+(typeof newNode));
   }
 
   if (auxSectionNode) {
@@ -316,12 +304,8 @@ const mainChangeCallback = (newNode, callback) => {
 
 const tweetsListUpdate = () => {
 
-  if (userCase === null) {
-    tweetsList = document.querySelectorAll(tweetAlternativeSelector);
-  }
-  else {
-    tweetsList = document.querySelectorAll(tweetSelector);
-  }
+  let selectorCase = (userCase === null) ? "not-user-logged" : "user-logged";
+  tweetsList = document.querySelectorAll(tweetSelectors[selectorCase]);
 
 };
 
@@ -333,3 +317,17 @@ const idAssignator = (node) => {
   }
 
 };
+
+/**
+ * Query and return "node" childs that fit a "selector" and that their content text fits the "text" regExp
+ * Adaptation of this solution: https://stackoverflow.com/a/37098508/743194
+ * @param {*} node element from where to start the search (e.g. document)
+ * @param {*} selector css selector string (e.g. 'div')
+ * @param {*} text regular expression that must fit the text content of the elements found (e.g. 'sometext')
+ */
+function querySelectorContains(node, selector, text) {
+  let elements = node.querySelectorAll(selector);
+  return Array.prototype.filter.call(elements, function(element){
+    return RegExp(text).test(element.textContent);
+  });
+}

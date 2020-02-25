@@ -28,6 +28,14 @@ CoinformClient.prototype = {
 
   getTwitterUserScore: function (username) {
     return getHttpRequest(this.baseURL + '/twitter/user/' + username);
+  },
+
+  postUserLogin: function (email, password) {
+    return postLogin(this.baseURL + '/twitter/login/', email, password);
+  },
+
+  postUserRegister: function (email, password) {
+    return postRegister(this.baseURL + '/twitter/register/', email, password);
   }
 };
 
@@ -102,6 +110,54 @@ function getHttpRequest(path) {
 
   return new Promise((resolve, reject) => {
     f(path)
+      .then(res => res.json())
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
+
+function postLogin(path, email, password) {
+
+  const data = {email: email, password: password};
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json())
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
+
+function postRegister(path, email, password) {
+
+  const data = {email: email, password: password};
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
       .then(res => res.json())
       .then(res => resolve(res))
       .catch(err => reject(err));

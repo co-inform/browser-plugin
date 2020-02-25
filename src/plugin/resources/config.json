@@ -1,14 +1,22 @@
 {
   "coinform": {
     "apiUrl": "https://api.coinform.eu",
+    "logLevel": "info",
     "hideThreshold": 5,
     "categories": {
-      "accurate": "information",
-      "accurate_with_considerations": "information",
-      "unsubstantiated": "information",
-      "inaccurate_with_considerations": "misinformation",
-      "inaccurate": "misinformation",
-      "not_verifiable_post": "misinformation"
+      "credible": "label", 
+      "mostly_credible": "label", 
+      "credibility_uncertain": "label", 
+      "mostly_not_credible": "blur", 
+      "not_credible": "blur", 
+      "not_verifiable": "label"
+    },
+    "accuracy": {
+      "accurate": "", 
+      "accurate_with_considerations": "", 
+      "unsubstantiated": "", 
+      "inaccurate_with_considerations": "", 
+      "inaccurate": ""
     }
   }
 }
