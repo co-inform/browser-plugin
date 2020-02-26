@@ -5,7 +5,18 @@
   "main": "src/js/browser-plugin.js",
   "scripts": {
     "test": "jasmine",
-    "build": "mkdir -p build/resources build/popup build/options build/background build/content && cp -r src/plugin/. build/. && browserify src/js/browser-plugin.js -o build/content/coinform.js && browserify src/js/background-script.js -o build/background/background-script.js && browserify src/js/options.js -o build/options/options.js && browserify src/js/popup.js -o build/popup/popup.js",
+    "clean": "rm -r build/*",
+    "build:directories": "mkdir -p build/resources build/resources/css build/popup build/options build/background build/content && cp -r src/plugin/. build/.",
+    "build:css-bootstrap": "cp node_modules/bootstrap/dist/css/bootstrap.min.css build/resources/css/bootstrap.min.css",
+    "build:css-fontawesome": "cp node_modules/@fortawesome/fontawesome-free/css/all.min.css build/resources/css/fontawesome.min.css",
+    "build:webfonts": "cp -R node_modules/@fortawesome/fontawesome-free/webfonts build/resources/webfonts",
+    "build:js-background": "browserify src/js/background-script.js -o build/background/background-script.js",
+    "build:js-popup": "browserify src/js/popup.js -o build/popup/popup.js",
+    "build:js-options": "browserify src/js/options.js -o build/options/options.js",
+    "build:js-main": "browserify src/js/browser-plugin.js -o build/content/coinform.js",
+    "build:css": "npm run build:css-bootstrap && npm run build:css-fontawesome && npm run build:webfonts",
+    "build:js": "npm run build:js-background && npm run build:js-popup && npm run build:js-options && npm run build:js-main",
+    "build": "npm run build:directories && npm run build:css && npm run build:js",
     "mock": "node mock-api/index.js &"
   },
   "repository": {
@@ -28,6 +39,8 @@
     "jshint": "^2.10.3"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.12.1",
+    "bootstrap": "^4.4.1",
     "jquery": "^3.4.0",
     "sweetalert2": "^8.8.1"
   }

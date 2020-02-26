@@ -2,6 +2,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## commit 26/02/2020 [branch: pre_second_review]
+
+package.json
+- added proper css dependencies for bootstrap and fontawesome
+- adapted the package build scripts with the new dependencies and using subscripts
+
+src/plugin/manifest.json
+- css resources moved to new folder
+- new logo for upcoming new login popup design
+
+
 ## commit 07/02/2020 [branch: hackathon_stockholm]
 
 src/js/background-script.js
