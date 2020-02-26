@@ -3,7 +3,27 @@
 All notable changes to this project will be documented in this file.
 
 
-## commit 26/02/2020 [branch: pre_second_review]
+## commit 26/02/2020 (2) [branch: pre_second_review]
+
+src/js/coinform-client.js
+- added userToken to the communication with the TwitterEvaluate endpoint
+- fixed path bug for the login and register endpoints
+- changed the structure of the return object from the endpoints queries to be able to parse the response status code in the callback function
+
+src/js/browser-plugin.js
+- working on await functionality
+- parse the publish tweet text to check and get if the user is posting an url
+- new listener and basic logging function for retweet action
+- adapted the API comunications callback functions for the new returned object with the response status code
+- new function for checking if as tweet is blurred or not
+- changes to the popup opened by the click action to the "cannot see" button, and now also to the tweet label
+- now the popup has buttons to let unblur and also re-blur a tweet that has been blurred by the system
+
+src/js/tweet-parser.js
+- new listener for retweet action
+
+
+## commit 26/02/2020 (1) [branch: pre_second_review]
 
 package.json
 - added proper css dependencies for bootstrap and fontawesome

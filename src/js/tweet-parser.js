@@ -56,6 +56,8 @@ const textSelectors = {
 // selector for publish tweet button
 const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetButton']"; // we detected 2 cases for the second data-testid (tweetButton and tweetButtonInline)
 
+const retweetTweetButtonSelector = "[role='group'] [data-testid='retweet']";
+
 // selector for user presentation menu item
 const userPresentationSelector = "header[role='banner'] a[role='link'] div[role='presentation']";
 
@@ -113,13 +115,19 @@ TweetParser.prototype = {
   listenPublishTweet: (publishTweetCallback) => {
 
     document.addEventListener('click', function (event) {
-      let target = event.target;
-      let targetParent = event.target.offsetParent;
-      if (target.matches(publisTweetButtonSelector) || (targetParent && targetParent.matches(publisTweetButtonSelector))) {
-        if (!target.matches(publisTweetButtonSelector) && targetParent) {
-          target = targetParent;
-        }
+      let target = event.target.closest(publisTweetButtonSelector);
+      if (target) {
         publishTweetCallback(event, target);
+      }
+    }, true); // important to set it true so the event propagation is capturing and not bubbling
+
+  },
+  listenRetweetTweet: (retweetTweetCallback) => {
+
+    document.addEventListener('click', function (event) {
+      let target = event.target.closest(retweetTweetButtonSelector);
+      if (target) {
+        retweetTweetCallback(event, target);
       }
     }, true); // important to set it true so the event propagation is capturing and not bubbling
 

@@ -87,6 +87,7 @@ const start = () => {
     parser.initContext();
     parser.listenForMainChanges(newTweetCallback);
     parser.listenPublishTweet(publishTweetCallback);
+    parser.listenRetweetTweet(retweetTweetCallback);
     parser.triggerFirstTweetBatch(newTweetCallback);
 
   } else if (window.location.hostname.indexOf('facebook.com') >= 0) {
@@ -102,7 +103,8 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
   // click situation when we already procesed the tweet and the await time has finished
   if (targetButton.coInformed) {
-    logger.logMessage(CoInformLogger.logTypes.info, `Publish button procesed!!`);
+    targetButton.coInformed = false;
+    logger.logMessage(CoInformLogger.logTypes.debug, `Publish button procesed!!`);
     return true;
   }
 
@@ -116,40 +118,69 @@ const publishTweetCallback = (clickEvent, targetButton) => {
     return true;
   }
 
-  logger.logMessage(CoInformLogger.logTypes.info, `Publish button clicked!!`);
+  logger.logMessage(CoInformLogger.logTypes.debug, `Publish button clicked!!`);
   
   targetButton.setAttribute("disabled", "");
   targetButton.setAttribute("aria-disabled", "true");
 
-  // replace the text of the button with a loading
-  let loadingSpinner = document.createElement("DIV");
-  loadingSpinner.classList.add("spinner-border");
-  loadingSpinner.setAttribute("role", "status");
-  let span = document.createElement("SPAN");
-  span.classList.add("sr-only");
-  let auxtxt = document.createTextNode("Loading...");
-  span.append(auxtxt);
-  loadingSpinner.append(span);
-  targetButton.children[0].style.display = "none";
-  targetButton.append(loadingSpinner);
-  
-  // attach text
-  let loadingMessage = document.createElement("SPAN");
-  loadingMessage.classList.add("publishTweetCoinformMessage");
-  loadingMessage.classList.add("blink_me");
-  let txt = document.createTextNode(browserAPI.i18n.getMessage("checking_tweet_coinform"));
-  loadingMessage.append(txt);
-  loadingMessage.setAttribute("id", `coinformCheckingMessage`);
-  let toolBar = targetButton.offsetParent;
-  for ( ; toolBar && toolBar !== document; toolBar = toolBar.parentNode ) {
-    if ( toolBar.matches("[data-testid='toolBar']") ) break;
+  // get text
+  let tweetText = null;
+  let parentTextBox = targetButton.offsetParent;
+  for ( ; parentTextBox && parentTextBox !== document; parentTextBox = parentTextBox.parentNode ) {
+    let auxTextSelector = parentTextBox.querySelector("[role='textbox'][data-testid*='tweetTextarea']");
+    if (auxTextSelector) {
+      tweetText = auxTextSelector.innerText;
+      break;
+    }
   }
-  toolBar.offsetParent.append(loadingMessage);
+  //get urls from text
+  let urls = null;
+  if (tweetText) {
+    urls = tweetText.match(/((ftp|https?):\/\/([^\s]+)([^.,;:\s]))/g);
+  }
 
-  // postpone the submiting of the tweet
-  setTimeout(function() {
+  if (urls) {
+
+    logger.logMessage(CoInformLogger.logTypes.debug, `Detected ${urls.length} URLs`);
+
+    // replace the text of the button with a loading
+    let loadingSpinner = document.createElement("DIV");
+    loadingSpinner.classList.add("spinner-border");
+    loadingSpinner.setAttribute("role", "status");
+    let span = document.createElement("SPAN");
+    span.classList.add("sr-only");
+    let auxtxt = document.createTextNode("Loading...");
+    span.append(auxtxt);
+    loadingSpinner.append(span);
+    targetButton.children[0].style.display = "none";
+    targetButton.append(loadingSpinner);
+    
+    // attach loading text
+    let loadingMessage = document.createElement("SPAN");
+    loadingMessage.classList.add("publishTweetCoinformMessage");
+    loadingMessage.classList.add("blink_me");
+    let txt = document.createTextNode(browserAPI.i18n.getMessage("checking_tweet_coinform"));
+    loadingMessage.append(txt);
+    loadingMessage.setAttribute("id", `coinformCheckingMessage`);
+    let toolBar = targetButton.offsetParent;
+    for ( ; toolBar && toolBar !== document; toolBar = toolBar.parentNode ) {
+      if ( toolBar.matches("[data-testid='toolBar']") ) break;
+    }
+    if (toolBar && (toolBar !== document)) {
+      toolBar.offsetParent.append(loadingMessage);
+    }
+
+    // postpone the submiting of the tweet
+    setTimeout(function() {
+      publishTweetDoit(targetButton);
+    }, 5000);
+
+  }
+  else {
+
     publishTweetDoit(targetButton);
-  }, 5000);
+
+  }
 
 };
 
@@ -163,6 +194,34 @@ const publishTweetDoit = (targetButton) => {
   targetButton.removeAttribute("aria-disabled");
   targetButton.coInformed = true;
   targetButton.click();
+};
+
+const retweetTweetCallback = (clickEvent, targetButton) => {
+
+  // click situation when we already procesed the tweet
+  if (targetButton.coInformed) {
+    targetButton.coInformed = false;
+    logger.logMessage(CoInformLogger.logTypes.debug, `Retweet button procesed!!`);
+    return true;
+  }
+
+  // prevent the submiting of the tweet
+  clickEvent.stopImmediatePropagation();
+  clickEvent.preventDefault();
+  clickEvent.stopPropagation();
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Retweet button clicked!!`);
+
+  // get tweet
+  let tweet = targetButton.closest("article");
+  
+  if (tweet.coInformLabel) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Retweet Tweet Label: ${tweet.coInformLabel}`);
+  }
+  
+  targetButton.coInformed = true;
+  targetButton.click();
+
 };
 
 const newTweetCallback = (tweetInfo) => {
@@ -210,7 +269,16 @@ const newTweetCallback = (tweetInfo) => {
   // First API call to the endpoint /twitter/tweet/
   client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
 
-    parseApiResponse(res, tweetInfo);
+    let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+    if ((resStatus.localeCompare('400') === 0)) {
+      logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+    }
+    else if (resStatus.localeCompare('200') === 0) {
+      parseApiResponse(res.data, tweetInfo);
+    }
+    else {
+      logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+    }
 
   }).catch(err => {
 
@@ -261,7 +329,16 @@ const retryTweetQuery = (tweetInfo, queryId) => {
       queryId: queryId
     }, function(res) {
 
-      parseApiResponse(res, tweetInfo);
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      if ((resStatus.localeCompare('404') === 0)) {
+        logger.logMessage(CoInformLogger.logTypes.error, `Request 404 (no such query) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+      }
+      else if (resStatus.localeCompare('200') === 0) {
+        parseApiResponse(res.data, tweetInfo);
+      }
+      else {
+        logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+      }
 
     });
 
@@ -281,47 +358,30 @@ const retryTweetQuery = (tweetInfo, queryId) => {
 
 };
 
-const parseApiResponse = (res, tweetInfo) => {
+const parseApiResponse = (data, tweetInfo) => {
 
-  let resStatus = null;
+  let resStatus = JSON.stringify(data.status).replace(/['"]+/g, '');
   let acurracyLabel = null;
-
-  if (res && res.status) {
-    resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-  }
-
-  // Discard requests with 400 http return codes
-  if ((resStatus.localeCompare('400') === 0) || (resStatus.localeCompare('404') === 0)) {
-    logger.logMessage(CoInformLogger.logTypes.error, `Request ${resStatus} Error (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
-    return;
-  }
 
   logger.logMessage(CoInformLogger.logTypes.debug, `${resStatus} response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
 
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
-
     // Result from API call
-    acurracyLabel = JSON.stringify(res.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
+    acurracyLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
     classifyTweet(tweetInfo, acurracyLabel);
-
   }
-
   if (resStatus && (resStatus.localeCompare('done') === 0)) {
-
     // Tweet analyzed
     pluginCache[tweetInfo.id] = acurracyLabel;
     tweetInfo.domObject.coInfoAnalyzed = true;
-
   }
   else {
-
     // If the result status has not reached the 'done' status then make a second API call to retrieve the 
     // result with a maximum of 10 retries
     // Call retry in random (between 0.5 and 2.5) seconds
     setTimeout(function() {
-      retryTweetQuery(tweetInfo, res.query_id);
+      retryTweetQuery(tweetInfo, data.query_id);
     }, randomInt(500, 2500));
-
   }
 
 };
@@ -332,6 +392,7 @@ const newFacebookPostCallback = (post) => {
     // Just for the proof of concept, use Twitter's score (even though we're in Facebook)
     client.getTwitterUserScore(post.username)
       .then(res => {
+
         classifyPost(post, res);
 
       })
@@ -372,34 +433,37 @@ const classifyTweet = (tweet, accuracyLabel) => {
       logger.logMessage(CoInformLogger.logTypes.info, `Classifying Tweet label: ${label}`, tweet.id);
     }
 
+    node.coInformLabel = label;
     let newCategory = configuration.coinform.categories[label];
     if (!newCategory) {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`, tweet.id);
     }
     else if (newCategory.localeCompare("blur") === 0) {
-      createTweetLabel(tweet, label);
-      createTweetBlurry(tweet, label);
+      createTweetLabel(tweet, label, function() {
+        openLabelPopup(tweet);
+      });
+      createTweetBlurry(tweet);
     }
     else if (newCategory.localeCompare("label") === 0) {
-      createTweetLabel(tweet, label);
+      createTweetLabel(tweet, label, function() {
+        openLabelPopup(tweet);
+      });
     }
-
-    node.coInformLabel = label;
 
   }
 
 };
 
-const createTweetBlurry = (tweet, label) => {
+const createTweetBlurry = (tweet) => {
 
   let node = tweet.domObject;
   node.setAttribute(parser.untrustedAttribute, 'true');
 
   let buttonContainer = createCannotSeeTweetButton(tweet.id, function() {
-    openCannotSeePopup(tweet, label);
+    openLabelPopup(tweet);
   });
 
-  node.append(buttonContainer);
+  node.querySelector("article > div").append(buttonContainer);
 
 };
 
@@ -420,7 +484,15 @@ const removeTweetBlurry = (tweet) => {
 
 };
 
-const createTweetLabel = (tweet, label) => {
+const isBlurred = (tweet) => {
+
+  let node = tweet.domObject;
+  let attrVal = node.getAttribute(parser.untrustedAttribute);
+  return (attrVal === 'true');
+
+};
+
+const createTweetLabel = (tweet, label, callback) => {
 
   let node = tweet.domObject;
 
@@ -429,6 +501,12 @@ const createTweetLabel = (tweet, label) => {
   labelcat.setAttribute('class', "coinformTweetLabel");
   let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
   labelcat.append(txt);
+
+  labelcat.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    callback();
+  });
 
   node.prepend(labelcat);
 
@@ -470,24 +548,56 @@ const createCannotSeeTweetButton = (tweetId, callback) => {
 
 };
 
-function openCannotSeePopup(tweet, label) {
+function openLabelPopup(tweet) {
+
+  let node = tweet.domObject;
+  let nodeBlurred = isBlurred(tweet);
+  let nodeBlurrable = false;
+  let showConfirm = false;
+  let buttonText = "";
+
+  if (node.coInformLabel) {
+    let category = configuration.coinform.categories[node.coInformLabel];
+    if (category && (category.localeCompare("blur") === 0)) {
+      nodeBlurrable = true;
+    }
+  }
+
+  if (nodeBlurred) {
+    showConfirm = true;
+    buttonText = browserAPI.i18n.getMessage('see_tweet');
+  }
+  else if (nodeBlurrable) {
+    showConfirm = true;
+    buttonText = browserAPI.i18n.getMessage('blur_tweet');
+  }
 
   return Swal2.fire({
     type: 'info',
-    title: browserAPI.i18n.getMessage('tweet_tagged_as', browserAPI.i18n.getMessage(label)),
+    title: browserAPI.i18n.getMessage('tweet_tagged_as', browserAPI.i18n.getMessage(node.coInformLabel)),
+    showConfirmButton: showConfirm,
     showCloseButton: true,
-    showCancelButton: false,
+    showCancelButton: true,
+    cancelButtonColor: buttonColor,
     confirmButtonColor: buttonColor,
-    confirmButtonText: browserAPI.i18n.getMessage('see_tweet'),
+    cancelButtonText: browserAPI.i18n.getMessage('ok'),
+    confirmButtonText: buttonText,
+    reverseButtons: true,
+    focusCancel: true,
     html:
-      '<span>' + browserAPI.i18n.getMessage(label + '__info') + '</span>',
+      '<span>' + browserAPI.i18n.getMessage(node.coInformLabel + '__info') + '</span>',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>`,
     focusConfirm: true
   }).then(function (result) {
     if(result.value === true){
       // function when confirm button is clicked
-      removeTweetBlurry(tweet);
+      if (nodeBlurred) {
+        removeTweetBlurry(tweet);
+      }
+      else if (nodeBlurrable) {
+        createTweetBlurry(tweet);
+      }
     }
   });
 
@@ -562,7 +672,7 @@ function openClaimPopup(tweet) {
     },
     html:
       '<span>' + browserAPI.i18n.getMessage('provide_claim') + '</span>' +
-      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('url') + '" type="url" pattern="https?://.*" class="swal2-input">' +
+      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('url') + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
       '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('comment') + '" class="swal2-textarea">',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>`
@@ -582,19 +692,37 @@ function openClaimPopup(tweet) {
           'comment': comment
         };
         client.postTwitterEvaluate(tweet.id, evaluation).then(function (res) {
-          if (res.evaluation_id) {
-            let resEvalId = JSON.stringify(res.evaluation_id).replace(/['"]+/g, '');
-            logger.logMessage(CoInformLogger.logTypes.info, `Claim sent. Evaluation ID = ${resEvalId}`, tweet.id);
-            Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
-          }
-          else {
-            let resStatus = "Unknown";
-            if (res.status) resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-            logger.logMessage(CoInformLogger.logTypes.error, `Claim sending ${resStatus} Error`, tweet.id);
+
+          let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+          if (resStatus.localeCompare('400') === 0) {
+            logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
             Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
           }
+          else if (resStatus.localeCompare('403') === 0) {
+            logger.logMessage(CoInformLogger.logTypes.error, `Request 403 (access denied) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+            Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+          }
+          else if (resStatus.localeCompare('200') === 0) {
+            
+            let data = res.data;
+            if (data.evaluation_id) {
+              let resEvalId = JSON.stringify(data.evaluation_id).replace(/['"]+/g, '');
+              logger.logMessage(CoInformLogger.logTypes.info, `Claim sent. Evaluation ID = ${resEvalId}`, tweet.id);
+              Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
+            }
+            else {
+              logger.logMessage(CoInformLogger.logTypes.error, `Request "evaluation_id" Error`, tweet.id);
+              Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+            }
+
+          }
+          else {
+            logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+            Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+          }
+
         }).catch(err => {
-          logger.logMessage(CoInformLogger.logTypes.error, `Claim sending error: ${err}`, tweet.id);
+          logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweet.id);
           Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
           //console.error(err);
         });
@@ -657,7 +785,7 @@ function randomInt(low, high) {
 }
 
 function isURL(str) {
-  let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+  let pattern = new RegExp('^((ftp|https?):\\/\\/)?'+ // protocol
   '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
   '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
   '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
