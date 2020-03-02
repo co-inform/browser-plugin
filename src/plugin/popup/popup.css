@@ -1,25 +1,131 @@
+
+/*@import "/resources/fontawesome.min.css";*/
+
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;;
   min-width: 380px;
   font-size: 100%;
   margin: 0;
-  padding: 1em;
+  padding: 1px;
+  padding-top: 0.5em;
+  padding-bottom: 1em;
   overflow: hidden;
   /*background-color: #a0a4b2;*/
 }
 
-h1 {
+#popup-header {
+  position: relative;
+  padding: 0.5em;
+  padding-top: 0;
+}
+
+#popup-header .logo {
+  position: relative;
+  float: left;
+  height: 60px;
+}
+
+#popup-title {
+  position: relative;
+  padding-top: 15px;
+  float: right;
+  font-weight: 600;
+  font-size: 0.9em;
   margin-top: 0;
   color: #693c5e;
+  width: 68%;
+}
+
+#popup-menu {
+  clear: both;
+  width: 100%;
+  background-color: #693c5e;
+  padding: 0.5em;
+  margin-bottom: 20px;
+}
+
+#popup-menu > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+#popup-menu > div > div {
+  padding: 0.5em;
+  display: inline-block;
+  background-color: #693c5e;
+  color: white;
+}
+
+#popup-menu .menu-item {
+  border-radius: 0.5em;
+  cursor: pointer;
+}
+
+#popup-menu .menu-tabs {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#popup-menu .menu-tabs .menu-item {
+  width: 40%;
+}
+
+#popup-menu .menu-item span {
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+}
+
+.menu-item > span::before {
+  margin-right: 5px;
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: auto;
+}
+
+#menu-login > span::before {
+  content: "\f007";
+}
+
+#menu-register > span::before {
+  content: "\f234";
+}
+
+#menu-options > span::before {
+  margin-right: 0px;
+  content: "\f013";
+}
+
+#menu-options {
+  margin-right: 15px;
+}
+
+#popup-menu .menu-item.actual, #popup-menu .menu-item:hover {
+  background-color: #8f6384;
+}
+
+.form-control label::before {
+  margin-right: 10px;
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: auto;
+  color: #62B9AF;
+}
+
+.form-control .mail_label::before {
+  content: "\f0e0";
+}
+
+.form-control .pass_label::before {
+  content: "\f084";
 }
 
 .form-control-group {
   margin: 1em 2em 1em;
-}
-
-.form-control-group input,
-.form-control-group label {
-  cursor: pointer;
 }
 
 .form-control-group label {
@@ -27,7 +133,10 @@ h1 {
 }
 
 .form-control-group input {
-  float: right;
+  float: left;
+  width: 90%;
+  outline: 0;
+  border: 0;
 }
 
 .form-control:not(:last-child) {
@@ -35,11 +144,11 @@ h1 {
 }
 
 .form-control:last-child {
-  margin-bottom: 3em;
+  margin-bottom: 1em;
 }
 
 .clearBoth {
-  clear:both;
+  clear: both;
 }
 
 .coinform-button {
@@ -54,6 +163,7 @@ h1 {
   font-size: 1em;
   color: rgba(0,0,0,.87);
   cursor: pointer;
+  outline: 0;
 }
 
 .coinform-button.coinform-button-primary {
@@ -61,14 +171,22 @@ h1 {
   color: #fff;
 }
 
-.coinform-button.coinform-button-secondary {
-  background-color: #62B9AF;
-  color: #fff;
-  float: right;
+.coinform-button.coinform-button-primary:hover {
+  background-color: #62b9afa6;
 }
 
-.coinform-button:hover {
-  background-color: #62b9afa6;
+.coinform-button.coinform-button-secondary {
+  background-color: #693c5e;
+  color: #fff;
+}
+
+.coinform-button.coinform-button-secondary:hover {
+  background-color: #693c5ea6;
+}
+
+.coinform-button:disabled {
+  cursor: not-allowed;
+  background-color: #a0a0a073;
 }
 
 .coinform-button:after {
@@ -77,36 +195,28 @@ h1 {
   transition: 0.5s;
 }
 
+.coinform-button::after {
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: auto;
+  margin-left: 1em;
+}
+
 .coinform-button.coinform-button-primary:after {
-  content: "\003e";
-  font-family: cursive;
-  margin-left: -1em;
+  /*content: "\003e";
+  font-family: cursive;*/
+  content: "\f2f6";
 }
 
 .coinform-button.coinform-button-secondary:after {
-  content: "\2039 \203a";
-  font-family: cursive;
-  margin-left: 0.2em;
+  /*content: "\2039 \203a";
+  font-family: cursive;*/
+  content: "\f2f5";
 }
 
 .coinform-button:hover:after {
   opacity: 1;
-}
-
-.coinform-button.coinform-button-primary:hover:after {
-  margin-left: 0.3em;
-}
-
-#popup-header {
-  position: relative;
-  float: right;
-  top: -8px;
-}
-
-#popup-title {
-  position: relative;
-  float: left;
-  font-size: x-large;
 }
 
 #popup-messages {
@@ -120,6 +230,10 @@ h1 {
   padding-left: 8px;
   margin-bottom: 5px;
   border-radius: 5px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.8;
 }
 
 .popup-message:last-child {
@@ -141,11 +255,14 @@ h1 {
   display: none;
 }
 
-.form-buttons .coinform-button{
-  display: none;
-}
-
 .form-buttons {
   clear: both;
   height: 32px;
+}
+
+.form-buttons .coinform-button {
+  margin: auto;
+  display: block;
+  box-shadow: 2px 3px 5px #888888;
+  width: 40%;
 }

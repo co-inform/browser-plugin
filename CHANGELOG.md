@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 02/03/2020 [branch: pre_second_review]
+	
+src/js/popup.js
+- new login design workflow
+
+src/plugin/popup/popup.html
+- new login design html structure (with 2 tabs for login/register)
+
+src/plugin/popup/popup.css
+- new login design styles (with 2 tabs for login/register)
+
+src/plugin/_locales/en/messages.json
+- new messages for new login design
+
+
 ## commit 26/02/2020 (2) [branch: pre_second_review]
 
 src/js/coinform-client.js
@@ -21,6 +36,9 @@ src/js/browser-plugin.js
 
 src/js/tweet-parser.js
 - new listener for retweet action
+
+src/plugin/content/coinform.css
+- pointer cursor for the new clickable tweet label
 
 
 ## commit 26/02/2020 (1) [branch: pre_second_review]

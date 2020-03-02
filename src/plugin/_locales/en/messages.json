@@ -80,6 +80,9 @@
   "see_tweet": {
     "message": "See tweet anyways"
   },
+  "blur_tweet": {
+    "message": "Blur tweet again"
+  },
   "provide_claim": {
     "message": "If you think this is not accurate please provide a claim and a URL to a post that supports that claim"
   },
@@ -91,6 +94,9 @@
   },
   "ok": {
     "message": "Ok"
+  },
+  "close": {
+    "message": "Close"
   },
   "submit": {
     "message": "Submit"
@@ -127,6 +133,9 @@
   },
   "feedback_not_sent": {
     "message": "Your feedback was not sent"
+  },
+  "popup_plugin_title": {
+    "message": "Plugin for collecting twitter sources"
   },
   "login_title": {
     "message": "Co-Inform Login"
@@ -182,20 +191,17 @@
   "register": {
     "message": "Register"
   },
-  "register_form": {
-    "message": "Register form"
-  },
-  "login_form": {
-    "message": "Login form"
+  "login": {
+    "message": "Login"
   },
   "user_mail": {
-    "message": "User email"
+    "message": "Your email"
   },
   "password": {
-    "message": "Password"
+    "message": "Your Password"
   },
   "retype_password": {
-    "message": "Retype password"
+    "message": "Retype your password"
   },
   "misinformation_restriction_level": {
     "message": "Misinforming restriction level"

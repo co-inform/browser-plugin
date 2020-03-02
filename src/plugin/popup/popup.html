@@ -7,64 +7,75 @@
   <link type="text/css" rel="stylesheet" href="popup.css">
 
   <script type="text/javascript" charset="utf-8" src="popup.js"></script>
+  <link rel="stylesheet" type="text/css" href="/resources/css/fontawesome.min.css">
 
 </head>
 
 <body>
 
   <div id="popup-header">
+    <h1 id="popup-title">Co-Inform</h1>
   </div>
-
-  <h1 id="popup-title">Co-Inform</h1>
-
-  <div id="popup-messages">
+  <div id="popup-menu">
+    <div id="menu-notlogged" class="menu-tabs">
+      <div class="menu-item" id="menu-login">
+        <span>Login</span>
+      </div>
+      <div class="menu-item" id="menu-register">
+        <span>Register</span>
+      </div>
+    </div>
+    <div id="menu-logged">
+      <div id="logged-text">
+        <span>You are already logged</span>
+      </div>
+      <div class="menu-item" id="menu-options">
+        <span></span>
+      </div>
+    </div>
   </div>
 
   <div class="form-control-group" id="login-form">
 
     <div class="form-control">
-      <input type="email" id="login-auth-mail" name="login-usermail" minlength="6" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-      <label id="login-mail-label" for="login-auth-mail">User email</label>
+      <label id="login-mail-label" class="mail_label" for="login-auth-mail"></label>
+      <input type="email" id="login-auth-mail" name="login-usermail" minlength="6" placeholder="Your email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
     </div>
     
     <div class="form-control">
-      <input type="password" id="login-auth-pass" name="login-userpass" minlength="6" required>
-      <label id="login-pass-label" for="login-auth-pass">Password</label>
+      <label id="login-pass-label" class="pass_label" for="login-auth-pass"></label>
+      <input type="password" id="login-auth-pass" name="login-userpass" minlength="6" placeholder="Your password" required>
     </div>
-
-    <br class="clearBoth" />
 
   </div>
 
   <div class="form-control-group" id="register-form">
 
     <div class="form-control">
-      <input type="email" id="register-auth-mail" name="register-usermail" minlength="6" placeholder="example@domain.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
-      <label id="register-mail-label" for="register-auth-mail">User email</label>
+      <label id="register-mail-label" class="mail_label" for="register-auth-mail"></label>
+      <input type="email" id="register-auth-mail" name="register-usermail" minlength="6" placeholder="Your email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
     </div>
 
     <div class="form-control">
-      <input type="password" id="register-auth-pass" name="register-userpass" minlength="6" placeholder="123456" required>
-      <label id="register-pass-label" for="register-auth-pass">Password</label>
+      <label id="register-pass-label" class="pass_label" for="register-auth-pass"></label>
+      <input type="password" id="register-auth-pass" name="register-userpass" minlength="6" placeholder="Your password" required>
     </div>
 
     <div class="form-control">
-      <input type="password" id="register-auth-pass2" name="register-userpass2" minlength="6" placeholder="123456" required>
-      <label id="register-pass2-label" for="register-auth-pass2">Retype password</label>
+      <label id="register-pass2-label" class="pass_label" for="register-auth-pass2"></label>
+      <input type="password" id="register-auth-pass2" name="register-userpass2" minlength="6" placeholder="Retype your password" required>
     </div>
 
-    <br class="clearBoth" />
+  </div>
 
+  <div id="popup-messages">
   </div>
 
   <div class="form-buttons">
     
     <button class="coinform-button coinform-button-primary" type="button" id="login-button">Log in</button>
-    <button class="coinform-button coinform-button-primary" type="button" id="logout-button">Log out</button>
     <button class="coinform-button coinform-button-primary" type="button" id="register-button">Register</button>
-
-    <button class="coinform-button coinform-button-secondary" type="button" id="registerStart-button">Register form</button>
-    <button class="coinform-button coinform-button-secondary" type="button" id="loginStart-button">Login form</button>
+    <button class="coinform-button coinform-button-secondary" type="button" id="logout-button">Log out</button>
   
     <br class="clearBoth" />
 
