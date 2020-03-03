@@ -11,7 +11,7 @@ const browserAPI = chrome || browser;
 const pluginCache = {};
 
 let logoURL = "/resources/coinform48.png";
-let minlogoURL = "/resources/coinform_logotext21.png";
+let minlogoURL = "/resources/coinform_biglogo.png";
 const mainColor = "#693c5e"; // coinform
 const buttonColor = "#62B9AF"; // old: #3085d6
 
@@ -186,9 +186,9 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
 const publishTweetDoit = (targetButton) => {
   let msg = document.getElementById("coinformCheckingMessage");
-  msg.parentNode.removeChild(msg);
+  if (msg) msg.parentNode.removeChild(msg);
   let load = targetButton.querySelector('.spinner-border');
-  load.parentNode.removeChild(load);
+  if (load) load.parentNode.removeChild(load);
   targetButton.children[0].style.display = "";
   targetButton.removeAttribute("disabled");
   targetButton.removeAttribute("aria-disabled");
@@ -587,7 +587,8 @@ function openLabelPopup(tweet) {
     html:
       '<span>' + browserAPI.i18n.getMessage(node.coInformLabel + '__info') + '</span>',
     footer:
-      `<img class="coinformPopupLogo" src="${minlogoURL}"/>`,
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
+      '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
     focusConfirm: true
   }).then(function (result) {
     if(result.value === true){
@@ -605,7 +606,12 @@ function openLabelPopup(tweet) {
 
 function logoClickAction(tweet) {
 
-  if (coinformUserToken) {
+  let nodeBlurred = isBlurred(tweet);
+
+  if (nodeBlurred) {
+    openLabelPopup(tweet);
+  }
+  else if (coinformUserToken) {
     openClaimPopup(tweet);
   }
   else {
@@ -623,15 +629,19 @@ function openClaimPopup(tweet) {
   let categoryOptions = {};
 
   Object.keys(configuration.coinform.accuracy).forEach(function(key) {
-    categoryOptions[key] = browserAPI.i18n.getMessage(key);
+    categoryOptions[key] = browserAPI.i18n.getMessage('tweet_is', browserAPI.i18n.getMessage(key));
   });
 
   let popupTitle = browserAPI.i18n.getMessage('tweet_not_tagged');
+  let moreInfo = browserAPI.i18n.getMessage('tweet_not_tagged__info');
+  let provideClaim = browserAPI.i18n.getMessage("provide_claim_untagged");
 
   if (node.coInformLabel) {
     let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
     if (!auxlabel) auxlabel = node.coInformLabel;
     popupTitle = browserAPI.i18n.getMessage('tweet_tagged_as', auxlabel);
+    moreInfo = browserAPI.i18n.getMessage(node.coInformLabel + '__info');
+    provideClaim = browserAPI.i18n.getMessage("provide_claim");
   }
 
   return Swal2.fire({
@@ -671,11 +681,17 @@ function openClaimPopup(tweet) {
       });
     },
     html:
-      '<span>' + browserAPI.i18n.getMessage('provide_claim') + '</span>' +
-      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('url') + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
-      '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('comment') + '" class="swal2-textarea">',
+      '<div class="subtitle">' + 
+        '<span>' + moreInfo + '</span>' + 
+      '</div>' + 
+      '<div class="contentText">' +
+        '<span>' + provideClaim + '</span>' +
+      '</div>' +
+      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
+      '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea">',
     footer:
-      `<img class="coinformPopupLogo" src="${minlogoURL}"/>`
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
+      '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>'
   }).then(function (result) {
 
     if (result.value) {
@@ -759,7 +775,8 @@ function openNotLoggedClaimPopup(tweet) {
       '<span>' + browserAPI.i18n.getMessage('provide_claim_with_login') + '</span><br/>' +
       '<span>' + browserAPI.i18n.getMessage('login_register_instructions') + '</span>',
     footer:
-      `<img class="coinformPopupLogo" src="${minlogoURL}"/>`,
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
+      '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){

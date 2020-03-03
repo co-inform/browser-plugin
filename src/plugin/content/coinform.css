@@ -149,8 +149,21 @@
 }
 
 .swal2-popup .swal2-footer img.coinformPopupLogo {
-  margin-left: auto;
-  height: 24px;
+  margin-right: auto;
+  height: 32px;
+}
+
+.swal2-popup .swal2-footer span {
+  color: #693c5e;
+  font-size: larger;
+  font-weight: 600;
+  margin: auto;
+}
+
+.swal2-popup .swal2-content .subtitle {
+  margin: 0 0 1.25em;
+  padding: 0 0 1em;
+  border-bottom: 1px solid #eee;
 }
 
 .coinform-padding-top-10 {

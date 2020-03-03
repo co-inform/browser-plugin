@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 03/03/2020 [branch: pre_second_review]
+
+src/js/browser-plugin.js
+- minor ui design change in popups footer
+- blurred tweets coinform logo click now opens the same info popup that lets the user unblur the tweet
+- changed the accuracy label texts in the accuracy sending popup, to specify that the accuracy refers to the tweet
+- added more info about the tweet credibility label in the accuracy sending popup
+- added special text for untagged tweet accuracy sending popup
+
+src/plugin/_locales/en/messages.json
+- new messages for credibility label descriptions
+- text changes in the accuracy sending popup
+
+src/plugin/content/coinform.css
+- minor style changes in the accuracy sending popup
+
+
 ## commit 02/03/2020 [branch: pre_second_review]
 	
 src/js/popup.js
