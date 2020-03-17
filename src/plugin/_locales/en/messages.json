@@ -3,37 +3,37 @@
     "message": "Credible"
   },
   "credible__info": {
-    "message": "We have found evidence that the content is most likely accurate (with high confidence)"
+    "message": "We have found evidence that the &#60;content&#62; is most likely accurate (with high confidence)"
   },
   "mostly_credible": {
     "message": "Mostly credible"
   },
   "mostly_credible__info": {
-    "message": "We have found evidence that the content is probably accurate, but also may contain minor inaccuracies (with high confidence)"
+    "message": "We have found evidence that the &#60;content&#62; is probably accurate, but also may contain minor inaccuracies (with high confidence)"
   },
   "credibility_uncertain": {
     "message": "Credibility uncertain"
   },
   "credibility_uncertain__info": {
-    "message": "We have found evidence that the content probably mixes accurate and inaccurate subcontent (with high confidence)"
+    "message": "We have found evidence that the &#60;content&#62; probably mixes accurate and inaccurate &#60;subcontent&#62; (with high confidence)"
   },
   "mostly_not_credible": {
     "message": "Mostly not credible"
   },
   "mostly_not_credible__info": {
-    "message": "We have found evidence that the content is most likely inaccurate (with high confidence)"
+    "message": "We have found evidence that the &#60;content&#62; is most likely inaccurate (with high confidence)"
   },
   "not_credible": {
     "message": "Not credible"
   },
   "not_credible__info": {
-    "message": "We have found evidence that the content is most likely inaccurate (with high confidence)"
+    "message": "We have found evidence that the &#60;content&#62; is most likely inaccurate (with high confidence)"
   },
   "not_verifiable": {
     "message": "Not verifiable"
   },
   "not_verifiable__info": {
-    "message": "The content does not contain verifiable claims (it's all opinions or speculations), or we could not find sufficient evidence supporting/refuting the claims, or we could not link the content to the evidence with sufficient confidence"
+    "message": "Either the &#60;content&#62; does not contain verifiable claims (it's all opinions or speculations), or we could not find sufficient evidence supporting/refuting the claims, or we could not link the &#60;content&#62; to the evidence with sufficient confidence"
   },
   "tweet_not_tagged": {
     "message": "This tweet is not tagged"
@@ -212,6 +212,15 @@
   "login": {
     "message": "Login"
   },
+  "options": {
+    "message": "Options"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "options_save_ok": {
+    "message": "No options to save"
+  },
   "user_mail": {
     "message": "Your email"
   },
@@ -232,8 +241,5 @@
   },
   "high": {
     "message": "High"
-  },
-  "save": {
-    "message": "Save"
   }
 }

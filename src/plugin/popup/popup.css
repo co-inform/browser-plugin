@@ -203,13 +203,21 @@ body {
   margin-left: 1em;
 }
 
-.coinform-button.coinform-button-primary:after {
+#login-button:after {
   /*content: "\003e";
   font-family: cursive;*/
   content: "\f2f6";
 }
 
-.coinform-button.coinform-button-secondary:after {
+#register-button:after {
+  content: "\f2f6";
+}
+
+#saveOptions-button:after {
+  content: "\f0c7";
+}
+
+#logout-button:after {
   /*content: "\2039 \203a";
   font-family: cursive;*/
   content: "\f2f5";

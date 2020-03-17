@@ -41,6 +41,7 @@
       "resources/coinform_logotext21.png"
     ],
     "permissions": [
+      "cookies",
       "storage",
       "tabs",
       "webNavigation",

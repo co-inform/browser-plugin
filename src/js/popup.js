@@ -9,6 +9,8 @@ let configuration;
 let client;
 let logger;
 
+let coinformUserToken = null;
+
 let logoURL = "/resources/coinform_biglogo.png";
 
 window.addEventListener("load", function(){
@@ -62,6 +64,12 @@ window.addEventListener("load", function(){
     registerAction(registerButton);
   });
   
+  let optionsSaveButton = document.getElementById('saveOptions-button');
+  optionsSaveButton.innerHTML = browserAPI.i18n.getMessage("save");
+  optionsSaveButton.addEventListener('click', (event) => {
+    optionsSaveAction(optionsSaveButton);
+  });
+  
   let registerTabButton = document.getElementById('menu-register');
   registerTabButton.querySelector("span").innerHTML = browserAPI.i18n.getMessage("register");
   registerTabButton.addEventListener('click', (event) => {
@@ -72,6 +80,22 @@ window.addEventListener("load", function(){
   loginTabButton.querySelector("span").innerHTML = browserAPI.i18n.getMessage("login");
   loginTabButton.addEventListener('click', (event) => {
     loginStartAction();
+  });
+  
+  let optionsTabButton = document.getElementById('menu-options');
+  optionsTabButton.querySelector("span").title = browserAPI.i18n.getMessage("options");
+  optionsTabButton.addEventListener('click', (event) => {
+    if (isOptionsDisplayed()) {
+      if (coinformUserToken) {
+        displayLogout();
+      }
+      else {
+        displayLogin();
+      }
+    }
+    else {
+      displayOptions();
+    }
   });
 
 });
@@ -85,6 +109,7 @@ const init = () => {
   browserAPI.storage.local.get(['userToken'], (data) => {
     if (data.userToken) {
       logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${data.userToken}`);
+      coinformUserToken = data.userToken;
       displayLogout();
     }
     else {
@@ -100,13 +125,16 @@ const displayLogin = () => {
   document.getElementById('menu-notlogged').style.display = "flex";
   document.getElementById('menu-register').classList.remove("actual");
   document.getElementById('menu-login').classList.add("actual");
+  document.getElementById('menu-options').classList.remove("actual");
 
   document.getElementById('register-form').style.display = "none";
   document.getElementById('login-form').style.display = "grid";
+  document.getElementById('options-form').style.display = "none";
 
   document.getElementById('logout-button').style.display = "none";
   document.getElementById('register-button').style.display = "none";
   document.getElementById('login-button').style.display = "block";
+  document.getElementById('saveOptions-button').style.display = "none";
 };
 
 const displayLogout = () => {
@@ -114,13 +142,16 @@ const displayLogout = () => {
   document.getElementById('menu-notlogged').style.display = "none";
   document.getElementById('menu-register').classList.remove("actual");
   document.getElementById('menu-login').classList.remove("actual");
+  document.getElementById('menu-options').classList.remove("actual");
 
   document.getElementById('login-form').style.display = "none";
   document.getElementById('register-form').style.display = "none";
+  document.getElementById('options-form').style.display = "none";
 
   document.getElementById('login-button').style.display = "none";
   document.getElementById('register-button').style.display = "none";
   document.getElementById('logout-button').style.display = "block";
+  document.getElementById('saveOptions-button').style.display = "none";
 };
 
 const displayRegister = () => {
@@ -128,14 +159,39 @@ const displayRegister = () => {
   document.getElementById('menu-notlogged').style.display = "flex";
   document.getElementById('menu-register').classList.add("actual");
   document.getElementById('menu-login').classList.remove("actual");
+  document.getElementById('menu-options').classList.remove("actual");
 
   document.getElementById('login-form').style.display = "none";
   document.getElementById('register-form').style.display = "grid";
+  document.getElementById('options-form').style.display = "none";
 
   document.getElementById('login-button').style.display = "none";
   document.getElementById('register-button').style.display = "block";
   document.getElementById('logout-button').style.display = "none";
+  document.getElementById('saveOptions-button').style.display = "none";
 };
+
+const displayOptions = () => {
+  document.getElementById('menu-logged').style.display = "flex";
+  document.getElementById('menu-notlogged').style.display = "none";
+  document.getElementById('menu-register').classList.remove("actual");
+  document.getElementById('menu-login').classList.remove("actual");
+  document.getElementById('menu-options').classList.add("actual");
+
+  document.getElementById('login-form').style.display = "none";
+  document.getElementById('register-form').style.display = "none";
+  document.getElementById('options-form').style.display = "block";
+
+  document.getElementById('login-button').style.display = "none";
+  document.getElementById('register-button').style.display = "none";
+  document.getElementById('logout-button').style.display = "none";
+  document.getElementById('saveOptions-button').style.display = "block";
+};
+
+const isOptionsDisplayed = () => {
+  return (document.getElementById('menu-options').classList.contains("actual"));
+};
+
 
 // Parse login, comunicate with API and save user to Chrome local Storage.
 const loginAction = (targetButton) => {
@@ -172,6 +228,7 @@ const loginAction = (targetButton) => {
           let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
           logger.logMessage(CoInformLogger.logTypes.info, "Login succesful");
           browserAPI.storage.local.set({'userToken': resToken});
+          coinformUserToken = resToken;
           showMessage("ok", "login_ok", 1000);
           setTimeout(function() {
             displayLogout();
@@ -254,6 +311,53 @@ const registerAction = (targetButton) => {
 
 };
 
+const optionsSaveAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+    
+  targetButton.disabled = true;
+
+  browserAPI.cookies.set({
+    url: configuration.coinform.apiUrl,
+    name: "coinform-test-cookie",
+    value: "test ok"
+  });
+
+  browserAPI.cookies.get({
+    url: configuration.coinform.apiUrl,
+    name: "coinform-test-cookie"
+  }, cookie => {
+    if (cookie) {
+      logger.logMessage(CoInformLogger.logTypes.debug, "Test Cookie saved ok");
+    }
+  });
+
+  browserAPI.runtime.sendMessage({
+    contentScriptQuery: "GetCookie",
+    cookieName: "coinform-test-cookie"
+  }, function(cookie) {
+    if (cookie) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `Cookie recovered: ${cookie.value}`);
+    }
+  });
+
+  logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
+  showMessage("ok", "options_save_ok", 2000);
+  setTimeout(function() {
+    if (coinformUserToken) {
+      displayLogout();
+    }
+    else {
+      displayLogin();
+    }
+    targetButton.disabled = false;
+  }, 1000);
+
+};
+
+
 const showMessage = (type, label, time) => {
   let span = document.getElementById(label);
   if (!span) {
@@ -300,6 +404,7 @@ const logoutAction = (targetButton) => {
   targetButton.disabled = true;
 
   browserAPI.storage.local.remove(['userToken']);
+  coinformUserToken = null;
   logger.logMessage(CoInformLogger.logTypes.info, "Logout succesful");
   showMessage("ok", "logout_ok", 1000);
 

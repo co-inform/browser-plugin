@@ -97,6 +97,7 @@ const start = () => {
     parser.listenForNewPosts(newFacebookPostCallback);
 
   }
+
 };
 
 const publishTweetCallback = (clickEvent, targetButton) => {
@@ -365,6 +366,7 @@ const parseApiResponse = (data, tweetInfo) => {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `${resStatus} response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
 
+  // If the result ststus is "done" or "partly_done", then we can classify (final or temporary, respectively) the tweet
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
     acurracyLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');

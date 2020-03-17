@@ -205,7 +205,7 @@ const getTweetInfo = (tweet, num) => {
 
   // Get the tweet User Id
   let userNode = querySelectorContains(tweet, usernameSelectors[selectorUserCase], /^\@/);
-  if (userNode) {
+  if (userNode && userNode.length) {
     user = userNode[0].textContent.replace(/\@/, '');
   }
 

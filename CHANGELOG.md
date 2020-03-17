@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 17/03/2020 [branch: pre_second_review]
+
+src/js/background-script.js
+- moved the requests code to functions to make the code more clear
+- added background request to get a cookie value, as cookies values are mandatory to be managed in the background
+
+src/js/popup.js
+- added listeners and basic ui interaction for the options menu button
+- implemented basic options code that sets and recover a cookie through the background script
+
+src/js/tweet-parser.js
+- minor bug fixed when tweet user html node was not found
+
+src/plugin/_locales/en/messages.json
+- credibility labels description messages changes
+- basic popup options messages added
+
+src/plugin/manifest.json
+- cookies permission added
+
+src/plugin/popup/popup.css
+- basic popup buttons icons
+
+src/plugin/popup/popup.html
+- basic popup options html
+
+
 ## commit 03/03/2020 [branch: pre_second_review]
 
 src/js/browser-plugin.js
