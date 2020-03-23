@@ -15,6 +15,10 @@
   filter: blur(4px);
   opacity: .6;
 }
+[coinform-untrusted] div > div:nth-child(1) > div:nth-child(3) {
+  filter: blur(4px);
+  opacity: .6;
+}
 /* Case for the main tweet when we are in a tweet page */
 [coinform-untrusted] > div > div:not(:first-child):not(:nth-child(2)):not(:last-child) {
   filter: blur(4px);
