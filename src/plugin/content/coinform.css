@@ -216,7 +216,7 @@
 
 .coinformTweetLogo {
   position: relative;
-  align-self: flex-end;
+  align-self: flex-start;
   padding-right: 10px;
   cursor: pointer;
 }
