@@ -61,36 +61,59 @@ browserAPI.storage.onChanged.addListener(function(changes, namespace) {
 const listenerRuntime = function(request, sender, sendResponse) {
 
   if (request.contentScriptQuery === "ConfigureBackground") {
-    
-    if (request.coinformApiUrl) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `Configuring client API url: ${request.coinformApiUrl}`);
-      client = new CoinformClient(fetch, request.coinformApiUrl);
-    }
-    if (request.logLevel) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `Configuring Log level: ${request.logLevel}`);
-      logger = new CoInformLogger(CoInformLogger.logTypes[request.logLevel]);
-    }
-
+    configureBackground(request, sender, sendResponse);
   }
   else if (request.contentScriptQuery === "RetryAPIQuery") {
-
-    logger.logMessage(CoInformLogger.logTypes.debug, `Retrying API query (id ${request.queryId})`, sender.id);
-
-    if (!client) {
-      if (request.coinformApiUrl) {
-        client = new CoinformClient(fetch, request.coinformApiUrl);
-      }
-      else if (configuration.coinform.apiUrl) {
-        client = new CoinformClient(fetch, configuration.coinform.apiUrl);
-      }
-    }
-
-    client.getResponseTweetInfo(request.queryId).then(res => sendResponse(res)).catch(err => {
-      logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, sender.id);
-      // console.error(err);
-    });
-
+    retryAPIQuery(request, sender, sendResponse);
   }
+  else if (request.contentScriptQuery === "GetCookie") {
+    getCookie(request, sender, sendResponse);
+  }
+
   return true;
+
+};
+
+const configureBackground = function(request, sender, sendResponse) {
+
+  if (request.coinformApiUrl) {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Configuring client API url: ${request.coinformApiUrl}`);
+    client = new CoinformClient(fetch, request.coinformApiUrl);
+  }
+  if (request.logLevel) {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Configuring Log level: ${request.logLevel}`);
+    logger = new CoInformLogger(CoInformLogger.logTypes[request.logLevel]);
+  }
+
+};
+
+const retryAPIQuery = function(request, sender, sendResponse) {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Retrying API query (id ${request.queryId})`, sender.id);
+
+  if (!client) {
+    if (request.coinformApiUrl) {
+      client = new CoinformClient(fetch, request.coinformApiUrl);
+    }
+    else if (configuration.coinform.apiUrl) {
+      client = new CoinformClient(fetch, configuration.coinform.apiUrl);
+    }
+  }
+
+  client.getResponseTweetInfo(request.queryId).then(res => sendResponse(res)).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, sender.id);
+    // console.error(err);
+  });
+
+};
+
+const getCookie = function(request, sender, sendResponse) {
+    
+  if (request.cookieName) {
+    browserAPI.cookies.get({
+      url: configuration.coinform.apiUrl,
+      name: request.cookieName
+    }, cookie => sendResponse(cookie));
+  }
 
 };

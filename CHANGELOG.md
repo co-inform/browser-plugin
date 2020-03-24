@@ -2,6 +2,100 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## commit 17/03/2020 [branch: pre_second_review]
+
+src/js/background-script.js
+- moved the requests code to functions to make the code more clear
+- added background request to get a cookie value, as cookies values are mandatory to be managed in the background
+
+src/js/popup.js
+- added listeners and basic ui interaction for the options menu button
+- implemented basic options code that sets and recover a cookie through the background script
+
+src/js/tweet-parser.js
+- minor bug fixed when tweet user html node was not found
+
+src/plugin/_locales/en/messages.json
+- credibility labels description messages changes
+- basic popup options messages added
+
+src/plugin/manifest.json
+- cookies permission added
+
+src/plugin/popup/popup.css
+- basic popup buttons icons
+
+src/plugin/popup/popup.html
+- basic popup options html
+
+
+## commit 03/03/2020 [branch: pre_second_review]
+
+src/js/browser-plugin.js
+- minor ui design change in popups footer
+- blurred tweets coinform logo click now opens the same info popup that lets the user unblur the tweet
+- changed the accuracy label texts in the accuracy sending popup, to specify that the accuracy refers to the tweet
+- added more info about the tweet credibility label in the accuracy sending popup
+- added special text for untagged tweet accuracy sending popup
+
+src/plugin/_locales/en/messages.json
+- new messages for credibility label descriptions
+- text changes in the accuracy sending popup
+
+src/plugin/content/coinform.css
+- minor style changes in the accuracy sending popup
+
+
+## commit 02/03/2020 [branch: pre_second_review]
+	
+src/js/popup.js
+- new login design workflow
+
+src/plugin/popup/popup.html
+- new login design html structure (with 2 tabs for login/register)
+
+src/plugin/popup/popup.css
+- new login design styles (with 2 tabs for login/register)
+
+src/plugin/_locales/en/messages.json
+- new messages for new login design
+
+
+## commit 26/02/2020 (2) [branch: pre_second_review]
+
+src/js/coinform-client.js
+- added userToken to the communication with the TwitterEvaluate endpoint
+- fixed path bug for the login and register endpoints
+- changed the structure of the return object from the endpoints queries to be able to parse the response status code in the callback function
+
+src/js/browser-plugin.js
+- working on await functionality
+- parse the publish tweet text to check and get if the user is posting an url
+- new listener and basic logging function for retweet action
+- adapted the API comunications callback functions for the new returned object with the response status code
+- new function for checking if as tweet is blurred or not
+- changes to the popup opened by the click action to the "cannot see" button, and now also to the tweet label
+- now the popup has buttons to let unblur and also re-blur a tweet that has been blurred by the system
+
+src/js/tweet-parser.js
+- new listener for retweet action
+
+src/plugin/content/coinform.css
+- pointer cursor for the new clickable tweet label
+
+
+## commit 26/02/2020 (1) [branch: pre_second_review]
+
+package.json
+- added proper css dependencies for bootstrap and fontawesome
+- adapted the package build scripts with the new dependencies and using subscripts
+
+src/plugin/manifest.json
+- css resources moved to new folder
+- new logo for upcoming new login popup design
+
+
 ## commit 07/02/2020 [branch: hackathon_stockholm]
 
 src/js/background-script.js

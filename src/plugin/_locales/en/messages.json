@@ -3,40 +3,43 @@
     "message": "Credible"
   },
   "credible__info": {
-    "message": "Reputable source with no disagreement and no related false claims"
+    "message": "We have found evidence that the &#60;content&#62; is most likely accurate (with high confidence)"
   },
   "mostly_credible": {
     "message": "Mostly credible"
   },
   "mostly_credible__info": {
-    "message": "Reputable source with little disagreement and related false claims"
+    "message": "We have found evidence that the &#60;content&#62; is probably accurate, but also may contain minor inaccuracies (with high confidence)"
   },
   "credibility_uncertain": {
     "message": "Credibility uncertain"
   },
   "credibility_uncertain__info": {
-    "message": "Mixture of reputability and disagreement associated to claim reviews"
+    "message": "We have found evidence that the &#60;content&#62; probably mixes accurate and inaccurate &#60;subcontent&#62; (with high confidence)"
   },
   "mostly_not_credible": {
     "message": "Mostly not credible"
   },
   "mostly_not_credible__info": {
-    "message": "Not credible source"
+    "message": "We have found evidence that the &#60;content&#62; is most likely inaccurate (with high confidence)"
   },
   "not_credible": {
     "message": "Not credible"
   },
   "not_credible__info": {
-    "message": "Not credible source with high disagreement"
+    "message": "We have found evidence that the &#60;content&#62; is most likely inaccurate (with high confidence)"
   },
   "not_verifiable": {
     "message": "Not verifiable"
   },
   "not_verifiable__info": {
-    "message": "Not verifiable"
+    "message": "Either the &#60;content&#62; does not contain verifiable claims (it's all opinions or speculations), or we could not find sufficient evidence supporting/refuting the claims, or we could not link the &#60;content&#62; to the evidence with sufficient confidence"
   },
   "tweet_not_tagged": {
     "message": "This tweet is not tagged"
+  },
+  "tweet_not_tagged__info": {
+    "message": "This tweet has not yet been tagged by the system"
   },
   "accurate": {
     "message": "Accurate"
@@ -75,13 +78,22 @@
     "message": "Why can't I see this?"
   },
   "tweet_tagged_as": {
-    "message": "This tweet has been tagged as $1"
+    "message": "This tweet has been tagged as: $1"
+  },
+  "tweet_is": {
+    "message": "This tweet is $1"
   },
   "see_tweet": {
     "message": "See tweet anyways"
   },
+  "blur_tweet": {
+    "message": "Blur tweet again"
+  },
   "provide_claim": {
-    "message": "If you think this is not accurate please provide a claim and a URL to a post that supports that claim"
+    "message": "If you think this is not accurate please provide a claim and a link to a post that supports that claim"
+  },
+  "provide_claim_untagged": {
+    "message": "If you want you can provide a claim and a link to a post that supports that claim"
   },
   "provide_claim_with_login": {
     "message": "If you think this is not accurate you can provide a claim by logging in with your Co-Inform user"
@@ -91,6 +103,9 @@
   },
   "ok": {
     "message": "Ok"
+  },
+  "close": {
+    "message": "Close"
   },
   "submit": {
     "message": "Submit"
@@ -104,6 +119,12 @@
   "choose_claim": {
     "message": "Choose a claim"
   },
+  "link_to_claim": {
+    "message": "Link to your claim"
+  },
+  "additional_info": {
+    "message": "Additional info"
+  },
   "please_choose_claim": {
     "message": "Please choose a claim"
   },
@@ -111,10 +132,13 @@
     "message": "The url introduced is not valid"
   },
   "provide_url": {
-    "message": "Please provide a URL"
+    "message": "Please provide a link to your claim"
   },
   "provide_additional_info": {
-    "message": "Please provide some additional information in the comment"
+    "message": "Please provide some additional information"
+  },
+  "popup_footer_text": {
+    "message": "Think - Check - Share"
   },
   "sent": {
     "message": "Sent!"
@@ -127,6 +151,9 @@
   },
   "feedback_not_sent": {
     "message": "Your feedback was not sent"
+  },
+  "popup_plugin_title": {
+    "message": "Plugin for collecting twitter sources"
   },
   "login_title": {
     "message": "Co-Inform Login"
@@ -182,20 +209,26 @@
   "register": {
     "message": "Register"
   },
-  "register_form": {
-    "message": "Register form"
+  "login": {
+    "message": "Login"
   },
-  "login_form": {
-    "message": "Login form"
+  "options": {
+    "message": "Options"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "options_save_ok": {
+    "message": "No options to save"
   },
   "user_mail": {
-    "message": "User email"
+    "message": "Your email"
   },
   "password": {
-    "message": "Password"
+    "message": "Your Password"
   },
   "retype_password": {
-    "message": "Retype password"
+    "message": "Retype your password"
   },
   "misinformation_restriction_level": {
     "message": "Misinforming restriction level"
@@ -208,8 +241,5 @@
   },
   "high": {
     "message": "High"
-  },
-  "save": {
-    "message": "Save"
   }
 }

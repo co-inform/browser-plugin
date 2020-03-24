@@ -18,8 +18,8 @@ CoinformClient.prototype = {
     return getResponseTweet(this.baseURL + '/response/' + queryID.replace(/['"]+/g, ''));
   },
 
-  postTwitterEvaluate: function (tweetId, evaluation) {
-    return postEvaluate(this.baseURL + '/twitter/evaluate/', tweetId, evaluation);
+  postTwitterEvaluate: function (tweetId, evaluation, userToken) {
+    return postEvaluate(this.baseURL + '/twitter/evaluate/', tweetId, evaluation, userToken);
   },
 
   getDomainDetails: function (domain) {
@@ -31,15 +31,15 @@ CoinformClient.prototype = {
   },
 
   postUserLogin: function (email, password) {
-    return postLogin(this.baseURL + '/twitter/login/', email, password);
+    return postLogin(this.baseURL + '/login/', email, password);
   },
 
   postUserRegister: function (email, password) {
-    return postRegister(this.baseURL + '/twitter/register/', email, password);
+    return postRegister(this.baseURL + '/register/', email, password);
   }
 };
 
-function postEvaluate(path, tweetId, evaluation) {
+function postEvaluate(path, tweetId, evaluation, userToken) {
 
   const data = {tweet_id: tweetId, evaluation: evaluation};
 
@@ -49,6 +49,7 @@ function postEvaluate(path, tweetId, evaluation) {
       mode: 'cors',
       body: JSON.stringify(data),
       headers: {
+        'Authorization': 'Bearer ' + userToken,
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(JSON.stringify(data)),
@@ -56,7 +57,10 @@ function postEvaluate(path, tweetId, evaluation) {
         'rejectUnauthorized': false
       }
     })
-      .then(res => res.json())
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
       .then(res => resolve(res))
       .catch(err => reject(err));
   });
@@ -80,7 +84,10 @@ function postCheckTweet(path, tweetId, author, tweetText) {
         'rejectUnauthorized': false
       }
     })
-      .then(res => res.json())
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
       .then(res => resolve(res))
       .catch(err => reject(err));
   });
@@ -99,7 +106,10 @@ function getResponseTweet(path) {
         'rejectUnauthorized': false
       }
     })
-      .then(res => res.json())
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
       .then(res => resolve(res))
       .catch(err => reject(err));
   });
@@ -110,7 +120,10 @@ function getHttpRequest(path) {
 
   return new Promise((resolve, reject) => {
     f(path)
-      .then(res => res.json())
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
       .then(res => resolve(res))
       .catch(err => reject(err));
   });
@@ -134,7 +147,10 @@ function postLogin(path, email, password) {
         'rejectUnauthorized': false
       }
     })
-      .then(res => res.json())
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
       .then(res => resolve(res))
       .catch(err => reject(err));
   });
@@ -158,7 +174,10 @@ function postRegister(path, email, password) {
         'rejectUnauthorized': false
       }
     })
-      .then(res => res.json())
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
       .then(res => resolve(res))
       .catch(err => reject(err));
   });
