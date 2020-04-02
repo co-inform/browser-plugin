@@ -192,7 +192,7 @@
     "message": "Something went wrong during the registration. Try again"
   },
   "register_ok": {
-    "message": "User succesfully registered. You will receive an email with instruccions to validate your account. You need to validate the account prior to log in."
+    "message": "User succesfully registered. You will receive an email with instructions to validate your account. You need to validate the account prior to log in."
   },
   "register_error": {
     "message": "Register unknown error"
