@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 02/04/2020 [branch: EU18COI-133-134-135-login-register-improvements]
+
+src/js/coinform-client.js
+- new API gateway endpoints for forgot passwor reset, user logged password change, and logout
+
+src/js/popup.js
+- added code for forgot passwor reset, user logged password change, and logout
+
+src/plugin/_locales/en/messages.json
+- new messages for the login, registering and account info and actions
+
+src/plugin/popup/popup.css
+- new css styles for login and registering UX design inputs
+
+src/plugin/popup/popup.html
+- new html elements and structure for new login and register features
+- new html element for user logged account information and password change
+
+
 ## commit 17/03/2020 [branch: pre_second_review]
 
 src/js/background-script.js

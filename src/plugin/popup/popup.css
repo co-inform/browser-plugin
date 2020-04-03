@@ -17,6 +17,7 @@ body {
   position: relative;
   padding: 0.5em;
   padding-top: 0;
+  height: 65px;
 }
 
 #popup-header .logo {
@@ -33,18 +34,18 @@ body {
   font-size: 0.9em;
   margin-top: 0;
   color: #693c5e;
-  width: 68%;
+  width: calc(100% - 140px);
 }
 
 #popup-menu {
   clear: both;
-  width: 100%;
+  width: auto;
   background-color: #693c5e;
   padding: 0.5em;
   margin-bottom: 20px;
 }
 
-#popup-menu > div {
+#menu-notlogged {
   display: flex;
   justify-content: space-between;
 }
@@ -94,6 +95,11 @@ body {
   content: "\f234";
 }
 
+#menu-account > span::before {
+  margin-right: 0px;
+  content: "\f007";
+}
+
 #menu-options > span::before {
   margin-right: 0px;
   content: "\f013";
@@ -105,6 +111,15 @@ body {
 
 #popup-menu .menu-item.actual, #popup-menu .menu-item:hover {
   background-color: #8f6384;
+}
+
+#menu-logged {
+  display: inline-block;
+  width: 100%;
+}
+
+#menu-logged .menu-item {
+  float: right;
 }
 
 .form-control label::before {
@@ -125,6 +140,8 @@ body {
 }
 
 .form-control-group {
+  display: grid;
+  clear: both;
   margin: 1em 2em 1em;
 }
 
@@ -136,7 +153,8 @@ body {
   float: left;
   width: 90%;
   outline: 0;
-  border: 0;
+  border-width: 0 0 2px;
+  background-color: white;
 }
 
 .form-control:not(:last-child) {
@@ -145,6 +163,15 @@ body {
 
 .form-control:last-child {
   margin-bottom: 1em;
+}
+
+.form-info-text {
+  margin-bottom: 1em;
+}
+
+.form-bottom-text {
+  font-size: 0.8em;
+  margin-top: 1em;
 }
 
 .clearBoth {
@@ -189,7 +216,7 @@ body {
   background-color: #a0a0a073;
 }
 
-.coinform-button:after {
+.coinform-button::after {
   position: absolute;
   opacity: 0;
   transition: 0.5s;
@@ -203,27 +230,23 @@ body {
   margin-left: 1em;
 }
 
-#login-button:after {
-  /*content: "\003e";
-  font-family: cursive;*/
+#login-button::after {
   content: "\f2f6";
 }
 
-#register-button:after {
+#register-button::after {
   content: "\f2f6";
 }
 
-#saveOptions-button:after {
+#saveOptions-button::after {
   content: "\f0c7";
 }
 
-#logout-button:after {
-  /*content: "\2039 \203a";
-  font-family: cursive;*/
+#logout-button::after {
   content: "\f2f5";
 }
 
-.coinform-button:hover:after {
+.coinform-button:hover::after {
   opacity: 1;
 }
 
@@ -258,13 +281,25 @@ body {
   background-color: #FFBABA;
 }
 
-.form-control-group {
-  clear: both;
-  display: none;
+.popup-message-close {
+  cursor: pointer;
+  position: relative;
+  float: right;
+  margin-right: 5px;
+}
+
+.popup-message-close::after {
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-size: 0.8em;
+  font-display: auto;
+  content: "\f00c";
 }
 
 .form-buttons {
   clear: both;
+  margin-top: 10px;
   height: 32px;
 }
 
@@ -273,4 +308,17 @@ body {
   display: block;
   box-shadow: 2px 3px 5px #888888;
   width: 40%;
+}
+
+.popup-link-text {
+  cursor: pointer;
+  color: #62B9AF;
+  text-decoration: underline;
+}
+.popup-link-text:hover {
+  text-decoration: none;
+}
+
+.hidden {
+  display: none !important;
 }

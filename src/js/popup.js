@@ -40,6 +40,14 @@ window.addEventListener("load", function(){
   document.getElementById('register-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
   document.getElementById('register-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
   document.getElementById('register-auth-pass2').placeholder = browserAPI.i18n.getMessage("retype_password");
+  document.getElementById('account-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
+  document.getElementById('account-auth-newpass').placeholder = browserAPI.i18n.getMessage("new_password");
+  document.getElementById('account-auth-newpass2').placeholder = browserAPI.i18n.getMessage("retype_new_password");
+  document.getElementById('account-change-pass-info').innerHTML = browserAPI.i18n.getMessage("change_password_info");
+  document.getElementById('account-info-title').innerHTML = browserAPI.i18n.getMessage("account_information");
+  document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("options_title");
+  document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
+  document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
 
   let img = document.createElement("IMG");
   img.classList.add("logo");
@@ -52,6 +60,24 @@ window.addEventListener("load", function(){
     loginAction(loginButton);
   });
   
+  let forgotPasswordLink = document.getElementById('forgot-pass-question');
+  forgotPasswordLink.innerHTML = browserAPI.i18n.getMessage("forgot_password_question");
+  forgotPasswordLink.addEventListener('click', (event) => {
+    forgotPasswordAction(forgotPasswordLink);
+  });
+  
+  let loginAnswerLink = document.getElementById('login-answer');
+  loginAnswerLink.innerHTML = browserAPI.i18n.getMessage("sign_up");
+  loginAnswerLink.addEventListener('click', (event) => {
+    registerStartAction();
+  });
+  
+  let registerAnswerLink = document.getElementById('register-login-answer');
+  registerAnswerLink.innerHTML = browserAPI.i18n.getMessage("login");
+  registerAnswerLink.addEventListener('click', (event) => {
+    loginStartAction();
+  });
+  
   let logoutButton = document.getElementById('logout-button');
   logoutButton.innerHTML = browserAPI.i18n.getMessage("log_out");
   logoutButton.addEventListener('click', (event) => {
@@ -62,6 +88,12 @@ window.addEventListener("load", function(){
   registerButton.innerHTML = browserAPI.i18n.getMessage("register");
   registerButton.addEventListener('click', (event) => {
     registerAction(registerButton);
+  });
+  
+  let changePasswordButton = document.getElementById('changePassword-button');
+  changePasswordButton.innerHTML = browserAPI.i18n.getMessage("change");
+  changePasswordButton.addEventListener('click', (event) => {
+    changePasswordAction(changePasswordButton);
   });
   
   let optionsSaveButton = document.getElementById('saveOptions-button');
@@ -80,6 +112,22 @@ window.addEventListener("load", function(){
   loginTabButton.querySelector("span").innerHTML = browserAPI.i18n.getMessage("login");
   loginTabButton.addEventListener('click', (event) => {
     loginStartAction();
+  });
+  
+  let accountTabButton = document.getElementById('menu-account');
+  accountTabButton.querySelector("span").title = browserAPI.i18n.getMessage("account");
+  accountTabButton.addEventListener('click', (event) => {
+    if (isAccountDisplayed()) {
+      if (coinformUserToken) {
+        displayLogout();
+      }
+      else {
+        displayLogin();
+      }
+    }
+    else {
+      displayAccount();
+    }
   });
   
   let optionsTabButton = document.getElementById('menu-options');
@@ -106,10 +154,12 @@ const init = () => {
   logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
   client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
-  browserAPI.storage.local.get(['userToken'], (data) => {
-    if (data.userToken) {
+  browserAPI.storage.local.get(['userToken', 'userMail'], (data) => {
+    if (data.userToken && data.userMail) {
       logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${data.userToken}`);
       coinformUserToken = data.userToken;
+      coinformUserMail = data.userMail;
+      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
       displayLogout();
     }
     else {
@@ -120,76 +170,52 @@ const init = () => {
 
 };
 
+const resetAllDisplays = () => {
+  document.querySelectorAll("#popup-menu > .menu-toolbar").forEach(el => el.classList.add("hidden"));
+  document.querySelectorAll("#popup-menu > .menu-toolbar > .menu-item").forEach(el => el.classList.remove("actual"));
+  document.querySelectorAll(".form-control-group").forEach(el => el.classList.add("hidden"));
+};
+
 const displayLogin = () => {
-  document.getElementById('menu-logged').style.display = "none";
-  document.getElementById('menu-notlogged').style.display = "flex";
-  document.getElementById('menu-register').classList.remove("actual");
+  resetAllDisplays();
+  document.getElementById('menu-notlogged').classList.remove("hidden");
   document.getElementById('menu-login').classList.add("actual");
-  document.getElementById('menu-options').classList.remove("actual");
-
-  document.getElementById('register-form').style.display = "none";
-  document.getElementById('login-form').style.display = "grid";
-  document.getElementById('options-form').style.display = "none";
-
-  document.getElementById('logout-button').style.display = "none";
-  document.getElementById('register-button').style.display = "none";
-  document.getElementById('login-button').style.display = "block";
-  document.getElementById('saveOptions-button').style.display = "none";
+  document.getElementById('login-form').classList.remove("hidden");
 };
 
 const displayLogout = () => {
-  document.getElementById('menu-logged').style.display = "flex";
-  document.getElementById('menu-notlogged').style.display = "none";
-  document.getElementById('menu-register').classList.remove("actual");
-  document.getElementById('menu-login').classList.remove("actual");
-  document.getElementById('menu-options').classList.remove("actual");
-
-  document.getElementById('login-form').style.display = "none";
-  document.getElementById('register-form').style.display = "none";
-  document.getElementById('options-form').style.display = "none";
-
-  document.getElementById('login-button').style.display = "none";
-  document.getElementById('register-button').style.display = "none";
-  document.getElementById('logout-button').style.display = "block";
-  document.getElementById('saveOptions-button').style.display = "none";
+  resetAllDisplays();
+  document.getElementById('menu-logged').classList.remove("hidden");
+  document.getElementById('registered-div').classList.remove("hidden");
 };
 
 const displayRegister = () => {
-  document.getElementById('menu-logged').style.display = "none";
-  document.getElementById('menu-notlogged').style.display = "flex";
+  resetAllDisplays();
+  document.getElementById('menu-notlogged').classList.remove("hidden");
   document.getElementById('menu-register').classList.add("actual");
-  document.getElementById('menu-login').classList.remove("actual");
-  document.getElementById('menu-options').classList.remove("actual");
-
-  document.getElementById('login-form').style.display = "none";
-  document.getElementById('register-form').style.display = "grid";
-  document.getElementById('options-form').style.display = "none";
-
-  document.getElementById('login-button').style.display = "none";
-  document.getElementById('register-button').style.display = "block";
-  document.getElementById('logout-button').style.display = "none";
-  document.getElementById('saveOptions-button').style.display = "none";
+  document.getElementById('register-form').classList.remove("hidden");
 };
 
 const displayOptions = () => {
-  document.getElementById('menu-logged').style.display = "flex";
-  document.getElementById('menu-notlogged').style.display = "none";
-  document.getElementById('menu-register').classList.remove("actual");
-  document.getElementById('menu-login').classList.remove("actual");
+  resetAllDisplays();
+  document.getElementById('menu-logged').classList.remove("hidden");
   document.getElementById('menu-options').classList.add("actual");
+  document.getElementById('options-form').classList.remove("hidden");
+};
 
-  document.getElementById('login-form').style.display = "none";
-  document.getElementById('register-form').style.display = "none";
-  document.getElementById('options-form').style.display = "block";
-
-  document.getElementById('login-button').style.display = "none";
-  document.getElementById('register-button').style.display = "none";
-  document.getElementById('logout-button').style.display = "none";
-  document.getElementById('saveOptions-button').style.display = "block";
+const displayAccount = () => {
+  resetAllDisplays();
+  document.getElementById('menu-logged').classList.remove("hidden");
+  document.getElementById('menu-account').classList.add("actual");
+  document.getElementById('account-form').classList.remove("hidden");
 };
 
 const isOptionsDisplayed = () => {
   return (document.getElementById('menu-options').classList.contains("actual"));
+};
+
+const isAccountDisplayed = () => {
+  return (document.getElementById('menu-account').classList.contains("actual"));
 };
 
 
@@ -227,8 +253,11 @@ const loginAction = (targetButton) => {
         if (data.token) {
           let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
           logger.logMessage(CoInformLogger.logTypes.info, "Login succesful");
+          browserAPI.storage.local.set({'userMail': userMail});
           browserAPI.storage.local.set({'userToken': resToken});
           coinformUserToken = resToken;
+          coinformUserMail = userMail;
+          document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
           showMessage("ok", "login_ok", 1000);
           setTimeout(function() {
             displayLogout();
@@ -289,7 +318,7 @@ const registerAction = (targetButton) => {
       else if (resStatus.localeCompare('201') === 0) {
         let data = res.data;
         logger.logMessage(CoInformLogger.logTypes.info, "Register succesful");
-        showMessage("ok", "register_ok", 2000);
+        showMessage("ok", "register_ok");
         setTimeout(function() {
           displayLogin();
           targetButton.disabled = false;
@@ -311,6 +340,59 @@ const registerAction = (targetButton) => {
 
 };
 
+const logoutAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  if (!coinformUserToken) {
+    showMessage("err", "logout_error", 2000);
+  }
+  else {
+    
+    targetButton.disabled = true;
+
+    client.postUserLogout(coinformUserToken).then(function (res) {
+
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      // Discard requests with 400 http return codes
+      if (resStatus.localeCompare('401') === 0) {
+        logger.logMessage(CoInformLogger.logTypes.warning, "Logout 400 response");
+        showMessage("err", "logout_problem", 2000);
+        targetButton.disabled = false;
+      }
+      else if (resStatus.localeCompare('200') === 0) {
+
+        browserAPI.storage.local.remove(['userMail']);
+        browserAPI.storage.local.remove(['userToken']);
+        coinformUserToken = null;
+        coinformUserMail = null;
+        logger.logMessage(CoInformLogger.logTypes.info, "Logout succesful");
+        showMessage("ok", "logout_ok", 1000);
+
+        setTimeout(function() {
+          displayLogin();
+          targetButton.disabled = false;
+        }, 1000);
+
+      }
+      else {
+        logger.logMessage(CoInformLogger.logTypes.error, `Logout unknown (${resStatus}) response`);
+        showMessage("err", "logout_error", 2000);
+        targetButton.disabled = false;
+      }
+
+    }).catch(err => {
+      logger.logMessage(CoInformLogger.logTypes.error, "Logout exception: "+JSON.stringify(err));
+      showMessage("err", "logout_error", 2000);
+      targetButton.disabled = false;
+    });
+
+  }
+
+};
+
 const optionsSaveAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -319,7 +401,7 @@ const optionsSaveAction = (targetButton) => {
     
   targetButton.disabled = true;
 
-  browserAPI.cookies.set({
+  /*browserAPI.cookies.set({
     url: configuration.coinform.apiUrl,
     name: "coinform-test-cookie",
     value: "test ok"
@@ -341,7 +423,7 @@ const optionsSaveAction = (targetButton) => {
     if (cookie) {
       logger.logMessage(CoInformLogger.logTypes.debug, `Cookie recovered: ${cookie.value}`);
     }
-  });
+  });*/
 
   logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
   showMessage("ok", "options_save_ok", 2000);
@@ -357,6 +439,110 @@ const optionsSaveAction = (targetButton) => {
 
 };
 
+const changePasswordAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+  
+  if (!coinformUserToken) {
+    showMessage("err", "change_password_error", 2000);
+  }
+  else {
+
+    const userPass = document.querySelector('input[name="account-userpass"]').value || null;
+    const userNewPass = document.querySelector('input[name="account-usernewpass"]').value || null;
+    const userNewPass2 = document.querySelector('input[name="account-usernewpass2"]').value || null;
+
+    if (!userPass || !userNewPass  || !userNewPass2 || (userNewPass !== userNewPass2) || !validatePass(userPass) || !validatePass(userNewPass)) {
+      showMessage("err", "password_not_valid_info", 4000);
+    }
+    else {
+      
+      targetButton.disabled = true;
+
+      client.postUserChangePass(userPass, userNewPass, coinformUserToken).then(function (res) {
+
+        let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+        // Discard requests with 400 http return codes
+        if ((resStatus.localeCompare('401') === 0) || (resStatus.localeCompare('403') === 0)) {
+          logger.logMessage(CoInformLogger.logTypes.warning, `ChangePass ${resStatus} response`);
+          showMessage("err", "change_password_problem", 2000);
+          targetButton.disabled = false;
+        }
+        else if (resStatus.localeCompare('200') === 0) {
+          let data = res.data;
+          logger.logMessage(CoInformLogger.logTypes.info, "ChangePass succesful");
+          showMessage("ok", "change_password_ok", 2000);
+          setTimeout(function() {
+            displayLogout();
+            targetButton.disabled = false;
+          }, 1000);
+        }
+        else {
+          logger.logMessage(CoInformLogger.logTypes.error, `ChangePass unknown (${resStatus}) response`);
+          showMessage("err", "change_password_error", 2000);
+          targetButton.disabled = false;
+        }
+
+      }).catch(err => {
+        logger.logMessage(CoInformLogger.logTypes.error, "ChangePass exception: "+JSON.stringify(err));
+        showMessage("err", "change_password_error", 2000);
+        targetButton.disabled = false;
+      });
+
+    }
+
+  }
+
+};
+
+const forgotPasswordAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  const userMail = document.querySelector('input[name="login-usermail"]').value || null;
+
+  if (!userMail) {
+    showMessage("err", "provide_mail", 2000);
+  }
+  else if (!validateEmail(userMail)) {
+    showMessage("err", "mail_not_valid", 2000);
+  }
+  else {
+    
+    targetButton.disabled = true;
+
+    client.postUserForgotPass(userMail).then(function (res) {
+
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      // Discard requests with 400 http return codes
+      if (resStatus.localeCompare('400') === 0) {
+        logger.logMessage(CoInformLogger.logTypes.warning, "ForgotPass 400 response");
+        showMessage("err", "forgot_password_problem", 2000);
+      }
+      else if (resStatus.localeCompare('200') === 0) {
+        let data = res.data;
+        logger.logMessage(CoInformLogger.logTypes.info, "ForgotPass succesful");
+        showMessage("ok", "forgot_password_ok");
+      }
+      else {
+        logger.logMessage(CoInformLogger.logTypes.error, `ForgotPass unknown (${resStatus}) response`);
+        showMessage("err", "forgot_password_error", 2000);
+      }
+      targetButton.disabled = false;
+
+    }).catch(err => {
+      logger.logMessage(CoInformLogger.logTypes.error, "ForgotPass exception: "+JSON.stringify(err));
+      showMessage("err", "forgot_password_error", 2000);
+      targetButton.disabled = false;
+    });
+
+  }
+
+};
 
 const showMessage = (type, label, time) => {
   let span = document.getElementById(label);
@@ -366,8 +552,14 @@ const showMessage = (type, label, time) => {
     span.setAttribute("id", label);
     span.classList.add("popup-message");
     span.classList.add(type);
-    let auxtxt = document.createTextNode(browserAPI.i18n.getMessage(label));
-    span.append(auxtxt);
+    span.append(document.createTextNode(browserAPI.i18n.getMessage(label)));
+    let auxclose = document.createElement("SPAN");
+    //auxclose.append(document.createTextNode("&times;"));
+    auxclose.classList.add("popup-message-close");
+    auxclose.addEventListener('click', (event) => {
+      clearMessage(span);
+    });
+    span.append(auxclose);
     $(span).hide();
     msgDiv.append(span);
     $(span).fadeIn(500);
@@ -394,25 +586,6 @@ const clearAllMessages = () => {
   while (msgDiv.firstChild) {
     msgDiv.removeChild(msgDiv.firstChild);
   }
-};
-
-const logoutAction = (targetButton) => {
-  
-  if (targetButton.disabled) {
-    return false;
-  }
-  targetButton.disabled = true;
-
-  browserAPI.storage.local.remove(['userToken']);
-  coinformUserToken = null;
-  logger.logMessage(CoInformLogger.logTypes.info, "Logout succesful");
-  showMessage("ok", "logout_ok", 1000);
-
-  setTimeout(function() {
-    displayLogin();
-    targetButton.disabled = false;
-  }, 1000);
-
 };
 
 const registerStartAction = () => {

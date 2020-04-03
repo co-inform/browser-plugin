@@ -153,7 +153,7 @@
     "message": "Your feedback was not sent"
   },
   "popup_plugin_title": {
-    "message": "Plugin for collecting twitter sources"
+    "message": "The plugin that helps you Think - Check - Share on Twitter"
   },
   "login_title": {
     "message": "Co-Inform Login"
@@ -163,6 +163,9 @@
   },
   "register_title": {
     "message": "Co-Inform Register"
+  },
+  "provide_mail": {
+    "message": "You must provide your email"
   },
   "mail_not_valid": {
     "message": "The text introduced is not a valid email"
@@ -189,7 +192,7 @@
     "message": "Something went wrong during the registration. Try again"
   },
   "register_ok": {
-    "message": "User succesfully registered. Now you can log in"
+    "message": "User succesfully registered. You will receive an email with instructions to validate your account. You need to validate the account prior to log in."
   },
   "register_error": {
     "message": "Register unknown error"
@@ -199,6 +202,12 @@
   },
   "logout_ok": {
     "message": "User succesfully logged out"
+  },
+  "logout_problem": {
+    "message": "Something went wrong during the logout. Try again"
+  },
+  "logout_error": {
+    "message": "Logout unknown error"
   },
   "log_in": {
     "message": "Log In"
@@ -212,8 +221,14 @@
   "login": {
     "message": "Login"
   },
+  "account": {
+    "message": "Account"
+  },
   "options": {
     "message": "Options"
+  },
+  "change": {
+    "message": "Change"
   },
   "save": {
     "message": "Save"
@@ -225,10 +240,16 @@
     "message": "Your email"
   },
   "password": {
-    "message": "Your Password"
+    "message": "Your password"
   },
   "retype_password": {
     "message": "Retype your password"
+  },
+  "new_password": {
+    "message": "Your new password"
+  },
+  "retype_new_password": {
+    "message": "Retype your new password"
   },
   "misinformation_restriction_level": {
     "message": "Misinforming restriction level"
@@ -241,5 +262,44 @@
   },
   "high": {
     "message": "High"
+  },
+  "change_password_problem": {
+    "message": "Something went wrong during the password change. Try again"
+  },
+  "change_password_ok": {
+    "message": "User succesfully changed the password"
+  },
+  "change_password_error": {
+    "message": "Change password unknown error"
+  },
+  "forgot_password_ok": {
+    "message": "A mail has been sent to recover your password"
+  },
+  "forgot_password_problem": {
+    "message": "Something went wrong during the forgot password request. Try again"
+  },
+  "forgot_password_error": {
+    "message": "Forgot password unknown error"
+  },
+  "change_password_info": {
+    "message": "Here you can change your password"
+  },
+  "forgot_password_question": {
+    "message": "Forgot your password?"
+  },
+  "account_information": {
+    "message": "Account information"
+  },
+  "options_title": {
+    "message": "No Options yet"
+  },
+  "dont_have_account_question": {
+    "message": "Don't have an account?"
+  },
+  "already_have_account_question": {
+    "message": "Already have an account?"
+  },
+  "sign_up": {
+    "message": "Sign Up"
   }
 }
