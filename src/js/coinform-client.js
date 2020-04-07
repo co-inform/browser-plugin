@@ -42,6 +42,10 @@ CoinformClient.prototype = {
     return postRegister(this.baseURL + '/register/', email, password);
   },
 
+  postRenewUserToken: function (userToken) {
+    return postRenewToken(this.baseURL + '/renew-token/', userToken);
+  },
+
   postUserChangePass: function (password, newpassword, userToken) {
     return postChangePass(this.baseURL + '/change-password/', password, newpassword, userToken);
   },
@@ -226,6 +230,34 @@ function postChangePass(path, password, newpassword, userToken) {
 }
 
 function postLogout(path, userToken) {
+  
+  // const data = {};
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'GET',
+      // mode: 'cors',
+      // body: JSON.stringify(data),
+      headers: {
+        'Authorization': 'Bearer ' + userToken,
+        'Accept': 'application/json',
+        // 'Content-Type': 'application/json',
+        // 'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
+
+function postRenewToken(path, userToken) {
   
   // const data = {};
 

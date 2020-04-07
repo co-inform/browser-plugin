@@ -22,6 +22,7 @@ let client;
 let parser;
 
 let coinformUserToken = null;
+let coinformUserMail = null;
 
 //Read the configuration file and if it was successful, start
 fetch(browserAPI.runtime.getURL('../resources/config.json'), {
@@ -42,29 +43,43 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
     console.error('Could not load configuration file', err)
   });
 
-browserAPI.storage.local.get(['userToken'], (data) => {
-  if (data.userToken) {
-    coinformUserToken = data.userToken;
+browserAPI.runtime.sendMessage({
+  messageId: "GetCookie",
+  cookieName: "userToken"
+}, function(cookie) {
+  if (cookie) {
+    logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Token: ${cookie.value}`);
+    coinformUserToken = cookie.value;
+  }
+  else {
+    logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
   }
 });
 
-browserAPI.storage.onChanged.addListener(function(changes, namespace) {
-  for (let key in changes) {
-    if (key === "userToken") {
-      let storageChange = changes[key];
-      if (storageChange.newValue) {
-        if (logger) {
-          logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${storageChange.newValue}`);
-        }
-        coinformUserToken = storageChange.newValue;
-      }
-      else {
-        if (logger) {
-          logger.logMessage(CoInformLogger.logTypes.info, `User logged out: ${storageChange.oldValue}`);
-        }
-        coinformUserToken = null;
-      }
-    }
+browserAPI.runtime.sendMessage({
+  messageId: "GetCookie",
+  cookieName: "userMail"
+}, function(cookie) {
+  if (cookie) {
+    logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Mail: ${cookie.value}`);
+    coinformUserMail = cookie.value;
+  }
+});
+
+browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.messageId === "userLogin") {
+    logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`);
+    coinformUserToken = request.jwt;
+    coinformUserMail = request.userMail;
+  }
+  else if (request.messageId === "userLogout") {
+    logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
+    coinformUserToken = null;
+    coinformUserMail = null;
+  }
+  else if (request.messageId === "renewUserToken") {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
+    coinformUserToken = request.jwt;
   }
 });
 
@@ -75,11 +90,6 @@ const start = () => {
 
   logoURL = browserAPI.extension.getURL(logoURL);
   minlogoURL = browserAPI.extension.getURL(minlogoURL);
-
-  browserAPI.runtime.sendMessage({
-    contentScriptQuery: "ConfigureBackground", 
-    coinformApiUrl: configuration.coinform.apiUrl
-  });
 
   if (window.location.hostname.indexOf('twitter.com') >= 0) {
 
@@ -325,8 +335,7 @@ const retryTweetQuery = (tweetInfo, queryId) => {
     tweetInfo.domObject.coInfoCounter++;
 
     browserAPI.runtime.sendMessage({
-      contentScriptQuery: "RetryAPIQuery",
-      coinformApiUrl: configuration.coinform.apiUrl,
+      messageId: "RetryAPIQuery",
       queryId: queryId
     }, function(res) {
 
@@ -342,18 +351,6 @@ const retryTweetQuery = (tweetInfo, queryId) => {
       }
 
     });
-
-    /*function (err) {
-
-      logger.logMessage(CoInformLogger.logTypes.error, `Request Error (${tweetInfo.domObject.coInfoCounter}): ${err}`, tweetInfo.id);
-      // console.error(err);
-
-      // Call retry in random (between 0.5 and 2.5) seconds
-      setTimeout(function() {
-        retryTweetQuery(tweetInfo, queryId);
-      }, randomInt(500, 2500));
-
-    });*/
 
   }
 
