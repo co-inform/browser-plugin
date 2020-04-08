@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 07/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
+
+package.json
+package-lock.json
+- added dependency for jwt decrypt
+
+src/js/background-script.js
+- implemented the user logged session managing through the cookies
+- added listeners and functions for cookie managing through the background script
+- added listeners and functions for API gateway communications for logging in, logging out and registering
+- added timers and function for user logged token renew
+- added back message communications to the tabs content scripts for communicating when a user has been logged in, logged out, or token renewed
+
+src/js/browser-plugin.js
+- checking initial user logged status through background script and the cookies
+- added listener for message communications from the background script when a user has been logged in, logged out, or token renewed
+
+src/js/popup.js
+- checking initial user logged status through background script and the cookies
+- added listener for message communications from the background script when a user has been logged in, logged out, or token renewed
+- migrated the API gateway communications, and session cookies managing, for login, logout and registering, to the background script
+
+src/js/coinform-client.js
+- new API gateway endpoint for renew-token
+
+
 ## commit 02/04/2020 [branch: EU18COI-133-134-135-login-register-improvements]
 
 src/js/coinform-client.js

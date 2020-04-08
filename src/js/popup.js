@@ -10,6 +10,7 @@ let client;
 let logger;
 
 let coinformUserToken = null;
+let coinformUserMail = null;
 
 let logoURL = "/resources/coinform_biglogo.png";
 
@@ -34,6 +35,7 @@ window.addEventListener("load", function(){
       console.error('Could not load configuration file', err)
     });
 
+  // Set language messages to the HTML
   document.getElementById('popup-title').innerHTML = browserAPI.i18n.getMessage("popup_plugin_title");
   document.getElementById('login-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
   document.getElementById('login-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
@@ -49,11 +51,13 @@ window.addEventListener("load", function(){
   document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
 
+  // Set the header logo image
   let img = document.createElement("IMG");
   img.classList.add("logo");
   img.setAttribute("src", logoURL);
   document.getElementById('popup-header').prepend(img);
 
+  // Set Texts and Bind Actions to the buttons and clickable elements
   let loginButton = document.getElementById('login-button');
   loginButton.innerHTML = browserAPI.i18n.getMessage("log_in");
   loginButton.addEventListener('click', (event) => {
@@ -148,18 +152,21 @@ window.addEventListener("load", function(){
 
 });
 
-// Init the login form
+// Init the popup page with logged/not-logged status
 const init = () => {
+
+  resetAllDisplays();
 
   logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
   client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
-  browserAPI.storage.local.get(['userToken', 'userMail'], (data) => {
-    if (data.userToken && data.userMail) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${data.userToken}`);
-      coinformUserToken = data.userToken;
-      coinformUserMail = data.userMail;
-      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
+  browserAPI.runtime.sendMessage({
+    messageId: "GetCookie",
+    cookieName: "userToken"
+  }, function(cookie) {
+    if (cookie) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Token: ${cookie.value}`);
+      coinformUserToken = cookie.value;
       displayLogout();
     }
     else {
@@ -168,8 +175,39 @@ const init = () => {
     }
   });
 
+  browserAPI.runtime.sendMessage({
+    messageId: "GetCookie",
+    cookieName: "userMail"
+  }, function(cookie) {
+    if (cookie) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Mail: ${cookie.value}`);
+      coinformUserMail = cookie.value;
+      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
+    }
+  });
+
+  browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.messageId === "userLogin") {
+      logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`);
+      coinformUserToken = request.jwt;
+      coinformUserMail = request.userMail;
+      document.querySelector('input[name="account-usermail"]').value = request.userMail;
+    }
+    else if (request.messageId === "userLogout") {
+      logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
+      coinformUserToken = null;
+      coinformUserMail = null;
+      document.querySelector('input[name="account-usermail"]').value = null;
+    }
+    else if (request.messageId === "renewUserToken") {
+      logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
+      coinformUserToken = request.jwt;
+    }
+  });
+
 };
 
+// Functions for changing through interface displayed
 const resetAllDisplays = () => {
   document.querySelectorAll("#popup-menu > .menu-toolbar").forEach(el => el.classList.add("hidden"));
   document.querySelectorAll("#popup-menu > .menu-toolbar > .menu-item").forEach(el => el.classList.remove("actual"));
@@ -219,7 +257,7 @@ const isAccountDisplayed = () => {
 };
 
 
-// Parse login, comunicate with API and save user to Chrome local Storage.
+// Parse login form, comunicate with API and save user token
 const loginAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -238,8 +276,12 @@ const loginAction = (targetButton) => {
   else {
 
     targetButton.disabled = true;
-
-    client.postUserLogin(userMail, userPass).then(function (res) {
+    
+    browserAPI.runtime.sendMessage({
+      messageId: "LogIn",
+      userMail: userMail,
+      userPass: userPass
+    }, function(res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
       // Discard requests with 400 http return codes
@@ -249,15 +291,11 @@ const loginAction = (targetButton) => {
         targetButton.disabled = false;
       }
       else if (resStatus.localeCompare('200') === 0) {
+        // The login response JWT parse and cookies is managed through the background script
         let data = res.data;
         if (data.token) {
-          let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
-          logger.logMessage(CoInformLogger.logTypes.info, "Login succesful");
-          browserAPI.storage.local.set({'userMail': userMail});
-          browserAPI.storage.local.set({'userToken': resToken});
-          coinformUserToken = resToken;
-          coinformUserMail = userMail;
-          document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
+          logger.logMessage(CoInformLogger.logTypes.info, "Login successful");
+          // Other login actuations are managed through the userLogin message listener
           showMessage("ok", "login_ok", 1000);
           setTimeout(function() {
             displayLogout();
@@ -276,16 +314,13 @@ const loginAction = (targetButton) => {
         targetButton.disabled = false;
       }
 
-    }).catch(err => {
-      logger.logMessage(CoInformLogger.logTypes.error, "Login exception: "+JSON.stringify(err));
-      showMessage("err", "login_error", 2000);
-      targetButton.disabled = false;
     });
 
   }
   
 };
 
+// Parse Register form, and comunicate with API
 const registerAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -305,8 +340,12 @@ const registerAction = (targetButton) => {
   else {
     
     targetButton.disabled = true;
-
-    client.postUserRegister(userMail, userPass).then(function (res) {
+    
+    browserAPI.runtime.sendMessage({
+      messageId: "Register",
+      userMail: userMail,
+      userPass: userPass
+    }, function(res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
       // Discard requests with 400 http return codes
@@ -316,8 +355,7 @@ const registerAction = (targetButton) => {
         targetButton.disabled = false;
       }
       else if (resStatus.localeCompare('201') === 0) {
-        let data = res.data;
-        logger.logMessage(CoInformLogger.logTypes.info, "Register succesful");
+        logger.logMessage(CoInformLogger.logTypes.info, "Register successful");
         showMessage("ok", "register_ok");
         setTimeout(function() {
           displayLogin();
@@ -330,16 +368,13 @@ const registerAction = (targetButton) => {
         targetButton.disabled = false;
       }
 
-    }).catch(err => {
-      logger.logMessage(CoInformLogger.logTypes.error, "Register exception: "+JSON.stringify(err));
-      showMessage("err", "register_error", 2000);
-      targetButton.disabled = false;
     });
 
   }
 
 };
 
+// Comunicate with API for Logout
 const logoutAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -352,8 +387,11 @@ const logoutAction = (targetButton) => {
   else {
     
     targetButton.disabled = true;
-
-    client.postUserLogout(coinformUserToken).then(function (res) {
+    
+    browserAPI.runtime.sendMessage({
+      messageId: "LogOut",
+      userToken: coinformUserToken
+    }, function(res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
       // Discard requests with 400 http return codes
@@ -363,14 +401,10 @@ const logoutAction = (targetButton) => {
         targetButton.disabled = false;
       }
       else if (resStatus.localeCompare('200') === 0) {
-
-        browserAPI.storage.local.remove(['userMail']);
-        browserAPI.storage.local.remove(['userToken']);
-        coinformUserToken = null;
-        coinformUserMail = null;
-        logger.logMessage(CoInformLogger.logTypes.info, "Logout succesful");
+        // The logout response parse and cookies is managed through the background script
+        logger.logMessage(CoInformLogger.logTypes.info, "Logout successful");
+        // Other logout actuations are managed through the userLogout message listener
         showMessage("ok", "logout_ok", 1000);
-
         setTimeout(function() {
           displayLogin();
           targetButton.disabled = false;
@@ -383,16 +417,13 @@ const logoutAction = (targetButton) => {
         targetButton.disabled = false;
       }
 
-    }).catch(err => {
-      logger.logMessage(CoInformLogger.logTypes.error, "Logout exception: "+JSON.stringify(err));
-      showMessage("err", "logout_error", 2000);
-      targetButton.disabled = false;
     });
 
   }
 
 };
 
+// Parse Options form, and do the appropriate actions
 const optionsSaveAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -401,29 +432,7 @@ const optionsSaveAction = (targetButton) => {
     
   targetButton.disabled = true;
 
-  /*browserAPI.cookies.set({
-    url: configuration.coinform.apiUrl,
-    name: "coinform-test-cookie",
-    value: "test ok"
-  });
-
-  browserAPI.cookies.get({
-    url: configuration.coinform.apiUrl,
-    name: "coinform-test-cookie"
-  }, cookie => {
-    if (cookie) {
-      logger.logMessage(CoInformLogger.logTypes.debug, "Test Cookie saved ok");
-    }
-  });
-
-  browserAPI.runtime.sendMessage({
-    contentScriptQuery: "GetCookie",
-    cookieName: "coinform-test-cookie"
-  }, function(cookie) {
-    if (cookie) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `Cookie recovered: ${cookie.value}`);
-    }
-  });*/
+  //TODO: here we can implement options save action
 
   logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
   showMessage("ok", "options_save_ok", 2000);
@@ -439,6 +448,7 @@ const optionsSaveAction = (targetButton) => {
 
 };
 
+// Parse Account Change Password form, and communicate with API
 const changePasswordAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -472,7 +482,7 @@ const changePasswordAction = (targetButton) => {
         }
         else if (resStatus.localeCompare('200') === 0) {
           let data = res.data;
-          logger.logMessage(CoInformLogger.logTypes.info, "ChangePass succesful");
+          logger.logMessage(CoInformLogger.logTypes.info, "ChangePass successful");
           showMessage("ok", "change_password_ok", 2000);
           setTimeout(function() {
             displayLogout();
@@ -497,6 +507,7 @@ const changePasswordAction = (targetButton) => {
 
 };
 
+// Parse the Login email form, and communicate with API
 const forgotPasswordAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -525,7 +536,7 @@ const forgotPasswordAction = (targetButton) => {
       }
       else if (resStatus.localeCompare('200') === 0) {
         let data = res.data;
-        logger.logMessage(CoInformLogger.logTypes.info, "ForgotPass succesful");
+        logger.logMessage(CoInformLogger.logTypes.info, "ForgotPass successful");
         showMessage("ok", "forgot_password_ok");
       }
       else {
@@ -544,6 +555,20 @@ const forgotPasswordAction = (targetButton) => {
 
 };
 
+const registerStartAction = () => {
+  displayRegister();
+};
+
+const loginStartAction = () => {
+  displayLogin();
+};
+
+/**
+ * Show a message on the page with a check button for removing it.
+ * @param {} type type of message (info/error) changeable through CSS
+ * @param {*} label label text of the message, defined in the language file
+ * @param {*} time optional time for the message, after which it will be automaticly removed
+ */
 const showMessage = (type, label, time) => {
   let span = document.getElementById(label);
   if (!span) {
@@ -586,14 +611,6 @@ const clearAllMessages = () => {
   while (msgDiv.firstChild) {
     msgDiv.removeChild(msgDiv.firstChild);
   }
-};
-
-const registerStartAction = () => {
-  displayRegister();
-};
-
-const loginStartAction = () => {
-  displayLogin();
 };
 
 function validateEmail(email) {
