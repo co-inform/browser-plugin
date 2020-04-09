@@ -72,6 +72,9 @@ const listenerRuntime = function(request, sender, sendResponse) {
   else if (request.messageId === "Register") {
     registerAPI(request, sender.id, sendResponse);
   }
+  else if (request.messageId === "CheckUrl") {
+    checkUrlAPI(request, sender.id, sendResponse);
+  }
 
   return true;
 
@@ -310,6 +313,17 @@ const registerAPI = function(request, scriptId, registerCallback) {
   logger.logMessage(CoInformLogger.logTypes.debug, `Registering (user ${request.userMail})`, scriptId);
 
   client.postUserRegister(request.userMail, request.userPass).then(res => registerCallback(res)).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
+    // console.error(err);
+  });
+
+};
+
+const checkUrlAPI = function(request, scriptId, checkUrlCallback) {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Check URL: ${request.url}`, scriptId);
+
+  client.getCheckUrlInfo(request.url).then(res => checkUrlCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
     // console.error(err);
   });

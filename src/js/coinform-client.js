@@ -18,6 +18,10 @@ CoinformClient.prototype = {
     return getResponseTweet(this.baseURL + '/response/' + queryID.replace(/['"]+/g, ''));
   },
 
+  getCheckUrlInfo: function (url) {
+    return getCheckUrl(this.baseURL + '/check-url/', url);
+  },
+
   postTwitterEvaluate: function (tweetId, evaluation, userToken) {
     return postEvaluate(this.baseURL + '/twitter/evaluate/', tweetId, evaluation, userToken);
   },
@@ -118,7 +122,6 @@ function getResponseTweet(path) {
       // mode: 'cors',
       headers: {
         'Accept': 'application/json',
-        // 'Content-Type': 'application/json',
         'Connection': 'keep-alive',
         'rejectUnauthorized': false
       }
@@ -131,6 +134,46 @@ function getResponseTweet(path) {
       .catch(err => reject(err));
   });
 
+}
+
+function getCheckUrl(path, url) {
+
+  const data = {source: url};
+  const urlParams = buildUrl(path, data);
+
+  return new Promise((resolve, reject) => {
+    f(urlParams, {
+      method: 'GET',
+      // mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
+
+function buildUrl(url, parameters) {
+  let qs = "";
+  for (const key in parameters) {
+    if (parameters.hasOwnProperty(key)) {
+      const value = parameters[key];
+      qs += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
+    }
+  }
+  if (qs.length > 0) {
+    qs = qs.substring(0, qs.length - 1); //chop off last "&"
+    url = url + "?" + qs;
+  }
+  return url;
 }
 
 function getHttpRequest(path) {

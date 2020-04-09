@@ -74,6 +74,15 @@
   "checking_tweet_coinform": {
     "message": "Checking tweet info with CoInform"
   },
+  "content_tagged_as": {
+    "message": "Detected content tagged as $1"
+  },
+  "url_detected_misinformation": {
+    "message": "The following URL is detected to be $1:"
+  },
+  "check_content_before_publish": {
+    "message": "Please, check the content of the URL again before shareing it."
+  },
   "why_cant_see": {
     "message": "Why can't I see this?"
   },

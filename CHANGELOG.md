@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 08/04/2020 [branch: EU18COI-123-Implement-the-Await-nudging-strategy]
+
+src/js/background-script.js
+- new listener and function for the communication with the API gateway endpoint "check-url"
+
+src/js/browser-plugin.js
+- implementing await functionality
+- implemented the new "check-url" API gateway endpoint communicating through the background script
+- implemented functions for the actuations after the url has been checked
+
+src/js/coinform-client.js
+- new API gateway endpoint for "check-url"
+
+src/plugin/_locales/en/messages.json
+- new messages for the await functionality
+
+
 ## commit 07/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
 
 package.json
