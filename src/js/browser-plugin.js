@@ -24,7 +24,7 @@ let parser;
 let coinformUserToken = null;
 let coinformUserMail = null;
 
-//Read the configuration file and if it was successful, start
+// Read the configuration file and if it was successful, start
 fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   mode: 'cors',
   header: {
@@ -43,29 +43,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
     console.error('Could not load configuration file', err)
   });
 
-browserAPI.runtime.sendMessage({
-  messageId: "GetCookie",
-  cookieName: "userToken"
-}, function(cookie) {
-  if (cookie) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Token: ${cookie.value}`);
-    coinformUserToken = cookie.value;
-  }
-  else {
-    logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
-  }
-});
-
-browserAPI.runtime.sendMessage({
-  messageId: "GetCookie",
-  cookieName: "userMail"
-}, function(cookie) {
-  if (cookie) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Mail: ${cookie.value}`);
-    coinformUserMail = cookie.value;
-  }
-});
-
+// Set listener for background scrpit messages
 browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.messageId === "userLogin") {
     logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`);
@@ -83,6 +61,7 @@ browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse)
   }
 });
 
+// Initialize objects, variables, and listeners
 const start = () => {
 
   logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
@@ -91,21 +70,41 @@ const start = () => {
   logoURL = browserAPI.extension.getURL(logoURL);
   minlogoURL = browserAPI.extension.getURL(minlogoURL);
 
-  if (window.location.hostname.indexOf('twitter.com') >= 0) {
+  browserAPI.runtime.sendMessage({
+    messageId: "GetCookie",
+    cookieName: "userToken"
+  }, function(cookie) {
+    if (cookie) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Token: ${cookie.value}`);
+      coinformUserToken = cookie.value;
+    }
+    else {
+      logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
+    }
+  });
+  
+  browserAPI.runtime.sendMessage({
+    messageId: "GetCookie",
+    cookieName: "userMail"
+  }, function(cookie) {
+    if (cookie) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Mail: ${cookie.value}`);
+      coinformUserMail = cookie.value;
+    }
+  });
 
+  if (window.location.hostname.indexOf('twitter.com') >= 0) {
     parser = new TweetParser();
     parser.initContext();
     parser.listenForMainChanges(newTweetCallback);
     parser.listenPublishTweet(publishTweetCallback);
     parser.listenRetweetTweet(retweetTweetCallback);
     parser.triggerFirstTweetBatch(newTweetCallback);
-
-  } else if (window.location.hostname.indexOf('facebook.com') >= 0) {
-
+  }
+  else if (window.location.hostname.indexOf('facebook.com') >= 0) {
     parser = new FacebookParser();
     parser.fromBrowser(newFacebookPostCallback);
     parser.listenForNewPosts(newFacebookPostCallback);
-
   }
 
 };
@@ -330,7 +329,8 @@ const retryTweetQuery = (tweetInfo, queryId) => {
     logger.logMessage(CoInformLogger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet.`, tweetInfo.id);
     return false;
 
-  } else {
+  }
+  else {
 
     tweetInfo.domObject.coInfoCounter++;
 
@@ -359,19 +359,19 @@ const retryTweetQuery = (tweetInfo, queryId) => {
 const parseApiResponse = (data, tweetInfo) => {
 
   let resStatus = JSON.stringify(data.status).replace(/['"]+/g, '');
-  let acurracyLabel = null;
+  let credibilityLabel = null;
 
   logger.logMessage(CoInformLogger.logTypes.debug, `${resStatus} response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
 
   // If the result ststus is "done" or "partly_done", then we can classify (final or temporary, respectively) the tweet
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
-    acurracyLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
-    classifyTweet(tweetInfo, acurracyLabel);
+    credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
+    classifyTweet(tweetInfo, credibilityLabel);
   }
   if (resStatus && (resStatus.localeCompare('done') === 0)) {
     // Tweet analyzed
-    pluginCache[tweetInfo.id] = acurracyLabel;
+    pluginCache[tweetInfo.id] = credibilityLabel;
     tweetInfo.domObject.coInfoAnalyzed = true;
   }
   else {
@@ -413,10 +413,10 @@ const classifyPost = (post, score) => {
 
 };
 
-const classifyTweet = (tweet, accuracyLabel) => {
+const classifyTweet = (tweet, credibilityLabel) => {
 
   const node = tweet.domObject;
-  const label = accuracyLabel.replace(/['"]+/g, '');
+  const label = credibilityLabel.replace(/['"]+/g, '');
 
   if (!node.coInformLabel || (node.coInformLabel.localeCompare(label) !== 0)) {
 
@@ -437,16 +437,15 @@ const classifyTweet = (tweet, accuracyLabel) => {
     if (!newCategory) {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`, tweet.id);
     }
-    else if (newCategory.localeCompare("blur") === 0) {
-      createTweetLabel(tweet, label, function() {
-        openLabelPopup(tweet);
-      });
-      createTweetBlurry(tweet);
-    }
-    else if (newCategory.localeCompare("label") === 0) {
-      createTweetLabel(tweet, label, function() {
-        openLabelPopup(tweet);
-      });
+    else {
+      if ((newCategory.localeCompare("blur") === 0) || (newCategory.localeCompare("label") === 0)) {
+        createTweetLabel(tweet, label, function() {
+          openLabelPopup(tweet);
+        });
+      }
+      if (newCategory.localeCompare("blur") === 0) {
+        createTweetBlurry(tweet);
+      }
     }
 
   }

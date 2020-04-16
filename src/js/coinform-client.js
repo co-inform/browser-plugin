@@ -42,8 +42,8 @@ CoinformClient.prototype = {
     return postRegister(this.baseURL + '/register/', email, password);
   },
 
-  postRenewUserToken: function (userToken) {
-    return postRenewToken(this.baseURL + '/renew-token/', userToken);
+  postRenewUserToken: function () {
+    return postRenewToken(this.baseURL + '/renew-token/');
   },
 
   postUserChangePass: function (password, newpassword, userToken) {
@@ -118,7 +118,6 @@ function getResponseTweet(path) {
       // mode: 'cors',
       headers: {
         'Accept': 'application/json',
-        // 'Content-Type': 'application/json',
         'Connection': 'keep-alive',
         'rejectUnauthorized': false
       }
@@ -230,19 +229,14 @@ function postChangePass(path, password, newpassword, userToken) {
 }
 
 function postLogout(path, userToken) {
-  
-  // const data = {};
 
   return new Promise((resolve, reject) => {
     f(path, {
       method: 'GET',
       // mode: 'cors',
-      // body: JSON.stringify(data),
       headers: {
         'Authorization': 'Bearer ' + userToken,
         'Accept': 'application/json',
-        // 'Content-Type': 'application/json',
-        // 'Content-Length': Buffer.byteLength(JSON.stringify(data)),
         'Connection': 'keep-alive',
         'rejectUnauthorized': false
       }
@@ -257,20 +251,14 @@ function postLogout(path, userToken) {
 
 }
 
-function postRenewToken(path, userToken) {
-  
-  // const data = {};
+function postRenewToken(path) {
 
   return new Promise((resolve, reject) => {
     f(path, {
       method: 'GET',
       // mode: 'cors',
-      // body: JSON.stringify(data),
       headers: {
-        'Authorization': 'Bearer ' + userToken,
         'Accept': 'application/json',
-        // 'Content-Type': 'application/json',
-        // 'Content-Length': Buffer.byteLength(JSON.stringify(data)),
         'Connection': 'keep-alive',
         'rejectUnauthorized': false
       }

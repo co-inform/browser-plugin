@@ -5,6 +5,11 @@ const CoInformLogger = require('./coinform-logger');
 
 const browserAPI = chrome || browser;
 
+// Retry a total of 6 times (6 * 5sec = 30sec)
+const MAX_TOKEN_RENEW_RETRIES = 6;
+const TOKEN_RENEW_RETRY_TIME = 5000;
+const TOKEN_RENEW_BEFORE_TIME = 30000;
+
 let configuration;
 let client;
 let logger;
@@ -37,6 +42,12 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
         else if (cookies[i].name == "userMail") coinformUserMail = cookies[i].value;
       }
       if (coinformUserToken) {
+        let ok = checkAndSaveToken(coinformUserMail, coinformUserToken);
+        if (!ok) {
+          renewUserToken();
+        }
+      }
+      else {
         renewUserToken();
       }
     });
@@ -58,7 +69,7 @@ const listenerRuntime = function(request, sender, sendResponse) {
     getCookie(request.cookieName, sendResponse);
   }
   else if (request.messageId === "SetCookie") {
-    setCookie(request, sendResponse);
+    setCookie(request.cookieData, sendResponse);
   }
   else if (request.messageId === "RemoveCookie") {
     removeCookie(request.cookieName, sendResponse);
@@ -112,61 +123,64 @@ const logInAPI = function(request, scriptId, loginCallback) {
     if (resStatus.localeCompare('200') === 0) {
       let data = res.data;
       if (data.token) {
-        logInOKactions(request.userMail, data.token, scriptId);
+        let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
+        let ok = checkAndSaveToken(request.userMail, resToken, scriptId);
+        if (ok) {
+          logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`, scriptId);
+          coinformUserToken = resToken;
+          coinformUserMail = request.userMail;
+        }
+        else {
+          logger.logMessage(CoInformLogger.logTypes.error, `Token Check Error. Login Aborted`, scriptId);
+        }
       }
       else {
-        logger.logMessage(CoInformLogger.logTypes.error, "Login token error", scriptId);
-        // console.error(err);
+        logger.logMessage(CoInformLogger.logTypes.error, "Login Token Error", scriptId);
       }
     }
     if (loginCallback) loginCallback(res);
 
   }).catch(err => {
-    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
+    logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
     // console.error(err);
   });
 
 };
 
-const logInOKactions = function(userMail, token, scriptId) {
-        
-  let resToken = JSON.stringify(token).replace(/['"]+/g, '');
-  let tokenDecoded = jwtDecode(resToken);
+const checkAndSaveToken = function(userMail, token, scriptId) {
 
+  let res = null;
+  let tokenDecoded = jwtDecode(token);
   const now = new Date();
   const secondsSinceEpoch = Math.round(now.getTime() / 1000);
   if (tokenDecoded.exp < secondsSinceEpoch) {
-    logger.logMessage(CoInformLogger.logTypes.warning, `Request warning: JWT expiring time error`, scriptId);
+    logger.logMessage(CoInformLogger.logTypes.warning, `JWT expiring time passed`, scriptId);
+    res = false;
   }
   else {
-    // set timer to renew the token, 30 seconds before expiring time
-    let timeToRenew = (tokenDecoded.exp - secondsSinceEpoch) - 30000;
+    res = true;
+    setCookie({
+      name: "userToken",
+      value: token,
+      expirationDate: tokenDecoded.exp
+    });
+    setCookie({
+      name: "userMail",
+      value: userMail,
+      expirationDate: tokenDecoded.exp
+    });
+    sendMessageToAllScripts({
+      messageId: "userLogin",
+      userMail: userMail,
+      jwt: token
+    });
+    // set timer to renew the token, TOKEN_RENEW_BEFORE_TIME before expiring time
+    let timeToRenew = ((tokenDecoded.exp - secondsSinceEpoch) * 1000) - TOKEN_RENEW_BEFORE_TIME;
     setTimeout(function() {
       renewUserToken();
     }, timeToRenew);
   }
-
-  setCookie({
-    cookieName: "userToken",
-    cookieValue: resToken,
-    cookieExpirationDate: tokenDecoded.exp
-  });
-  setCookie({
-    cookieName: "userMail",
-    cookieValue: userMail,
-    cookieExpirationDate: tokenDecoded.exp
-  });
-
-  sendMessageToAllScripts({
-    messageId: "userLogin",
-    userMail: userMail,
-    jwt: resToken
-  });
-
-
-  logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${userMail}`, scriptId);
-  coinformUserToken = resToken;
-  coinformUserMail = userMail;
+  return res;
 
 };
 
@@ -189,16 +203,16 @@ const sendMessageToAllScripts = function(message) {
 
 };
 
-const renewUserToken = function() {
+const renewUserToken = function(retryNum = 0) {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `Time to Renew User Token (token ${coinformUserToken})..`);
 
-  client.postRenewUserToken(coinformUserToken).then(res => {
-    
+  client.postRenewUserToken().then(res => {
+
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
     // Discard requests with 400 http return codes
     if (resStatus.localeCompare('404') === 0) {
-      logger.logMessage(CoInformLogger.logTypes.warning, `RenewToken ${resStatus} response. Logging Out..`);
+      logger.logMessage(CoInformLogger.logTypes.warning, `RenewToken ${resStatus} Response. Logging Out..`);
       logOutAPI({
         userToken: coinformUserToken
       });
@@ -206,69 +220,51 @@ const renewUserToken = function() {
     else if (resStatus.localeCompare('200') === 0) {
       let data = res.data;
       if (data.token) {
-        renewTokenOKactions(data.token);
+        //renewTokenOKactions(data.token);
+        let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
+        let ok = checkAndSaveToken(coinformUserMail, resToken);
+        if (ok) {
+          logger.logMessage(CoInformLogger.logTypes.info, `User Token Renewed: ${coinformUserMail}`);
+          coinformUserToken = resToken;
+        }
+        else {
+          logger.logMessage(CoInformLogger.logTypes.error, "RenewToken Token Check Error");
+          retryRenewVsLogout(retryNum);
+        }
       }
       else {
-        logger.logMessage(CoInformLogger.logTypes.error, "RenewToken error. Logging Out..", scriptId);
-        logOutAPI({
-          userToken: coinformUserToken
-        });
+        logger.logMessage(CoInformLogger.logTypes.error, "RenewToken No Token Error");
+        retryRenewVsLogout(retryNum);
       }
     }
     else {
-      logger.logMessage(CoInformLogger.logTypes.error, `RenewToken unknown (${resStatus}) response. Logging Out..`);
-      logOutAPI({
-        userToken: coinformUserToken
-      });
+      logger.logMessage(CoInformLogger.logTypes.error, `RenewToken Unknown (${resStatus}) Response`);
+      retryRenewVsLogout(retryNum);
     }
 
   }).catch(err => {
-    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}. Logging Out..`);
-    logOutAPI({
-      userToken: coinformUserToken
-    });
+    logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`);
     // console.error(err);
+    retryRenewVsLogout(retryNum);
   });
 
 };
 
-const renewTokenOKactions = function(token) {
-        
-  let resToken = JSON.stringify(token).replace(/['"]+/g, '');
-  let tokenDecoded = jwtDecode(resToken);
-
-  const now = new Date();
-  const secondsSinceEpoch = Math.round(now.getTime() / 1000);
-  if (tokenDecoded.exp < secondsSinceEpoch) {
-    logger.logMessage(CoInformLogger.logTypes.warning, `Request warning: JWT expiring time error`);
+const retryRenewVsLogout = function (retryNum) {
+  // check if we did retried a total of MAX_TOKEN_RENEW_RETRIES times
+  if (retryNum < MAX_TOKEN_RENEW_RETRIES) {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Retrying again in short time..`);
+    setTimeout(function() {
+      renewUserToken(retryNum + 1);
+    }, TOKEN_RENEW_RETRY_TIME);
   }
   else {
-    // set timer to renew the token, 30 seconds before expiring time
-    let timeToRenew = (tokenDecoded.exp - secondsSinceEpoch) - 30000;
-    setTimeout(function() {
-      renewUserToken();
-    }, timeToRenew);
+    // if it failed MAX_TOKEN_RENEW_RETRIES times, we do the log out
+    logger.logMessage(CoInformLogger.logTypes.debug, `Too many retries. Logging Out..`);
+    logOutAPI({
+      userToken: coinformUserToken
+    });
   }
-
-  setCookie({
-    cookieName: "userToken",
-    cookieValue: resToken,
-    cookieExpirationDate: tokenDecoded.exp
-  });
-  setCookie({
-    cookieName: "userMail",
-    cookieValue: coinformUserMail,
-    cookieExpirationDate: tokenDecoded.exp
-  });
-
-  sendMessageToAllScripts({
-    messageId: "renewUserToken",
-    jwt: resToken
-  });
-
-  logger.logMessage(CoInformLogger.logTypes.info, `User Token Renewed: ${coinformUserMail}`);
-  coinformUserToken = resToken;
-
 };
 
 const logOutAPI = function(request, scriptId, logoutCallback) {
@@ -328,25 +324,24 @@ const getCookie = function(cookieName, cookieCallback) {
       if (cookieCallback) cookieCallback(cookie)
     });
   }
+  else {
+    logger.logMessage(CoInformLogger.logTypes.error, `Cokkie Get Parameters Error`);
+  }
 
 };
 
 const setCookie = function(data, cookieCallback) {
-    
-  if (data.cookieName && data.cookieValue) {
-    let cookieParams = {
-      url: configuration.coinform.apiUrl,
-      name: data.cookieName,
-      value: data.cookieValue
-    };
-    if (data.cookieExpirationDate) {
-      cookieParams.expirationDate = data.cookieExpirationDate;
-    }
-    browserAPI.cookies.set(cookieParams, cookie => {
+  
+  if (data.name) {
+    data.url = configuration.coinform.apiUrl;
+    browserAPI.cookies.set(data, cookie => {
       if (cookie) logger.logMessage(CoInformLogger.logTypes.debug, `Cookie ${data.cookieName} Set OK: ${cookie.value}`);
       else logger.logMessage(CoInformLogger.logTypes.debug, `Cookie ${data.cookieName} Set Problem`);
       if (cookieCallback) cookieCallback(cookie);
     });
+  }
+  else {
+    logger.logMessage(CoInformLogger.logTypes.error, `Cokkie Set Parameters Error`);
   }
 
 };
@@ -362,6 +357,9 @@ const removeCookie = function(cookieName, cookieCallback) {
       else logger.logMessage(CoInformLogger.logTypes.debug, `Cookie ${cookieName} Not Found`);
       if (cookieCallback) cookieCallback(cookie)
     });
+  }
+  else {
+    logger.logMessage(CoInformLogger.logTypes.error, `Cokkie Remove Parameters Error`);
   }
 
 };
