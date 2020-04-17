@@ -16,6 +16,7 @@ let logger;
 
 let coinformUserToken = null;
 let coinformUserMail = null;
+let coinformUserID = null;
 
 //Read the configuration file and if it was successful, start
 fetch(browserAPI.runtime.getURL('../resources/config.json'), {
@@ -40,10 +41,19 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
       for (let i = 0; i < cookies.length; i++) {
         if (cookies[i].name == "userToken") coinformUserToken = cookies[i].value;
         else if (cookies[i].name == "userMail") coinformUserMail = cookies[i].value;
+        else if (cookies[i].name == "userID") coinformUserID = cookies[i].value;
       }
       if (coinformUserToken) {
-        let ok = checkAndSaveToken(coinformUserMail, coinformUserToken);
-        if (!ok) {
+        let res = checkAndSaveToken(coinformUserToken);
+        if (res.ok) {
+          sendMessageToAllScripts({
+            messageId: "renewUserToken",
+            userMail: res.userMail,
+            userID: res.userID,
+            token: res.token
+          });
+        }
+        else {
           renewUserToken();
         }
       }
@@ -82,6 +92,13 @@ const listenerRuntime = function(request, sender, sendResponse) {
   }
   else if (request.messageId === "Register") {
     registerAPI(request, sender.id, sendResponse);
+  }
+  else if (request.messageId === "GetSession") {
+    sendResponse({
+      userMail: coinformUserMail,
+      userID: coinformUserID,
+      token: coinformUserToken
+    });
   }
 
   return true;
@@ -124,11 +141,15 @@ const logInAPI = function(request, scriptId, loginCallback) {
       let data = res.data;
       if (data.token) {
         let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
-        let ok = checkAndSaveToken(request.userMail, resToken, scriptId);
-        if (ok) {
-          logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`, scriptId);
-          coinformUserToken = resToken;
-          coinformUserMail = request.userMail;
+        let res = checkAndSaveToken(resToken, scriptId);
+        if (res.ok) {
+          logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${res.userMail}`, scriptId);
+          sendMessageToAllScripts({
+            messageId: "userLogin",
+            userMail: res.userMail,
+            userID: res.userID,
+            token: res.token
+          });
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, `Token Check Error. Login Aborted`, scriptId);
@@ -147,18 +168,33 @@ const logInAPI = function(request, scriptId, loginCallback) {
 
 };
 
-const checkAndSaveToken = function(userMail, token, scriptId) {
+const checkAndSaveToken = function(token, scriptId) {
 
-  let res = null;
-  let tokenDecoded = jwtDecode(token);
+  let res = {
+    ok: false
+  };
+  const tokenDecoded = jwtDecode(token);
   const now = new Date();
   const secondsSinceEpoch = Math.round(now.getTime() / 1000);
+  let userMail = null;
+  let userID = null;
+  if (tokenDecoded.user && tokenDecoded.user.email) {
+    userMail = tokenDecoded.user.email;
+    if (tokenDecoded.user.uuid) {
+      userID = tokenDecoded.user.uuid;
+    }
+  }
   if (tokenDecoded.exp < secondsSinceEpoch) {
     logger.logMessage(CoInformLogger.logTypes.warning, `JWT expiring time passed`, scriptId);
-    res = false;
   }
   else {
-    res = true;
+    res.ok = true;
+    res.userMail = userMail;
+    res.userID = userID;
+    res.token = token;
+    coinformUserMail = userMail;
+    coinformUserID = userID;
+    coinformUserToken = token;
     setCookie({
       name: "userToken",
       value: token,
@@ -169,10 +205,10 @@ const checkAndSaveToken = function(userMail, token, scriptId) {
       value: userMail,
       expirationDate: tokenDecoded.exp
     });
-    sendMessageToAllScripts({
-      messageId: "userLogin",
-      userMail: userMail,
-      jwt: token
+    setCookie({
+      name: "userID",
+      value: userID,
+      expirationDate: tokenDecoded.exp
     });
     // set timer to renew the token, TOKEN_RENEW_BEFORE_TIME before expiring time
     let timeToRenew = ((tokenDecoded.exp - secondsSinceEpoch) * 1000) - TOKEN_RENEW_BEFORE_TIME;
@@ -205,7 +241,7 @@ const sendMessageToAllScripts = function(message) {
 
 const renewUserToken = function(retryNum = 0) {
 
-  logger.logMessage(CoInformLogger.logTypes.debug, `Time to Renew User Token (token ${coinformUserToken})..`);
+  logger.logMessage(CoInformLogger.logTypes.debug, `Time to Renew User Token..`);
 
   client.postRenewUserToken().then(res => {
 
@@ -213,19 +249,24 @@ const renewUserToken = function(retryNum = 0) {
     // Discard requests with 400 http return codes
     if (resStatus.localeCompare('404') === 0) {
       logger.logMessage(CoInformLogger.logTypes.warning, `RenewToken ${resStatus} Response. Logging Out..`);
-      logOutAPI({
-        userToken: coinformUserToken
-      });
+      logOutActions();
     }
     else if (resStatus.localeCompare('200') === 0) {
       let data = res.data;
       if (data.token) {
         //renewTokenOKactions(data.token);
         let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
-        let ok = checkAndSaveToken(coinformUserMail, resToken);
-        if (ok) {
-          logger.logMessage(CoInformLogger.logTypes.info, `User Token Renewed: ${coinformUserMail}`);
-          coinformUserToken = resToken;
+        let res = checkAndSaveToken(resToken);
+        if (res.ok) {
+          logger.logMessage(CoInformLogger.logTypes.info, `User Token Renewed: ${res.userMail}`);
+          if (res.ok) {
+            sendMessageToAllScripts({
+              messageId: "renewUserToken",
+              userMail: res.userMail,
+              userID: res.userID,
+              token: res.token
+            });
+          }
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, "RenewToken Token Check Error");
@@ -261,9 +302,7 @@ const retryRenewVsLogout = function (retryNum) {
   else {
     // if it failed MAX_TOKEN_RENEW_RETRIES times, we do the log out
     logger.logMessage(CoInformLogger.logTypes.debug, `Too many retries. Logging Out..`);
-    logOutAPI({
-      userToken: coinformUserToken
-    });
+    logOutActions();
   }
 };
 
@@ -275,7 +314,7 @@ const logOutAPI = function(request, scriptId, logoutCallback) {
     
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
     if (resStatus.localeCompare('200') === 0) {
-      logOutOKactions(scriptId);
+      logOutActions(scriptId);
     }
     if (logoutCallback) logoutCallback(res);
 
@@ -286,18 +325,21 @@ const logOutAPI = function(request, scriptId, logoutCallback) {
 
 };
 
-const logOutOKactions = function(scriptId) {
+const logOutActions = function(scriptId) {
+
+  coinformUserToken = null;
+  coinformUserMail = null;
+  coinformUserID = null;
 
   removeCookie("userToken");
   removeCookie("userMail");
+  removeCookie("userID");
 
   sendMessageToAllScripts({
     messageId: "userLogout"
   });
 
   logger.logMessage(CoInformLogger.logTypes.info, `User logged out`, scriptId);
-  coinformUserToken = null;
-  coinformUserMail = null;
 
 }
 
@@ -335,8 +377,8 @@ const setCookie = function(data, cookieCallback) {
   if (data.name) {
     data.url = configuration.coinform.apiUrl;
     browserAPI.cookies.set(data, cookie => {
-      if (cookie) logger.logMessage(CoInformLogger.logTypes.debug, `Cookie ${data.cookieName} Set OK: ${cookie.value}`);
-      else logger.logMessage(CoInformLogger.logTypes.debug, `Cookie ${data.cookieName} Set Problem`);
+      if (cookie) logger.logMessage(CoInformLogger.logTypes.debug, `Cookie ${cookie.name} Set OK: ${cookie.value}`);
+      else logger.logMessage(CoInformLogger.logTypes.debug, `Cookie ${cookie.name} Set Problem`);
       if (cookieCallback) cookieCallback(cookie);
     });
   }

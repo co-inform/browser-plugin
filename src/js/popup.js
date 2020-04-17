@@ -11,6 +11,7 @@ let logger;
 
 let coinformUserToken = null;
 let coinformUserMail = null;
+let coinformUserID = null;
 
 let logoURL = "/resources/coinform_biglogo.png";
 
@@ -161,47 +162,42 @@ const init = () => {
   client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
   browserAPI.runtime.sendMessage({
-    messageId: "GetCookie",
-    cookieName: "userToken"
-  }, function(cookie) {
-    if (cookie) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Token: ${cookie.value}`);
-      coinformUserToken = cookie.value;
+    messageId: "GetSession"
+  }, function(res) {
+    if (res.token) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${res.userMail}`);
+      coinformUserToken = res.token;
+      coinformUserMail = res.userMail;
+      coinformUserID = res.userID;
       displayLogout();
+      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
     }
     else {
-      logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
       displayLogin();
-    }
-  });
-
-  browserAPI.runtime.sendMessage({
-    messageId: "GetCookie",
-    cookieName: "userMail"
-  }, function(cookie) {
-    if (cookie) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Mail: ${cookie.value}`);
-      coinformUserMail = cookie.value;
-      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
     }
   });
 
   browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.messageId === "userLogin") {
       logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`);
-      coinformUserToken = request.jwt;
+      coinformUserToken = request.token;
       coinformUserMail = request.userMail;
+      coinformUserID = request.userID;
       document.querySelector('input[name="account-usermail"]').value = request.userMail;
     }
     else if (request.messageId === "userLogout") {
       logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
       coinformUserToken = null;
       coinformUserMail = null;
+      coinformUserID = null;
       document.querySelector('input[name="account-usermail"]').value = null;
     }
     else if (request.messageId === "renewUserToken") {
       logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
-      coinformUserToken = request.jwt;
+      coinformUserToken = request.token;
+      coinformUserMail = request.userMail;
+      coinformUserID = request.userID;
+      document.querySelector('input[name="account-usermail"]').value = request.userMail;
     }
   });
 
