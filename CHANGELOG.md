@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 20/04/2020 [branch: EU18COI-123-Implement-the-Await-nudging-strategy]
+
+src/js/background-script.js
+- added the callback function execution in the catch exception of the checkUrlAPI method, so the communicaiton exceptions will not block the user publish functionality
+
+src/js/browser-plugin.js
+- when missinformation is detected, attach a warning message to the publish button, and change the button text
+- added countdown timeout of 10 sec, to the publish of the tweet, when it is detected as missinformation
+- new function publishTweetCountdown() that manages the publish countdown blinking text
+- removed the loading spinner because it was using the bootstrap css and the css was interfering the facebook page styles
+- added a missinformation alert popup when the user starts the retweet of a missingormation tagged tweet
+
+src/plugin/_locales/en/messages.json
+- new messages for the await functionality
+
+src/plugin/content/coinform.css
+- commented the loading spinner css styles
+
+src/plugin/manifest.json
+- removed the bootstrap css injection because it was interfering the facebook page styles
+
+
 ## commit 08/04/2020 [branch: EU18COI-123-Implement-the-Await-nudging-strategy]
 
 src/js/background-script.js

@@ -74,6 +74,12 @@
   "checking_tweet_coinform": {
     "message": "Checking tweet info with CoInform"
   },
+  "detected_misinfo_content": {
+    "message": "Some content is detected to be Misinformation"
+  },
+  "publish_anyway": {
+    "message": "Publish anyway"
+  },
   "content_tagged_as": {
     "message": "Detected content tagged as $1"
   },
@@ -81,7 +87,10 @@
     "message": "The following URL is detected to be $1:"
   },
   "check_content_before_publish": {
-    "message": "Please, check the content of the URL again before shareing it."
+    "message": "Please, check the content again before sharing it."
+  },
+  "published_in_seconds": {
+    "message": "The tweet will be pubished in $1 seconds"
   },
   "why_cant_see": {
     "message": "Why can't I see this?"

@@ -326,6 +326,10 @@ const checkUrlAPI = function(request, scriptId, checkUrlCallback) {
   client.getCheckUrlInfo(request.url).then(res => checkUrlCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
     // console.error(err);
+    if (checkUrlCallback) checkUrlCallback({
+      status: -1,
+      error: err
+    });
   });
 
 };

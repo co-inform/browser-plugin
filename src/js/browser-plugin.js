@@ -15,6 +15,7 @@ let minlogoURL = "/resources/coinform_biglogo.png";
 const mainColor = "#693c5e"; // coinform
 const buttonColor = "#62B9AF"; // old: #3085d6
 
+const TIME_PUBLISH_AWAIT = 10;
 const MAX_RETRIES = 10;
 let configuration;
 let logger;
@@ -114,9 +115,26 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
   // click situation when we already procesed the tweet and the await time has finished
   if (targetButton.coInformed) {
-    targetButton.coInformed = false;
-    logger.logMessage(CoInformLogger.logTypes.debug, `Publish button procesed!!`);
-    return true;
+    if (targetButton.foundMisinfo) {
+      // TODO: if the content is missinfo, put a timer of 5 or 10 seconds before publishing it, and then set the CoInformed property tu false and raise the click event again
+      targetButton.setAttribute("disabled", "");
+      targetButton.setAttribute("aria-disabled", "true");
+      let msg = document.getElementById("coinformPublishMessages");
+      let txtContent = document.createElement("SPAN");
+      txtContent.classList.add("blink_me");
+      let txt = document.createTextNode(browserAPI.i18n.getMessage("published_in_seconds", `${TIME_PUBLISH_AWAIT}`));
+      txtContent.append(txt);
+      msg.append(document.createTextNode(". "));
+      msg.append(txtContent);
+      setTimeout(function() {
+        publishTweetCountdown(targetButton, (TIME_PUBLISH_AWAIT - 1));
+      }, 1000);
+    }
+    else {
+      targetButton.coInformed = false;
+      logger.logMessage(CoInformLogger.logTypes.debug, `Publish button procesed!!`);
+      return true;
+    }
   }
 
   // prevent the submiting of the tweet
@@ -124,7 +142,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
   clickEvent.preventDefault();
   clickEvent.stopPropagation();
 
-  // if disabled we are still waiting
+  // if disabled we are still waiting, so just finish it, with the click event propagation stopped
   if (targetButton.hasAttribute("disabled")) {
     return true;
   }
@@ -155,7 +173,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
     logger.logMessage(CoInformLogger.logTypes.debug, `Detected ${urls.length} URLs`);
 
     // replace the text of the button with a loading
-    let loadingSpinner = document.createElement("DIV");
+    /*let loadingSpinner = document.createElement("DIV");
     loadingSpinner.classList.add("spinner-border");
     loadingSpinner.setAttribute("role", "status");
     let span = document.createElement("SPAN");
@@ -164,7 +182,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
     span.append(auxtxt);
     loadingSpinner.append(span);
     targetButton.children[0].style.display = "none";
-    targetButton.append(loadingSpinner);
+    targetButton.append(loadingSpinner);*/
     
     // attach loading text
     let loadingMessage = document.createElement("SPAN");
@@ -172,7 +190,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
     loadingMessage.classList.add("blink_me");
     let txt = document.createTextNode(browserAPI.i18n.getMessage("checking_tweet_coinform"));
     loadingMessage.append(txt);
-    loadingMessage.setAttribute("id", `coinformCheckingMessage`);
+    loadingMessage.setAttribute("id", "coinformPublishMessages");
     let toolBar = targetButton.offsetParent;
     for ( ; toolBar && toolBar !== document; toolBar = toolBar.parentNode ) {
       if ( toolBar.matches("[data-testid='toolBar']") ) break;
@@ -181,9 +199,9 @@ const publishTweetCallback = (clickEvent, targetButton) => {
       toolBar.offsetParent.append(loadingMessage);
     }
 
-    for (let i = 0; i < urls.length; i++) {
+    targetButton.foundMisinfo = false;
 
-      let foundMisinfo = false;
+    for (let i = 0; i < urls.length; i++) {
 
       browserAPI.runtime.sendMessage({
         messageId: "CheckUrl",
@@ -197,17 +215,13 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         else if (resStatus.localeCompare('200') === 0) {
           let data = res.data;
           let accuracyLabel = JSON.stringify(data.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
-          foundMisinfo = foundMisinfo || publishTweetCheckLabel(accuracyLabel,urls[i]);
+          targetButton.foundMisinfo = targetButton.foundMisinfo || publishTweetCheckLabel(accuracyLabel, urls[i]);
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response`);
         }
         if (i == (urls.length - 1)) {
-          // postpone the submiting of the tweet
-          /*setTimeout(function() {
-            publishTweetPostAction(targetButton);
-          }, 5000);*/
-          publishTweetPostAction(targetButton, foundMisinfo);
+          publishTweetPostAction(targetButton);
         }
 
       });
@@ -221,22 +235,34 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
 };
 
-const publishTweetPostAction = (targetButton, misInfo) => {
+const publishTweetPostAction = (targetButton) => {
   // Undo changes to the publish button
-  let load = targetButton.querySelector('.spinner-border');
+  /*let load = targetButton.querySelector('.spinner-border');
   if (load) load.parentNode.removeChild(load);
-  let msg = document.getElementById("coinformCheckingMessage");
-  if (msg) msg.parentNode.removeChild(msg);
-  targetButton.children[0].style.display = "";
+  targetButton.children[0].style.display = "";*/
   targetButton.removeAttribute("disabled");
   targetButton.removeAttribute("aria-disabled");
   targetButton.coInformed = true;
+  let msg = document.getElementById("coinformPublishMessages");
   // Only re-do the clicking if we do not detected misinformation
-  if (!misInfo) {
+  if (!targetButton.foundMisinfo) {
+    if (msg) msg.parentNode.removeChild(msg);
     targetButton.click();
   }
   else {
-    // TODO: attach some warning message and change the text of the publish button
+    // Attach warning message and change the text of the publish button
+    let txt = document.createTextNode(browserAPI.i18n.getMessage("detected_misinfo_content"));
+    msg.removeChild(msg.firstChild);
+    msg.classList.remove("blink_me");
+    msg.append(txt);
+    let buttText = browserAPI.i18n.getMessage("publish_anyway");
+    targetButton.querySelectorAll("span").forEach(function(elem) {
+      elem.childNodes.forEach(function(elem) {
+        if (elem.nodeType == Node.TEXT_NODE) {
+          elem.parentNode.innerText = buttText;
+        }
+      });
+    });
   }
 };
 
@@ -285,6 +311,23 @@ const publishTweetAlertMisinfo = (label, url) => {
   
 };
 
+const publishTweetCountdown = (targetButton, iteration) => {
+  let msg = document.getElementById("coinformPublishMessages");
+  if (iteration > 0) {
+    msg.querySelector("span").innerText = browserAPI.i18n.getMessage("published_in_seconds", `${iteration}`);
+    setTimeout(function() {
+      publishTweetCountdown(targetButton, (iteration - 1));
+    }, 1000);
+  }
+  else {
+    targetButton.foundMisinfo = false;
+    targetButton.removeAttribute("disabled");
+    targetButton.removeAttribute("aria-disabled");
+    if (msg) msg.parentNode.removeChild(msg);
+    targetButton.click();
+  }
+};
+
 const retweetTweetCallback = (clickEvent, targetButton) => {
 
   // click situation when we already procesed the tweet
@@ -303,14 +346,52 @@ const retweetTweetCallback = (clickEvent, targetButton) => {
 
   // get tweet
   let tweet = targetButton.closest("article");
-  
+
+  targetButton.coInformed = true;
+
   if (tweet.coInformLabel) {
     logger.logMessage(CoInformLogger.logTypes.info, `Retweet Tweet Label: ${tweet.coInformLabel}`);
+    let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
+    if (!labelCategory) {
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
+    }
+    else if (labelCategory.localeCompare("blur") === 0) {
+      retweetTweetAlertMisinfo(tweet.coInformLabel);
+    }
   }
-  
-  targetButton.coInformed = true;
-  targetButton.click();
+  else {
+    targetButton.click();
+  }
 
+};
+
+const retweetTweetAlertMisinfo = (label) => {
+
+  let auxlabel = browserAPI.i18n.getMessage(label);
+  if (!auxlabel) auxlabel = label;
+  let popupTitle = browserAPI.i18n.getMessage('content_tagged_as', auxlabel);
+  let popupButtonText = browserAPI.i18n.getMessage('ok');
+  
+  return Swal2.fire({
+    type: 'info',
+    title: popupTitle,
+    showCloseButton: true,
+    showCancelButton: false,
+    confirmButtonColor: buttonColor,
+    confirmButtonText: popupButtonText,
+    html:
+      '<span>' + browserAPI.i18n.getMessage('content_tagged_as', auxlabel) + '</span><br/>'+
+      '<span>' + browserAPI.i18n.getMessage('check_content_before_publish') + '</span>',
+    footer:
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
+      '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
+    focusConfirm: true,
+  }).then(function (result) {
+    if(result.value === true){
+      // function when confirm button is clicked
+    }
+  });
+  
 };
 
 const newTweetCallback = (tweetInfo) => {

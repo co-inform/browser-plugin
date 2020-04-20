@@ -26,7 +26,7 @@
     "content_scripts": [
       {
         "matches": ["https://*.twitter.com/*", "https://*.facebook.com/*"],
-        "css": ["content/coinform.css", "resources/css/bootstrap.min.css", "resources/css/fontawesome.min.css"],
+        "css": ["content/coinform.css", "resources/css/fontawesome.min.css"],
         "run_at": "document_idle",
         "js": ["content/coinform.js"]
       }
