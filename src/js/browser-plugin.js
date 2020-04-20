@@ -11,6 +11,7 @@ const browserAPI = chrome || browser;
 const pluginCache = {};
 
 let logoURL = "/resources/coinform48.png";
+let claimURL = "/resources/coinform48.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 const mainColor = "#693c5e"; // coinform
 const buttonColor = "#62B9AF"; // old: #3085d6
@@ -74,6 +75,7 @@ const start = () => {
   client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
   logoURL = browserAPI.extension.getURL(logoURL);
+  claimURL = browserAPI.extension.getURL(claimURL);
   minlogoURL = browserAPI.extension.getURL(minlogoURL);
 
   browserAPI.runtime.sendMessage({
@@ -247,14 +249,11 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id] = false;
   }
 
-  if (!tweetInfo.domObject.coInfoLogo) {
+  if (!tweetInfo.domObject.toolBar) {
 
-    let cologo = createClickableLogo(tweetInfo.id, function() {
-      logoClickAction(tweetInfo);
-    });
-    tweetInfo.domObject.append(cologo);
-
-    tweetInfo.domObject.coInfoLogo = true;
+    let toolbar = createToolbar(tweetInfo, acurracyLabel);
+    tweetInfo.domObject.prepend(toolbar);
+    tweetInfo.domObject.toolBar = true;
   }
 
   // If the tweet has already been tagged then we directly classify it
@@ -267,6 +266,7 @@ const newTweetCallback = (tweetInfo) => {
 
   tweetInfo.domObject.coInfoCounter = 0;
 
+  var acurracyLabel;
   // First API call to the endpoint /twitter/tweet/
   client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
 
@@ -275,7 +275,7 @@ const newTweetCallback = (tweetInfo) => {
       logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
     }
     else if (resStatus.localeCompare('200') === 0) {
-      parseApiResponse(res.data, tweetInfo);
+      acurracyLabel = parseApiResponse(res.data, tweetInfo);
     }
     else {
       logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
@@ -290,19 +290,60 @@ const newTweetCallback = (tweetInfo) => {
 
 };
 
-const createClickableLogo = (tweetId, callback) => {
+const createToolbar = (tweetInfo) => {
+
+  var tbl = document.createElement('table');
+  tbl.setAttribute("class", "coinformToolbar");
+  tbl.style.width  = '100%';
+
+  var tr = tbl.insertRow();
+  var td1 = tr.insertCell();
+  td1.appendChild(createLogoCoinform(tweetInfo.id));
+  td1.width = '10px';
+
+  var td2 = tr.insertCell();
+  td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
+  td2.width = '80px';
+
+  var td3 = tr.insertCell();
+  td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
+  td3.width = '250px';
+  td3.appendChild(createLogoClaim(tweetInfo.id, function () {
+    openClaimPopup(tweetInfo);
+  }));
+
+  return tbl;
+};
+
+const createLogoClaim = (tweetId, callback) => {
+  let claim = document.createElement("IMG");
+  claim.setAttribute("class", "coinformTweetClaim");
+  claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
+  claim.setAttribute("src", claimURL);
+
+  claim.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    callback();
+  });
+
+  return claim;
+};
+
+const createLogoCoinform = (tweetId) => {
 
   let img = document.createElement("IMG");
   img.setAttribute("class", "coinformTweetLogo");
   img.setAttribute("id", `coinformTweetLogo-${tweetId}`);
-  img.setAttribute("src", logoURL);
+  img.setAttribute("src", claimURL);
 
   img.addEventListener('click', (event) => {
     // prevent opening the tweet
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    callback();
   });
 
   return img;
@@ -386,6 +427,7 @@ const parseApiResponse = (data, tweetInfo) => {
     }, randomInt(500, 2500));
   }
 
+  return acurracyLabel;
 };
 
 const newFacebookPostCallback = (post) => {
@@ -496,10 +538,11 @@ const isBlurred = (tweet) => {
 
 const createTweetLabel = (tweet, label, callback) => {
 
-  let node = tweet.domObject;
+  // let node = tweet.domObject;
+  let node = document.getElementById(`coinformTweetLabel-${tweet.id}`);
 
   let labelcat = document.createElement("SPAN");
-  labelcat.setAttribute('id', `coinformTweetLabel-${tweet.id}`);
+  labelcat.setAttribute('id', `coinformTweetLabelValue-${tweet.id}`);
   labelcat.setAttribute('class', "coinformTweetLabel");
   let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
   labelcat.append(txt);
@@ -511,7 +554,6 @@ const createTweetLabel = (tweet, label, callback) => {
   });
 
   node.prepend(labelcat);
-
 };
 
 const removeTweetLabel = (tweet) => {
