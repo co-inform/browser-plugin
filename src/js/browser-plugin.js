@@ -306,11 +306,18 @@ const createToolbar = (tweetInfo) => {
   var td3 = tr.insertCell();
   td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
   td3.width = '255px';
-  td3.append(createLogoClaim(tweetInfo.id, function () {
+  td3.appendChild(createLogoClaim(tweetInfo.id, function () {
     openClaimPopup(tweetInfo);
   }));
   td3.setAttribute("class", "coinformTweetClaim");
   td3.insertAdjacentText("beforeend", "I want to make a claim");
+  td3.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    openClaimPopup(tweetInfo);
+  });
 
   return tbl;
 };
@@ -319,8 +326,6 @@ const createLogoClaim = (tweetId, callback) => {
   let claim = document.createElement("IMG");
   claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
   claim.setAttribute("src", claimURL);
-  
-
 
   claim.addEventListener('click', (event) => {
     // prevent opening the tweet
@@ -668,9 +673,7 @@ function logoClickAction(tweet) {
 function openClaimPopup(tweet) {
 
   let node = tweet.domObject;
-
   let resultDropdown;
-
   let categoryOptions = {};
 
   Object.keys(configuration.coinform.accuracy).forEach(function(key) {
