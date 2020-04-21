@@ -240,12 +240,9 @@
 .coinformTweetClaim:hover {
   color: #C0C0C0;
   background-color: #3b444b;
-  transform: translateX(-95px);
-  
+  transform: translateX(-170px);
   display:inline-block;
-  padding-right: 90px;
-  border-radius: 5px;
-  margin-right: -50px;
+  border-radius: 10px;
  }
 
 .coinformToolbar {
@@ -261,7 +258,7 @@
 .coinformTweetLabel {
   position: relative;
   align-self: flex-end;
-  margin-right: 400px;
+  margin-right: 407px;
   /* background-color: #62b9af;
   border-radius: 5%; */
   color: #3b444b;
