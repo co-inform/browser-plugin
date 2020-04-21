@@ -294,16 +294,14 @@ const createToolbar = (tweetInfo) => {
 
   var tbl = document.createElement('table');
   tbl.setAttribute("class", "coinformToolbar");
-  tbl.style.width  = '100%';
+  tbl.style.width  = '600px';
 
   var tr = tbl.insertRow();
   var td1 = tr.insertCell();
   td1.appendChild(createLogoCoinform(tweetInfo.id));
-  td1.width = '10px';
 
   var td2 = tr.insertCell();
   td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
-  td2.width = '80px';
 
   var td3 = tr.insertCell();
   td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
@@ -320,6 +318,7 @@ const createLogoClaim = (tweetId, callback) => {
   claim.setAttribute("class", "coinformTweetClaim");
   claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
   claim.setAttribute("src", claimURL);
+  claim.append(document.createTextNode("I want to make a claim"));
 
   claim.addEventListener('click', (event) => {
     // prevent opening the tweet
@@ -337,7 +336,7 @@ const createLogoCoinform = (tweetId) => {
   let img = document.createElement("IMG");
   img.setAttribute("class", "coinformTweetLogo");
   img.setAttribute("id", `coinformTweetLogo-${tweetId}`);
-  img.setAttribute("src", claimURL);
+  img.setAttribute("src", logoURL);
 
   img.addEventListener('click', (event) => {
     // prevent opening the tweet
@@ -542,8 +541,8 @@ const createTweetLabel = (tweet, label, callback) => {
   let node = document.getElementById(`coinformTweetLabel-${tweet.id}`);
 
   let labelcat = document.createElement("SPAN");
-  labelcat.setAttribute('id', `coinformTweetLabelValue-${tweet.id}`);
-  labelcat.setAttribute('class', "coinformTweetLabel");
+  labelcat.setAttribute("id", `coinformTweetLabelValue-${tweet.id}`);
+  labelcat.setAttribute("class", "coinformTweetLabel");
   let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
   labelcat.append(txt);
 

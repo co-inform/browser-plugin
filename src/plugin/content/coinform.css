@@ -216,7 +216,7 @@
 
 .coinformTweetLogo {
   position: relative;
-  padding-right: 10px;
+  padding-right: 5px;
   align-self: flex-start;
   cursor: pointer;
 }
@@ -224,13 +224,29 @@
 .coinformTweetClaim {
   color: #6c3b5d;
   position: relative;
-  align-self: flex-start;
+  align-self: flex-end;
   cursor: pointer;
   padding-left: 1px;
   padding-right: 10px;
   border-width: 1px; 
   border-style: hidden hidden hidden solid;
+  transition: transform 0.1s linear;
+  transition-duration: 0.25s;
+  transform: translateX(0px);
+  transform: scale(1);
+  display: inline-block;
 }
+
+.coinformTweetClaim:hover {
+  color: #C0C0C0;
+  background-color: #3b444b;
+  transform: translateX(-95px);
+  
+  display:inline-block;
+  padding-right: 90px;
+  border-radius: 5px;
+  margin-right: -50px;
+ }
 
 .coinformToolbar {
   color: #C0C0C0;
@@ -246,13 +262,12 @@
   position: relative;
   align-self: flex-end;
   margin-right: 400px;
-  margin-top: 5px;
   /* background-color: #62b9af;
   border-radius: 5%; */
   color: #3b444b;
   padding: 2px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-  font-size: 0.8em;
+  font-size: 1em;
   cursor: pointer;
 }
 
