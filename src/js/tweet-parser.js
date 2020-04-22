@@ -177,6 +177,7 @@ const checkUserCase = () => {
 const getTweetInfo = (tweet, num) => {
 
   let tweetid = null;
+  let tweetUrl = null;
   let user = null;
   let text = null;
 
@@ -185,14 +186,18 @@ const getTweetInfo = (tweet, num) => {
   // Get the tweet Id
   // Special case, when we are in a Tweet Page, with its responses, the first one is the main Tweet, and we do not have the tweet link to parse the id, so we get the id from the url
   if ( (pageCase === "tweet") && (num === 0) ) {
-    let auxMatch = window.location.href.match(/\d+\b/g);
-    if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
+    tweetUrl = window.location.href;
+    let auxMatch = tweetUrl.match(/\d+\b/g);
+    if (auxMatch.length > 0) {
+      tweetid = auxMatch[auxMatch.length - 1];
+    }
   }
   else {
     let timeNode = tweet.querySelector(tweetIdSelectors[selectorUserCase]) ? tweet.querySelector(tweetIdSelectors[selectorUserCase]) : null;
     if (timeNode) {
       link = timeNode.parentNode;
       if (link && link.href.match(/\d+\b/g)) {
+        tweetUrl = link.href;
         let auxMatch = link.href.match(/\d+\b/g);
         if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
       }
@@ -230,6 +235,7 @@ const getTweetInfo = (tweet, num) => {
     username: user,
     text: text,
     id: tweetid,
+    url: tweetUrl,
     domObject: tweet,
     analyzed: false,
     logo: false,

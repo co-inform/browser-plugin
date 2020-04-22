@@ -38,7 +38,8 @@
       "resources/coinform128.png",
       "resources/coinform_biglogo.png",
       "resources/coinform_logotext.png",
-      "resources/coinform_logotext21.png"
+      "resources/coinform_logotext21.png",
+      "resources/meter*.png"
     ],
     "permissions": [
       "cookies",

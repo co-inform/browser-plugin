@@ -13,6 +13,7 @@ const pluginCache = {};
 let logoURL = "/resources/coinform48.png";
 let claimURL = "/resources/coinform48.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
+let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform
 const buttonColor = "#62B9AF"; // old: #3085d6
 
@@ -594,13 +595,29 @@ const createCannotSeeTweetButton = (tweetId, callback) => {
 
 function openLabelPopup(tweet) {
 
+  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+
   let node = tweet.domObject;
   let nodeBlurred = isBlurred(tweet);
   let nodeBlurrable = false;
   let showConfirm = false;
   let buttonText = "";
 
+  let popupPreTitle = '';
+  let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
+  let moreInfo = browserAPI.i18n.getMessage('not_tagged__info', elementTxt);
+
+  //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
+  let meterLogoSrc = null;
+
   if (node.coInformLabel) {
+    let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
+    if (!auxlabel) auxlabel = node.coInformLabel;
+    popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
+    popupTitle = auxlabel;
+    moreInfo = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
+    meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
+
     let category = configuration.coinform.categories[node.coInformLabel];
     if (category && (category.localeCompare("blur") === 0)) {
       nodeBlurrable = true;
@@ -609,16 +626,19 @@ function openLabelPopup(tweet) {
 
   if (nodeBlurred) {
     showConfirm = true;
-    buttonText = browserAPI.i18n.getMessage('see_tweet');
+    buttonText = browserAPI.i18n.getMessage('see_anyway', elementTxt);
   }
   else if (nodeBlurrable) {
     showConfirm = true;
-    buttonText = browserAPI.i18n.getMessage('blur_tweet');
+    buttonText = browserAPI.i18n.getMessage('blur_again', elementTxt);
   }
 
   return Swal2.fire({
-    type: 'info',
-    title: browserAPI.i18n.getMessage('tweet_tagged_as', browserAPI.i18n.getMessage(node.coInformLabel)),
+    type: (meterLogoSrc ? null : 'question'),
+    imageUrl: meterLogoSrc,
+    imageHeight: 100,
+    title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
+      '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
     showConfirmButton: showConfirm,
     showCloseButton: true,
     showCancelButton: true,
@@ -629,7 +649,7 @@ function openLabelPopup(tweet) {
     reverseButtons: true,
     focusCancel: true,
     html:
-      '<span>' + browserAPI.i18n.getMessage(node.coInformLabel + '__info') + '</span>',
+      '<span>' + moreInfo + '</span>',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
@@ -666,40 +686,60 @@ function logoClickAction(tweet) {
 
 function openClaimPopup(tweet) {
 
+  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+
   let node = tweet.domObject;
 
   let resultDropdown;
 
   let categoryOptions = {};
+  let htmlSelectInputOptions = "<option value>" + browserAPI.i18n.getMessage('choose_claim') + "</option>";
 
   Object.keys(configuration.coinform.accuracy).forEach(function(key) {
-    categoryOptions[key] = browserAPI.i18n.getMessage('tweet_is', browserAPI.i18n.getMessage(key));
+    categoryOptions[key] = browserAPI.i18n.getMessage(key + '__info', elementTxt);
+    htmlSelectInputOptions += `\n<option value="${key}">` + categoryOptions[key] + '</option>';
   });
 
-  let popupTitle = browserAPI.i18n.getMessage('tweet_not_tagged');
-  let moreInfo = browserAPI.i18n.getMessage('tweet_not_tagged__info');
-  let provideClaim = browserAPI.i18n.getMessage("provide_claim_untagged");
+  let popupPreTitle = '';
+  let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
+  let moreInfo = browserAPI.i18n.getMessage('not_tagged__info', elementTxt);
+  let provideClaimTitle = browserAPI.i18n.getMessage("provide_claim_title");
+  //let provideClaimText = browserAPI.i18n.getMessage("provide_claim_untagged");
+  let provideClaimText1 = browserAPI.i18n.getMessage("provide_claim_text1");
+  let provideClaimText2 = browserAPI.i18n.getMessage("provide_claim_text2", elementTxt);
+
+  //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
+  let meterLogoSrc = null;
 
   if (node.coInformLabel) {
     let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
     if (!auxlabel) auxlabel = node.coInformLabel;
-    popupTitle = browserAPI.i18n.getMessage('tweet_tagged_as', auxlabel);
-    moreInfo = browserAPI.i18n.getMessage(node.coInformLabel + '__info');
-    provideClaim = browserAPI.i18n.getMessage("provide_claim");
+    popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
+    popupTitle = auxlabel;
+    moreInfo = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
+    //provideClaimText = browserAPI.i18n.getMessage("provide_claim");
+    meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
   }
 
   return Swal2.fire({
-    type: 'info',
-    title: popupTitle,
+    type: (meterLogoSrc ? null : 'question'),
+    imageUrl: meterLogoSrc,
+    imageHeight: 100,
+    title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
+      '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
     showCloseButton: true,
     showCancelButton: false,
     confirmButtonColor: buttonColor,
     confirmButtonText: browserAPI.i18n.getMessage('submit'),
     focusConfirm: true,
     preConfirm: () => {
+      let claimOpt = document.getElementById('swal-input-select').value;
       let url = document.getElementById('swal-input1').value;
       let comment = document.getElementById('swal-input2').value;
-      if (!isURL(url)) {
+      if (!claimOpt) {
+        Swal2.showValidationMessage(browserAPI.i18n.getMessage('please_choose_claim'));
+      }
+      else if (!isURL(url)) {
         Swal2.showValidationMessage(browserAPI.i18n.getMessage('invalid_url'));
         return false;
       }
@@ -708,29 +748,21 @@ function openClaimPopup(tweet) {
         return false;
       }
       else {
-        return [ url, comment ];
+        return [ claimOpt, url, comment ];
       }
     },
-    input: 'select',
-    inputPlaceholder: browserAPI.i18n.getMessage('choose_claim'),
-    inputOptions: categoryOptions,
-    inputValidator: (value) => {
-      return new Promise((resolve) => {
-        if (value.localeCompare('') !== 0) {
-          resultDropdown = value;
-        } else {
-          resolve(browserAPI.i18n.getMessage('please_choose_claim'));
-        }
-        resolve();
-      });
-    },
     html:
-      '<div class="subtitle">' + 
+      '<div class="coinformPopupSubtitle">' + 
         '<span>' + moreInfo + '</span>' + 
       '</div>' + 
-      '<div class="contentText">' +
-        '<span>' + provideClaim + '</span>' +
+      '<div class="coinformProvideClaimText">' +
+        '<span class="coinformProvideClaimTitle">' + provideClaimTitle + '</span><br/>' +
+        '<span>' + provideClaimText1 + '</span>' +
+        '<span>' + provideClaimText2 + '</span>' +
       '</div>' +
+      '<select id="swal-input-select" class="swal2-select">' +
+        htmlSelectInputOptions +
+      '</select>' +
       '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
       '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea">',
     footer:
@@ -744,14 +776,15 @@ function openClaimPopup(tweet) {
         let returned = result[Object.keys(result)[0]];
         returned = returned.toString();
         let array = returned.split(',');
-        let url = array[0];
-        let comment = array[1];
+        let claimAccuracyLabel = array[0];
+        let claimUrl = array[1];
+        let claimComment = array[2];
         let evaluation = {
-          'label': resultDropdown, 
-          'url': url, 
-          'comment': comment
+          'label': claimAccuracyLabel, 
+          'url': claimUrl, 
+          'comment': claimComment
         };
-        client.postTwitterEvaluate(tweet.id, evaluation).then(function (res) {
+        client.postTwitterEvaluate(tweet.id, tweet.url, evaluation, coinformUserToken).then(function (res) {
 
           let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
           if (resStatus.localeCompare('400') === 0) {
@@ -796,21 +829,32 @@ function openClaimPopup(tweet) {
 }
 
 function openNotLoggedClaimPopup(tweet) {
+  
+  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
 
   let node = tweet.domObject;
 
-  let popupTitle = browserAPI.i18n.getMessage('tweet_not_tagged');
+  let popupPreTitle = '';
+  let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
   let popupButtonText = browserAPI.i18n.getMessage('ok');
+
+  //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
+  let meterLogoSrc = null;
 
   if (node.coInformLabel) {
     let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
     if (!auxlabel) auxlabel = node.coInformLabel;
-    popupTitle = browserAPI.i18n.getMessage('tweet_tagged_as', auxlabel);
+    popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
+    popupTitle = auxlabel;
+    meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
   }
   
   return Swal2.fire({
-    type: 'info',
-    title: popupTitle,
+    type: (meterLogoSrc ? null : 'question'),
+    imageUrl: meterLogoSrc,
+    imageHeight: 100,
+    title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
+      '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
     showCloseButton: true,
     showCancelButton: false,
     confirmButtonColor: buttonColor,

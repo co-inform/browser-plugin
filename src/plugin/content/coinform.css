@@ -143,10 +143,6 @@
   border-width: .40em;
 }
 
-.swal2-popup .swal2-title {
-  font-size: 1.7em;
-}
-
 .swal2-popup .swal2-content {
   font-size: 1.4em;
 }
@@ -168,10 +164,33 @@
   margin: auto;
 }
 
-.swal2-popup .swal2-content .subtitle {
+.swal2-popup .swal2-content .coinformPopupSubtitle {
   margin: 0 0 1.25em;
   padding: 0 0 1em;
   border-bottom: 1px solid #eee;
+}
+
+.swal2-popup .swal2-content .coinformProvideClaimTitle {
+  font-weight: 700;
+}
+
+.swal2-popup .swal2-header .swal2-image {
+  margin-top: 3em !important;
+}
+
+.swal2-popup .swal2-header .swal2-title:not(.swal2-pretitle) {
+  font-size: 1.5em !important;
+  font-weight: 700 !important;
+  color: black !important;
+}
+
+.swal2-popup .swal2-header .swal2-pretitle {
+  font-size: 0.6em !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  position: absolute !important;
+  top: -140px !important;
+  width: 100% !important;
 }
 
 .coinform-padding-top-10 {

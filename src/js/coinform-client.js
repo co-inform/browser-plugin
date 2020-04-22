@@ -18,8 +18,8 @@ CoinformClient.prototype = {
     return getResponseTweet(this.baseURL + '/response/' + queryID.replace(/['"]+/g, ''));
   },
 
-  postTwitterEvaluate: function (tweetId, evaluation, userToken) {
-    return postEvaluate(this.baseURL + '/twitter/evaluate/', tweetId, evaluation, userToken);
+  postTwitterEvaluate: function (tweetId, tweetUrl, evaluation, userToken) {
+    return postEvaluate(this.baseURL + '/twitter/evaluate/', tweetId, tweetUrl, evaluation, userToken);
   },
 
   getDomainDetails: function (domain) {
@@ -39,9 +39,17 @@ CoinformClient.prototype = {
   }
 };
 
-function postEvaluate(path, tweetId, evaluation, userToken) {
+function postEvaluate(path, tweetId, tweetUrl, evaluation, userToken) {
 
-  const data = {tweet_id: tweetId, evaluation: evaluation};
+  const data = {
+    tweet_id: tweetId,
+    rating: evaluation.label,
+    comment: evaluation.comment,
+    supportingUrl: [
+      evaluation.url
+    ],
+    url: tweetUrl
+  };
 
   return new Promise((resolve, reject) => {
     f(path, {
