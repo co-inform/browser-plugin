@@ -295,30 +295,36 @@ const createToolbar = (tweetInfo) => {
 
   var tbl = document.createElement('table');
   tbl.setAttribute("class", "coinformToolbar");
-  tbl.style.width  = '100%';
+  tbl.style.width  = '600px';
 
   var tr = tbl.insertRow();
   var td1 = tr.insertCell();
   td1.appendChild(createLogoCoinform(tweetInfo.id));
-  td1.width = '10px';
 
   var td2 = tr.insertCell();
   td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
-  td2.width = '80px';
 
   var td3 = tr.insertCell();
   td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
-  td3.width = '250px';
+  td3.width = '255px';
   td3.appendChild(createLogoClaim(tweetInfo.id, function () {
     openClaimPopup(tweetInfo);
   }));
+  td3.setAttribute("class", "coinformTweetClaim");
+  td3.insertAdjacentText("beforeend", "I want to make a claim");
+  td3.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    openClaimPopup(tweetInfo);
+  });
 
   return tbl;
 };
 
 const createLogoClaim = (tweetId, callback) => {
   let claim = document.createElement("IMG");
-  claim.setAttribute("class", "coinformTweetClaim");
   claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
   claim.setAttribute("src", claimURL);
 
@@ -338,7 +344,7 @@ const createLogoCoinform = (tweetId) => {
   let img = document.createElement("IMG");
   img.setAttribute("class", "coinformTweetLogo");
   img.setAttribute("id", `coinformTweetLogo-${tweetId}`);
-  img.setAttribute("src", claimURL);
+  img.setAttribute("src", logoURL);
 
   img.addEventListener('click', (event) => {
     // prevent opening the tweet
@@ -543,8 +549,8 @@ const createTweetLabel = (tweet, label, callback) => {
   let node = document.getElementById(`coinformTweetLabel-${tweet.id}`);
 
   let labelcat = document.createElement("SPAN");
-  labelcat.setAttribute('id', `coinformTweetLabelValue-${tweet.id}`);
-  labelcat.setAttribute('class', "coinformTweetLabel");
+  labelcat.setAttribute("id", `coinformTweetLabelValue-${tweet.id}`);
+  labelcat.setAttribute("class", "coinformTweetLabel");
   let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
   labelcat.append(txt);
 
@@ -689,9 +695,7 @@ function openClaimPopup(tweet) {
   const elementTxt = browserAPI.i18n.getMessage('tweet_post');
 
   let node = tweet.domObject;
-
   let resultDropdown;
-
   let categoryOptions = {};
   let htmlSelectInputOptions = "<option value>" + browserAPI.i18n.getMessage('choose_claim') + "</option>";
 
