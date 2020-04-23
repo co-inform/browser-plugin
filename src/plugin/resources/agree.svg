@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="29px" height="29px" viewBox="0 0 29 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 64 (93537) - https://sketch.com -->
+    <title>icon/agree copy 6</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Toolbar" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Tooltip-on-label" transform="translate(-590.000000, -351.000000)">
+            <g id="icon/agree" transform="translate(591.000000, 352.000000)">
+                <circle id="Oval-Copy-2" stroke="#37474F" stroke-width="1" cx="13.5" cy="13.5" r="13.5"></circle>
+                <path d="M7.94117647,6.35294118 C9.25691367,6.35294118 10.3235294,7.41955692 10.3235294,8.73529412 C10.3235294,10.0510313 9.25691367,11.1176471 7.94117647,11.1176471 C6.62543927,11.1176471 5.55882353,10.0510313 5.55882353,8.73529412 C5.55882353,7.41955692 6.62543927,6.35294118 7.94117647,6.35294118 Z M19.0588235,6.35294118 C20.3745607,6.35294118 21.4411765,7.41955692 21.4411765,8.73529412 C21.4411765,10.0510313 20.3745607,11.1176471 19.0588235,11.1176471 C17.7430863,11.1176471 16.6764706,10.0510313 16.6764706,8.73529412 C16.6764706,7.41955692 17.7430863,6.35294118 19.0588235,6.35294118 Z" id="Combined-Shape" fill="#37474F" fill-rule="evenodd"></path>
+                <path d="M7.14705882,19.3252097 C9.29608154,17.5593836 11.418317,16.6764706 13.5137652,16.6764706 C15.6092134,16.6764706 17.7046616,17.5593836 19.8001099,19.3252097" id="Path-3-Copy" stroke="#37474F" stroke-width="1" transform="translate(13.473584, 18.000840) rotate(-180.000000) translate(-13.473584, -18.000840) "></path>
+            </g>
+        </g>
+    </g>
+</svg>
