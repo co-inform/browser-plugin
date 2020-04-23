@@ -295,8 +295,7 @@ const createToolbar = (tweetInfo) => {
 
   var tbl = document.createElement('table');
   tbl.setAttribute("class", "coinformToolbar");
-  tbl.style.width  = '600px';
-
+  
   var tr = tbl.insertRow();
   var td1 = tr.insertCell();
   td1.appendChild(createLogoCoinform(tweetInfo.id));
@@ -307,12 +306,12 @@ const createToolbar = (tweetInfo) => {
 
   var td3 = tr.insertCell();
   td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
-  td3.width = '255px';
+  
   td3.appendChild(createLogoClaim(tweetInfo.id, function () {
     openClaimPopup(tweetInfo);
   }));
   td3.setAttribute("class", "coinformTweetClaim");
-  td3.insertAdjacentText("beforeend", "I want to make a claim");
+  td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
   td3.addEventListener('click', (event) => {
     // prevent opening the tweet
     event.stopImmediatePropagation();
@@ -547,7 +546,6 @@ const isBlurred = (tweet) => {
 
 const createTweetLabel = (tweet, label, callback) => {
 
-  // let node = tweet.domObject;
   let node = document.getElementById(`coinformTweetLabel-${tweet.id}`);
 
   let labelcat = document.createElement("SPAN");

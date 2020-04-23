@@ -128,6 +128,9 @@
   "choose_claim": {
     "message": "Choose a claim"
   },
+  "make_claim": {
+    "message": "I want to make a claim"
+  },
   "link_to_claim": {
     "message": "Link to your claim"
   },
