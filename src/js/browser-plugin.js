@@ -10,8 +10,8 @@ const browserAPI = chrome || browser;
 
 const pluginCache = {};
 
-let logoURL = "/resources/coinform48.png";
-let claimURL = "/resources/coinform48.png";
+let logoURL = "/resources/logo_36_20.png";
+let claimURL = "/resources/bubble_claim.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform
@@ -302,6 +302,7 @@ const createToolbar = (tweetInfo) => {
   td1.appendChild(createLogoCoinform(tweetInfo.id));
 
   var td2 = tr.insertCell();
+  td2.setAttribute("class", "coinformTweetLabel");
   td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
 
   var td3 = tr.insertCell();
@@ -326,6 +327,7 @@ const createToolbar = (tweetInfo) => {
 const createLogoClaim = (tweetId, callback) => {
   let claim = document.createElement("IMG");
   claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
+  claim.setAttribute("class", "coinformButton");
   claim.setAttribute("src", claimURL);
 
   claim.addEventListener('click', (event) => {

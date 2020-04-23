@@ -33,13 +33,7 @@
     ],
     "web_accessible_resources": [
       "resources/config.json",
-      "resources/coinform16.png",
-      "resources/coinform48.png",
-      "resources/coinform128.png",
-      "resources/coinform_biglogo.png",
-      "resources/coinform_logotext.png",
-      "resources/coinform_logotext21.png",
-      "resources/meter*.png"
+      "resources/*.png"
     ],
     "permissions": [
       "cookies",
