@@ -11,7 +11,7 @@ const browserAPI = chrome || browser;
 const pluginCache = {};
 
 let logoURL = "/resources/logo_36_20.png";
-let claimURL = "/resources/bubble_claim.png";
+let claimURL = "/resources/bubble_claim_transparent.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform
@@ -326,7 +326,7 @@ const createToolbar = (tweetInfo) => {
 const createLogoClaim = (tweetId, callback) => {
   let claim = document.createElement("IMG");
   claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
-  claim.setAttribute("class", "coinformButton");
+  claim.setAttribute("class", "coinformClaimLogo");
   claim.setAttribute("src", claimURL);
 
   claim.addEventListener('click', (event) => {
@@ -346,6 +346,13 @@ const createLogoCoinform = (tweetId) => {
   img.setAttribute("class", "coinformTweetLogo");
   img.setAttribute("id", `coinformTweetLogo-${tweetId}`);
   img.setAttribute("src", logoURL);
+
+  if (document.getElementById(`coinformTweetLabelValue-${tweetId}`) == null) {
+   // img.style.marginRight = "300px";
+    //img.setAttribute("margin-right", "400px");
+  } else if (document.domObject.hasAttribute(marginRight) != null) {
+    document.domObject.removeAttribute(marginRight);
+  }
 
   img.addEventListener('click', (event) => {
     // prevent opening the tweet
