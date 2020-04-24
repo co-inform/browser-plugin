@@ -310,7 +310,7 @@ const createToolbar = (tweetInfo) => {
   td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
   
   td3.appendChild(createLogoClaim(tweetInfo.id, function () {
-    openClaimPopup(tweetInfo);
+    claimClickAction(tweetInfo);
   }));
   td3.setAttribute("class", "coinformTweetClaim");
   td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
@@ -319,7 +319,7 @@ const createToolbar = (tweetInfo) => {
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    openClaimPopup(tweetInfo);
+    claimClickAction(tweetInfo);
   });
 
   return tbl;
@@ -676,14 +676,9 @@ function openLabelPopup(tweet) {
 
 }
 
-function logoClickAction(tweet) {
+function claimClickAction(tweet) {
 
-  let nodeBlurred = isBlurred(tweet);
-
-  if (nodeBlurred) {
-    openLabelPopup(tweet);
-  }
-  else if (coinformUserToken) {
+  if (coinformUserToken) {
     openClaimPopup(tweet);
   }
   else {
