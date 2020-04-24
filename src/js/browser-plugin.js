@@ -314,14 +314,13 @@ const createToolbar = (tweetInfo) => {
   }));
   td3.setAttribute("class", "coinformTweetClaim");
   td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
-  td3.addEventListener('click', (event) => {
+  td3.addEventListener('click', (event) => { 
     // prevent opening the tweet
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
     openClaimPopup(tweetInfo);
   });
-  //document.getElementById(`coinformTweetClaim-${tweetInfo.id}`).setAttribute("src", claimURLWhite);
 
   return tbl;
 };
@@ -349,13 +348,6 @@ const createLogoCoinform = (tweetId) => {
   img.setAttribute("class", "coinformTweetLogo");
   img.setAttribute("id", `coinformTweetLogo-${tweetId}`);
   img.setAttribute("src", logoURL);
-
-  if (document.getElementById(`coinformTweetLabelValue-${tweetId}`) == null) {
-   // img.style.marginRight = "300px";
-    //img.setAttribute("margin-right", "400px");
-  } else if (document.domObject.hasAttribute(marginRight) != null) {
-    document.domObject.removeAttribute(marginRight);
-  }
 
   img.addEventListener('click', (event) => {
     // prevent opening the tweet
