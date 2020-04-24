@@ -11,7 +11,8 @@ const browserAPI = chrome || browser;
 const pluginCache = {};
 
 let logoURL = "/resources/logo_36_20.png";
-let claimURL = "/resources/bubble_claim_transparent.png";
+let claimURL = "/resources/bubble_claim.png";
+let claimURLWhite = "/resources/bubble_claim_w.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform
@@ -77,6 +78,7 @@ const start = () => {
 
   logoURL = browserAPI.extension.getURL(logoURL);
   claimURL = browserAPI.extension.getURL(claimURL);
+  claimURLWhite = browserAPI.extension.getURL(claimURLWhite);
   minlogoURL = browserAPI.extension.getURL(minlogoURL);
 
   browserAPI.runtime.sendMessage({
@@ -319,6 +321,7 @@ const createToolbar = (tweetInfo) => {
     event.stopPropagation();
     openClaimPopup(tweetInfo);
   });
+  //document.getElementById(`coinformTweetClaim-${tweetInfo.id}`).setAttribute("src", claimURLWhite);
 
   return tbl;
 };

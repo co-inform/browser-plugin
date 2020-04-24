@@ -259,18 +259,18 @@
 }
 
 .coinformClaimLogo {
-  background: #ffffff;
   border-radius: 3px;
-  border-radius: 25%;
+  border-radius: 20%;
   background-clip: content-box;
 }
 
 .coinformTweetClaim:hover {
-  color: #C0C0C0;
-  background-color: #3b444b;
+  color: rgb(68, 65, 65);
+  background-color: #C0C0C0;
   transform: translateX(-170px);
   display:inline-block;
   border-radius: 10px;
+  filter: invert(100%);
  }
 
 .coinformToolbar {
