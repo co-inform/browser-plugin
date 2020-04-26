@@ -252,13 +252,6 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id] = false;
   }
 
-  if (!tweetInfo.domObject.toolBar) {
-
-    let toolbar = createToolbar(tweetInfo, acurracyLabel);
-    tweetInfo.domObject.prepend(toolbar);
-    tweetInfo.domObject.toolBar = true;
-  }
-
   // If the tweet has already been tagged then we directly classify it
   if (pluginCache[tweetInfo.id]) {
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
@@ -290,6 +283,12 @@ const newTweetCallback = (tweetInfo) => {
     // console.error(err);
 
   });
+  
+  if (!tweetInfo.domObject.toolBar) {
+    let toolbar = createToolbar(tweetInfo, acurracyLabel);
+    tweetInfo.domObject.prepend(toolbar);
+    tweetInfo.domObject.toolBar = true;
+  }
 
 };
 
