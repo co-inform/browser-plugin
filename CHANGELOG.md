@@ -29,6 +29,83 @@ src/plugin/manifest.json
 - new icons access defined
 
 
+## commit 17/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
+
+src/js/background-script.js
+- adapted the login and token session management to the new situation thet the token gives us information about the user identification
+- now if we have the token we can extract from ther the user identification info
+- new message listener "GetSession" through which the other scripts can gather information about the user session situation
+- now the method "checkAndSaveToken()" returns info about the user session details
+
+src/js/browser-plugin.js
+- replaced the initial script user session management, to use the new background script message "GetSession"
+- new session parameter userID
+
+src/js/popup.js
+- replaced the initial script user session management, to use the new background script message "GetSession"
+- new session parameter userID
+
+
+## commit 16/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
+
+src/js/background-script.js
+- implemented the token renew at startup
+- changed the parametes to the SetCookie message listener
+- new function checkAndSaveToken() for parsing and treating the tokens received from the gateway
+- new function retryRenewVsLogout() for treating the maximum number of token renew tries
+
+src/js/browser-plugin.js
+- minor changes
+
+src/js/coinform-client.js
+- fixed minor bug on the RenewToken endpoint communication
+
+
+## commit 07/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
+
+package.json
+package-lock.json
+- added dependency for jwt decrypt
+
+src/js/background-script.js
+- implemented the user logged session managing through the cookies
+- added listeners and functions for cookie managing through the background script
+- added listeners and functions for API gateway communications for logging in, logging out and registering
+- added timers and function for user logged token renew
+- added back message communications to the tabs content scripts for communicating when a user has been logged in, logged out, or token renewed
+
+src/js/browser-plugin.js
+- checking initial user logged status through background script and the cookies
+- added listener for message communications from the background script when a user has been logged in, logged out, or token renewed
+
+src/js/popup.js
+- checking initial user logged status through background script and the cookies
+- added listener for message communications from the background script when a user has been logged in, logged out, or token renewed
+- migrated the API gateway communications, and session cookies managing, for login, logout and registering, to the background script
+
+src/js/coinform-client.js
+- new API gateway endpoint for renew-token
+
+
+## commit 02/04/2020 [branch: EU18COI-133-134-135-login-register-improvements]
+
+src/js/coinform-client.js
+- new API gateway endpoints for forgot passwor reset, user logged password change, and logout
+
+src/js/popup.js
+- added code for forgot passwor reset, user logged password change, and logout
+
+src/plugin/_locales/en/messages.json
+- new messages for the login, registering and account info and actions
+
+src/plugin/popup/popup.css
+- new css styles for login and registering UX design inputs
+
+src/plugin/popup/popup.html
+- new html elements and structure for new login and register features
+- new html element for user logged account information and password change
+
+
 ## commit 17/03/2020 [branch: pre_second_review]
 
 src/js/background-script.js

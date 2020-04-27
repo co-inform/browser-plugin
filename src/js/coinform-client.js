@@ -34,9 +34,26 @@ CoinformClient.prototype = {
     return postLogin(this.baseURL + '/login/', email, password);
   },
 
+  postUserLogout: function (userToken) {
+    return postLogout(this.baseURL + '/exit/', userToken);
+  },
+
   postUserRegister: function (email, password) {
     return postRegister(this.baseURL + '/register/', email, password);
+  },
+
+  postRenewUserToken: function () {
+    return postRenewToken(this.baseURL + '/renew-token/');
+  },
+
+  postUserChangePass: function (password, newpassword, userToken) {
+    return postChangePass(this.baseURL + '/change-password/', password, newpassword, userToken);
+  },
+
+  postUserForgotPass: function (email) {
+    return postForgotPass(this.baseURL + '/reset-password/', email);
   }
+
 };
 
 function postEvaluate(path, tweetId, tweetUrl, evaluation, userToken) {
@@ -109,7 +126,6 @@ function getResponseTweet(path) {
       // mode: 'cors',
       headers: {
         'Accept': 'application/json',
-        // 'Content-Type': 'application/json',
         'Connection': 'keep-alive',
         'rejectUnauthorized': false
       }
@@ -168,6 +184,106 @@ function postLogin(path, email, password) {
 function postRegister(path, email, password) {
 
   const data = {email: email, password: password};
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
+
+function postChangePass(path, password, newpassword, userToken) {
+  
+  const data = {oldPassword: password, newPassword: newpassword};
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers: {
+        'Authorization': 'Bearer ' + userToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
+
+function postLogout(path, userToken) {
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'GET',
+      // mode: 'cors',
+      headers: {
+        'Authorization': 'Bearer ' + userToken,
+        'Accept': 'application/json',
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
+
+function postRenewToken(path) {
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'GET',
+      // mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
+
+function postForgotPass(path, email) {
+  
+  const data = {email: email};
 
   return new Promise((resolve, reject) => {
     f(path, {

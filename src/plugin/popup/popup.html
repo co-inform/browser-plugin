@@ -17,7 +17,7 @@
     <h1 id="popup-title">Co-Inform</h1>
   </div>
   <div id="popup-menu">
-    <div id="menu-notlogged" class="menu-tabs">
+    <div id="menu-notlogged" class="menu-toolbar menu-tabs">
       <div class="menu-item" id="menu-login">
         <span>Login</span>
       </div>
@@ -25,9 +25,12 @@
         <span>Register</span>
       </div>
     </div>
-    <div id="menu-logged">
+    <div id="menu-logged" class="menu-toolbar">
       <div id="logged-text">
         <span>You are already logged</span>
+      </div>
+      <div class="menu-item" id="menu-account" title="Account">
+        <span></span>
       </div>
       <div class="menu-item" id="menu-options" title="Options">
         <span></span>
@@ -45,6 +48,17 @@
     <div class="form-control">
       <label id="login-pass-label" class="pass_label" for="login-auth-pass"></label>
       <input type="password" id="login-auth-pass" name="login-userpass" minlength="6" placeholder="Your password" required>
+    </div>
+
+    <div class="form-buttons">
+      <button class="coinform-button coinform-button-primary" type="button" id="login-button">Log in</button>
+      <br class="clearBoth" />
+    </div>
+
+    <div class="form-bottom-text">
+      <span id="login-question">Don't have an account?</span>&nbsp;<span id="login-answer" class="popup-link-text">Sign up</span>
+      <br/>
+      <span id="forgot-pass-question" class="popup-link-text">Forgot your password?</span>
     </div>
 
   </div>
@@ -66,24 +80,77 @@
       <input type="password" id="register-auth-pass2" name="register-userpass2" minlength="6" placeholder="Retype your password" required>
     </div>
 
+    <div class="form-buttons">
+      <button class="coinform-button coinform-button-primary" type="button" id="register-button">Register</button>
+      <br class="clearBoth" />
+    </div>
+
+    <div class="form-bottom-text">
+      <span id="register-login-question">Already have an account?</span>&nbsp;<span id="register-login-answer" class="popup-link-text">Login</span>
+    </div>
+
+  </div>
+
+  <div class="form-control-group" id="registered-div">
+
+    <div class="form-buttons">
+      <button class="coinform-button coinform-button-secondary" type="button" id="logout-button">Log out</button>
+      <br class="clearBoth" />
+    </div>
+
+  </div>
+
+  <div class="form-control-group" id="account-form">
+
+    <div class="form-info-text">
+      <span id="account-info-title">Account information</span>:
+    </div>
+
+    <div class="form-control">
+      <label id="account-mail-label" class="mail_label" for="account-auth-mail"></label>
+      <input type="email" id="account-auth-mail" name="account-usermail" value="" disabled>
+    </div>
+
+    <div class="form-info-text">
+      <span id="account-change-pass-info">Here you can change your password</span>:
+    </div>
+    
+    <div class="form-control">
+      <label id="account-pass-label" class="pass_label" for="account-auth-pass"></label>
+      <input type="password" id="account-auth-pass" name="account-userpass" minlength="6" placeholder="Your password" required>
+    </div>
+
+    <div class="form-control">
+      <label id="account-newpass-label" class="pass_label" for="account-auth-newpass"></label>
+      <input type="password" id="account-auth-newpass" name="account-usernewpass" minlength="6" placeholder="Your new password" required>
+    </div>
+
+    <div class="form-control">
+      <label id="account-newpass2-label" class="pass_label" for="account-auth-newpass2"></label>
+      <input type="password" id="account-auth-newpass2" name="account-usernewpass2" minlength="6" placeholder="Retype your new password" required>
+    </div>
+
+    <div class="form-buttons">
+      <button class="coinform-button coinform-button-primary" type="button" id="changePassword-button">Change</button>
+      <br class="clearBoth" />
+    </div>
+
   </div>
 
   <div class="form-control-group" id="options-form">
 
+    <div class="form-info-text">
+      <span id="options-title">Options</span>
+    </div>
+
+    <div class="form-buttons">
+      <button class="coinform-button coinform-button-primary" type="button" id="saveOptions-button">Save</button>
+      <br class="clearBoth" />
+    </div>
+
   </div>
 
   <div id="popup-messages">
-  </div>
-
-  <div class="form-buttons">
-    
-    <button class="coinform-button coinform-button-primary" type="button" id="login-button">Log in</button>
-    <button class="coinform-button coinform-button-primary" type="button" id="register-button">Register</button>
-    <button class="coinform-button coinform-button-primary" type="button" id="saveOptions-button">Save</button>
-    <button class="coinform-button coinform-button-secondary" type="button" id="logout-button">Log out</button>
-  
-    <br class="clearBoth" />
-
   </div>
 
 </body>

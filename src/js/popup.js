@@ -10,6 +10,8 @@ let client;
 let logger;
 
 let coinformUserToken = null;
+let coinformUserMail = null;
+let coinformUserID = null;
 
 let logoURL = "/resources/coinform_biglogo.png";
 
@@ -34,22 +36,51 @@ window.addEventListener("load", function(){
       console.error('Could not load configuration file', err)
     });
 
+  // Set language messages to the HTML
   document.getElementById('popup-title').innerHTML = browserAPI.i18n.getMessage("popup_plugin_title");
   document.getElementById('login-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
   document.getElementById('login-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
   document.getElementById('register-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
   document.getElementById('register-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
   document.getElementById('register-auth-pass2').placeholder = browserAPI.i18n.getMessage("retype_password");
+  document.getElementById('account-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
+  document.getElementById('account-auth-newpass').placeholder = browserAPI.i18n.getMessage("new_password");
+  document.getElementById('account-auth-newpass2').placeholder = browserAPI.i18n.getMessage("retype_new_password");
+  document.getElementById('account-change-pass-info').innerHTML = browserAPI.i18n.getMessage("change_password_info");
+  document.getElementById('account-info-title').innerHTML = browserAPI.i18n.getMessage("account_information");
+  document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("options_title");
+  document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
+  document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
 
+  // Set the header logo image
   let img = document.createElement("IMG");
   img.classList.add("logo");
   img.setAttribute("src", logoURL);
   document.getElementById('popup-header').prepend(img);
 
+  // Set Texts and Bind Actions to the buttons and clickable elements
   let loginButton = document.getElementById('login-button');
   loginButton.innerHTML = browserAPI.i18n.getMessage("log_in");
   loginButton.addEventListener('click', (event) => {
     loginAction(loginButton);
+  });
+  
+  let forgotPasswordLink = document.getElementById('forgot-pass-question');
+  forgotPasswordLink.innerHTML = browserAPI.i18n.getMessage("forgot_password_question");
+  forgotPasswordLink.addEventListener('click', (event) => {
+    forgotPasswordAction(forgotPasswordLink);
+  });
+  
+  let loginAnswerLink = document.getElementById('login-answer');
+  loginAnswerLink.innerHTML = browserAPI.i18n.getMessage("sign_up");
+  loginAnswerLink.addEventListener('click', (event) => {
+    registerStartAction();
+  });
+  
+  let registerAnswerLink = document.getElementById('register-login-answer');
+  registerAnswerLink.innerHTML = browserAPI.i18n.getMessage("login");
+  registerAnswerLink.addEventListener('click', (event) => {
+    loginStartAction();
   });
   
   let logoutButton = document.getElementById('logout-button');
@@ -62,6 +93,12 @@ window.addEventListener("load", function(){
   registerButton.innerHTML = browserAPI.i18n.getMessage("register");
   registerButton.addEventListener('click', (event) => {
     registerAction(registerButton);
+  });
+  
+  let changePasswordButton = document.getElementById('changePassword-button');
+  changePasswordButton.innerHTML = browserAPI.i18n.getMessage("change");
+  changePasswordButton.addEventListener('click', (event) => {
+    changePasswordAction(changePasswordButton);
   });
   
   let optionsSaveButton = document.getElementById('saveOptions-button');
@@ -82,6 +119,22 @@ window.addEventListener("load", function(){
     loginStartAction();
   });
   
+  let accountTabButton = document.getElementById('menu-account');
+  accountTabButton.querySelector("span").title = browserAPI.i18n.getMessage("account");
+  accountTabButton.addEventListener('click', (event) => {
+    if (isAccountDisplayed()) {
+      if (coinformUserToken) {
+        displayLogout();
+      }
+      else {
+        displayLogin();
+      }
+    }
+    else {
+      displayAccount();
+    }
+  });
+  
   let optionsTabButton = document.getElementById('menu-options');
   optionsTabButton.querySelector("span").title = browserAPI.i18n.getMessage("options");
   optionsTabButton.addEventListener('click', (event) => {
@@ -100,100 +153,107 @@ window.addEventListener("load", function(){
 
 });
 
-// Init the login form
+// Init the popup page with logged/not-logged status
 const init = () => {
+
+  resetAllDisplays();
 
   logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
   client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
-  browserAPI.storage.local.get(['userToken'], (data) => {
-    if (data.userToken) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${data.userToken}`);
-      coinformUserToken = data.userToken;
+  browserAPI.runtime.sendMessage({
+    messageId: "GetSession"
+  }, function(res) {
+    if (res.token) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${res.userMail}`);
+      coinformUserToken = res.token;
+      coinformUserMail = res.userMail;
+      coinformUserID = res.userID;
       displayLogout();
+      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
     }
     else {
-      logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
       displayLogin();
+    }
+  });
+
+  browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.messageId === "userLogin") {
+      logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`);
+      coinformUserToken = request.token;
+      coinformUserMail = request.userMail;
+      coinformUserID = request.userID;
+      document.querySelector('input[name="account-usermail"]').value = request.userMail;
+    }
+    else if (request.messageId === "userLogout") {
+      logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
+      coinformUserToken = null;
+      coinformUserMail = null;
+      coinformUserID = null;
+      document.querySelector('input[name="account-usermail"]').value = null;
+    }
+    else if (request.messageId === "renewUserToken") {
+      logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
+      coinformUserToken = request.token;
+      coinformUserMail = request.userMail;
+      coinformUserID = request.userID;
+      document.querySelector('input[name="account-usermail"]').value = request.userMail;
     }
   });
 
 };
 
+// Functions for changing through interface displayed
+const resetAllDisplays = () => {
+  document.querySelectorAll("#popup-menu > .menu-toolbar").forEach(el => el.classList.add("hidden"));
+  document.querySelectorAll("#popup-menu > .menu-toolbar > .menu-item").forEach(el => el.classList.remove("actual"));
+  document.querySelectorAll(".form-control-group").forEach(el => el.classList.add("hidden"));
+};
+
 const displayLogin = () => {
-  document.getElementById('menu-logged').style.display = "none";
-  document.getElementById('menu-notlogged').style.display = "flex";
-  document.getElementById('menu-register').classList.remove("actual");
+  resetAllDisplays();
+  document.getElementById('menu-notlogged').classList.remove("hidden");
   document.getElementById('menu-login').classList.add("actual");
-  document.getElementById('menu-options').classList.remove("actual");
-
-  document.getElementById('register-form').style.display = "none";
-  document.getElementById('login-form').style.display = "grid";
-  document.getElementById('options-form').style.display = "none";
-
-  document.getElementById('logout-button').style.display = "none";
-  document.getElementById('register-button').style.display = "none";
-  document.getElementById('login-button').style.display = "block";
-  document.getElementById('saveOptions-button').style.display = "none";
+  document.getElementById('login-form').classList.remove("hidden");
 };
 
 const displayLogout = () => {
-  document.getElementById('menu-logged').style.display = "flex";
-  document.getElementById('menu-notlogged').style.display = "none";
-  document.getElementById('menu-register').classList.remove("actual");
-  document.getElementById('menu-login').classList.remove("actual");
-  document.getElementById('menu-options').classList.remove("actual");
-
-  document.getElementById('login-form').style.display = "none";
-  document.getElementById('register-form').style.display = "none";
-  document.getElementById('options-form').style.display = "none";
-
-  document.getElementById('login-button').style.display = "none";
-  document.getElementById('register-button').style.display = "none";
-  document.getElementById('logout-button').style.display = "block";
-  document.getElementById('saveOptions-button').style.display = "none";
+  resetAllDisplays();
+  document.getElementById('menu-logged').classList.remove("hidden");
+  document.getElementById('registered-div').classList.remove("hidden");
 };
 
 const displayRegister = () => {
-  document.getElementById('menu-logged').style.display = "none";
-  document.getElementById('menu-notlogged').style.display = "flex";
+  resetAllDisplays();
+  document.getElementById('menu-notlogged').classList.remove("hidden");
   document.getElementById('menu-register').classList.add("actual");
-  document.getElementById('menu-login').classList.remove("actual");
-  document.getElementById('menu-options').classList.remove("actual");
-
-  document.getElementById('login-form').style.display = "none";
-  document.getElementById('register-form').style.display = "grid";
-  document.getElementById('options-form').style.display = "none";
-
-  document.getElementById('login-button').style.display = "none";
-  document.getElementById('register-button').style.display = "block";
-  document.getElementById('logout-button').style.display = "none";
-  document.getElementById('saveOptions-button').style.display = "none";
+  document.getElementById('register-form').classList.remove("hidden");
 };
 
 const displayOptions = () => {
-  document.getElementById('menu-logged').style.display = "flex";
-  document.getElementById('menu-notlogged').style.display = "none";
-  document.getElementById('menu-register').classList.remove("actual");
-  document.getElementById('menu-login').classList.remove("actual");
+  resetAllDisplays();
+  document.getElementById('menu-logged').classList.remove("hidden");
   document.getElementById('menu-options').classList.add("actual");
+  document.getElementById('options-form').classList.remove("hidden");
+};
 
-  document.getElementById('login-form').style.display = "none";
-  document.getElementById('register-form').style.display = "none";
-  document.getElementById('options-form').style.display = "block";
-
-  document.getElementById('login-button').style.display = "none";
-  document.getElementById('register-button').style.display = "none";
-  document.getElementById('logout-button').style.display = "none";
-  document.getElementById('saveOptions-button').style.display = "block";
+const displayAccount = () => {
+  resetAllDisplays();
+  document.getElementById('menu-logged').classList.remove("hidden");
+  document.getElementById('menu-account').classList.add("actual");
+  document.getElementById('account-form').classList.remove("hidden");
 };
 
 const isOptionsDisplayed = () => {
   return (document.getElementById('menu-options').classList.contains("actual"));
 };
 
+const isAccountDisplayed = () => {
+  return (document.getElementById('menu-account').classList.contains("actual"));
+};
 
-// Parse login, comunicate with API and save user to Chrome local Storage.
+
+// Parse login form, comunicate with API and save user token
 const loginAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -212,8 +272,12 @@ const loginAction = (targetButton) => {
   else {
 
     targetButton.disabled = true;
-
-    client.postUserLogin(userMail, userPass).then(function (res) {
+    
+    browserAPI.runtime.sendMessage({
+      messageId: "LogIn",
+      userMail: userMail,
+      userPass: userPass
+    }, function(res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
       // Discard requests with 400 http return codes
@@ -223,12 +287,11 @@ const loginAction = (targetButton) => {
         targetButton.disabled = false;
       }
       else if (resStatus.localeCompare('200') === 0) {
+        // The login response JWT parse and cookies is managed through the background script
         let data = res.data;
         if (data.token) {
-          let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
-          logger.logMessage(CoInformLogger.logTypes.info, "Login succesful");
-          browserAPI.storage.local.set({'userToken': resToken});
-          coinformUserToken = resToken;
+          logger.logMessage(CoInformLogger.logTypes.info, "Login successful");
+          // Other login actuations are managed through the userLogin message listener
           showMessage("ok", "login_ok", 1000);
           setTimeout(function() {
             displayLogout();
@@ -247,16 +310,13 @@ const loginAction = (targetButton) => {
         targetButton.disabled = false;
       }
 
-    }).catch(err => {
-      logger.logMessage(CoInformLogger.logTypes.error, "Login exception: "+JSON.stringify(err));
-      showMessage("err", "login_error", 2000);
-      targetButton.disabled = false;
     });
 
   }
   
 };
 
+// Parse Register form, and comunicate with API
 const registerAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -276,8 +336,12 @@ const registerAction = (targetButton) => {
   else {
     
     targetButton.disabled = true;
-
-    client.postUserRegister(userMail, userPass).then(function (res) {
+    
+    browserAPI.runtime.sendMessage({
+      messageId: "Register",
+      userMail: userMail,
+      userPass: userPass
+    }, function(res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
       // Discard requests with 400 http return codes
@@ -287,9 +351,8 @@ const registerAction = (targetButton) => {
         targetButton.disabled = false;
       }
       else if (resStatus.localeCompare('201') === 0) {
-        let data = res.data;
-        logger.logMessage(CoInformLogger.logTypes.info, "Register succesful");
-        showMessage("ok", "register_ok", 2000);
+        logger.logMessage(CoInformLogger.logTypes.info, "Register successful");
+        showMessage("ok", "register_ok");
         setTimeout(function() {
           displayLogin();
           targetButton.disabled = false;
@@ -301,16 +364,62 @@ const registerAction = (targetButton) => {
         targetButton.disabled = false;
       }
 
-    }).catch(err => {
-      logger.logMessage(CoInformLogger.logTypes.error, "Register exception: "+JSON.stringify(err));
-      showMessage("err", "register_error", 2000);
-      targetButton.disabled = false;
     });
 
   }
 
 };
 
+// Comunicate with API for Logout
+const logoutAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  if (!coinformUserToken) {
+    showMessage("err", "logout_error", 2000);
+  }
+  else {
+    
+    targetButton.disabled = true;
+    
+    browserAPI.runtime.sendMessage({
+      messageId: "LogOut",
+      userToken: coinformUserToken
+    }, function(res) {
+
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      // Discard requests with 400 http return codes
+      if (resStatus.localeCompare('401') === 0) {
+        logger.logMessage(CoInformLogger.logTypes.warning, "Logout 400 response");
+        showMessage("err", "logout_problem", 2000);
+        targetButton.disabled = false;
+      }
+      else if (resStatus.localeCompare('200') === 0) {
+        // The logout response parse and cookies is managed through the background script
+        logger.logMessage(CoInformLogger.logTypes.info, "Logout successful");
+        // Other logout actuations are managed through the userLogout message listener
+        showMessage("ok", "logout_ok", 1000);
+        setTimeout(function() {
+          displayLogin();
+          targetButton.disabled = false;
+        }, 1000);
+
+      }
+      else {
+        logger.logMessage(CoInformLogger.logTypes.error, `Logout unknown (${resStatus}) response`);
+        showMessage("err", "logout_error", 2000);
+        targetButton.disabled = false;
+      }
+
+    });
+
+  }
+
+};
+
+// Parse Options form, and do the appropriate actions
 const optionsSaveAction = (targetButton) => {
   
   if (targetButton.disabled) {
@@ -319,29 +428,7 @@ const optionsSaveAction = (targetButton) => {
     
   targetButton.disabled = true;
 
-  browserAPI.cookies.set({
-    url: configuration.coinform.apiUrl,
-    name: "coinform-test-cookie",
-    value: "test ok"
-  });
-
-  browserAPI.cookies.get({
-    url: configuration.coinform.apiUrl,
-    name: "coinform-test-cookie"
-  }, cookie => {
-    if (cookie) {
-      logger.logMessage(CoInformLogger.logTypes.debug, "Test Cookie saved ok");
-    }
-  });
-
-  browserAPI.runtime.sendMessage({
-    contentScriptQuery: "GetCookie",
-    cookieName: "coinform-test-cookie"
-  }, function(cookie) {
-    if (cookie) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `Cookie recovered: ${cookie.value}`);
-    }
-  });
+  //TODO: here we can implement options save action
 
   logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
   showMessage("ok", "options_save_ok", 2000);
@@ -357,7 +444,127 @@ const optionsSaveAction = (targetButton) => {
 
 };
 
+// Parse Account Change Password form, and communicate with API
+const changePasswordAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+  
+  if (!coinformUserToken) {
+    showMessage("err", "change_password_error", 2000);
+  }
+  else {
 
+    const userPass = document.querySelector('input[name="account-userpass"]').value || null;
+    const userNewPass = document.querySelector('input[name="account-usernewpass"]').value || null;
+    const userNewPass2 = document.querySelector('input[name="account-usernewpass2"]').value || null;
+
+    if (!userPass || !userNewPass  || !userNewPass2 || (userNewPass !== userNewPass2) || !validatePass(userPass) || !validatePass(userNewPass)) {
+      showMessage("err", "password_not_valid_info", 4000);
+    }
+    else {
+      
+      targetButton.disabled = true;
+
+      client.postUserChangePass(userPass, userNewPass, coinformUserToken).then(function (res) {
+
+        let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+        // Discard requests with 400 http return codes
+        if ((resStatus.localeCompare('401') === 0) || (resStatus.localeCompare('403') === 0)) {
+          logger.logMessage(CoInformLogger.logTypes.warning, `ChangePass ${resStatus} response`);
+          showMessage("err", "change_password_problem", 2000);
+          targetButton.disabled = false;
+        }
+        else if (resStatus.localeCompare('200') === 0) {
+          let data = res.data;
+          logger.logMessage(CoInformLogger.logTypes.info, "ChangePass successful");
+          showMessage("ok", "change_password_ok", 2000);
+          setTimeout(function() {
+            displayLogout();
+            targetButton.disabled = false;
+          }, 1000);
+        }
+        else {
+          logger.logMessage(CoInformLogger.logTypes.error, `ChangePass unknown (${resStatus}) response`);
+          showMessage("err", "change_password_error", 2000);
+          targetButton.disabled = false;
+        }
+
+      }).catch(err => {
+        logger.logMessage(CoInformLogger.logTypes.error, "ChangePass exception: "+JSON.stringify(err));
+        showMessage("err", "change_password_error", 2000);
+        targetButton.disabled = false;
+      });
+
+    }
+
+  }
+
+};
+
+// Parse the Login email form, and communicate with API
+const forgotPasswordAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  const userMail = document.querySelector('input[name="login-usermail"]').value || null;
+
+  if (!userMail) {
+    showMessage("err", "provide_mail", 2000);
+  }
+  else if (!validateEmail(userMail)) {
+    showMessage("err", "mail_not_valid", 2000);
+  }
+  else {
+    
+    targetButton.disabled = true;
+
+    client.postUserForgotPass(userMail).then(function (res) {
+
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      // Discard requests with 400 http return codes
+      if (resStatus.localeCompare('400') === 0) {
+        logger.logMessage(CoInformLogger.logTypes.warning, "ForgotPass 400 response");
+        showMessage("err", "forgot_password_problem", 2000);
+      }
+      else if (resStatus.localeCompare('200') === 0) {
+        let data = res.data;
+        logger.logMessage(CoInformLogger.logTypes.info, "ForgotPass successful");
+        showMessage("ok", "forgot_password_ok");
+      }
+      else {
+        logger.logMessage(CoInformLogger.logTypes.error, `ForgotPass unknown (${resStatus}) response`);
+        showMessage("err", "forgot_password_error", 2000);
+      }
+      targetButton.disabled = false;
+
+    }).catch(err => {
+      logger.logMessage(CoInformLogger.logTypes.error, "ForgotPass exception: "+JSON.stringify(err));
+      showMessage("err", "forgot_password_error", 2000);
+      targetButton.disabled = false;
+    });
+
+  }
+
+};
+
+const registerStartAction = () => {
+  displayRegister();
+};
+
+const loginStartAction = () => {
+  displayLogin();
+};
+
+/**
+ * Show a message on the page with a check button for removing it.
+ * @param {} type type of message (info/error) changeable through CSS
+ * @param {*} label label text of the message, defined in the language file
+ * @param {*} time optional time for the message, after which it will be automaticly removed
+ */
 const showMessage = (type, label, time) => {
   let span = document.getElementById(label);
   if (!span) {
@@ -366,8 +573,14 @@ const showMessage = (type, label, time) => {
     span.setAttribute("id", label);
     span.classList.add("popup-message");
     span.classList.add(type);
-    let auxtxt = document.createTextNode(browserAPI.i18n.getMessage(label));
-    span.append(auxtxt);
+    span.append(document.createTextNode(browserAPI.i18n.getMessage(label)));
+    let auxclose = document.createElement("SPAN");
+    //auxclose.append(document.createTextNode("&times;"));
+    auxclose.classList.add("popup-message-close");
+    auxclose.addEventListener('click', (event) => {
+      clearMessage(span);
+    });
+    span.append(auxclose);
     $(span).hide();
     msgDiv.append(span);
     $(span).fadeIn(500);
@@ -394,33 +607,6 @@ const clearAllMessages = () => {
   while (msgDiv.firstChild) {
     msgDiv.removeChild(msgDiv.firstChild);
   }
-};
-
-const logoutAction = (targetButton) => {
-  
-  if (targetButton.disabled) {
-    return false;
-  }
-  targetButton.disabled = true;
-
-  browserAPI.storage.local.remove(['userToken']);
-  coinformUserToken = null;
-  logger.logMessage(CoInformLogger.logTypes.info, "Logout succesful");
-  showMessage("ok", "logout_ok", 1000);
-
-  setTimeout(function() {
-    displayLogin();
-    targetButton.disabled = false;
-  }, 1000);
-
-};
-
-const registerStartAction = () => {
-  displayRegister();
-};
-
-const loginStartAction = () => {
-  displayLogin();
 };
 
 function validateEmail(email) {
