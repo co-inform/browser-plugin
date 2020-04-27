@@ -42,6 +42,64 @@ src/plugin/_locales/en/messages.json
 - new messages for the await functionality
 
 
+## commit 22/04/2020 [branch: EU18COI-132-Implement-the-UX-input-changes-to-the-browser-plugin]
+
+src/js/browser-plugin.js
+- added the credibility label dependent meter icons to the header of the popups
+- extracted the tweet word from most of the language messages, so it can easily adapt the functions for reuse in other websites than twitter
+- moved the accuracy select input in the claim popup to the "html" content, so it will be the first input
+- adapted the communication with the "/twitter/evaluate" API GW endpoint to the new specification
+
+src/js/coinform-client.js
+- adapted the communication with the "/twitter/evaluate" API GW endpoint to the new specification
+
+src/js/tweet-parser.js
+- new tweet prsed property "url" with the URL of the tweet, for new endpoints communication specifications
+
+src/plugin/_locales/en/messages.json
+- credibility labels description texts updated
+- accuracy labels description texts updated
+- claim and other popups texts updated
+
+src/plugin/content/coinform.css
+- new css styles for claim and other popups header changes
+
+src/plugin/manifest.json
+- new icons access defined
+
+
+## commit 17/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
+
+src/js/background-script.js
+- adapted the login and token session management to the new situation thet the token gives us information about the user identification
+- now if we have the token we can extract from ther the user identification info
+- new message listener "GetSession" through which the other scripts can gather information about the user session situation
+- now the method "checkAndSaveToken()" returns info about the user session details
+
+src/js/browser-plugin.js
+- replaced the initial script user session management, to use the new background script message "GetSession"
+- new session parameter userID
+
+src/js/popup.js
+- replaced the initial script user session management, to use the new background script message "GetSession"
+- new session parameter userID
+
+
+## commit 16/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
+
+src/js/background-script.js
+- implemented the token renew at startup
+- changed the parametes to the SetCookie message listener
+- new function checkAndSaveToken() for parsing and treating the tokens received from the gateway
+- new function retryRenewVsLogout() for treating the maximum number of token renew tries
+
+src/js/browser-plugin.js
+- minor changes
+
+src/js/coinform-client.js
+- fixed minor bug on the RenewToken endpoint communication
+
+
 ## commit 07/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
 
 package.json

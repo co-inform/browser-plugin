@@ -3,73 +3,76 @@
     "message": "Credible"
   },
   "credible__info": {
-    "message": "We have found evidence that the &#60;content&#62; is most likely accurate (with high confidence)"
+    "message": "The $1 is most likely to be accurate, according to strong signals we found"
   },
   "mostly_credible": {
     "message": "Mostly credible"
   },
   "mostly_credible__info": {
-    "message": "We have found evidence that the &#60;content&#62; is probably accurate, but also may contain minor inaccuracies (with high confidence)"
+    "message": "The $1 is likely to be accurate, but may contain some minor inaccuracies, according to the (strong) signals we found"
   },
   "credibility_uncertain": {
     "message": "Credibility uncertain"
   },
   "credibility_uncertain__info": {
-    "message": "We have found evidence that the &#60;content&#62; probably mixes accurate and inaccurate &#60;subcontent&#62; (with high confidence)"
+    "message": "The $1 probably mixes some accurate and inaccurate (or not verifiable) claims"
   },
   "mostly_not_credible": {
     "message": "Mostly not credible"
   },
   "mostly_not_credible__info": {
-    "message": "We have found evidence that the &#60;content&#62; is most likely inaccurate (with high confidence)"
+    "message": "The $1 is most likely inaccurate, according to strong signals we found"
   },
   "not_credible": {
     "message": "Not credible"
   },
   "not_credible__info": {
-    "message": "We have found evidence that the &#60;content&#62; is most likely inaccurate (with high confidence)"
+    "message": "The $1 is most likely inaccurate, according to strong signals we found"
   },
   "not_verifiable": {
     "message": "Not verifiable"
   },
   "not_verifiable__info": {
-    "message": "Either the &#60;content&#62; does not contain verifiable claims (it's all opinions or speculations), or we could not find sufficient evidence supporting/refuting the claims, or we could not link the &#60;content&#62; to the evidence with sufficient confidence"
+    "message": "The $1 does not contain verifiable claims (it's all opinions or speculations), or we could not find sufficient signals supporting/refuting the claims in the $1"
   },
-  "tweet_not_tagged": {
-    "message": "This tweet is not tagged"
+  "tweet_post": {
+    "message": "Tweet post"
   },
-  "tweet_not_tagged__info": {
-    "message": "This tweet has not yet been tagged by the system"
+  "not_tagged": {
+    "message": "The $1 is not tagged"
+  },
+  "not_tagged__info": {
+    "message": "The $1 has not yet been tagged by the system"
   },
   "accurate": {
     "message": "Accurate"
   },
   "accurate__info": {
-    "message": "Accurate"
+    "message": "The $1 is accurate"
   },
   "accurate_with_considerations": {
     "message": "Accurate with considerations"
   },
   "accurate_with_considerations__info": {
-    "message": "Accurate with considerations"
+    "message": "The $1 contain minor inaccuracies"
   },
   "unsubstantiated": {
     "message": "Unsubstantiated"
   },
   "unsubstantiated__info": {
-    "message": "Unsubstantiated"
+    "message": "The $1 is unsubstantiated"
   },
   "inaccurate_with_considerations": {
     "message": "Inaccurate with considerations"
   },
   "inaccurate_with_considerations__info": {
-    "message": "Inaccurate with considerations"
+    "message": "The $1 mixes accurate and inaccurate subcontent"
   },
   "inaccurate": {
     "message": "Inaccurate"
   },
   "inaccurate__info": {
-    "message": "Inaccurate"
+    "message": "The $1 is inaccurate"
   },
   "checking_tweet_coinform": {
     "message": "Checking tweet info with CoInform"
@@ -95,20 +98,26 @@
   "why_cant_see": {
     "message": "Why can't I see this?"
   },
-  "tweet_tagged_as": {
-    "message": "This tweet has been tagged as: $1"
+  "element_tagged_as": {
+    "message": "This $1 has been tagged as: $2"
   },
-  "tweet_is": {
-    "message": "This tweet is $1"
+  "see_anyway": {
+    "message": "See $1 anyway"
   },
-  "see_tweet": {
-    "message": "See tweet anyways"
+  "blur_again": {
+    "message": "Blur $1 again"
   },
-  "blur_tweet": {
-    "message": "Blur tweet again"
+  "provide_claim_title": {
+    "message": "Help us improve Co-Inform AI"
   },
   "provide_claim": {
     "message": "If you think this is not accurate please provide a claim and a link to a post that supports that claim"
+  },
+  "provide_claim_text1": {
+    "message": "Based on your ratings, we may suggest ways to improve media literacy"
+  },
+  "provide_claim_text2": {
+    "message": "You can help us by telling us whether you think the $1 is accurate or not and include a link to a source providing evidence"
   },
   "provide_claim_untagged": {
     "message": "If you want you can provide a claim and a link to a post that supports that claim"
@@ -136,6 +145,9 @@
   },
   "choose_claim": {
     "message": "Choose a claim"
+  },
+  "make_claim": {
+    "message": "I want to make a claim"
   },
   "link_to_claim": {
     "message": "Link to your claim"

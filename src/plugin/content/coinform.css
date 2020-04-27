@@ -1,24 +1,11 @@
 
 /* Co-Inform project main color: #693c5e */
 /* Co-Inform project secondary color: #62B9AF */
+[coinform-untrusted] div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) {
+  filter: blur(4px);
+  opacity: .6;
+}
 
-[coinform-untrusted] > div > div:nth-child(2) > div:nth-child(2) > div:not(:first-child):not(:last-child) {
-  filter: blur(4px);
-  opacity: .6;
-  position: relative;
-}
-[coinform-untrusted] div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) {
-  filter: blur(4px);
-  opacity: .6;
-}
-[coinform-untrusted] div > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) {
-  filter: blur(4px);
-  opacity: .6;
-}
-[coinform-untrusted] div > div:nth-child(1) > div:nth-child(3) {
-  filter: blur(4px);
-  opacity: .6;
-}
 /* Case for the main tweet when we are in a tweet page */
 [coinform-untrusted] > div > div:not(:first-child):not(:nth-child(2)):not(:last-child) {
   filter: blur(4px);
@@ -143,10 +130,6 @@
   border-width: .40em;
 }
 
-.swal2-popup .swal2-title {
-  font-size: 1.7em;
-}
-
 .swal2-popup .swal2-content {
   font-size: 1.4em;
 }
@@ -168,10 +151,33 @@
   margin: auto;
 }
 
-.swal2-popup .swal2-content .subtitle {
+.swal2-popup .swal2-content .coinformPopupSubtitle {
   margin: 0 0 1.25em;
   padding: 0 0 1em;
   border-bottom: 1px solid #eee;
+}
+
+.swal2-popup .swal2-content .coinformProvideClaimTitle {
+  font-weight: 700;
+}
+
+.swal2-popup .swal2-header .swal2-image {
+  margin-top: 3em !important;
+}
+
+.swal2-popup .swal2-header .swal2-title:not(.swal2-pretitle) {
+  font-size: 1.5em !important;
+  font-weight: 700 !important;
+  color: black !important;
+}
+
+.swal2-popup .swal2-header .swal2-pretitle {
+  font-size: 0.6em !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  position: absolute !important;
+  top: -140px !important;
+  width: 100% !important;
 }
 
 .coinform-padding-top-10 {
@@ -215,24 +221,71 @@
 }
 
 .coinformTweetLogo {
-  position: relative;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  align-self: flex-start;
+}
+
+.coinformTweetClaim {
+  color: #6c3b5d;
+  position: absolute;
+  left: 552px;
+  width: 400px;
   align-self: flex-end;
-  padding-right: 10px;
   cursor: pointer;
+  padding-left: 1px;
+  padding-right: 100px;
+  border-width: 1px; 
+  border-style: hidden hidden hidden solid;
+  transition: transform 0.1s linear;
+  transition-duration: 0.25s;
+  transform: translateX(0px);
+  transform: scale(1);
+  display: inline-block;
+}
+
+.coinformClaimLogo {
+  border-radius: 3px;
+  border-radius: 20%;
+  background-clip: content-box;
+}
+
+.coinformTweetClaim:hover {
+  color: rgb(68, 65, 65);
+  background-color: #C0C0C0;
+  transform: translateX(-170px);
+  display:inline-block;
+  border-radius: 10px;
+  filter: invert(100%);
+ }
+
+.coinformToolbar {
+  color: #C0C0C0;
+  width: 600px;
+  height: 35px;
+  background-color: #f3f3f3;
+  font-weight: bold;
+  position: relative;
+  align-self: flex-start;
+  padding-top: 5px;
+  box-shadow: 2px 2px;
 }
 
 .coinformTweetLabel {
-  position: relative;
-  align-self: flex-end;
-  margin-right: 10px;
-  margin-top: 5px;
+  position: absolute;
+  left: 30px;
+  width: 100px;
+  top: 3px;
+  align-self: flex-start;
+ /* margin-right: 402px;
+  white-space: nowrap;
   /* background-color: #62b9af;
   border-radius: 5%; */
-  color: #6c3b5d;
-  font-weight: bold;
-  padding: 2px;
+  color: #3b444b;
+  padding: 1px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-  font-size: 0.8em;
+  font-size: 1em;
   cursor: pointer;
 }
 

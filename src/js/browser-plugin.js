@@ -10,8 +10,11 @@ const browserAPI = chrome || browser;
 
 const pluginCache = {};
 
-let logoURL = "/resources/coinform48.png";
+let logoURL = "/resources/logo_36_20.png";
+let claimURL = "/resources/bubble_claim.png";
+let claimURLWhite = "/resources/bubble_claim_w.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
+let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform
 const buttonColor = "#62B9AF"; // old: #3085d6
 
@@ -25,7 +28,7 @@ let parser;
 let coinformUserToken = null;
 let coinformUserMail = null;
 
-//Read the configuration file and if it was successful, start
+// Read the configuration file and if it was successful, start
 fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   mode: 'cors',
   header: {
@@ -44,69 +47,66 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
     console.error('Could not load configuration file', err)
   });
 
-browserAPI.runtime.sendMessage({
-  messageId: "GetCookie",
-  cookieName: "userToken"
-}, function(cookie) {
-  if (cookie) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Token: ${cookie.value}`);
-    coinformUserToken = cookie.value;
-  }
-  else {
-    logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
-  }
-});
-
-browserAPI.runtime.sendMessage({
-  messageId: "GetCookie",
-  cookieName: "userMail"
-}, function(cookie) {
-  if (cookie) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `User already logged. Mail: ${cookie.value}`);
-    coinformUserMail = cookie.value;
-  }
-});
-
+// Set listener for background scrpit messages
 browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.messageId === "userLogin") {
     logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`);
-    coinformUserToken = request.jwt;
+    coinformUserToken = request.token;
     coinformUserMail = request.userMail;
+    coinformUserID = request.userID;
   }
   else if (request.messageId === "userLogout") {
     logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
     coinformUserToken = null;
     coinformUserMail = null;
+    coinformUserID = null;
   }
   else if (request.messageId === "renewUserToken") {
     logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
-    coinformUserToken = request.jwt;
+    coinformUserToken = request.token;
+    coinformUserMail = request.userMail;
+    coinformUserID = request.userID;
   }
 });
 
+// Initialize objects, variables, and listeners
 const start = () => {
 
   logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
   client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
   logoURL = browserAPI.extension.getURL(logoURL);
+  claimURL = browserAPI.extension.getURL(claimURL);
+  claimURLWhite = browserAPI.extension.getURL(claimURLWhite);
   minlogoURL = browserAPI.extension.getURL(minlogoURL);
 
-  if (window.location.hostname.indexOf('twitter.com') >= 0) {
+  browserAPI.runtime.sendMessage({
+    messageId: "GetSession"
+  }, function(res) {
+    if (res.token) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${res.userMail}`);
+      coinformUserToken = res.token;
+      coinformUserMail = res.userMail;
+      coinformUserID = res.userID;
+      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
+    }
+    else {
+      logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
+    }
+  });
 
+  if (window.location.hostname.indexOf('twitter.com') >= 0) {
     parser = new TweetParser();
     parser.initContext();
     parser.listenForMainChanges(newTweetCallback);
     parser.listenPublishTweet(publishTweetCallback);
     parser.listenRetweetTweet(retweetTweetCallback);
     parser.triggerFirstTweetBatch(newTweetCallback);
-
-  } else if (window.location.hostname.indexOf('facebook.com') >= 0) {
-
+  }
+  else if (window.location.hostname.indexOf('facebook.com') >= 0) {
     parser = new FacebookParser();
     parser.fromBrowser(newFacebookPostCallback);
     parser.listenForNewPosts(newFacebookPostCallback);
-
   }
 
 };
@@ -416,14 +416,13 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id] = false;
   }
 
-  if (!tweetInfo.domObject.coInfoLogo) {
-
-    let cologo = createClickableLogo(tweetInfo.id, function() {
-      logoClickAction(tweetInfo);
-    });
-    tweetInfo.domObject.append(cologo);
-
-    tweetInfo.domObject.coInfoLogo = true;
+  if (!tweetInfo.domObject.toolBar) {
+    let toolbar = createToolbar(tweetInfo);
+    tweetInfo.domObject.prepend(toolbar);
+    tweetInfo.domObject.toolBar = true;
+  } else {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
+    return;
   }
 
   // If the tweet has already been tagged then we directly classify it
@@ -459,7 +458,56 @@ const newTweetCallback = (tweetInfo) => {
 
 };
 
-const createClickableLogo = (tweetId, callback) => {
+const createToolbar = (tweetInfo) => {
+
+  let tbl = document.createElement('table');
+  tbl.setAttribute("class", "coinformToolbar");
+  
+  let tr = tbl.insertRow();
+  let td1 = tr.insertCell();
+  td1.appendChild(createLogoCoinform(tweetInfo.id));
+
+  let td2 = tr.insertCell();
+  td2.setAttribute("class", "coinformTweetLabel");
+  td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
+
+  let td3 = tr.insertCell();
+  td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
+  
+  td3.appendChild(createLogoClaim(tweetInfo.id, function () {
+    claimClickAction(tweetInfo);
+  }));
+  td3.setAttribute("class", "coinformTweetClaim");
+  td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
+  td3.addEventListener('click', (event) => { 
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    claimClickAction(tweetInfo);
+  });
+
+  return tbl;
+};
+
+const createLogoClaim = (tweetId, callback) => {
+  let claim = document.createElement("IMG");
+  claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
+  claim.setAttribute("class", "coinformClaimLogo");
+  claim.setAttribute("src", claimURL);
+
+  claim.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    callback();
+  });
+
+  return claim;
+};
+
+const createLogoCoinform = (tweetId) => {
 
   let img = document.createElement("IMG");
   img.setAttribute("class", "coinformTweetLogo");
@@ -471,7 +519,6 @@ const createClickableLogo = (tweetId, callback) => {
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    callback();
   });
 
   return img;
@@ -489,7 +536,8 @@ const retryTweetQuery = (tweetInfo, queryId) => {
     logger.logMessage(CoInformLogger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet.`, tweetInfo.id);
     return false;
 
-  } else {
+  }
+  else {
 
     tweetInfo.domObject.coInfoCounter++;
 
@@ -518,19 +566,19 @@ const retryTweetQuery = (tweetInfo, queryId) => {
 const parseApiResponse = (data, tweetInfo) => {
 
   let resStatus = JSON.stringify(data.status).replace(/['"]+/g, '');
-  let acurracyLabel = null;
+  let credibilityLabel = null;
 
   logger.logMessage(CoInformLogger.logTypes.debug, `${resStatus} response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
 
   // If the result ststus is "done" or "partly_done", then we can classify (final or temporary, respectively) the tweet
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
-    acurracyLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
-    classifyTweet(tweetInfo, acurracyLabel);
+    credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
+    classifyTweet(tweetInfo, credibilityLabel);
   }
   if (resStatus && (resStatus.localeCompare('done') === 0)) {
     // Tweet analyzed
-    pluginCache[tweetInfo.id] = acurracyLabel;
+    pluginCache[tweetInfo.id] = credibilityLabel;
     tweetInfo.domObject.coInfoAnalyzed = true;
   }
   else {
@@ -541,7 +589,7 @@ const parseApiResponse = (data, tweetInfo) => {
       retryTweetQuery(tweetInfo, data.query_id);
     }, randomInt(500, 2500));
   }
-
+  
 };
 
 const newFacebookPostCallback = (post) => {
@@ -572,10 +620,10 @@ const classifyPost = (post, score) => {
 
 };
 
-const classifyTweet = (tweet, accuracyLabel) => {
+const classifyTweet = (tweet, credibilityLabel) => {
 
   const node = tweet.domObject;
-  const label = accuracyLabel.replace(/['"]+/g, '');
+  const label = credibilityLabel.replace(/['"]+/g, '');
 
   if (!node.coInformLabel || (node.coInformLabel.localeCompare(label) !== 0)) {
 
@@ -596,16 +644,15 @@ const classifyTweet = (tweet, accuracyLabel) => {
     if (!newCategory) {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`, tweet.id);
     }
-    else if (newCategory.localeCompare("blur") === 0) {
-      createTweetLabel(tweet, label, function() {
-        openLabelPopup(tweet);
-      });
-      createTweetBlurry(tweet);
-    }
-    else if (newCategory.localeCompare("label") === 0) {
-      createTweetLabel(tweet, label, function() {
-        openLabelPopup(tweet);
-      });
+    else {
+      if ((newCategory.localeCompare("blur") === 0) || (newCategory.localeCompare("label") === 0)) {
+        createTweetLabel(tweet, label, function() {
+          openLabelPopup(tweet);
+        });
+      }
+      if (newCategory.localeCompare("blur") === 0) {
+        createTweetBlurry(tweet);
+      }
     }
 
   }
@@ -652,11 +699,11 @@ const isBlurred = (tweet) => {
 
 const createTweetLabel = (tweet, label, callback) => {
 
-  let node = tweet.domObject;
+  let node = document.getElementById(`coinformTweetLabel-${tweet.id}`);
 
   let labelcat = document.createElement("SPAN");
-  labelcat.setAttribute('id', `coinformTweetLabel-${tweet.id}`);
-  labelcat.setAttribute('class', "coinformTweetLabel");
+  labelcat.setAttribute("id", `coinformTweetLabelValue-${tweet.id}`);
+  labelcat.setAttribute("class", "coinformTweetLabel");
   let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
   labelcat.append(txt);
 
@@ -667,7 +714,6 @@ const createTweetLabel = (tweet, label, callback) => {
   });
 
   node.prepend(labelcat);
-
 };
 
 const removeTweetLabel = (tweet) => {
@@ -708,13 +754,29 @@ const createCannotSeeTweetButton = (tweetId, callback) => {
 
 function openLabelPopup(tweet) {
 
+  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+
   let node = tweet.domObject;
   let nodeBlurred = isBlurred(tweet);
   let nodeBlurrable = false;
   let showConfirm = false;
   let buttonText = "";
 
+  let popupPreTitle = '';
+  let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
+  let moreInfo = browserAPI.i18n.getMessage('not_tagged__info', elementTxt);
+
+  //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
+  let meterLogoSrc = null;
+
   if (node.coInformLabel) {
+    let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
+    if (!auxlabel) auxlabel = node.coInformLabel;
+    popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
+    popupTitle = auxlabel;
+    moreInfo = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
+    meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
+
     let category = configuration.coinform.categories[node.coInformLabel];
     if (category && (category.localeCompare("blur") === 0)) {
       nodeBlurrable = true;
@@ -723,16 +785,19 @@ function openLabelPopup(tweet) {
 
   if (nodeBlurred) {
     showConfirm = true;
-    buttonText = browserAPI.i18n.getMessage('see_tweet');
+    buttonText = browserAPI.i18n.getMessage('see_anyway', elementTxt);
   }
   else if (nodeBlurrable) {
     showConfirm = true;
-    buttonText = browserAPI.i18n.getMessage('blur_tweet');
+    buttonText = browserAPI.i18n.getMessage('blur_again', elementTxt);
   }
 
   return Swal2.fire({
-    type: 'info',
-    title: browserAPI.i18n.getMessage('tweet_tagged_as', browserAPI.i18n.getMessage(node.coInformLabel)),
+    type: (meterLogoSrc ? null : 'question'),
+    imageUrl: meterLogoSrc,
+    imageHeight: 100,
+    title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
+      '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
     showConfirmButton: showConfirm,
     showCloseButton: true,
     showCancelButton: true,
@@ -743,7 +808,7 @@ function openLabelPopup(tweet) {
     reverseButtons: true,
     focusCancel: true,
     html:
-      '<span>' + browserAPI.i18n.getMessage(node.coInformLabel + '__info') + '</span>',
+      '<span>' + moreInfo + '</span>',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
@@ -762,14 +827,9 @@ function openLabelPopup(tweet) {
 
 }
 
-function logoClickAction(tweet) {
+function claimClickAction(tweet) {
 
-  let nodeBlurred = isBlurred(tweet);
-
-  if (nodeBlurred) {
-    openLabelPopup(tweet);
-  }
-  else if (coinformUserToken) {
+  if (coinformUserToken) {
     openClaimPopup(tweet);
   }
   else {
@@ -780,40 +840,58 @@ function logoClickAction(tweet) {
 
 function openClaimPopup(tweet) {
 
+  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+
   let node = tweet.domObject;
-
   let resultDropdown;
-
   let categoryOptions = {};
+  let htmlSelectInputOptions = "<option value>" + browserAPI.i18n.getMessage('choose_claim') + "</option>";
 
   Object.keys(configuration.coinform.accuracy).forEach(function(key) {
-    categoryOptions[key] = browserAPI.i18n.getMessage('tweet_is', browserAPI.i18n.getMessage(key));
+    categoryOptions[key] = browserAPI.i18n.getMessage(key + '__info', elementTxt);
+    htmlSelectInputOptions += `\n<option value="${key}">` + categoryOptions[key] + '</option>';
   });
 
-  let popupTitle = browserAPI.i18n.getMessage('tweet_not_tagged');
-  let moreInfo = browserAPI.i18n.getMessage('tweet_not_tagged__info');
-  let provideClaim = browserAPI.i18n.getMessage("provide_claim_untagged");
+  let popupPreTitle = '';
+  let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
+  let moreInfo = browserAPI.i18n.getMessage('not_tagged__info', elementTxt);
+  let provideClaimTitle = browserAPI.i18n.getMessage("provide_claim_title");
+  //let provideClaimText = browserAPI.i18n.getMessage("provide_claim_untagged");
+  let provideClaimText1 = browserAPI.i18n.getMessage("provide_claim_text1");
+  let provideClaimText2 = browserAPI.i18n.getMessage("provide_claim_text2", elementTxt);
+
+  //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
+  let meterLogoSrc = null;
 
   if (node.coInformLabel) {
     let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
     if (!auxlabel) auxlabel = node.coInformLabel;
-    popupTitle = browserAPI.i18n.getMessage('tweet_tagged_as', auxlabel);
-    moreInfo = browserAPI.i18n.getMessage(node.coInformLabel + '__info');
-    provideClaim = browserAPI.i18n.getMessage("provide_claim");
+    popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
+    popupTitle = auxlabel;
+    moreInfo = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
+    //provideClaimText = browserAPI.i18n.getMessage("provide_claim");
+    meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
   }
 
   return Swal2.fire({
-    type: 'info',
-    title: popupTitle,
+    type: (meterLogoSrc ? null : 'question'),
+    imageUrl: meterLogoSrc,
+    imageHeight: 100,
+    title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
+      '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
     showCloseButton: true,
     showCancelButton: false,
     confirmButtonColor: buttonColor,
     confirmButtonText: browserAPI.i18n.getMessage('submit'),
     focusConfirm: true,
     preConfirm: () => {
+      let claimOpt = document.getElementById('swal-input-select').value;
       let url = document.getElementById('swal-input1').value;
       let comment = document.getElementById('swal-input2').value;
-      if (!isURL(url)) {
+      if (!claimOpt) {
+        Swal2.showValidationMessage(browserAPI.i18n.getMessage('please_choose_claim'));
+      }
+      else if (!isURL(url)) {
         Swal2.showValidationMessage(browserAPI.i18n.getMessage('invalid_url'));
         return false;
       }
@@ -822,29 +900,21 @@ function openClaimPopup(tweet) {
         return false;
       }
       else {
-        return [ url, comment ];
+        return [ claimOpt, url, comment ];
       }
     },
-    input: 'select',
-    inputPlaceholder: browserAPI.i18n.getMessage('choose_claim'),
-    inputOptions: categoryOptions,
-    inputValidator: (value) => {
-      return new Promise((resolve) => {
-        if (value.localeCompare('') !== 0) {
-          resultDropdown = value;
-        } else {
-          resolve(browserAPI.i18n.getMessage('please_choose_claim'));
-        }
-        resolve();
-      });
-    },
     html:
-      '<div class="subtitle">' + 
+      '<div class="coinformPopupSubtitle">' + 
         '<span>' + moreInfo + '</span>' + 
       '</div>' + 
-      '<div class="contentText">' +
-        '<span>' + provideClaim + '</span>' +
+      '<div class="coinformProvideClaimText">' +
+        '<span class="coinformProvideClaimTitle">' + provideClaimTitle + '</span><br/>' +
+        '<span>' + provideClaimText1 + '</span>' +
+        '<span>' + provideClaimText2 + '</span>' +
       '</div>' +
+      '<select id="swal-input-select" class="swal2-select">' +
+        htmlSelectInputOptions +
+      '</select>' +
       '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
       '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea">',
     footer:
@@ -858,14 +928,15 @@ function openClaimPopup(tweet) {
         let returned = result[Object.keys(result)[0]];
         returned = returned.toString();
         let array = returned.split(',');
-        let url = array[0];
-        let comment = array[1];
+        let claimAccuracyLabel = array[0];
+        let claimUrl = array[1];
+        let claimComment = array[2];
         let evaluation = {
-          'label': resultDropdown, 
-          'url': url, 
-          'comment': comment
+          'label': claimAccuracyLabel, 
+          'url': claimUrl, 
+          'comment': claimComment
         };
-        client.postTwitterEvaluate(tweet.id, evaluation).then(function (res) {
+        client.postTwitterEvaluate(tweet.id, tweet.url, evaluation, coinformUserToken).then(function (res) {
 
           let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
           if (resStatus.localeCompare('400') === 0) {
@@ -879,15 +950,9 @@ function openClaimPopup(tweet) {
           else if (resStatus.localeCompare('200') === 0) {
             
             let data = res.data;
-            if (data.evaluation_id) {
-              let resEvalId = JSON.stringify(data.evaluation_id).replace(/['"]+/g, '');
-              logger.logMessage(CoInformLogger.logTypes.info, `Claim sent. Evaluation ID = ${resEvalId}`, tweet.id);
-              Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
-            }
-            else {
-              logger.logMessage(CoInformLogger.logTypes.error, `Request "evaluation_id" Error`, tweet.id);
-              Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
-            }
+            // let resEvalId = JSON.stringify(data.evaluation_id).replace(/['"]+/g, '');
+            logger.logMessage(CoInformLogger.logTypes.info, `Claim sent successfully`, tweet.id);
+            Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
 
           }
           else {
@@ -910,21 +975,32 @@ function openClaimPopup(tweet) {
 }
 
 function openNotLoggedClaimPopup(tweet) {
+  
+  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
 
   let node = tweet.domObject;
 
-  let popupTitle = browserAPI.i18n.getMessage('tweet_not_tagged');
+  let popupPreTitle = '';
+  let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
   let popupButtonText = browserAPI.i18n.getMessage('ok');
+
+  //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
+  let meterLogoSrc = null;
 
   if (node.coInformLabel) {
     let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
     if (!auxlabel) auxlabel = node.coInformLabel;
-    popupTitle = browserAPI.i18n.getMessage('tweet_tagged_as', auxlabel);
+    popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
+    popupTitle = auxlabel;
+    meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
   }
   
   return Swal2.fire({
-    type: 'info',
-    title: popupTitle,
+    type: (meterLogoSrc ? null : 'question'),
+    imageUrl: meterLogoSrc,
+    imageHeight: 100,
+    title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
+      '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
     showCloseButton: true,
     showCancelButton: false,
     confirmButtonColor: buttonColor,

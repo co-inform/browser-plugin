@@ -26,6 +26,10 @@ CoinformClient.prototype = {
     return postEvaluate(this.baseURL + '/twitter/evaluate/', tweetId, evaluation, userToken);
   },
 
+  postTwitterEvaluate: function (tweetId, tweetUrl, evaluation, userToken) {
+    return postEvaluate(this.baseURL + '/twitter/evaluate/', tweetId, tweetUrl, evaluation, userToken);
+  },
+
   getDomainDetails: function (domain) {
     return getHttpRequest(this.baseURL + '/toop/domain/' + domain);
   },
@@ -46,8 +50,8 @@ CoinformClient.prototype = {
     return postRegister(this.baseURL + '/register/', email, password);
   },
 
-  postRenewUserToken: function (userToken) {
-    return postRenewToken(this.baseURL + '/renew-token/', userToken);
+  postRenewUserToken: function () {
+    return postRenewToken(this.baseURL + '/renew-token/');
   },
 
   postUserChangePass: function (password, newpassword, userToken) {
@@ -60,9 +64,17 @@ CoinformClient.prototype = {
 
 };
 
-function postEvaluate(path, tweetId, evaluation, userToken) {
+function postEvaluate(path, tweetId, tweetUrl, evaluation, userToken) {
 
-  const data = {tweet_id: tweetId, evaluation: evaluation};
+  const data = {
+    tweet_id: tweetId,
+    rating: evaluation.label,
+    comment: evaluation.comment,
+    supportingUrl: [
+      evaluation.url
+    ],
+    url: tweetUrl
+  };
 
   return new Promise((resolve, reject) => {
     f(path, {
@@ -273,19 +285,14 @@ function postChangePass(path, password, newpassword, userToken) {
 }
 
 function postLogout(path, userToken) {
-  
-  // const data = {};
 
   return new Promise((resolve, reject) => {
     f(path, {
       method: 'GET',
       // mode: 'cors',
-      // body: JSON.stringify(data),
       headers: {
         'Authorization': 'Bearer ' + userToken,
         'Accept': 'application/json',
-        // 'Content-Type': 'application/json',
-        // 'Content-Length': Buffer.byteLength(JSON.stringify(data)),
         'Connection': 'keep-alive',
         'rejectUnauthorized': false
       }
@@ -300,20 +307,14 @@ function postLogout(path, userToken) {
 
 }
 
-function postRenewToken(path, userToken) {
-  
-  // const data = {};
+function postRenewToken(path) {
 
   return new Promise((resolve, reject) => {
     f(path, {
       method: 'GET',
       // mode: 'cors',
-      // body: JSON.stringify(data),
       headers: {
-        'Authorization': 'Bearer ' + userToken,
         'Accept': 'application/json',
-        // 'Content-Type': 'application/json',
-        // 'Content-Length': Buffer.byteLength(JSON.stringify(data)),
         'Connection': 'keep-alive',
         'rejectUnauthorized': false
       }
