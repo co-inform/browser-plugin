@@ -256,6 +256,9 @@ const newTweetCallback = (tweetInfo) => {
     let toolbar = createToolbar(tweetInfo);
     tweetInfo.domObject.prepend(toolbar);
     tweetInfo.domObject.toolBar = true;
+  } else {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
+    return;
   }
 
   // If the tweet has already been tagged then we directly classify it
