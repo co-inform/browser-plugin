@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 22/04/2020 [branch: EU18COI-132-Implement-the-UX-input-changes-to-the-browser-plugin]
+
+src/js/browser-plugin.js
+- added the credibility label dependent meter icons to the header of the popups
+- extracted the tweet word from most of the language messages, so it can easily adapt the functions for reuse in other websites than twitter
+- moved the accuracy select input in the claim popup to the "html" content, so it will be the first input
+- adapted the communication with the "/twitter/evaluate" API GW endpoint to the new specification
+
+src/js/coinform-client.js
+- adapted the communication with the "/twitter/evaluate" API GW endpoint to the new specification
+
+src/js/tweet-parser.js
+- new tweet prsed property "url" with the URL of the tweet, for new endpoints communication specifications
+
+src/plugin/_locales/en/messages.json
+- credibility labels description texts updated
+- accuracy labels description texts updated
+- claim and other popups texts updated
+
+src/plugin/content/coinform.css
+- new css styles for claim and other popups header changes
+
+src/plugin/manifest.json
+- new icons access defined
+
+
 ## commit 17/04/2020 [branch: EU18COI-133-Browser-Plugin-Long-Lived-Sessions]
 
 src/js/background-script.js
