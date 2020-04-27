@@ -289,13 +289,13 @@
   cursor: pointer;
 }
 
-[data-testid="toolBar"] [data-testid^="tweetButton"] .spinner-border {
+/*[data-testid="toolBar"] [data-testid^="tweetButton"] .spinner-border {
   width: 28px;
   height: 28px;
   top: 50%;
   position: relative;
   margin-top: -14px;
-}
+}*/
 
 .publishTweetCoinformMessage {
   position: relative;
