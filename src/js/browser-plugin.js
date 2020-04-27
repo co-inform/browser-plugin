@@ -252,6 +252,16 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id] = false;
   }
 
+<<<<<<< HEAD
+=======
+  if (!tweetInfo.domObject.toolBar) {
+
+    let toolbar = createToolbar(tweetInfo);
+    tweetInfo.domObject.prepend(toolbar);
+    tweetInfo.domObject.toolBar = true;
+  }
+
+>>>>>>> b47b97a0e147405bdeb00abc260368c17a2b1ff4
   // If the tweet has already been tagged then we directly classify it
   if (pluginCache[tweetInfo.id]) {
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
@@ -262,7 +272,6 @@ const newTweetCallback = (tweetInfo) => {
 
   tweetInfo.domObject.coInfoCounter = 0;
 
-  var acurracyLabel;
   // First API call to the endpoint /twitter/tweet/
   client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
 
@@ -271,7 +280,7 @@ const newTweetCallback = (tweetInfo) => {
       logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
     }
     else if (resStatus.localeCompare('200') === 0) {
-      acurracyLabel = parseApiResponse(res.data, tweetInfo);
+      parseApiResponse(res.data, tweetInfo);
     }
     else {
       logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
@@ -294,22 +303,22 @@ const newTweetCallback = (tweetInfo) => {
 
 const createToolbar = (tweetInfo) => {
 
-  var tbl = document.createElement('table');
+  let tbl = document.createElement('table');
   tbl.setAttribute("class", "coinformToolbar");
   
-  var tr = tbl.insertRow();
-  var td1 = tr.insertCell();
+  let tr = tbl.insertRow();
+  let td1 = tr.insertCell();
   td1.appendChild(createLogoCoinform(tweetInfo.id));
 
-  var td2 = tr.insertCell();
+  let td2 = tr.insertCell();
   td2.setAttribute("class", "coinformTweetLabel");
   td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
 
-  var td3 = tr.insertCell();
+  let td3 = tr.insertCell();
   td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
   
   td3.appendChild(createLogoClaim(tweetInfo.id, function () {
-    openClaimPopup(tweetInfo);
+    claimClickAction(tweetInfo);
   }));
   td3.setAttribute("class", "coinformTweetClaim");
   td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
@@ -318,7 +327,7 @@ const createToolbar = (tweetInfo) => {
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    openClaimPopup(tweetInfo);
+    claimClickAction(tweetInfo);
   });
 
   return tbl;
@@ -435,8 +444,7 @@ const parseApiResponse = (data, tweetInfo) => {
       retryTweetQuery(tweetInfo, data.query_id);
     }, randomInt(500, 2500));
   }
-
-  return acurracyLabel;
+  
 };
 
 const newFacebookPostCallback = (post) => {
@@ -675,14 +683,9 @@ function openLabelPopup(tweet) {
 
 }
 
-function logoClickAction(tweet) {
+function claimClickAction(tweet) {
 
-  let nodeBlurred = isBlurred(tweet);
-
-  if (nodeBlurred) {
-    openLabelPopup(tweet);
-  }
-  else if (coinformUserToken) {
+  if (coinformUserToken) {
     openClaimPopup(tweet);
   }
   else {
@@ -803,15 +806,9 @@ function openClaimPopup(tweet) {
           else if (resStatus.localeCompare('200') === 0) {
             
             let data = res.data;
-            if (data.evaluation_id) {
-              let resEvalId = JSON.stringify(data.evaluation_id).replace(/['"]+/g, '');
-              logger.logMessage(CoInformLogger.logTypes.info, `Claim sent. Evaluation ID = ${resEvalId}`, tweet.id);
-              Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
-            }
-            else {
-              logger.logMessage(CoInformLogger.logTypes.error, `Request "evaluation_id" Error`, tweet.id);
-              Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
-            }
+            // let resEvalId = JSON.stringify(data.evaluation_id).replace(/['"]+/g, '');
+            logger.logMessage(CoInformLogger.logTypes.info, `Claim sent successfully`, tweet.id);
+            Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
 
           }
           else {
