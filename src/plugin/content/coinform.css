@@ -210,83 +210,110 @@
   cursor: default;
 }
 
-.logo {
-  background: url("resources/logo.png") no-repeat;
-  background-size: 250px 250px;
-  display: block;
-  width: 250px;
-  height: 250px;
-  margin-top: 35px;
-  margin-bottom: 65px;
+.coinformToolbar {
+  position: relative;
+  left: -17px;
+  width: calc(100% + 32px);
+  height: 35px;
+  background-color: #f3f3f3;
+  color: #C0C0C0;
+  font-weight: bold;
+  align-self: flex-start;
+  box-shadow: 2px 2px;
+  cursor: auto;
 }
 
-.coinformTweetLogo {
-  position: absolute;
-  left: 10px;
-  top: 10px;
+.coinformToolbarLogoContent {
+  width: 52px;
+}
+
+.coinformToolbarLogo {
+  position: relative;
+  margin-left: 10px;
+  padding-top: 5px;
   align-self: flex-start;
 }
 
-.coinformTweetClaim {
+.coinformToolbarLabelContent {
+  padding-left: 8px;
+  display: table-cell;
+}
+
+.coinformToolbarLabel {
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+  color: #3b444b;
+  padding: 1px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  font-size: 1em;
+  cursor: pointer;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.coinformToolbarButton {
   color: #6c3b5d;
-  position: absolute;
-  left: 552px;
-  width: 400px;
+  position: relative;
+  float: right;
+  top: 0px;
+  right: 0px;
+  width: fit-content;
   align-self: flex-end;
   cursor: pointer;
-  padding-left: 1px;
-  padding-right: 100px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-color: rgba(0, 0, 0, .2);
   border-width: 1px; 
   border-style: hidden hidden hidden solid;
   transition: transform 0.1s linear;
   transition-duration: 0.25s;
   transform: translateX(0px);
   transform: scale(1);
+}
+
+.coinformToolbarButton > img {
+  position: relative;
+  top: 2px;
   display: inline-block;
 }
 
+.coinformToolbarButton > span {
+  position: relative;
+  top: -7px;
+  padding-left: 8px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  font-size: 0.8em;
+}
+
+.coinformToolbarButton > span {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s linear;
+  display: none;
+}
+
 .coinformClaimLogo {
+  padding-top: 2px;
+  width: 25px;
+  height: 25px;
   border-radius: 3px;
   border-radius: 20%;
   background-clip: content-box;
 }
 
-.coinformTweetClaim:hover {
+.coinformToolbarButton:hover {
   color: rgb(68, 65, 65);
   background-color: #C0C0C0;
-  transform: translateX(-170px);
-  display:inline-block;
-  border-radius: 10px;
+  transform: translateX(-0px);
+  border-radius: 6px;
   filter: invert(100%);
- }
-
-.coinformToolbar {
-  color: #C0C0C0;
-  width: 600px;
-  height: 35px;
-  background-color: #f3f3f3;
-  font-weight: bold;
-  position: relative;
-  align-self: flex-start;
-  padding-top: 5px;
-  box-shadow: 2px 2px;
 }
 
-.coinformTweetLabel {
-  position: absolute;
-  left: 30px;
-  width: 100px;
-  top: 3px;
-  align-self: flex-start;
- /* margin-right: 402px;
-  white-space: nowrap;
-  /* background-color: #62b9af;
-  border-radius: 5%; */
-  color: #3b444b;
-  padding: 1px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-  font-size: 1em;
-  cursor: pointer;
+.coinformToolbarButton:hover > span {
+  display: inline-block;
+  visibility: visible;
+  opacity: 1;
 }
 
 /*[data-testid="toolBar"] [data-testid^="tweetButton"] .spinner-border {

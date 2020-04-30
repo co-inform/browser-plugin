@@ -461,24 +461,40 @@ const newTweetCallback = (tweetInfo) => {
 const createToolbar = (tweetInfo) => {
 
   let tbl = document.createElement('table');
-  tbl.setAttribute("class", "coinformToolbar");
+  tbl.classList.add("coinformToolbar");
+  
+  tbl.addEventListener('click', (event) => { 
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+  });
   
   let tr = tbl.insertRow();
+
   let td1 = tr.insertCell();
+  td1.classList.add("coinformToolbarLogoContent");
   td1.appendChild(createLogoCoinform(tweetInfo.id));
 
   let td2 = tr.insertCell();
-  td2.setAttribute("class", "coinformTweetLabel");
-  td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
+  td2.classList.add("coinformToolbarLabelContent");
+  td2.setAttribute("id", `coinformToolbarLabelContent-${tweetInfo.id}`);
 
   let td3 = tr.insertCell();
-  td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
+  td3.setAttribute("id", `coinformToolbarFeedback-${tweetInfo.id}`);
   
   td3.appendChild(createLogoClaim(tweetInfo.id, function () {
     claimClickAction(tweetInfo);
   }));
-  td3.setAttribute("class", "coinformTweetClaim");
-  td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
+  td3.classList.add("coinformToolbarButton");
+  td3.classList.add("coinformToolbarClaim");
+
+  //td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
+  let auxtext = document.createElement("SPAN");
+  let txt = document.createTextNode(browserAPI.i18n.getMessage('make_claim'));
+  auxtext.append(txt);
+  td3.appendChild(auxtext);
+
   td3.addEventListener('click', (event) => { 
     // prevent opening the tweet
     event.stopImmediatePropagation();
@@ -491,9 +507,10 @@ const createToolbar = (tweetInfo) => {
 };
 
 const createLogoClaim = (tweetId, callback) => {
+
   let claim = document.createElement("IMG");
-  claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
-  claim.setAttribute("class", "coinformClaimLogo");
+  claim.setAttribute("id", `coinformToolbarClaim-${tweetId}`);
+  claim.classList.add("coinformClaimLogo");
   claim.setAttribute("src", claimURL);
 
   claim.addEventListener('click', (event) => {
@@ -510,8 +527,8 @@ const createLogoClaim = (tweetId, callback) => {
 const createLogoCoinform = (tweetId) => {
 
   let img = document.createElement("IMG");
-  img.setAttribute("class", "coinformTweetLogo");
-  img.setAttribute("id", `coinformTweetLogo-${tweetId}`);
+  img.classList.add("coinformToolbarLogo");
+  img.setAttribute("id", `coinformToolbarLogo-${tweetId}`);
   img.setAttribute("src", logoURL);
 
   img.addEventListener('click', (event) => {
@@ -522,7 +539,6 @@ const createLogoCoinform = (tweetId) => {
   });
 
   return img;
-
 };
 
 const retryTweetQuery = (tweetInfo, queryId) => {
@@ -699,11 +715,12 @@ const isBlurred = (tweet) => {
 
 const createTweetLabel = (tweet, label, callback) => {
 
-  let node = document.getElementById(`coinformTweetLabel-${tweet.id}`);
+  let node = tweet.domObject.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
 
+  // create the label inside the toolbar
   let labelcat = document.createElement("SPAN");
-  labelcat.setAttribute("id", `coinformTweetLabelValue-${tweet.id}`);
-  labelcat.setAttribute("class", "coinformTweetLabel");
+  labelcat.setAttribute("id", `coinformToolbarLabel-${tweet.id}`);
+  labelcat.setAttribute("class", "coinformToolbarLabel");
   let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
   labelcat.append(txt);
 
@@ -713,16 +730,13 @@ const createTweetLabel = (tweet, label, callback) => {
     callback();
   });
 
-  node.prepend(labelcat);
+  node.append(labelcat);
 };
 
 const removeTweetLabel = (tweet) => {
 
-  let node = tweet.domObject;
-  let auxPrevious = node.querySelector(`#coinformTweetLabel-${tweet.id}`);
-  if (auxPrevious) {
-    auxPrevious.remove();
-  }
+  let node = tweet.domObject.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
+  node.querySelectorAll('*').forEach(n => n.remove());
 
 };
 
