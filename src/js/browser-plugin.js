@@ -420,15 +420,6 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id] = false;
   }
 
-  if (!tweetInfo.domObject.toolBar) {
-    let toolbar = createToolbar(tweetInfo);
-    tweetInfo.domObject.prepend(toolbar);
-    tweetInfo.domObject.toolBar = true;
-  } else {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
-    return;
-  }
-
   // If the tweet has already been tagged then we directly classify it
   if (pluginCache[tweetInfo.id]) {
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
@@ -438,7 +429,7 @@ const newTweetCallback = (tweetInfo) => {
   }
 
   tweetInfo.domObject.coInfoCounter = 0;
-
+  let moduleResponse; 
   // First API call to the endpoint /twitter/tweet/
   client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
 
@@ -448,6 +439,7 @@ const newTweetCallback = (tweetInfo) => {
     }
     else if (resStatus.localeCompare('200') === 0) {
       parseApiResponse(res.data, tweetInfo);
+      moduleResponse = res.data.module_response_code;
     }
     else {
       logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
@@ -460,9 +452,18 @@ const newTweetCallback = (tweetInfo) => {
 
   });
 
+  if (!tweetInfo.domObject.toolBar) {
+    let toolbar = createToolbar(tweetInfo, moduleResponse);
+    tweetInfo.domObject.prepend(toolbar);
+    tweetInfo.domObject.toolBar = true;
+  } else {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
+    return;
+  }
+
 };
 
-const createToolbar = (tweetInfo) => {
+const createToolbar = (tweetInfo, moduleResponse) => {
 
   let tbl = document.createElement('table');
   tbl.classList.add("coinformToolbar");
@@ -510,7 +511,7 @@ const createToolbar = (tweetInfo) => {
   td4.setAttribute("id", `coinformToolbarFeedbackNegative-${tweetInfo.id}`);
 
   td4.appendChild(createLogoNegativeFeedback(tweetInfo.id, function () {
-    sendTweetEvaluation(tweetInfo, "disagree");
+    sendTweetEvaluation(tweetInfo, moduleResponse, "disagree");
   }));
   let positiveFeedbackText = document.createElement("SPAN");
   let positiveText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
@@ -523,14 +524,14 @@ const createToolbar = (tweetInfo) => {
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    sendTweetEvaluation(tweetInfo, "disagree");
+    sendTweetEvaluation(tweetInfo, moduleResponse, "disagree");
   });
 
   let td5 = tr.insertCell();
   td5.setAttribute("id", `coinformToolbarFeedbackPositive-${tweetInfo.id}`);
 
   td5.appendChild(createLogoPositiveFeedback(tweetInfo.id, function () {
-    sendTweetEvaluation(tweetInfo, "agree");
+    sendTweetEvaluation(tweetInfo, moduleResponse, "agree");
   }));
   let negativeFeedbackText = document.createElement("SPAN");
   let negativeText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
@@ -543,7 +544,7 @@ const createToolbar = (tweetInfo) => {
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    sendTweetEvaluation(tweetInfo, "agree");
+    sendTweetEvaluation(tweetInfo, moduleResponse, "agree");
   });
 
   return tbl;
@@ -920,15 +921,15 @@ function openLabelPopup(tweet) {
 
 }
 
-function sendTweetEvaluation(tweetInfo, agreement) {
+function sendTweetEvaluation(tweetInfo, moduleResponse, agreement) {
 
   let evaluation = {
     'label': tweetInfo.domObject.coInformLabel, 
     'url': tweetInfo.domObject.url,
-    'comment': claimComment
+    'comment': tweetInfo.domObject.text
   };
 
-  client.postTwitterEvaluateTweet(tweet.id, tweet.url, evaluation, moduleresponse, agreement).then(function () {
+  client.postTwitterEvaluateTweet(tweetInfo.id, tweetInfo.url, evaluation, moduleResponse, agreement).then(function () {
     logger.logMessage(CoInformLogger.logTypes.info, `Reaction registrated`);
 
     Swal2.fire({
@@ -938,7 +939,7 @@ function sendTweetEvaluation(tweetInfo, agreement) {
     });
 
   }).catch(err => {
-    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweet.id);
+    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweetInfo.id);
   });
 
 }
