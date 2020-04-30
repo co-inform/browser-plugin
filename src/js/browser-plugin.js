@@ -13,6 +13,8 @@ const pluginCache = {};
 let logoURL = "/resources/logo_36_20.png";
 let claimURL = "/resources/bubble_claim.png";
 let claimURLWhite = "/resources/bubble_claim_w.png";
+let disagreeURL = "/resources/disagree.png";
+let agreeURL = "/resources/agree.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform
@@ -79,6 +81,8 @@ const start = () => {
   claimURL = browserAPI.extension.getURL(claimURL);
   claimURLWhite = browserAPI.extension.getURL(claimURLWhite);
   minlogoURL = browserAPI.extension.getURL(minlogoURL);
+  disagreeURL = browserAPI.extension.getURL(disagreeURL);
+  agreeURL = browserAPI.extension.getURL(agreeURL);
 
   browserAPI.runtime.sendMessage({
     messageId: "GetSession"
@@ -489,7 +493,6 @@ const createToolbar = (tweetInfo) => {
   td3.classList.add("coinformToolbarButton");
   td3.classList.add("coinformToolbarClaim");
 
-  //td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
   let auxtext = document.createElement("SPAN");
   let txt = document.createTextNode(browserAPI.i18n.getMessage('make_claim'));
   auxtext.append(txt);
@@ -501,6 +504,46 @@ const createToolbar = (tweetInfo) => {
     event.preventDefault();
     event.stopPropagation();
     claimClickAction(tweetInfo);
+  });
+
+  let td4 = tr.insertCell();
+  td4.setAttribute("id", `coinformToolbarFeedbackNegative-${tweetInfo.id}`);
+
+  td4.appendChild(createLogoNegativeFeedback(tweetInfo.id, function () {
+    sendTweetEvaluation(tweetInfo, "disagree");
+  }));
+  let positiveFeedbackText = document.createElement("SPAN");
+  let positiveText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
+  positiveFeedbackText.append(positiveText);
+  td4.appendChild(positiveFeedbackText);
+  td4.classList.add("coinformToolbarNegativeLogo");
+
+  td4.addEventListener('click', (event) => { 
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    sendTweetEvaluation(tweetInfo, "disagree");
+  });
+
+  let td5 = tr.insertCell();
+  td5.setAttribute("id", `coinformToolbarFeedbackPositive-${tweetInfo.id}`);
+
+  td5.appendChild(createLogoPositiveFeedback(tweetInfo.id, function () {
+    sendTweetEvaluation(tweetInfo, "agree");
+  }));
+  let negativeFeedbackText = document.createElement("SPAN");
+  let negativeText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
+  negativeFeedbackText.append(negativeText);
+  td5.appendChild(negativeFeedbackText);
+  td5.classList.add("coinformToolbarPositiveLogo");
+
+  td5.addEventListener('click', (event) => { 
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    sendTweetEvaluation(tweetInfo, "agree");
   });
 
   return tbl;
@@ -522,6 +565,42 @@ const createLogoClaim = (tweetId, callback) => {
   });
 
   return claim;
+};
+
+const createLogoPositiveFeedback = (tweetId, callback) => {
+
+  let agree = document.createElement("IMG");
+  agree.setAttribute("id", `coinformPositiveLogo-${tweetId}`);
+  agree.classList.add("coinformPositiveLogo");
+  agree.setAttribute("src", agreeURL);
+
+  agree.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    callback();
+  });
+
+  return agree;
+};
+
+const createLogoNegativeFeedback = (tweetId, callback) => {
+
+  let disagree = document.createElement("IMG");
+  disagree.setAttribute("id", `coinformNegativeLogo-${tweetId}`);
+  disagree.classList.add("coinformNegativeLogo");
+  disagree.setAttribute("src", disagreeURL);
+
+  disagree.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    callback();
+  });
+
+  return disagree;
 };
 
 const createLogoCoinform = (tweetId) => {
@@ -638,7 +717,7 @@ const classifyPost = (post, score) => {
 
 const classifyTweet = (tweet, credibilityLabel) => {
 
-  const node = tweet.domObject;
+  const node = tweet.domObject; 
   const label = credibilityLabel.replace(/['"]+/g, '');
 
   if (!node.coInformLabel || (node.coInformLabel.localeCompare(label) !== 0)) {
@@ -837,6 +916,29 @@ function openLabelPopup(tweet) {
         createTweetBlurry(tweet);
       }
     }
+  });
+
+}
+
+function sendTweetEvaluation(tweetInfo, agreement) {
+
+  let evaluation = {
+    'label': tweetInfo.domObject.coInformLabel, 
+    'url': tweetInfo.domObject.url,
+    'comment': claimComment
+  };
+
+  client.postTwitterEvaluateTweet(tweet.id, tweet.url, evaluation, moduleresponse, agreement).then(function () {
+    logger.logMessage(CoInformLogger.logTypes.info, `Reaction registrated`);
+
+    Swal2.fire({
+      title: '<strong> Reaction registrated </strong>',
+      icon: 'success',
+      timer: 1500
+    });
+
+  }).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweet.id);
   });
 
 }

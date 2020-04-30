@@ -152,6 +152,12 @@
   "link_to_claim": {
     "message": "Link to your claim"
   },
+  "positive_feedback": {
+    "message": "I agree with the tweet label"
+  },
+  "negative_feedback": {
+    "message": "I disagree with the tweet label"
+  },
   "additional_info": {
     "message": "Additional info"
   },
