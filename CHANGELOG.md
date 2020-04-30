@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 30/04/2020 [branch: EU18COI-141-Add-module-labels-and-module-values-information-to-the-Browser-Plugin-labeling]
+
+src/js/browser-plugin.js
+- changed toolbar generation for the label info tooltip and for new buttons
+- prevent tweet opening when clicking the toolbar
+- new function for credibility modules info parsing
+- added the modules info to the pluginCache variable
+- new function for creating modules info tooltip content
+- added the modules info content to the label popup
+
+src/plugin/_locales/en/messages.json
+- added messages for the credibility label info tooltip
+
+src/plugin/content/coinform.css
+- changed styles of the coinform toolbar, label and buttons
+- new styles for the coinform tollbar label info tooltip
+
+
 ## commit 20/04/2020 [branch: EU18COI-123-Implement-the-Await-nudging-strategy]
 
 src/js/background-script.js

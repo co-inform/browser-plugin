@@ -12,7 +12,7 @@ const pluginCache = {};
 
 let logoURL = "/resources/logo_36_20.png";
 let claimURL = "/resources/bubble_claim.png";
-let claimURLWhite = "/resources/bubble_claim_w.png";
+let infoLogoURL = "/resources/info.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform
@@ -77,8 +77,8 @@ const start = () => {
 
   logoURL = browserAPI.extension.getURL(logoURL);
   claimURL = browserAPI.extension.getURL(claimURL);
-  claimURLWhite = browserAPI.extension.getURL(claimURLWhite);
   minlogoURL = browserAPI.extension.getURL(minlogoURL);
+  infoLogoURL = browserAPI.extension.getURL(infoLogoURL);
 
   browserAPI.runtime.sendMessage({
     messageId: "GetSession"
@@ -88,7 +88,6 @@ const start = () => {
       coinformUserToken = res.token;
       coinformUserMail = res.userMail;
       coinformUserID = res.userID;
-      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
     }
     else {
       logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
@@ -429,7 +428,7 @@ const newTweetCallback = (tweetInfo) => {
   if (pluginCache[tweetInfo.id]) {
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
     tweetInfo.domObject.coInfoAnalyzed = true;
-    classifyTweet(tweetInfo, pluginCache[tweetInfo.id]);
+    classifyTweet(tweetInfo, pluginCache[tweetInfo.id].label, pluginCache[tweetInfo.id].modules);
     return;
   }
 
@@ -461,24 +460,40 @@ const newTweetCallback = (tweetInfo) => {
 const createToolbar = (tweetInfo) => {
 
   let tbl = document.createElement('table');
-  tbl.setAttribute("class", "coinformToolbar");
+  tbl.classList.add("coinformToolbar");
+  
+  tbl.addEventListener('click', (event) => { 
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+  });
   
   let tr = tbl.insertRow();
+
   let td1 = tr.insertCell();
+  td1.classList.add("coinformToolbarLogoContent");
   td1.appendChild(createLogoCoinform(tweetInfo.id));
 
   let td2 = tr.insertCell();
-  td2.setAttribute("class", "coinformTweetLabel");
-  td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
+  td2.classList.add("coinformToolbarLabelContent");
+  td2.setAttribute("id", `coinformToolbarLabelContent-${tweetInfo.id}`);
+  
 
   let td3 = tr.insertCell();
-  td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
-  
+  td3.setAttribute("id", `coinformToolbarFeedback-${tweetInfo.id}`);
   td3.appendChild(createLogoClaim(tweetInfo.id, function () {
     claimClickAction(tweetInfo);
   }));
-  td3.setAttribute("class", "coinformTweetClaim");
-  td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
+  td3.classList.add("coinformToolbarButton");
+  td3.classList.add("coinformToolbarClaim");
+  
+  //td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
+  let auxtext = document.createElement("SPAN");
+  let txt = document.createTextNode(browserAPI.i18n.getMessage('make_claim'));
+  auxtext.append(txt);
+  td3.appendChild(auxtext);
+  
   td3.addEventListener('click', (event) => { 
     // prevent opening the tweet
     event.stopImmediatePropagation();
@@ -491,9 +506,10 @@ const createToolbar = (tweetInfo) => {
 };
 
 const createLogoClaim = (tweetId, callback) => {
+
   let claim = document.createElement("IMG");
-  claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
-  claim.setAttribute("class", "coinformClaimLogo");
+  claim.setAttribute("id", `coinformToolbarClaim-${tweetId}`);
+  claim.classList.add("coinformClaimLogo");
   claim.setAttribute("src", claimURL);
 
   claim.addEventListener('click', (event) => {
@@ -510,8 +526,8 @@ const createLogoClaim = (tweetId, callback) => {
 const createLogoCoinform = (tweetId) => {
 
   let img = document.createElement("IMG");
-  img.setAttribute("class", "coinformTweetLogo");
-  img.setAttribute("id", `coinformTweetLogo-${tweetId}`);
+  img.classList.add("coinformToolbarLogo");
+  img.setAttribute("id", `coinformToolbarLogo-${tweetId}`);
   img.setAttribute("src", logoURL);
 
   img.addEventListener('click', (event) => {
@@ -522,7 +538,6 @@ const createLogoCoinform = (tweetId) => {
   });
 
   return img;
-
 };
 
 const retryTweetQuery = (tweetInfo, queryId) => {
@@ -567,18 +582,23 @@ const parseApiResponse = (data, tweetInfo) => {
 
   let resStatus = JSON.stringify(data.status).replace(/['"]+/g, '');
   let credibilityLabel = null;
+  let credibilityModules = null;
 
   logger.logMessage(CoInformLogger.logTypes.debug, `${resStatus} response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
 
   // If the result ststus is "done" or "partly_done", then we can classify (final or temporary, respectively) the tweet
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
-    credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
-    classifyTweet(tweetInfo, credibilityLabel);
+    credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g, '_');
+    credibilityModules = parseModulesValues(data.response.rule_engine.module_labels, data.response.rule_engine.module_values);
+    classifyTweet(tweetInfo, credibilityLabel, credibilityModules);
   }
   if (resStatus && (resStatus.localeCompare('done') === 0)) {
     // Tweet analyzed
-    pluginCache[tweetInfo.id] = credibilityLabel;
+    pluginCache[tweetInfo.id] = {
+      label: credibilityLabel,
+      modules: credibilityModules
+    };
     tweetInfo.domObject.coInfoAnalyzed = true;
   }
   else {
@@ -590,6 +610,26 @@ const parseApiResponse = (data, tweetInfo) => {
     }, randomInt(500, 2500));
   }
   
+};
+
+const parseModulesValues = (moduleLabels, moduleValues) => {
+  let credibilityModules = {};
+
+  if (moduleLabels) {
+    for (let [key, value] of Object.entries(moduleLabels)) {
+      let conf = null;
+      let cred = null;
+      if (moduleValues[key] && (moduleValues[key].confidence != null)) conf = parseFloat(moduleValues[key].confidence).toFixed(2);
+      if (moduleValues[key] && (moduleValues[key].credibility != null)) cred = parseFloat(moduleValues[key].credibility).toFixed(2);
+      credibilityModules[key] = {
+        label: value,
+        confidence: conf,
+        credibility: cred
+      }
+    }
+  }
+
+  return credibilityModules;
 };
 
 const newFacebookPostCallback = (post) => {
@@ -620,15 +660,14 @@ const classifyPost = (post, score) => {
 
 };
 
-const classifyTweet = (tweet, credibilityLabel) => {
+const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
 
   const node = tweet.domObject;
-  const label = credibilityLabel.replace(/['"]+/g, '');
 
-  if (!node.coInformLabel || (node.coInformLabel.localeCompare(label) !== 0)) {
+  if (!node.coInformLabel || (node.coInformLabel.localeCompare(credibilityLabel) !== 0)) {
 
     if (node.coInformLabel) {
-      logger.logMessage(CoInformLogger.logTypes.info, `ReClassifying Tweet Label: ${node.coInformLabel} -> ${label}`, tweet.id);
+      logger.logMessage(CoInformLogger.logTypes.info, `ReClassifying Tweet Label: ${node.coInformLabel} -> ${credibilityLabel}`, tweet.id);
       removeTweetLabel(tweet);
       let previousCategory = configuration.coinform.categories[node.coInformLabel];
       if (previousCategory && (previousCategory.localeCompare("blur") === 0)) {
@@ -636,17 +675,18 @@ const classifyTweet = (tweet, credibilityLabel) => {
       }
     }
     else {
-      logger.logMessage(CoInformLogger.logTypes.info, `Classifying Tweet label: ${label}`, tweet.id);
+      logger.logMessage(CoInformLogger.logTypes.info, `Classifying Tweet label: ${credibilityLabel}`, tweet.id);
     }
 
-    node.coInformLabel = label;
-    let newCategory = configuration.coinform.categories[label];
+    node.coInformLabel = credibilityLabel;
+    node.coInformModules = credibilityModules;
+    let newCategory = configuration.coinform.categories[credibilityLabel];
     if (!newCategory) {
-      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`, tweet.id);
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${credibilityLabel}`, tweet.id);
     }
     else {
       if ((newCategory.localeCompare("blur") === 0) || (newCategory.localeCompare("label") === 0)) {
-        createTweetLabel(tweet, label, function() {
+        createTweetLabel(tweet, credibilityLabel, credibilityModules, function() {
           openLabelPopup(tweet);
         });
       }
@@ -697,13 +737,14 @@ const isBlurred = (tweet) => {
 
 };
 
-const createTweetLabel = (tweet, label, callback) => {
+const createTweetLabel = (tweet, label, modules, callback) => {
 
-  let node = document.getElementById(`coinformTweetLabel-${tweet.id}`);
+  let node = tweet.domObject.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
 
+  // create the label inside the toolbar
   let labelcat = document.createElement("SPAN");
-  labelcat.setAttribute("id", `coinformTweetLabelValue-${tweet.id}`);
-  labelcat.setAttribute("class", "coinformTweetLabel");
+  labelcat.setAttribute("id", `coinformToolbarLabel-${tweet.id}`);
+  labelcat.setAttribute("class", "coinformToolbarLabel");
   let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
   labelcat.append(txt);
 
@@ -713,16 +754,72 @@ const createTweetLabel = (tweet, label, callback) => {
     callback();
   });
 
-  node.prepend(labelcat);
+  node.append(labelcat);
+
+  // create a info logo
+  let infoContent = document.createElement("DIV");
+  infoContent.setAttribute("id", `coinformLabelInfoContent-${tweet.id}`);
+  infoContent.setAttribute("class", "coinformLabelInfoContent");
+  let infoLogo = document.createElement("IMG");
+  infoLogo.setAttribute("id", `coinformLabelInfoLogo-${tweet.id}`);
+  infoLogo.setAttribute("class", "coinformLabelInfoLogo");
+  infoLogo.setAttribute("src", infoLogoURL);
+  infoContent.append(infoLogo);
+  
+  // create tooltip div with detailed modules info
+  let infoTooltip = document.createElement("DIV");
+  infoTooltip.setAttribute("id", `coinformLabelInfoTooltip-${tweet.id}`);
+  infoTooltip.setAttribute("class", "coinformLabelInfoTooltip");
+  let infoTooltipTitle = document.createElement("H2");
+  let titleTxt = document.createTextNode(browserAPI.i18n.getMessage(label));
+  infoTooltipTitle.append(titleTxt);
+  infoTooltip.append(infoTooltipTitle);
+  let infoTooltipContent = createLabelModulesInfoContent(label, modules);
+  infoTooltip.append(infoTooltipContent);
+
+  infoContent.append(infoTooltip);
+
+  infoContent.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+
+  node.append(infoContent);
+
+};
+
+const createLabelModulesInfoContent = (label, modules) => {
+
+  let infoTooltipContent = document.createElement("DIV");
+  let infoTooltipText = document.createElement("SPAN");
+  let textTxt = document.createTextNode(browserAPI.i18n.getMessage('content_tagged_as_modules_result', [browserAPI.i18n.getMessage(label), Object.keys(modules).length]));
+  infoTooltipText.append(textTxt);
+  infoTooltipContent.append(infoTooltipText);
+  let infoTooltipList = document.createElement("UL");
+  if (modules) {
+    for (let [key, value] of Object.entries(modules)) {
+      let infoTooltipListItem = document.createElement("LI");
+      let moduleCredibility = '?';
+      if (modules[key].credibility != null) moduleCredibility = modules[key].credibility;
+      let moduleLabelTxt = browserAPI.i18n.getMessage(modules[key].label);
+      let moduleName = browserAPI.i18n.getMessage(key);
+      let confidenceTxt = '';
+      if (modules[key].confidence != null) confidenceTxt = ' (' + Math.round(parseFloat(modules[key].confidence) * 100) + '% ' + browserAPI.i18n.getMessage('confidence') + ')';
+      let infoTooltipListItemText = document.createTextNode(moduleCredibility + ': ' + moduleLabelTxt + ' - ' + moduleName + confidenceTxt);
+      infoTooltipListItem.append(infoTooltipListItemText);
+      infoTooltipList.append(infoTooltipListItem);
+    }
+  }
+  infoTooltipContent.append(infoTooltipList);
+
+  return infoTooltipContent;
+
 };
 
 const removeTweetLabel = (tweet) => {
 
-  let node = tweet.domObject;
-  let auxPrevious = node.querySelector(`#coinformTweetLabel-${tweet.id}`);
-  if (auxPrevious) {
-    auxPrevious.remove();
-  }
+  let node = tweet.domObject.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
+  node.querySelectorAll('*').forEach(n => n.remove());
 
 };
 
@@ -764,7 +861,7 @@ function openLabelPopup(tweet) {
 
   let popupPreTitle = '';
   let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
-  let moreInfo = browserAPI.i18n.getMessage('not_tagged__info', elementTxt);
+  let moreInfo = document.createElement('DIV');
 
   //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
   let meterLogoSrc = null;
@@ -774,13 +871,26 @@ function openLabelPopup(tweet) {
     if (!auxlabel) auxlabel = node.coInformLabel;
     popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
     popupTitle = auxlabel;
-    moreInfo = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
+    let auxText = document.createElement('SPAN');
+    auxText.innerHTML = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
+    moreInfo.append(auxText);
     meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
+
+    moreInfo.append(document.createElement('BR'));
+
+    let auxModules = node.coInformModules;
+    let auxContent = createLabelModulesInfoContent(node.coInformLabel, auxModules);
+    moreInfo.append(auxContent);
 
     let category = configuration.coinform.categories[node.coInformLabel];
     if (category && (category.localeCompare("blur") === 0)) {
       nodeBlurrable = true;
     }
+  }
+  else {
+    let auxText = document.createElement('SPAN');
+    auxText.innerHTML = browserAPI.i18n.getMessage('not_tagged__info', elementTxt);
+    moreInfo.append(auxText);
   }
 
   if (nodeBlurred) {
@@ -808,7 +918,7 @@ function openLabelPopup(tweet) {
     reverseButtons: true,
     focusCancel: true,
     html:
-      '<span>' + moreInfo + '</span>',
+      '<span>' + moreInfo.outerHTML + '</span>',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',

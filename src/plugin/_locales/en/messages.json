@@ -331,5 +331,20 @@
   },
   "sign_up": {
     "message": "Sign Up"
+  },
+  "content_tagged_as_modules_result": {
+    "message": "This content has been tagged as $1, as the result of this $2 different modules analysis result:"
+  },
+  "confidence": {
+    "message": "confidence"
+  },
+  "claim_similarity": {
+    "message": "Claim Similarity"
+  },
+  "misinfome": {
+    "message": "MisInfoMe"
+  },
+  "content_analysis": {
+    "message": "Content Analysis"
   }
 }
