@@ -428,8 +428,16 @@ const newTweetCallback = (tweetInfo) => {
     return;
   }
 
+  if (!tweetInfo.domObject.toolBar) {
+    let toolbar = createToolbar(tweetInfo);
+    tweetInfo.domObject.prepend(toolbar);
+    tweetInfo.domObject.toolBar = true;
+  } else {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
+    return;
+  }
+
   tweetInfo.domObject.coInfoCounter = 0;
-  let moduleResponse; 
   // First API call to the endpoint /twitter/tweet/
   client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
 
@@ -439,7 +447,6 @@ const newTweetCallback = (tweetInfo) => {
     }
     else if (resStatus.localeCompare('200') === 0) {
       parseApiResponse(res.data, tweetInfo);
-      moduleResponse = res.data.module_response_code;
     }
     else {
       logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
@@ -452,18 +459,9 @@ const newTweetCallback = (tweetInfo) => {
 
   });
 
-  if (!tweetInfo.domObject.toolBar) {
-    let toolbar = createToolbar(tweetInfo, moduleResponse);
-    tweetInfo.domObject.prepend(toolbar);
-    tweetInfo.domObject.toolBar = true;
-  } else {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
-    return;
-  }
-
 };
 
-const createToolbar = (tweetInfo, moduleResponse) => {
+const createToolbar = (tweetInfo) => {
 
   let tbl = document.createElement('table');
   tbl.classList.add("coinformToolbar");
@@ -511,7 +509,7 @@ const createToolbar = (tweetInfo, moduleResponse) => {
   td4.setAttribute("id", `coinformToolbarFeedbackNegative-${tweetInfo.id}`);
 
   td4.appendChild(createLogoNegativeFeedback(tweetInfo.id, function () {
-    sendTweetEvaluation(tweetInfo, moduleResponse, "disagree");
+    feedbackClickAction(tweetInfo, "disagree");
   }));
   let positiveFeedbackText = document.createElement("SPAN");
   let positiveText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
@@ -524,14 +522,14 @@ const createToolbar = (tweetInfo, moduleResponse) => {
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    sendTweetEvaluation(tweetInfo, moduleResponse, "disagree");
+    feedbackClickAction(tweetInfo, "disagree");
   });
 
   let td5 = tr.insertCell();
   td5.setAttribute("id", `coinformToolbarFeedbackPositive-${tweetInfo.id}`);
 
   td5.appendChild(createLogoPositiveFeedback(tweetInfo.id, function () {
-    sendTweetEvaluation(tweetInfo, moduleResponse, "agree");
+    feedbackClickAction(tweetInfo, "agree");
   }));
   let negativeFeedbackText = document.createElement("SPAN");
   let negativeText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
@@ -544,7 +542,7 @@ const createToolbar = (tweetInfo, moduleResponse) => {
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    sendTweetEvaluation(tweetInfo, moduleResponse, "agree");
+    feedbackClickAction(tweetInfo, "agree");
   });
 
   return tbl;
@@ -669,6 +667,7 @@ const parseApiResponse = (data, tweetInfo) => {
   // If the result ststus is "done" or "partly_done", then we can classify (final or temporary, respectively) the tweet
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
+    tweetInfo.domObject.queryId = data.query_id;
     credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
     classifyTweet(tweetInfo, credibilityLabel);
   }
@@ -921,25 +920,33 @@ function openLabelPopup(tweet) {
 
 }
 
-function sendTweetEvaluation(tweetInfo, moduleResponse, agreement) {
+function feedbackClickAction(tweet, agreement) {
 
-  let evaluation = {
-    'label': tweetInfo.domObject.coInformLabel, 
-    'url': tweetInfo.domObject.url,
-    'comment': tweetInfo.domObject.text
-  };
+  let node = tweet.domObject;
 
-  client.postTwitterEvaluateTweet(tweetInfo.id, tweetInfo.url, evaluation, moduleResponse, agreement).then(function () {
-    logger.logMessage(CoInformLogger.logTypes.info, `Reaction registrated`);
+  if (!node.coInformLabel) {
+    openNotTaggedFeedbackPopup(tweet);
+  }
+  else if (!coinformUserToken) {
+    openNotLoggedFeedbackPopup(tweet);
+  }
+  else {
+    sendTweetEvaluation(tweet, agreement);
+  }
 
-    Swal2.fire({
-      title: '<strong> Reaction registrated </strong>',
-      icon: 'success',
-      timer: 1500
-    });
+}
 
+function sendTweetEvaluation(tweetInfo, agreement) {
+
+  let ratedCredibility = tweetInfo.domObject.coInformLabel;
+  let moduleResponse = tweetInfo.domObject.queryId;
+
+  client.postTwitterEvaluateTweet(tweetInfo.id, tweetInfo.url, ratedCredibility, moduleResponse, agreement, coinformUserToken).then(function (res) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Reaction registered successfully`);
+    Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage("feedback_sent"), 'success');
   }).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweetInfo.id);
+    Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
   });
 
 }
@@ -1087,6 +1094,64 @@ function openClaimPopup(tweet) {
 
     }
     
+  });
+
+}
+
+function openNotTaggedFeedbackPopup(tweet) {
+  
+  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+
+  let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
+  let popupButtonText = browserAPI.i18n.getMessage('ok');
+
+  //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
+  let meterLogoSrc = null;
+  
+  return Swal2.fire({
+    type: 'warning',
+    title: popupTitle,
+    showCloseButton: true,
+    showCancelButton: false,
+    confirmButtonColor: buttonColor,
+    confirmButtonText: popupButtonText,
+    html:
+      '<span>' + browserAPI.i18n.getMessage('wait_label_for_feedback', elementTxt) + '</span>',
+    footer:
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
+      '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
+    focusConfirm: true,
+  }).then(function (result) {
+    if(result.value === true){
+      // function when confirm button is clicked
+    }
+  });
+
+}
+
+function openNotLoggedFeedbackPopup(tweet) {
+
+  let popupTitle = browserAPI.i18n.getMessage('not_logged');
+  let popupButtonText = browserAPI.i18n.getMessage('ok');
+  
+  return Swal2.fire({
+    type: 'warning',
+    title: popupTitle,
+    showCloseButton: true,
+    showCancelButton: false,
+    confirmButtonColor: buttonColor,
+    confirmButtonText: popupButtonText,
+    html:
+      '<span>' + browserAPI.i18n.getMessage('provide_feedback_with_login') + '</span><br/>' +
+      '<span>' + browserAPI.i18n.getMessage('login_register_instructions') + '</span>',
+    footer:
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
+      '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
+    focusConfirm: true,
+  }).then(function (result) {
+    if(result.value === true){
+      // function when confirm button is clicked
+    }
   });
 
 }

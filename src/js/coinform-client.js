@@ -30,8 +30,8 @@ CoinformClient.prototype = {
     return postEvaluate(this.baseURL + '/twitter/evaluate/', tweetId, tweetUrl, evaluation, userToken);
   },
 
-  postTwitterEvaluateTweet: function (tweetId, tweetUrl, evaluation, moduleResponse, agreement) {
-    return postEvaluateTweet(this.baseURL + '/twitter/evaluate/label', tweetId, tweetUrl, evaluation, moduleResponse, agreement);
+  postTwitterEvaluateTweet: function (tweetId, tweetUrl, ratedCredibility, moduleResponse, agreement, userToken) {
+    return postEvaluateTweet(this.baseURL + '/twitter/evaluate/label', tweetId, tweetUrl, ratedCredibility, moduleResponse, agreement, userToken);
   },
 
   getDomainDetails: function (domain) {
@@ -104,11 +104,11 @@ function postEvaluate(path, tweetId, tweetUrl, evaluation, userToken) {
 
 }
 
-function postEvaluateTweet(path, tweetId, tweetUrl, evaluation, moduleResponse, agreement) {
+function postEvaluateTweet(path, tweetId, tweetUrl, ratedCredibility, moduleResponse, agreement, userToken) {
 
   const data = {
     tweet_id: tweetId,
-    rated_credibility: evaluation.label,
+    rated_credibility: ratedCredibility,
     rated_moduleResponse: moduleResponse,
     url: tweetUrl,
     reaction: agreement
