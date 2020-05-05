@@ -309,7 +309,6 @@ const publishTweetAlertMisinfo = (label, url) => {
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
     }
   });
   
@@ -392,7 +391,6 @@ const retweetTweetAlertMisinfo = (label) => {
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
     }
   });
   
@@ -908,7 +906,6 @@ function openLabelPopup(tweet) {
     focusConfirm: true
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
       if (nodeBlurred) {
         removeTweetBlurry(tweet);
       }
@@ -1123,7 +1120,6 @@ function openNotTaggedFeedbackPopup(tweet) {
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
     }
   });
 
@@ -1150,7 +1146,6 @@ function openNotLoggedFeedbackPopup(tweet) {
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
     }
   });
 
@@ -1196,7 +1191,6 @@ function openNotLoggedClaimPopup(tweet) {
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
     }
   });
 
