@@ -122,6 +122,15 @@
   "provide_claim_untagged": {
     "message": "If you want you can provide a claim and a link to a post that supports that claim"
   },
+  "not_logged": {
+    "message": "Not logged in"
+  },
+  "provide_feedback_with_login": {
+    "message": "To provide your feedback about the Co-Inform labeling you must be a logged in Co-Inform user"
+  },
+  "wait_label_for_feedback": {
+    "message": "You must wait for the $1 to be tagged before providing your feedback"
+  },
   "provide_claim_with_login": {
     "message": "If you think this is not accurate you can provide a claim by logging in with your Co-Inform user"
   },
@@ -151,6 +160,12 @@
   },
   "link_to_claim": {
     "message": "Link to your claim"
+  },
+  "positive_feedback": {
+    "message": "I agree with the tweet label"
+  },
+  "negative_feedback": {
+    "message": "I disagree with the tweet label"
   },
   "additional_info": {
     "message": "Additional info"

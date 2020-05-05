@@ -13,6 +13,8 @@ const pluginCache = {};
 let logoURL = "/resources/logo_36_20.png";
 let claimURL = "/resources/bubble_claim.png";
 let claimURLWhite = "/resources/bubble_claim_w.png";
+let disagreeURL = "/resources/disagree.png";
+let agreeURL = "/resources/agree.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform
@@ -79,6 +81,8 @@ const start = () => {
   claimURL = browserAPI.extension.getURL(claimURL);
   claimURLWhite = browserAPI.extension.getURL(claimURLWhite);
   minlogoURL = browserAPI.extension.getURL(minlogoURL);
+  disagreeURL = browserAPI.extension.getURL(disagreeURL);
+  agreeURL = browserAPI.extension.getURL(agreeURL);
 
   browserAPI.runtime.sendMessage({
     messageId: "GetSession"
@@ -305,7 +309,6 @@ const publishTweetAlertMisinfo = (label, url) => {
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
     }
   });
   
@@ -388,7 +391,6 @@ const retweetTweetAlertMisinfo = (label) => {
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
     }
   });
   
@@ -416,6 +418,14 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id] = false;
   }
 
+  // If the tweet has already been tagged then we directly classify it
+  if (pluginCache[tweetInfo.id]) {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
+    tweetInfo.domObject.coInfoAnalyzed = true;
+    classifyTweet(tweetInfo, pluginCache[tweetInfo.id]);
+    return;
+  }
+
   if (!tweetInfo.domObject.toolBar) {
     let toolbar = createToolbar(tweetInfo);
     tweetInfo.domObject.prepend(toolbar);
@@ -425,16 +435,7 @@ const newTweetCallback = (tweetInfo) => {
     return;
   }
 
-  // If the tweet has already been tagged then we directly classify it
-  if (pluginCache[tweetInfo.id]) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
-    tweetInfo.domObject.coInfoAnalyzed = true;
-    classifyTweet(tweetInfo, pluginCache[tweetInfo.id]);
-    return;
-  }
-
   tweetInfo.domObject.coInfoCounter = 0;
-
   // First API call to the endpoint /twitter/tweet/
   client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
 
@@ -461,24 +462,39 @@ const newTweetCallback = (tweetInfo) => {
 const createToolbar = (tweetInfo) => {
 
   let tbl = document.createElement('table');
-  tbl.setAttribute("class", "coinformToolbar");
+  tbl.classList.add("coinformToolbar");
+  
+  tbl.addEventListener('click', (event) => { 
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+  });
   
   let tr = tbl.insertRow();
+
   let td1 = tr.insertCell();
+  td1.classList.add("coinformToolbarLogoContent");
   td1.appendChild(createLogoCoinform(tweetInfo.id));
 
   let td2 = tr.insertCell();
-  td2.setAttribute("class", "coinformTweetLabel");
-  td2.setAttribute("id", `coinformTweetLabel-${tweetInfo.id}`);
+  td2.classList.add("coinformToolbarLabelContent");
+  td2.setAttribute("id", `coinformToolbarLabelContent-${tweetInfo.id}`);
 
   let td3 = tr.insertCell();
-  td3.setAttribute("id", `coinformTweetFeedback-${tweetInfo.id}`);
+  td3.setAttribute("id", `coinformToolbarFeedback-${tweetInfo.id}`);
   
   td3.appendChild(createLogoClaim(tweetInfo.id, function () {
     claimClickAction(tweetInfo);
   }));
-  td3.setAttribute("class", "coinformTweetClaim");
-  td3.insertAdjacentText("beforeend", browserAPI.i18n.getMessage('make_claim'));
+  td3.classList.add("coinformToolbarButton");
+  td3.classList.add("coinformToolbarClaim");
+
+  let auxtext = document.createElement("SPAN");
+  let txt = document.createTextNode(browserAPI.i18n.getMessage('make_claim'));
+  auxtext.append(txt);
+  td3.appendChild(auxtext);
+
   td3.addEventListener('click', (event) => { 
     // prevent opening the tweet
     event.stopImmediatePropagation();
@@ -487,13 +503,54 @@ const createToolbar = (tweetInfo) => {
     claimClickAction(tweetInfo);
   });
 
+  let td4 = tr.insertCell();
+  td4.setAttribute("id", `coinformToolbarFeedbackNegative-${tweetInfo.id}`);
+
+  td4.appendChild(createLogoNegativeFeedback(tweetInfo.id, function () {
+    feedbackClickAction(tweetInfo, "disagree");
+  }));
+  let positiveFeedbackText = document.createElement("SPAN");
+  let positiveText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
+  positiveFeedbackText.append(positiveText);
+  td4.appendChild(positiveFeedbackText);
+  td4.classList.add("coinformToolbarNegativeLogo");
+
+  td4.addEventListener('click', (event) => { 
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    feedbackClickAction(tweetInfo, "disagree");
+  });
+
+  let td5 = tr.insertCell();
+  td5.setAttribute("id", `coinformToolbarFeedbackPositive-${tweetInfo.id}`);
+
+  td5.appendChild(createLogoPositiveFeedback(tweetInfo.id, function () {
+    feedbackClickAction(tweetInfo, "agree");
+  }));
+  let negativeFeedbackText = document.createElement("SPAN");
+  let negativeText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
+  negativeFeedbackText.append(negativeText);
+  td5.appendChild(negativeFeedbackText);
+  td5.classList.add("coinformToolbarPositiveLogo");
+
+  td5.addEventListener('click', (event) => { 
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    feedbackClickAction(tweetInfo, "agree");
+  });
+
   return tbl;
 };
 
 const createLogoClaim = (tweetId, callback) => {
+
   let claim = document.createElement("IMG");
-  claim.setAttribute("id", `coinformTweetClaim-${tweetId}`);
-  claim.setAttribute("class", "coinformClaimLogo");
+  claim.setAttribute("id", `coinformToolbarClaim-${tweetId}`);
+  claim.classList.add("coinformClaimLogo");
   claim.setAttribute("src", claimURL);
 
   claim.addEventListener('click', (event) => {
@@ -507,11 +564,47 @@ const createLogoClaim = (tweetId, callback) => {
   return claim;
 };
 
+const createLogoPositiveFeedback = (tweetId, callback) => {
+
+  let agree = document.createElement("IMG");
+  agree.setAttribute("id", `coinformPositiveLogo-${tweetId}`);
+  agree.classList.add("coinformPositiveLogo");
+  agree.setAttribute("src", agreeURL);
+
+  agree.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    callback();
+  });
+
+  return agree;
+};
+
+const createLogoNegativeFeedback = (tweetId, callback) => {
+
+  let disagree = document.createElement("IMG");
+  disagree.setAttribute("id", `coinformNegativeLogo-${tweetId}`);
+  disagree.classList.add("coinformNegativeLogo");
+  disagree.setAttribute("src", disagreeURL);
+
+  disagree.addEventListener('click', (event) => {
+    // prevent opening the tweet
+    event.stopImmediatePropagation();
+    event.preventDefault();
+    event.stopPropagation();
+    callback();
+  });
+
+  return disagree;
+};
+
 const createLogoCoinform = (tweetId) => {
 
   let img = document.createElement("IMG");
-  img.setAttribute("class", "coinformTweetLogo");
-  img.setAttribute("id", `coinformTweetLogo-${tweetId}`);
+  img.classList.add("coinformToolbarLogo");
+  img.setAttribute("id", `coinformToolbarLogo-${tweetId}`);
   img.setAttribute("src", logoURL);
 
   img.addEventListener('click', (event) => {
@@ -522,7 +615,6 @@ const createLogoCoinform = (tweetId) => {
   });
 
   return img;
-
 };
 
 const retryTweetQuery = (tweetInfo, queryId) => {
@@ -573,6 +665,7 @@ const parseApiResponse = (data, tweetInfo) => {
   // If the result ststus is "done" or "partly_done", then we can classify (final or temporary, respectively) the tweet
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
+    tweetInfo.domObject.queryId = data.query_id;
     credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
     classifyTweet(tweetInfo, credibilityLabel);
   }
@@ -622,7 +715,7 @@ const classifyPost = (post, score) => {
 
 const classifyTweet = (tweet, credibilityLabel) => {
 
-  const node = tweet.domObject;
+  const node = tweet.domObject; 
   const label = credibilityLabel.replace(/['"]+/g, '');
 
   if (!node.coInformLabel || (node.coInformLabel.localeCompare(label) !== 0)) {
@@ -699,11 +792,12 @@ const isBlurred = (tweet) => {
 
 const createTweetLabel = (tweet, label, callback) => {
 
-  let node = document.getElementById(`coinformTweetLabel-${tweet.id}`);
+  let node = tweet.domObject.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
 
+  // create the label inside the toolbar
   let labelcat = document.createElement("SPAN");
-  labelcat.setAttribute("id", `coinformTweetLabelValue-${tweet.id}`);
-  labelcat.setAttribute("class", "coinformTweetLabel");
+  labelcat.setAttribute("id", `coinformToolbarLabel-${tweet.id}`);
+  labelcat.setAttribute("class", "coinformToolbarLabel");
   let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
   labelcat.append(txt);
 
@@ -713,16 +807,13 @@ const createTweetLabel = (tweet, label, callback) => {
     callback();
   });
 
-  node.prepend(labelcat);
+  node.append(labelcat);
 };
 
 const removeTweetLabel = (tweet) => {
 
-  let node = tweet.domObject;
-  let auxPrevious = node.querySelector(`#coinformTweetLabel-${tweet.id}`);
-  if (auxPrevious) {
-    auxPrevious.remove();
-  }
+  let node = tweet.domObject.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
+  node.querySelectorAll('*').forEach(n => n.remove());
 
 };
 
@@ -815,7 +906,6 @@ function openLabelPopup(tweet) {
     focusConfirm: true
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
       if (nodeBlurred) {
         removeTweetBlurry(tweet);
       }
@@ -823,6 +913,37 @@ function openLabelPopup(tweet) {
         createTweetBlurry(tweet);
       }
     }
+  });
+
+}
+
+function feedbackClickAction(tweet, agreement) {
+
+  let node = tweet.domObject;
+
+  if (!node.coInformLabel) {
+    openNotTaggedFeedbackPopup(tweet);
+  }
+  else if (!coinformUserToken) {
+    openNotLoggedFeedbackPopup(tweet);
+  }
+  else {
+    sendTweetEvaluation(tweet, agreement);
+  }
+
+}
+
+function sendTweetEvaluation(tweetInfo, agreement) {
+
+  let ratedCredibility = tweetInfo.domObject.coInformLabel;
+  let moduleResponse = tweetInfo.domObject.queryId;
+
+  client.postTwitterEvaluateTweet(tweetInfo.id, tweetInfo.url, ratedCredibility, moduleResponse, agreement, coinformUserToken).then(function (res) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Reaction registered successfully`);
+    Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage("feedback_sent"), 'success');
+  }).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweetInfo.id);
+    Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
   });
 
 }
@@ -974,6 +1095,62 @@ function openClaimPopup(tweet) {
 
 }
 
+function openNotTaggedFeedbackPopup(tweet) {
+  
+  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+
+  let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
+  let popupButtonText = browserAPI.i18n.getMessage('ok');
+
+  //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
+  let meterLogoSrc = null;
+  
+  return Swal2.fire({
+    type: 'warning',
+    title: popupTitle,
+    showCloseButton: true,
+    showCancelButton: false,
+    confirmButtonColor: buttonColor,
+    confirmButtonText: popupButtonText,
+    html:
+      '<span>' + browserAPI.i18n.getMessage('wait_label_for_feedback', elementTxt) + '</span>',
+    footer:
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
+      '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
+    focusConfirm: true,
+  }).then(function (result) {
+    if(result.value === true){
+    }
+  });
+
+}
+
+function openNotLoggedFeedbackPopup(tweet) {
+
+  let popupTitle = browserAPI.i18n.getMessage('not_logged');
+  let popupButtonText = browserAPI.i18n.getMessage('ok');
+  
+  return Swal2.fire({
+    type: 'warning',
+    title: popupTitle,
+    showCloseButton: true,
+    showCancelButton: false,
+    confirmButtonColor: buttonColor,
+    confirmButtonText: popupButtonText,
+    html:
+      '<span>' + browserAPI.i18n.getMessage('provide_feedback_with_login') + '</span><br/>' +
+      '<span>' + browserAPI.i18n.getMessage('login_register_instructions') + '</span>',
+    footer:
+      `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
+      '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
+    focusConfirm: true,
+  }).then(function (result) {
+    if(result.value === true){
+    }
+  });
+
+}
+
 function openNotLoggedClaimPopup(tweet) {
   
   const elementTxt = browserAPI.i18n.getMessage('tweet_post');
@@ -1014,7 +1191,6 @@ function openNotLoggedClaimPopup(tweet) {
     focusConfirm: true,
   }).then(function (result) {
     if(result.value === true){
-      // function when confirm button is clicked
     }
   });
 
