@@ -384,6 +384,12 @@ const CheckTweetInfo = function(request, scriptId, tweetInfoCallback) {
 
   client.postCheckTweetInfo(request.id, request.username, request.text).then(res => tweetInfoCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
+
+    if (tweetInfoCallback) tweetInfoCallback({
+      status: -1,
+      error: err
+    });
+
   });
 
 };
