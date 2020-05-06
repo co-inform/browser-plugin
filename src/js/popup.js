@@ -1,12 +1,10 @@
 
 const $ = require('jquery');
-const CoinformClient = require('./coinform-client');
 const CoInformLogger = require('./coinform-logger');
 
 let browserAPI = chrome || browser;
 
 let configuration;
-let client;
 let logger;
 
 let coinformUserToken = null;
@@ -159,7 +157,6 @@ const init = () => {
   resetAllDisplays();
 
   logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
-  client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
   browserAPI.runtime.sendMessage({
     messageId: "GetSession"
@@ -467,7 +464,12 @@ const changePasswordAction = (targetButton) => {
       
       targetButton.disabled = true;
 
-      client.postUserChangePass(userPass, userNewPass, coinformUserToken).then(function (res) {
+      browserAPI.runtime.sendMessage({
+        messageId: "ChangePass",
+        userPass: userPass,
+        userNewPass: userNewPass,
+        coinformUserToken: coinformUserToken
+      }, function (res) {
 
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
         // Discard requests with 400 http return codes
@@ -491,16 +493,9 @@ const changePasswordAction = (targetButton) => {
           targetButton.disabled = false;
         }
 
-      }).catch(err => {
-        logger.logMessage(CoInformLogger.logTypes.error, "ChangePass exception: "+JSON.stringify(err));
-        showMessage("err", "change_password_error", 2000);
-        targetButton.disabled = false;
       });
-
     }
-
   }
-
 };
 
 // Parse the Login email form, and communicate with API
@@ -522,7 +517,10 @@ const forgotPasswordAction = (targetButton) => {
     
     targetButton.disabled = true;
 
-    client.postUserForgotPass(userMail).then(function (res) {
+    browserAPI.runtime.sendMessage({
+      messageId: "ForgotPass",
+      userMail: userMail
+    }, function (res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
       // Discard requests with 400 http return codes

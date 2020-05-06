@@ -2,6 +2,7 @@
 const jwtDecode = require('jwt-decode');
 const CoinformClient = require('./coinform-client');
 const CoInformLogger = require('./coinform-logger');
+const Swal2 = require('sweetalert2');
 
 const browserAPI = chrome || browser;
 
@@ -103,6 +104,21 @@ const listenerRuntime = function(request, sender, sendResponse) {
       token: coinformUserToken
     });
   }
+  else if (request.messageId === "CheckTweetInfo") {
+    CheckTweetInfo(request, sendResponse);
+  } 
+  else if (request.messageId === "EvaluateTweet") {
+    EvaluateTweet(request, sendResponse);
+  }
+  else if (request.messageId === "TwitterEvaluate") {
+    TwitterEvaluate(request, sendResponse);
+  }
+  else if (request.messageId === "ForgotPass") {
+    ForgotPass(request, sendResponse);
+  }
+  else if (request.messageId === "ChangePass") {
+    ChangePass(request, sendResponse);
+  }
 
   return true;
 
@@ -128,7 +144,6 @@ const retryAPIQuery = function(request, scriptId, queryCallback) {
 
   client.getResponseTweetInfo(request.queryId).then(res => queryCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
-    // console.error(err);
   });
 
 };
@@ -166,7 +181,6 @@ const logInAPI = function(request, scriptId, loginCallback) {
 
   }).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
-    // console.error(err);
   });
 
 };
@@ -288,7 +302,6 @@ const renewUserToken = function(retryNum = 0) {
 
   }).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`);
-    // console.error(err);
     retryRenewVsLogout(retryNum);
   });
 
@@ -323,7 +336,6 @@ const logOutAPI = function(request, scriptId, logoutCallback) {
 
   }).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
-    // console.error(err);
   });
 
 };
@@ -352,7 +364,6 @@ const registerAPI = function(request, scriptId, registerCallback) {
 
   client.postUserRegister(request.userMail, request.userPass).then(res => registerCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
-    // console.error(err);
   });
 
 };
@@ -363,7 +374,6 @@ const checkUrlAPI = function(request, scriptId, checkUrlCallback) {
 
   client.getCheckUrlInfo(request.url).then(res => checkUrlCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
-    // console.error(err);
     if (checkUrlCallback) checkUrlCallback({
       status: -1,
       error: err
@@ -371,6 +381,53 @@ const checkUrlAPI = function(request, scriptId, checkUrlCallback) {
   });
 
 };
+
+const CheckTweetInfo = function(request, tweetInfoCallback) {
+
+  client.postCheckTweetInfo(request.id, request.username, request.text).then(res => tweetInfoCallback(res)).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, tweetInfo.id);
+  });
+
+};
+
+const EvaluateTweet = function(request, evaluateTweetCallback) {
+
+  client.postTwitterEvaluateTweet(request.id, request.url, request.ratedCredibility, 
+    request.moduleResponse, request.agreement, request.coinformUserToken).then(res => evaluateTweetCallback(res)).catch(err => {
+      logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweetInfo.id);
+      Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+    });
+
+}
+
+const TwitterEvaluate = function(request, twitterEvaluateCallback) {
+
+  client.postTwitterEvaluate(request.id, request.url, request.evaluation, request.coinformUserToken).then(res => twitterEvaluateCallback(res)).catch (err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweet.id);
+    Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+  });
+
+}
+
+const ForgotPass = function(request, forgotPassCallback) {
+
+  client.postUserForgotPass(request.userMail).then(res => forgotPassCallback(res)).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, "ForgotPass exception: "+JSON.stringify(err));
+    showMessage("err", "forgot_password_error", 2000);
+    targetButton.disabled = false;
+  });
+
+}
+
+const ChangePass = function(request, changePassCallback) {
+
+  client.postUserChangePass(request.userPass, request.userNewPass, request.coinformUserToken).then(res => changePassCallback(res)).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, "ChangePass exception: "+JSON.stringify(err));
+    showMessage("err", "change_password_error", 2000);
+    targetButton.disabled = false;
+  });
+
+}
 
 const getCookie = function(cookieName, cookieCallback) {
     
