@@ -2,8 +2,6 @@
 const jwtDecode = require('jwt-decode');
 const CoinformClient = require('./coinform-client');
 const CoInformLogger = require('./coinform-logger');
-const Swal2 = require('sweetalert2');
-
 const browserAPI = chrome || browser;
 
 // Retry a total of 6 times (6 * 5sec = 30sec)
@@ -395,7 +393,11 @@ const EvaluateTweet = function(request, evaluateTweetCallback) {
   client.postTwitterEvaluateTweet(request.id, request.url, request.ratedCredibility, 
     request.moduleResponse, request.agreement, request.coinformUserToken).then(res => evaluateTweetCallback(res)).catch(err => {
       logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweetInfo.id);
-      Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+
+      if (evaluateTweetCallback) evaluateTweetCallback({
+        status: -1,
+        error: err
+      });
     });
 
 }
@@ -404,7 +406,11 @@ const TwitterEvaluate = function(request, twitterEvaluateCallback) {
 
   client.postTwitterEvaluate(request.id, request.url, request.evaluation, request.coinformUserToken).then(res => twitterEvaluateCallback(res)).catch (err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweet.id);
-    Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+
+    if (twitterEvaluateCallback) twitterEvaluateCallback({
+      status: -1,
+      error: err
+    });
   });
 
 }

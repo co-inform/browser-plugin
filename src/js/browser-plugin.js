@@ -208,7 +208,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         messageId: "CheckUrl",
         url: urls[i]
       }, function(res) {
-
+        
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
         if ((resStatus.localeCompare('400') === 0)) {
           logger.logMessage(CoInformLogger.logTypes.error, `Request 400 response`);
@@ -1048,8 +1048,16 @@ function sendTweetEvaluation(tweetInfo, agreement) {
     agreement: agreement,
     coinformUserToken: coinformUserToken
   }, function (res) {
-    logger.logMessage(CoInformLogger.logTypes.info, `Reaction registered successfully`);
-    Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage("feedback_sent"), 'success');
+    let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+
+    if (resStatus.localeCompare('200') === 0) {
+      logger.logMessage(CoInformLogger.logTypes.info, `Reaction registered successfully`);
+      Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage("feedback_sent"), 'success');
+    } 
+    else {
+      Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+    }
+
   });
 }
 
