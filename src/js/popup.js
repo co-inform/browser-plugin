@@ -539,12 +539,7 @@ const forgotPasswordAction = (targetButton) => {
       }
       targetButton.disabled = false;
 
-    }).catch(err => {
-      logger.logMessage(CoInformLogger.logTypes.error, "ForgotPass exception: "+JSON.stringify(err));
-      showMessage("err", "forgot_password_error", 2000);
-      targetButton.disabled = false;
     });
-
   }
 
 };
