@@ -419,8 +419,12 @@ const ForgotPass = function(request, forgotPassCallback) {
 
   client.postUserForgotPass(request.userMail).then(res => forgotPassCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, "ForgotPass exception: "+JSON.stringify(err));
-    showMessage("err", "forgot_password_error", 2000);
-    targetButton.disabled = false;
+    
+    if (forgotPassCallback) forgotPassCallback({
+      status: -1,
+      error: err
+    });
+    
   });
 
 }
@@ -429,8 +433,12 @@ const ChangePass = function(request, changePassCallback) {
 
   client.postUserChangePass(request.userPass, request.userNewPass, request.coinformUserToken).then(res => changePassCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, "ChangePass exception: "+JSON.stringify(err));
-    showMessage("err", "change_password_error", 2000);
-    targetButton.disabled = false;
+    
+    if (changePassCallback) changePassCallback({
+      status: -1,
+      error: err
+    });
+    
   });
 
 }

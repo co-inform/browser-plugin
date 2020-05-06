@@ -33,10 +33,10 @@
     "express": "^4.16.4",
     "fs": "0.0.1-security",
     "jasmine": "^3.5.0",
+    "jshint": "^2.10.3",
     "minify": "^4.1.1",
-    "mocha": "^6.2.2",
-    "node-fetch": "^2.3.0",
-    "jshint": "^2.10.3"
+    "mocha": "^7.1.2",
+    "node-fetch": "^2.3.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
