@@ -1,7 +1,6 @@
 
 const $ = require('jquery');
 const Swal2 = require('sweetalert2');
-const CoinformClient = require('./coinform-client');
 const TweetParser = require('./tweet-parser');
 const FacebookParser = require('./facebook-parser');
 const CoInformLogger = require('./coinform-logger');
@@ -25,7 +24,6 @@ const TIME_PUBLISH_AWAIT = 10;
 const MAX_RETRIES = 10;
 let configuration;
 let logger;
-let client;
 let parser;
 
 let coinformUserToken = null;
@@ -76,7 +74,6 @@ browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse)
 const start = () => {
 
   logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
-  client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
   logoURL = browserAPI.extension.getURL(logoURL);
   claimURL = browserAPI.extension.getURL(claimURL);
@@ -211,7 +208,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         messageId: "CheckUrl",
         url: urls[i]
       }, function(res) {
-
+        
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
         if ((resStatus.localeCompare('400') === 0)) {
           logger.logMessage(CoInformLogger.logTypes.error, `Request 400 response`);
@@ -444,9 +441,14 @@ const newTweetCallback = (tweetInfo) => {
   }
 
   tweetInfo.domObject.coInfoCounter = 0;
-  // First API call to the endpoint /twitter/tweet/
-  client.postCheckTweetInfo(tweetInfo.id, tweetInfo.username, tweetInfo.text).then(function (res) {
 
+  // First API call to the endpoint /twitter/tweet/
+  browserAPI.runtime.sendMessage({
+    messageId: "CheckTweetInfo",
+    id: tweetInfo.id,
+    username: tweetInfo.username,
+    text: tweetInfo.text
+  }, function (res) {
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
     if ((resStatus.localeCompare('400') === 0)) {
       logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
@@ -457,12 +459,6 @@ const newTweetCallback = (tweetInfo) => {
     else {
       logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
     }
-
-  }).catch(err => {
-
-    logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, tweetInfo.id);
-    // console.error(err);
-
   });
 
 };
@@ -1043,14 +1039,26 @@ function sendTweetEvaluation(tweetInfo, agreement) {
   let ratedCredibility = tweetInfo.domObject.coInformLabel;
   let moduleResponse = tweetInfo.domObject.queryId;
 
-  client.postTwitterEvaluateTweet(tweetInfo.id, tweetInfo.url, ratedCredibility, moduleResponse, agreement, coinformUserToken).then(function (res) {
-    logger.logMessage(CoInformLogger.logTypes.info, `Reaction registered successfully`);
-    Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage("feedback_sent"), 'success');
-  }).catch(err => {
-    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweetInfo.id);
-    Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
-  });
+  browserAPI.runtime.sendMessage({
+    messageId: "EvaluateTweet",
+    id: tweetInfo.id,
+    url: tweetInfo.url,
+    ratedCredibility: ratedCredibility,
+    moduleResponse: moduleResponse,
+    agreement: agreement,
+    coinformUserToken: coinformUserToken
+  }, function (res) {
+    let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
 
+    if (resStatus.localeCompare('200') === 0) {
+      logger.logMessage(CoInformLogger.logTypes.info, `Reaction registered successfully`);
+      Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage("feedback_sent"), 'success');
+    } 
+    else {
+      Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+    }
+
+  });
 }
 
 function claimClickAction(tweet) {
@@ -1161,9 +1169,15 @@ function openClaimPopup(tweet) {
           'label': claimAccuracyLabel, 
           'url': claimUrl, 
           'comment': claimComment
-        };
-        client.postTwitterEvaluate(tweet.id, tweet.url, evaluation, coinformUserToken).then(function (res) {
+        }; 
 
+        browserAPI.runtime.sendMessage({
+          messageId: "TwitterEvaluate",
+          id: tweet.id,
+          url: tweet.url,
+          evaluation: evaluation, 
+          coinformUserToken: coinformUserToken
+        }, function (res) {
           let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
           if (resStatus.localeCompare('400') === 0) {
             logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
@@ -1185,12 +1199,8 @@ function openClaimPopup(tweet) {
             logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
             Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
           }
-
-        }).catch(err => {
-          logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, tweet.id);
-          Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
-          //console.error(err);
         });
+
         resolve();
       });
 
