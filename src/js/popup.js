@@ -14,6 +14,8 @@ let coinformUserID = null;
 let logoURL = "/resources/coinform_biglogo.png";
 
 window.addEventListener("load", function(){
+  
+  resetAllDisplays();
 
   //Read the configuration file and if it was successful, start
   fetch(browserAPI.runtime.getURL('../resources/config.json'), {
