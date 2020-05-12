@@ -577,7 +577,7 @@
 
 .coinformToolbar .coinformToolbarLabelContent .coinformStatus .coinformStatusUnDone::before {
   content: "\0021";
-  color: #f8bb86;
+  /*color: #f8bb86;*/
 }
 
 .coinformToolbar .coinformToolbarLabelContent .coinformStatus .coinformStatusTooltip {

@@ -2,6 +2,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## commit 12/05/2020 [branch: EU18COI-147-Browser-Plugin-minor-changes-and-bug-fixing-after-3rd-version]
+
+src/js/background-script.js
+- adapted the "change-password" endpoint response to store the renewed JWT returned by the endpoint
+- some refactoring for better code structure
+- changed some functions and background API messages names for better understanding
+- added some internal debug logs
+
+src/js/browser-plugin.js
+- changed some functions and background API messages names for better understanding
+- refactor the sending claim popup confirmation action
+
+src/js/coinform-client.js
+- changed some endpoints communications functions names for better understanding
+
+src/plugin/content/coinform.css
+- minor style change
+
+
 ## commit 11/05/2020 [branch: EU18COI-147-Browser-Plugin-minor-changes-and-bug-fixing-after-3rd-version]
 
 package.json
