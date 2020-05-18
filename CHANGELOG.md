@@ -3,6 +3,49 @@
 All notable changes to this project will be documented in this file.
 
 
+## commit 12/05/2020 [branch: EU18COI-147-Browser-Plugin-minor-changes-and-bug-fixing-after-3rd-version]
+
+src/js/background-script.js
+- adapted the "change-password" endpoint response to store the renewed JWT returned by the endpoint
+- some refactoring for better code structure
+- changed some functions and background API messages names for better understanding
+- added some internal debug logs
+
+src/js/browser-plugin.js
+- changed some functions and background API messages names for better understanding
+- refactor the sending claim popup confirmation action
+
+src/js/coinform-client.js
+- changed some endpoints communications functions names for better understanding
+
+src/plugin/content/coinform.css
+- minor style change
+
+
+## commit 11/05/2020 [branch: EU18COI-147-Browser-Plugin-minor-changes-and-bug-fixing-after-3rd-version]
+
+package.json
+src/plugin/manifest.json
+- version number updated to 3.1.0
+
+src/js/browser-plugin.js
+- new spinner while loading the tweet label and until it is finalized
+- new icon when the tweet label is finalized with the information if it has been fully done
+- new function finalizeTweetClassify that sets that icon and the tooltip text information
+
+src/js/popup.js
+- fixed bug for slow browsers when opening the login popup
+
+src/plugin/_locales/en/messages.json
+- new messages for the loading spinner and the label status icon tooltips
+
+src/plugin/content/coinform.css
+- new styles for the loading spinner and the label status icon tooltips
+
+src/plugin/popup/popup.html
+- fixed bug for slow browsers when opening the login popup
+
+
 ## commit 30/04/2020 [branch: EU18COI-141-Add-module-labels-and-module-values-information-to-the-Browser-Plugin-labeling]
 
 src/js/browser-plugin.js

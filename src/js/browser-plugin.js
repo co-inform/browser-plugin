@@ -17,8 +17,8 @@ let disagreeURL = "/resources/disagree.png";
 let agreeURL = "/resources/agree.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 let imgsPath = "/resources/";
-const mainColor = "#693c5e"; // coinform
-const buttonColor = "#62B9AF"; // old: #3085d6
+const mainColor = "#693c5e"; // coinform color (violet)
+const buttonColor = "#62B9AF"; // coinform green color (old: #3085d6)
 
 const TIME_PUBLISH_AWAIT = 10;
 const MAX_RETRIES = 10;
@@ -485,6 +485,19 @@ const createToolbar = (tweetInfo) => {
   td2.classList.add("coinformToolbarLabelContent");
   td2.setAttribute("id", `coinformToolbarLabelContent-${tweetInfo.id}`);
 
+  let statusContent = document.createElement("DIV");
+  statusContent.classList.add("coinformStatus");
+  let statusIcon = document.createElement("DIV");
+  statusIcon.classList.add("coinformStatusIcon");
+  statusIcon.classList.add("coinformStatusLoading");
+  statusContent.appendChild(statusIcon);
+  td2.appendChild(statusContent);
+
+  let tooltipStatus = document.createElement("DIV");
+  tooltipStatus.classList.add("coinformStatusTooltip");
+  tooltipStatus.textContent = browserAPI.i18n.getMessage("processing_labeling");
+  statusContent.appendChild(tooltipStatus);
+
   let td3 = tr.insertCell();
   td3.setAttribute("id", `coinformToolbarFeedback-${tweetInfo.id}`);
   
@@ -630,6 +643,12 @@ const retryTweetQuery = (tweetInfo, queryId) => {
   if (tweetInfo.domObject.coInfoCounter > MAX_RETRIES) {
 
     logger.logMessage(CoInformLogger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet.`, tweetInfo.id);
+    if ((tweetInfo.domObject.queryStatus.localeCompare('done') === 0) || (tweetInfo.domObject.queryStatus.localeCompare('partly_done') === 0)) {
+      finalizeTweetClassify(tweetInfo, tweetInfo.domObject.queryStatus);
+    }
+    else {
+      finalizeTweetClassify(tweetInfo, "timeout");
+    }
     return false;
 
   }
@@ -643,6 +662,7 @@ const retryTweetQuery = (tweetInfo, queryId) => {
     }, function(res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+
       if ((resStatus.localeCompare('404') === 0)) {
         logger.logMessage(CoInformLogger.logTypes.error, `Request 404 (no such query) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
       }
@@ -651,6 +671,11 @@ const retryTweetQuery = (tweetInfo, queryId) => {
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
+
+        // Call retry in random (between 0.5 and 2.5) seconds
+        setTimeout(function() {
+          retryTweetQuery(tweetInfo, queryId);
+        }, randomInt(500, 2500));
       }
 
     });
@@ -667,6 +692,8 @@ const parseApiResponse = (data, tweetInfo) => {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `${resStatus} response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
 
+  tweetInfo.domObject.queryStatus = resStatus;
+
   // If the result ststus is "done" or "partly_done", then we can classify (final or temporary, respectively) the tweet
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
@@ -682,6 +709,7 @@ const parseApiResponse = (data, tweetInfo) => {
       modules: credibilityModules
     };
     tweetInfo.domObject.coInfoAnalyzed = true;
+    finalizeTweetClassify(tweetInfo, 'done');
   }
   else {
     // If the result status has not reached the 'done' status then make a second API call to retrieve the 
@@ -777,6 +805,36 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
       }
     }
 
+  }
+
+};
+
+const finalizeTweetClassify = (tweet, status) => {
+
+  let node = tweet.domObject.querySelector(`.coinformStatus`);
+
+  let iconNode = node.querySelector(`.coinformStatusIcon`);
+
+  iconNode.classList.remove("coinformStatusLoading");
+  iconNode.classList.remove("coinformStatusDone");
+  iconNode.classList.remove("coinformStatusUnDone");
+
+  let subNode = node.querySelector(`.coinformStatusTooltip`);
+  if (status.localeCompare('done') === 0) {
+    iconNode.classList.add("coinformStatusDone");
+    subNode.textContent = browserAPI.i18n.getMessage("labeling_done");
+  }
+  else if (status.localeCompare('partly_done') === 0) {
+    iconNode.classList.add("coinformStatusUnDone");
+    subNode.textContent = browserAPI.i18n.getMessage("labeling_partly_done");
+  }
+  else if (status.localeCompare('timeout') === 0) {
+    iconNode.classList.add("coinformStatusUnDone");
+    subNode.textContent = browserAPI.i18n.getMessage("labeling_timeout");
+  }
+  else {
+    iconNode.classList.add("coinformStatusUnDone");
+    subNode.textContent = browserAPI.i18n.getMessage("labeling_undone");
   }
 
 };
@@ -901,7 +959,8 @@ const createLabelModulesInfoContent = (label, modules) => {
 const removeTweetLabel = (tweet) => {
 
   let node = tweet.domObject.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
-  node.querySelectorAll('*').forEach(n => n.remove());
+  node.querySelectorAll('.coinformToolbarLabel').forEach(n => n.remove());
+  node.querySelectorAll('.coinformLabelInfoContent').forEach(n => n.remove());
 
 };
 
@@ -1029,18 +1088,18 @@ function feedbackClickAction(tweet, agreement) {
     openNotLoggedFeedbackPopup(tweet);
   }
   else {
-    sendTweetEvaluation(tweet, agreement);
+    sendLabelEvaluation(tweet, agreement);
   }
 
 }
 
-function sendTweetEvaluation(tweetInfo, agreement) {
+function sendLabelEvaluation(tweetInfo, agreement) {
 
   let ratedCredibility = tweetInfo.domObject.coInformLabel;
   let moduleResponse = tweetInfo.domObject.queryId;
 
   browserAPI.runtime.sendMessage({
-    messageId: "EvaluateTweet",
+    messageId: "EvaluateLabel",
     id: tweetInfo.id,
     url: tweetInfo.url,
     ratedCredibility: ratedCredibility,
@@ -1157,51 +1216,45 @@ function openClaimPopup(tweet) {
   }).then(function (result) {
 
     if (result.value) {
+      
+      let claimAccuracyLabel = result.value[0];
+      let claimUrl = result.value[1];
+      let claimComment = result.value[2];
 
-      return new Promise((resolve) => {
-        let returned = result[Object.keys(result)[0]];
-        returned = returned.toString();
-        let array = returned.split(',');
-        let claimAccuracyLabel = array[0];
-        let claimUrl = array[1];
-        let claimComment = array[2];
-        let evaluation = {
-          'label': claimAccuracyLabel, 
-          'url': claimUrl, 
-          'comment': claimComment
-        }; 
+      let evaluation = {
+        'label': claimAccuracyLabel, 
+        'url': claimUrl, 
+        'comment': claimComment
+      }; 
 
-        browserAPI.runtime.sendMessage({
-          messageId: "TwitterEvaluate",
-          id: tweet.id,
-          url: tweet.url,
-          evaluation: evaluation, 
-          coinformUserToken: coinformUserToken
-        }, function (res) {
-          let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-          if (resStatus.localeCompare('400') === 0) {
-            logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
-            Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
-          }
-          else if (resStatus.localeCompare('403') === 0) {
-            logger.logMessage(CoInformLogger.logTypes.error, `Request 403 (access denied) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
-            Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
-          }
-          else if (resStatus.localeCompare('200') === 0) {
-            
-            let data = res.data;
-            // let resEvalId = JSON.stringify(data.evaluation_id).replace(/['"]+/g, '');
-            logger.logMessage(CoInformLogger.logTypes.info, `Claim sent successfully`, tweet.id);
-            Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
+      browserAPI.runtime.sendMessage({
+        messageId: "EvaluateTweet",
+        id: tweet.id,
+        url: tweet.url,
+        evaluation: evaluation, 
+        coinformUserToken: coinformUserToken
+      }, function (res) {
+        let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+        if (resStatus.localeCompare('400') === 0) {
+          logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response`, tweet.id);
+          Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+        }
+        else if (resStatus.localeCompare('403') === 0) {
+          logger.logMessage(CoInformLogger.logTypes.error, `Request 403 (access denied) response`, tweet.id);
+          Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+        }
+        else if (resStatus.localeCompare('200') === 0) {
+          
+          let data = res.data;
+          // let resEvalId = JSON.stringify(data.evaluation_id).replace(/['"]+/g, '');
+          logger.logMessage(CoInformLogger.logTypes.info, `Claim sent successfully`, tweet.id);
+          Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage('feedback_sent'), 'success');
 
-          }
-          else {
-            logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
-            Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
-          }
-        });
-
-        resolve();
+        }
+        else {
+          logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response`, tweet.id);
+          Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
+        }
       });
 
     }

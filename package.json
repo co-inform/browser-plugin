@@ -1,6 +1,6 @@
 {
   "name": "coinform-extension",
-  "version": "2.0.0",
+  "version": "3.1.0",
   "description": "Helping combat misinformation",
   "main": "src/js/browser-plugin.js",
   "scripts": {

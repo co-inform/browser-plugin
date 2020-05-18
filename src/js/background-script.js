@@ -71,9 +71,6 @@ const listenerRuntime = function(request, sender, sendResponse) {
   if (request.messageId === "ConfigureBackground") {
     configureBackground(request, sendResponse);
   }
-  else if (request.messageId === "RetryAPIQuery") {
-    retryAPIQuery(request, sender.id, sendResponse);
-  }
   else if (request.messageId === "GetCookie") {
     getCookie(request.cookieName, sendResponse);
   }
@@ -92,8 +89,11 @@ const listenerRuntime = function(request, sender, sendResponse) {
   else if (request.messageId === "Register") {
     registerAPI(request, sender.id, sendResponse);
   }
-  else if (request.messageId === "CheckUrl") {
-    checkUrlAPI(request, sender.id, sendResponse);
+  else if (request.messageId === "ForgotPass") {
+    forgotPass(request, sender.id, sendResponse);
+  }
+  else if (request.messageId === "ChangePass") {
+    changePass(request, sender.id, sendResponse);
   }
   else if (request.messageId === "GetSession") {
     sendResponse({
@@ -102,20 +102,20 @@ const listenerRuntime = function(request, sender, sendResponse) {
       token: coinformUserToken
     });
   }
+  else if (request.messageId === "CheckUrl") {
+    checkUrlAPI(request, sender.id, sendResponse);
+  }
   else if (request.messageId === "CheckTweetInfo") {
-    CheckTweetInfo(request, sender.id, sendResponse);
-  } 
+    checkTweetInfo(request, sender.id, sendResponse);
+  }
+  else if (request.messageId === "RetryAPIQuery") {
+    retryAPIQuery(request, sender.id, sendResponse);
+  }
+  else if (request.messageId === "EvaluateLabel") {
+    evaluateLabel(request, sender.id, sendResponse);
+  }
   else if (request.messageId === "EvaluateTweet") {
-    EvaluateTweet(request, sender.id, sendResponse);
-  }
-  else if (request.messageId === "TwitterEvaluate") {
-    TwitterEvaluate(request, sender.id, sendResponse);
-  }
-  else if (request.messageId === "ForgotPass") {
-    ForgotPass(request, sender.id, sendResponse);
-  }
-  else if (request.messageId === "ChangePass") {
-    ChangePass(request, sender.id, sendResponse);
+    evaluateTweet(request, sender.id, sendResponse);
   }
 
   return true;
@@ -133,16 +133,6 @@ const configureBackground = function(request, configureCallback) {
     logger = new CoInformLogger(CoInformLogger.logTypes[request.logLevel]);
   }
   if (configureCallback) configureCallback();
-
-};
-
-const retryAPIQuery = function(request, scriptId, queryCallback) {
-
-  logger.logMessage(CoInformLogger.logTypes.debug, `Retrying API query (id ${request.queryId})`, scriptId);
-
-  client.getResponseTweetInfo(request.queryId).then(res => queryCallback(res)).catch(err => {
-    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
-  });
 
 };
 
@@ -256,7 +246,7 @@ const sendMessageToAllScripts = function(message) {
 
 const renewUserToken = function(retryNum = 0) {
 
-  logger.logMessage(CoInformLogger.logTypes.debug, `Time to Renew User Token..`);
+  logger.logMessage(CoInformLogger.logTypes.debug, `Requesting New Token..`);
 
   client.postRenewUserToken().then(res => {
 
@@ -274,14 +264,12 @@ const renewUserToken = function(retryNum = 0) {
         let res = checkAndSaveToken(resToken);
         if (res.ok) {
           logger.logMessage(CoInformLogger.logTypes.info, `User Token Renewed: ${res.userMail}`);
-          if (res.ok) {
-            sendMessageToAllScripts({
-              messageId: "renewUserToken",
-              userMail: res.userMail,
-              userID: res.userID,
-              token: res.token
-            });
-          }
+          sendMessageToAllScripts({
+            messageId: "renewUserToken",
+            userMail: res.userMail,
+            userID: res.userID,
+            token: res.token
+          });
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, "RenewToken Token Check Error");
@@ -380,7 +368,9 @@ const checkUrlAPI = function(request, scriptId, checkUrlCallback) {
 
 };
 
-const CheckTweetInfo = function(request, scriptId, tweetInfoCallback) {
+const checkTweetInfo = function(request, scriptId, tweetInfoCallback) {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Check Tweet Info (tweet id ${request.id})`, scriptId);
 
   client.postCheckTweetInfo(request.id, request.username, request.text).then(res => tweetInfoCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
@@ -394,23 +384,36 @@ const CheckTweetInfo = function(request, scriptId, tweetInfoCallback) {
 
 };
 
-const EvaluateTweet = function(request, scriptId, evaluateTweetCallback) {
+const retryAPIQuery = function(request, scriptId, queryCallback) {
 
-  client.postTwitterEvaluateTweet(request.id, request.url, request.ratedCredibility, 
-    request.moduleResponse, request.agreement, request.coinformUserToken).then(res => evaluateTweetCallback(res)).catch(err => {
-      logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
+  logger.logMessage(CoInformLogger.logTypes.debug, `Retrying Tweet Query (query id ${request.queryId})`, scriptId);
 
-      if (evaluateTweetCallback) evaluateTweetCallback({
-        status: -1,
-        error: err
-      });
+  client.getResponseTweetInfo(request.queryId).then(res => queryCallback(res)).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
+  });
+
+};
+
+const evaluateLabel = function(request, scriptId, evaluateTweetCallback) {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Sending Label Evaluation (tweet id ${request.id}): ${request.agreement}`, scriptId);
+
+  client.postEvaluateLabel(request.id, request.url, request.ratedCredibility, request.moduleResponse, request.agreement, request.coinformUserToken).then(res => evaluateTweetCallback(res)).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
+
+    if (evaluateTweetCallback) evaluateTweetCallback({
+      status: -1,
+      error: err
     });
+  });
 
 }
 
-const TwitterEvaluate = function(request, scriptId, twitterEvaluateCallback) {
+const evaluateTweet = function(request, scriptId, twitterEvaluateCallback) {
 
-  client.postTwitterEvaluate(request.id, request.url, request.evaluation, request.coinformUserToken).then(res => twitterEvaluateCallback(res)).catch (err => {
+  logger.logMessage(CoInformLogger.logTypes.debug, `Sending Tweet Evaluation (tweet id ${request.id})`, scriptId);
+
+  client.postEvaluateTweet(request.id, request.url, request.evaluation, request.coinformUserToken).then(res => twitterEvaluateCallback(res)).catch (err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
 
     if (twitterEvaluateCallback) twitterEvaluateCallback({
@@ -421,7 +424,9 @@ const TwitterEvaluate = function(request, scriptId, twitterEvaluateCallback) {
 
 }
 
-const ForgotPass = function(request, scriptId, forgotPassCallback) {
+const forgotPass = function(request, scriptId, forgotPassCallback) {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Requesting Forgot Password (user ${request.userMail})`, scriptId);
 
   client.postUserForgotPass(request.userMail).then(res => forgotPassCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, "ForgotPass exception: "+JSON.stringify(err), scriptId);
@@ -435,9 +440,39 @@ const ForgotPass = function(request, scriptId, forgotPassCallback) {
 
 }
 
-const ChangePass = function(request, scriptId, changePassCallback) {
+const changePass = function(request, scriptId, changePassCallback) {
 
-  client.postUserChangePass(request.userPass, request.userNewPass, request.coinformUserToken).then(res => changePassCallback(res)).catch(err => {
+  logger.logMessage(CoInformLogger.logTypes.debug, `Requesting Password Change`, scriptId);
+
+  client.postUserChangePass(request.userPass, request.userNewPass, request.coinformUserToken).then(res => {
+    
+    let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+    if (resStatus.localeCompare('200') === 0) {
+      let data = res.data;
+      if (data.token) {
+        let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
+        let res = checkAndSaveToken(resToken);
+        if (res.ok) {
+          logger.logMessage(CoInformLogger.logTypes.info, `ChangePass Token Renewed: ${res.userMail}`);
+          sendMessageToAllScripts({
+            messageId: "renewUserToken",
+            userMail: res.userMail,
+            userID: res.userID,
+            token: res.token
+          });
+        }
+        else {
+          logger.logMessage(CoInformLogger.logTypes.error, "ChangePass Token Check Error");
+        }
+      }
+      else {
+        logger.logMessage(CoInformLogger.logTypes.error, "ChangePass No Token Error");
+      }
+    }
+    if (changePassCallback) changePassCallback(res);
+
+  }).catch(err => {
+
     logger.logMessage(CoInformLogger.logTypes.error, "ChangePass exception: "+JSON.stringify(err), scriptId);
     
     if (changePassCallback) changePassCallback({

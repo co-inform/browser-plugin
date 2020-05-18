@@ -361,5 +361,20 @@
   },
   "content_analysis": {
     "message": "Content Analysis"
+  },
+  "processing_labeling": {
+    "message": "Processing the label.."
+  },
+  "labeling_done": {
+    "message": "Labeling done"
+  },
+  "labeling_partly_done": {
+    "message": "Labeling partly done"
+  },
+  "labeling_timeout": {
+    "message": "Labeling timeout"
+  },
+  "labeling_undone": {
+    "message": "Labeling undone"
   }
 }
