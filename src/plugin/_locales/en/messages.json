@@ -159,7 +159,10 @@
     "message": "I want to make a claim"
   },
   "link_to_claim": {
-    "message": "Link to your claim"
+    "message": "Link to corrective source"
+  },
+  "optional": {
+    "message": "optional"
   },
   "positive_feedback": {
     "message": "I agree with the tweet label"

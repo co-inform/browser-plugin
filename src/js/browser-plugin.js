@@ -1201,7 +1201,7 @@ function openClaimPopup(tweet) {
       '<select id="swal-input-select" class="swal2-select" required>' +
         htmlSelectInputOptions +
       '</select>' +
-      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
+      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + ' (' + browserAPI.i18n.getMessage('optional') + ')' + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
       '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea" required>',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
