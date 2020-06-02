@@ -415,21 +415,12 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id] = false;
   }
 
-  // If the tweet has already been tagged then we directly classify it
-  if (pluginCache[tweetInfo.id]) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
-    tweetInfo.domObject.coInfoAnalyzed = true;
-    classifyTweet(tweetInfo, pluginCache[tweetInfo.id]);
-    return;
-  }
-
   if (!tweetInfo.domObject.toolBar) {
     let toolbar = createToolbar(tweetInfo);
     tweetInfo.domObject.prepend(toolbar);
     tweetInfo.domObject.toolBar = true;
   } else {
     logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
-    return;
   }
 
   // If the tweet has already been tagged then we directly classify it
@@ -437,6 +428,7 @@ const newTweetCallback = (tweetInfo) => {
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
     tweetInfo.domObject.coInfoAnalyzed = true;
     classifyTweet(tweetInfo, pluginCache[tweetInfo.id].label, pluginCache[tweetInfo.id].modules);
+    finalizeTweetClassify(tweetInfo, 'done');
     return;
   }
 
@@ -1183,18 +1175,19 @@ function openClaimPopup(tweet) {
       let comment = document.getElementById('swal-input2').value;
       if (!claimOpt) {
         Swal2.showValidationMessage(browserAPI.i18n.getMessage('please_choose_claim'));
-      }
-      else if (!isURL(url)) {
-        Swal2.showValidationMessage(browserAPI.i18n.getMessage('invalid_url'));
         return false;
       }
-      else if (!comment) {
+      if (url) {
+        if (!isURL(url)) {
+          Swal2.showValidationMessage(browserAPI.i18n.getMessage('invalid_url'));
+          return false;
+        }
+      }
+      if (!comment) {
         Swal2.showValidationMessage(browserAPI.i18n.getMessage('provide_additional_info'));
         return false;
       }
-      else {
-        return [ claimOpt, url, comment ];
-      }
+      return [ claimOpt, url, comment ];
     },
     html:
       '<div class="coinformPopupSubtitle">' + 
@@ -1205,11 +1198,11 @@ function openClaimPopup(tweet) {
         '<span>' + provideClaimText1 + '</span>' +
         '<span>' + provideClaimText2 + '</span>' +
       '</div>' +
-      '<select id="swal-input-select" class="swal2-select">' +
+      '<select id="swal-input-select" class="swal2-select" required>' +
         htmlSelectInputOptions +
       '</select>' +
       '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
-      '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea">',
+      '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea" required>',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>'

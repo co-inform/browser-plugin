@@ -70,11 +70,13 @@ function postEvaluate(path, tweetId, tweetUrl, evaluation, userToken) {
     tweet_id: tweetId,
     rating: evaluation.label,
     comment: evaluation.comment,
-    supportingUrl: [
-      evaluation.url
-    ],
+    supportingUrl: [],
     url: tweetUrl
   };
+
+  if (evaluation.url) {
+    data.supportingUrl.push(evaluation.url);
+  }
 
   return new Promise((resolve, reject) => {
     f(path, {
