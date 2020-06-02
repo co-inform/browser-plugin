@@ -1,7 +1,7 @@
 {
   "coinform": {
     "apiUrl": "https://api.coinform.eu",
-    "logLevel": "info",
+    "logLevel": "debug",
     "hideThreshold": 5,
     "categories": {
       "credible": "label", 
