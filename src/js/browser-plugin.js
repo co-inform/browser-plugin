@@ -784,6 +784,9 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
     node.coInformModules = credibilityModules;
     let newCategory = configuration.coinform.categories[credibilityLabel];
     if (!newCategory) {
+      createTweetLabel(tweet, credibilityLabel, credibilityModules, function() {
+        openLabelPopup(tweet);
+      });
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${credibilityLabel}`, tweet.id);
     }
     else {
@@ -877,7 +880,9 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   let labelcat = document.createElement("SPAN");
   labelcat.setAttribute("id", `coinformToolbarLabel-${tweet.id}`);
   labelcat.setAttribute("class", "coinformToolbarLabel");
-  let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
+  let auxLabel = browserAPI.i18n.getMessage(label);
+  if (!auxLabel) auxLabel = label;
+  let txt = document.createTextNode(auxLabel);
   labelcat.append(txt);
 
   labelcat.addEventListener('click', (event) => {
@@ -924,7 +929,9 @@ const createLabelModulesInfoContent = (label, modules) => {
 
   let infoTooltipContent = document.createElement("DIV");
   let infoTooltipText = document.createElement("SPAN");
-  let textTxt = document.createTextNode(browserAPI.i18n.getMessage('content_tagged_as_modules_result', [browserAPI.i18n.getMessage(label), Object.keys(modules).length]));
+  let auxLabel = browserAPI.i18n.getMessage(label);
+  if (!auxLabel) auxLabel = label;
+  let textTxt = document.createTextNode(browserAPI.i18n.getMessage('content_tagged_as_modules_result', [auxLabel, Object.keys(modules).length]));
   infoTooltipText.append(textTxt);
   infoTooltipContent.append(infoTooltipText);
   let infoTooltipList = document.createElement("UL");
@@ -1000,15 +1007,17 @@ function openLabelPopup(tweet) {
   let meterLogoSrc = null;
 
   if (node.coInformLabel) {
-    let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
-    if (!auxlabel) auxlabel = node.coInformLabel;
+    let auxLabel = browserAPI.i18n.getMessage(node.coInformLabel);
+    if (!auxLabel) auxLabel = node.coInformLabel;
     popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
-    popupTitle = auxlabel;
-    let auxText = document.createElement('SPAN');
-    auxText.innerHTML = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
-    moreInfo.append(auxText);
+    popupTitle = auxLabel;
+    let auxLabelMoreInfoText = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
+    if (auxLabelMoreInfoText) {
+      let auxText = document.createElement('SPAN');
+      auxText.innerHTML = auxLabelMoreInfoText;
+      moreInfo.append(auxText);
+    }
     meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
-
     moreInfo.append(document.createElement('BR'));
 
     let auxModules = node.coInformModules;
