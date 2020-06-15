@@ -213,14 +213,19 @@
 .coinformToolbar {
   position: relative;
   left: -17px;
-  width: calc(100% + 32px);
+  width: calc(100% + 17px);
   height: 35px;
   background-color: #f3f3f3;
-  color: #C0C0C0;
+  color: #e6e0e0;
   font-weight: bold;
   align-self: flex-start;
-  box-shadow: 2px 2px;
+  box-shadow: 3px 3px;
   cursor: auto;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 2px;
+  border-radius: 3px;
 }
 
 .coinformToolbarLogoContent {
