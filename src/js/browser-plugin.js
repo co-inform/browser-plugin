@@ -415,21 +415,12 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id] = false;
   }
 
-  // If the tweet has already been tagged then we directly classify it
-  if (pluginCache[tweetInfo.id]) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
-    tweetInfo.domObject.coInfoAnalyzed = true;
-    classifyTweet(tweetInfo, pluginCache[tweetInfo.id]);
-    return;
-  }
-
   if (!tweetInfo.domObject.toolBar) {
     let toolbar = createToolbar(tweetInfo);
     tweetInfo.domObject.prepend(toolbar);
     tweetInfo.domObject.toolBar = true;
   } else {
     logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
-    return;
   }
 
   // If the tweet has already been tagged then we directly classify it
@@ -437,6 +428,7 @@ const newTweetCallback = (tweetInfo) => {
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
     tweetInfo.domObject.coInfoAnalyzed = true;
     classifyTweet(tweetInfo, pluginCache[tweetInfo.id].label, pluginCache[tweetInfo.id].modules);
+    finalizeTweetClassify(tweetInfo, 'done');
     return;
   }
 
@@ -792,6 +784,9 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
     node.coInformModules = credibilityModules;
     let newCategory = configuration.coinform.categories[credibilityLabel];
     if (!newCategory) {
+      createTweetLabel(tweet, credibilityLabel, credibilityModules, function() {
+        openLabelPopup(tweet);
+      });
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${credibilityLabel}`, tweet.id);
     }
     else {
@@ -885,7 +880,9 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   let labelcat = document.createElement("SPAN");
   labelcat.setAttribute("id", `coinformToolbarLabel-${tweet.id}`);
   labelcat.setAttribute("class", "coinformToolbarLabel");
-  let txt = document.createTextNode(browserAPI.i18n.getMessage(label));
+  let auxLabel = browserAPI.i18n.getMessage(label);
+  if (!auxLabel) auxLabel = label;
+  let txt = document.createTextNode(auxLabel);
   labelcat.append(txt);
 
   labelcat.addEventListener('click', (event) => {
@@ -932,7 +929,9 @@ const createLabelModulesInfoContent = (label, modules) => {
 
   let infoTooltipContent = document.createElement("DIV");
   let infoTooltipText = document.createElement("SPAN");
-  let textTxt = document.createTextNode(browserAPI.i18n.getMessage('content_tagged_as_modules_result', [browserAPI.i18n.getMessage(label), Object.keys(modules).length]));
+  let auxLabel = browserAPI.i18n.getMessage(label);
+  if (!auxLabel) auxLabel = label;
+  let textTxt = document.createTextNode(browserAPI.i18n.getMessage('content_tagged_as_modules_result', [auxLabel, Object.keys(modules).length]));
   infoTooltipText.append(textTxt);
   infoTooltipContent.append(infoTooltipText);
   let infoTooltipList = document.createElement("UL");
@@ -1008,15 +1007,17 @@ function openLabelPopup(tweet) {
   let meterLogoSrc = null;
 
   if (node.coInformLabel) {
-    let auxlabel = browserAPI.i18n.getMessage(node.coInformLabel);
-    if (!auxlabel) auxlabel = node.coInformLabel;
+    let auxLabel = browserAPI.i18n.getMessage(node.coInformLabel);
+    if (!auxLabel) auxLabel = node.coInformLabel;
     popupPreTitle = browserAPI.i18n.getMessage('element_tagged_as', elementTxt);
-    popupTitle = auxlabel;
-    let auxText = document.createElement('SPAN');
-    auxText.innerHTML = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
-    moreInfo.append(auxText);
+    popupTitle = auxLabel;
+    let auxLabelMoreInfoText = browserAPI.i18n.getMessage(node.coInformLabel + '__info', elementTxt);
+    if (auxLabelMoreInfoText) {
+      let auxText = document.createElement('SPAN');
+      auxText.innerHTML = auxLabelMoreInfoText;
+      moreInfo.append(auxText);
+    }
     meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
-
     moreInfo.append(document.createElement('BR'));
 
     let auxModules = node.coInformModules;
@@ -1183,18 +1184,19 @@ function openClaimPopup(tweet) {
       let comment = document.getElementById('swal-input2').value;
       if (!claimOpt) {
         Swal2.showValidationMessage(browserAPI.i18n.getMessage('please_choose_claim'));
-      }
-      else if (!isURL(url)) {
-        Swal2.showValidationMessage(browserAPI.i18n.getMessage('invalid_url'));
         return false;
       }
-      else if (!comment) {
+      if (url) {
+        if (!isURL(url)) {
+          Swal2.showValidationMessage(browserAPI.i18n.getMessage('invalid_url'));
+          return false;
+        }
+      }
+      if (!comment) {
         Swal2.showValidationMessage(browserAPI.i18n.getMessage('provide_additional_info'));
         return false;
       }
-      else {
-        return [ claimOpt, url, comment ];
-      }
+      return [ claimOpt, url, comment ];
     },
     html:
       '<div class="coinformPopupSubtitle">' + 
@@ -1205,11 +1207,11 @@ function openClaimPopup(tweet) {
         '<span>' + provideClaimText1 + '</span>' +
         '<span>' + provideClaimText2 + '</span>' +
       '</div>' +
-      '<select id="swal-input-select" class="swal2-select">' +
+      '<select id="swal-input-select" class="swal2-select" required>' +
         htmlSelectInputOptions +
       '</select>' +
-      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
-      '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea">',
+      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + ' (' + browserAPI.i18n.getMessage('optional') + ')' + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
+      '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea" required>',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>'
