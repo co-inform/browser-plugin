@@ -17,6 +17,9 @@
       "unsubstantiated": "", 
       "inaccurate_with_considerations": "", 
       "inaccurate": ""
+    },
+    "options": {
+      "testMode": "false"
     }
   }
 }

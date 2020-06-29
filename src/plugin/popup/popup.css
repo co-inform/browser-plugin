@@ -139,6 +139,10 @@ body {
   content: "\f084";
 }
 
+.form-control .testmode_label::before {
+  content: "\f121";
+}
+
 .form-control-group {
   display: grid;
   clear: both;
@@ -155,6 +159,11 @@ body {
   outline: 0;
   border-width: 0 0 2px;
   background-color: white;
+}
+
+.form-control-group input[type=checkbox] {
+  width: auto;
+  float: right;
 }
 
 .form-control:not(:last-child) {
