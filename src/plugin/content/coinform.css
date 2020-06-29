@@ -131,8 +131,7 @@
 }
 
 .swal2-popup .swal2-content {
-  font-size: 1.4em;
-  font-weight: 400;
+  font-weight: 400 !important;
 }
 
 .swal2-popup .swal2-content span {
