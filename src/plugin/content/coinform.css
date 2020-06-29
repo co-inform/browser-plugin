@@ -132,6 +132,7 @@
 
 .swal2-popup .swal2-content {
   font-size: 1.4em;
+  font-weight: 400;
 }
 
 .swal2-popup .swal2-content span {
@@ -210,10 +211,16 @@
   cursor: default;
 }
 
+
+article[coinform-id] {
+  display: block;
+  flex-wrap: wrap;
+}
+
 .coinformToolbar {
   position: relative;
-  left: -17px;
-  width: calc(100% + 17px);
+  left: 0px;
+  width: calc(100% - 17px);
   height: 35px;
   background-color: #f3f3f3;
   color: #e6e0e0;
