@@ -1,13 +1,13 @@
 
 /* Co-Inform project main color: #693c5e */
 /* Co-Inform project secondary color: #62B9AF */
-[coinform-untrusted] div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) {
+[coinform-untrusted] div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) {
   filter: blur(4px);
   opacity: .6;
 }
 
 /* Case for the main tweet when we are in a tweet page */
-[coinform-untrusted] > div > div:not(:first-child):not(:nth-child(2)):not(:last-child) {
+[coinform-untrusted] > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) {
   filter: blur(4px);
   opacity: .6;
   position: relative;
