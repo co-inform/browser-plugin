@@ -93,7 +93,7 @@
     "message": "Please, check the content again before sharing it."
   },
   "published_in_seconds": {
-    "message": "The tweet will be pubished in $1 seconds"
+    "message": "The tweet will be published in $1 seconds"
   },
   "why_cant_see": {
     "message": "Why can't I see this?"
@@ -275,6 +275,9 @@
   "options": {
     "message": "Options"
   },
+  "options_test_mode": {
+    "message": "Test Mode"
+  },
   "change": {
     "message": "Change"
   },
@@ -282,7 +285,7 @@
     "message": "Save"
   },
   "options_save_ok": {
-    "message": "No options to save"
+    "message": "Options Saved OK"
   },
   "user_mail": {
     "message": "Your email"
@@ -339,7 +342,7 @@
     "message": "Account information"
   },
   "options_title": {
-    "message": "No Options yet"
+    "message": "Plugin Options"
   },
   "dont_have_account_question": {
     "message": "Don't have an account?"

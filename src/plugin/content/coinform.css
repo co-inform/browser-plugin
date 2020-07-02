@@ -1,13 +1,13 @@
 
 /* Co-Inform project main color: #693c5e */
 /* Co-Inform project secondary color: #62B9AF */
-[coinform-untrusted] div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) {
+[coinform-untrusted] div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) {
   filter: blur(4px);
   opacity: .6;
 }
 
 /* Case for the main tweet when we are in a tweet page */
-[coinform-untrusted] > div > div:not(:first-child):not(:nth-child(2)):not(:last-child) {
+[coinform-untrusted] > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) {
   filter: blur(4px);
   opacity: .6;
   position: relative;
@@ -131,7 +131,7 @@
 }
 
 .swal2-popup .swal2-content {
-  font-size: 1.4em;
+  font-weight: 400 !important;
 }
 
 .swal2-popup .swal2-content span {
@@ -210,10 +210,16 @@
   cursor: default;
 }
 
+
+article[coinform-id] {
+  display: block;
+  flex-wrap: wrap;
+}
+
 .coinformToolbar {
   position: relative;
-  left: -17px;
-  width: calc(100% + 17px);
+  left: 0px;
+  width: calc(100% - 17px);
   height: 35px;
   background-color: #f3f3f3;
   color: #e6e0e0;

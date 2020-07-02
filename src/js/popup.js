@@ -51,6 +51,7 @@ window.addEventListener("load", function(){
   document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("options_title");
   document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
+  document.getElementById('options-test-mode-label').innerHTML = browserAPI.i18n.getMessage("options_test_mode");
 
   // Set the header logo image
   let img = document.createElement("IMG");
@@ -173,6 +174,18 @@ const init = () => {
     }
     else {
       displayLogin();
+    }
+  });
+
+  browserAPI.runtime.sendMessage({
+    messageId: "GetOptions"
+  }, function(res) {
+    if (res.options) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `Options retrieved`);
+      if (res.options.testMode !== undefined) {
+        let valCheckbox = (res.options.testMode.localeCompare("true") === 0);
+        document.querySelector('input[name="options-test-mode"]').checked = valCheckbox;
+      }
     }
   });
 
@@ -428,18 +441,32 @@ const optionsSaveAction = (targetButton) => {
   targetButton.disabled = true;
 
   //TODO: here we can implement options save action
+  let optionsObj = {
+    testMode: "false"
+  };
+  let auxInput = document.querySelector('input[name="options-test-mode"]:checked');
+  if (auxInput) {
+    optionsObj.testMode = auxInput.value || "false";
+  }
 
-  logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
-  showMessage("ok", "options_save_ok", 2000);
-  setTimeout(function() {
-    if (coinformUserToken) {
-      displayLogout();
-    }
-    else {
-      displayLogin();
-    }
-    targetButton.disabled = false;
-  }, 1000);
+  browserAPI.runtime.sendMessage({
+    messageId: "OptionsChange",
+    options: optionsObj
+  }, function (res) {
+
+    logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
+    showMessage("ok", "options_save_ok", 2000);
+    setTimeout(function() {
+      if (coinformUserToken) {
+        displayLogout();
+      }
+      else {
+        displayLogin();
+      }
+      targetButton.disabled = false;
+    }, 1000);
+    
+  });
 
 };
 

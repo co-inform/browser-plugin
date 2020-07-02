@@ -20,6 +20,11 @@ let imgsPath = "/resources/";
 const mainColor = "#693c5e"; // coinform color (violet)
 const buttonColor = "#62B9AF"; // coinform green color (old: #3085d6)
 
+// Hack to force a misinformation url detection, and a missinformation user tweets detection
+// Active only in test use mode
+const misInfoUrlRegExpTest = new RegExp("https://www\.breitbart\.com.*");
+const misInfoTestTweetUser = "BreitbartNews";
+
 const TIME_PUBLISH_AWAIT = 10;
 const MAX_RETRIES = 10;
 let configuration;
@@ -67,6 +72,11 @@ browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse)
     coinformUserToken = request.token;
     coinformUserMail = request.userMail;
     coinformUserID = request.userID;
+  }
+  else if (request.messageId === "OptionsChange") {
+    if (request.options !== undefined) {
+      configuration.coinform.options = request.options;
+    }
   }
 });
 
@@ -210,7 +220,14 @@ const publishTweetCallback = (clickEvent, targetButton) => {
       }, function(res) {
         
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-        if ((resStatus.localeCompare('400') === 0)) {
+
+        // Hack to force a misinformation url detection, and a missinformation user tweets detection
+        // Active only in test use mode
+        if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(misInfoUrlRegExpTest)) {
+          targetButton.foundMisinfo = targetButton.foundMisinfo || publishTweetCheckLabel("not_credible", urls[i]);
+        }
+
+        else if ((resStatus.localeCompare('400') === 0)) {
           logger.logMessage(CoInformLogger.logTypes.error, `Request 400 response`);
         }
         else if (resStatus.localeCompare('200') === 0) {
@@ -442,7 +459,24 @@ const newTweetCallback = (tweetInfo) => {
     text: tweetInfo.text
   }, function (res) {
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-    if ((resStatus.localeCompare('400') === 0)) {
+    
+    // Hack to force a misinformation url detection, and a missinformation user tweets detection
+    // Active only in test use mode
+    if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.localeCompare(misInfoTestTweetUser) === 0)) {
+      parseApiResponse({
+        status: "done",
+        query_id: -1,
+        response: {
+          rule_engine: {
+            final_credibility: "not_credible",
+            module_labels: [],
+            module_values: []
+          }
+        }
+      }, tweetInfo);
+    }
+
+    else if ((resStatus.localeCompare('400') === 0)) {
       logger.logMessage(CoInformLogger.logTypes.error, `Request 400 (invalid input) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
     }
     else if (resStatus.localeCompare('200') === 0) {

@@ -102,6 +102,20 @@ const listenerRuntime = function(request, sender, sendResponse) {
       token: coinformUserToken
     });
   }
+  else if (request.messageId === "GetOptions") {
+    sendResponse({
+      options: configuration.coinform.options
+    });
+  }
+  else if (request.messageId === "OptionsChange") {
+    if (request.options !== undefined) {
+      configuration.coinform.options = request.options;
+    }
+    sendMessageToAllScripts(request);
+    sendResponse({
+      options: configuration.coinform.options
+    });
+  }
   else if (request.messageId === "CheckUrl") {
     checkUrlAPI(request, sender.id, sendResponse);
   }
