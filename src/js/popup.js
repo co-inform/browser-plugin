@@ -17,24 +17,15 @@ window.addEventListener("load", function(){
   
   resetAllDisplays();
 
-  //Read the configuration file and if it was successful, start
-  fetch(browserAPI.runtime.getURL('../resources/config.json'), {
-    mode: 'cors',
-    header: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(res => res.json())
-    .then(res => {
-
-      configuration = res;
+  // Read the configuration file and if it was successful, start
+  browserAPI.runtime.sendMessage({
+    messageId: "GetConfig"
+  }, function(res) {
+    if (res.configuration) {
+      configuration = res.configuration;
       init();
-      
-    })
-    .catch(err => {
-      console.error('Could not load configuration file', err)
-    });
+    }
+  });
 
   // Set language messages to the HTML
   document.getElementById('popup-title').innerHTML = browserAPI.i18n.getMessage("popup_plugin_title");

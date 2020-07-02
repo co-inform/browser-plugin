@@ -210,7 +210,6 @@
   cursor: default;
 }
 
-
 article[coinform-id] {
   display: block;
   flex-wrap: wrap;

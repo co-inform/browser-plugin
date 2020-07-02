@@ -68,10 +68,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
 
 const listenerRuntime = function(request, sender, sendResponse) {
 
-  if (request.messageId === "ConfigureBackground") {
-    configureBackground(request, sendResponse);
-  }
-  else if (request.messageId === "GetCookie") {
+  if (request.messageId === "GetCookie") {
     getCookie(request.cookieName, sendResponse);
   }
   else if (request.messageId === "SetCookie") {
@@ -100,6 +97,11 @@ const listenerRuntime = function(request, sender, sendResponse) {
       userMail: coinformUserMail,
       userID: coinformUserID,
       token: coinformUserToken
+    });
+  }
+  else if (request.messageId === "GetConfig") {
+    sendResponse({
+      configuration: configuration
     });
   }
   else if (request.messageId === "GetOptions") {
@@ -133,20 +135,6 @@ const listenerRuntime = function(request, sender, sendResponse) {
   }
 
   return true;
-
-};
-
-const configureBackground = function(request, configureCallback) {
-
-  if (request.coinformApiUrl) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Configuring client API url: ${request.coinformApiUrl}`);
-    client = new CoinformClient(fetch, request.coinformApiUrl);
-  }
-  if (request.logLevel) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Configuring Log level: ${request.logLevel}`);
-    logger = new CoInformLogger(CoInformLogger.logTypes[request.logLevel]);
-  }
-  if (configureCallback) configureCallback();
 
 };
 

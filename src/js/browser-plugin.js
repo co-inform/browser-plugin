@@ -35,23 +35,14 @@ let coinformUserToken = null;
 let coinformUserMail = null;
 
 // Read the configuration file and if it was successful, start
-fetch(browserAPI.runtime.getURL('../resources/config.json'), {
-  mode: 'cors',
-  header: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }
-})
-  .then(res => res.json())
-  .then(res => {
-
-    configuration = res;
+browserAPI.runtime.sendMessage({
+  messageId: "GetConfig"
+}, function(res) {
+  if (res.configuration) {
+    configuration = res.configuration;
     setTimeout(start, 1000);
-
-  })
-  .catch(err => {
-    console.error('Could not load configuration file', err)
-  });
+  }
+});
 
 // Set listener for background scrpit messages
 browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
