@@ -23,6 +23,7 @@ window.addEventListener("load", function(){
   }, function(res) {
     if (res.configuration) {
       configuration = res.configuration;
+      logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
       init();
     }
   });
@@ -149,8 +150,6 @@ window.addEventListener("load", function(){
 const init = () => {
 
   resetAllDisplays();
-
-  logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
 
   browserAPI.runtime.sendMessage({
     messageId: "GetSession"

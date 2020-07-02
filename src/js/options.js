@@ -8,24 +8,16 @@ let logger;
 
 window.addEventListener("load", function(){
 
-  //Read the configuration file and if it was successful, start
-  fetch(browserAPI.runtime.getURL('../resources/config.json'), {
-    mode: 'cors',
-    header: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(res => res.json())
-    .then(res => {
-
-      configuration = res;
+  // Read the configuration file and if it was successful, start
+  browserAPI.runtime.sendMessage({
+    messageId: "GetConfig"
+  }, function(res) {
+    if (res.configuration) {
+      configuration = res.configuration;
+      logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
       init();
-      
-    })
-    .catch(err => {
-      console.error('Could not load configuration file', err)
-    });
+    }
+  });
 
   document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("misinformation_restriction_level");
   document.getElementById('treshold_1-label').innerHTML = browserAPI.i18n.getMessage("low");
@@ -42,8 +34,6 @@ window.addEventListener("load", function(){
 
 // Init the theshold value
 const init = () => {
-
-  logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
 
   browserAPI.storage.local.get(['treshold'], (data) => {
     logger.logMessage(CoInformLogger.logTypes.debug, `User treshold level: ${data.treshold}`);

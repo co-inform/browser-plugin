@@ -353,20 +353,47 @@
   "sign_up": {
     "message": "Sign Up"
   },
-  "content_tagged_as_modules_result": {
-    "message": "This content has been tagged as $1, as the result of this $2 different modules analysis result:"
+  "content_deemed_due_analysis__html": {
+    "message": "This content has been deemed as <b>$1</b>, due to the result of this <b>$2</b> different analysis:"
   },
-  "confidence": {
-    "message": "confidence"
+  "more_analysis_info": {
+    "message": "For more information about the analysis click on the credibility label"
+  },
+  "module_analysis_long_info__html": {
+    "message": "A <b>$1</b> analysis, based on $2, that generated this assessment:"
+  },
+  "module_analysis_short_info__html": {
+    "message": "A <b>$1</b> analysis generated this assessment:"
+  },
+  "module_analysis_result__html": {
+    "message": "<b>$1</b> (with <b>$2</b> of credibility value, and <b>$3%</b> of confidence)"
+  },
+  "module_explainability_text": {
+    "message": "Explanation"
+  },
+  "module_explainability_link": {
+    "message": "More information"
+  },
+  "here": {
+    "message": "here"
   },
   "claim_similarity": {
     "message": "Claim Similarity"
   },
+  "claim_similarity_based_info": {
+    "message": "similar articles"
+  },
   "misinfome": {
-    "message": "MisInfoMe"
+    "message": "Misinformation Identification"
+  },
+  "misinfome_based_info": {
+    "message": "the source authour reputation"
   },
   "content_analysis": {
-    "message": "Content Analysis"
+    "message": "Content Stance"
+  },
+  "content_analysis_based_info": {
+    "message": "the tweet content and its replies"
   },
   "processing_labeling": {
     "message": "Processing the label.."
