@@ -139,7 +139,7 @@ body {
   content: "\f084";
 }
 
-.form-control .testmode_label::before {
+.form-control .devmode_label::before {
   content: "\f121";
 }
 
@@ -161,7 +161,68 @@ body {
   background-color: white;
 }
 
-.form-control-group input[type=checkbox] {
+.form-control .coinform-switch {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 16px;
+  margin-right: 10px;
+  margin-top: 4px;
+}
+
+.form-control .coinform-switch input.input-checkbox-switch { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.form-control .coinform-switch .coinform-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.form-control .coinform-switch .coinform-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.form-control .coinform-switch input.input-checkbox-switch:checked + .coinform-switch-slider {
+  background-color: #2196F3;
+}
+
+.form-control .coinform-switch input.input-checkbox-switch:focus + .coinform-switch-slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+.form-control .coinform-switch input.input-checkbox-switch:checked + .coinform-switch-slider:before {
+  -webkit-transform: translateX(12px);
+  -ms-transform: translateX(12px);
+  transform: translateX(12px);
+}
+
+.form-control .coinform-switch label {
+  position: absolute;
+  left: 40px;
+  white-space: nowrap;
+}
+
+.form-control-group input.input-checkbox {
   width: auto;
   float: right;
 }
