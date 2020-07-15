@@ -564,6 +564,7 @@ const createToolbar = (tweetInfo) => {
     event.preventDefault();
     event.stopPropagation();
     feedbackClickAction(tweetInfo, "disagree");
+    td4.classList.add("coinformToolbarNegativeLogoAfterClick");
   });
 
   let td5 = tr.insertCell();
@@ -572,6 +573,7 @@ const createToolbar = (tweetInfo) => {
   td5.appendChild(createLogoPositiveFeedback(tweetInfo.id, function () {
     feedbackClickAction(tweetInfo, "agree");
   }));
+
   let negativeFeedbackText = document.createElement("SPAN");
   let negativeText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
   negativeFeedbackText.append(negativeText);
@@ -584,6 +586,7 @@ const createToolbar = (tweetInfo) => {
     event.preventDefault();
     event.stopPropagation();
     feedbackClickAction(tweetInfo, "agree");
+    td5.classList.add("coinformToolbarPositiveLogoAfterClick");
   });
 
   return tbl;
