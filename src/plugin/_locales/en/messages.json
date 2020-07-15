@@ -360,7 +360,7 @@
     "message": "For more information about the analysis click on the credibility label"
   },
   "module_analysis_long_info__html": {
-    "message": "A <b>$1</b> analysis, based on $2, that generated this assessment:"
+    "message": "A <b>$1</b> analysis, based on $2, generated this assessment:"
   },
   "module_analysis_short_info__html": {
     "message": "A <b>$1</b> analysis generated this assessment:"

@@ -715,7 +715,27 @@ const parseApiResponse = (data, tweetInfo) => {
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
     credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g, '_');
-    credibilityModules = parseModulesValues(data.response.rule_engine.module_labels, data.response.rule_engine.module_values, []);
+    let moduleExplanations = null;
+    if (data.response.rule_engine.module_explanations) {
+      moduleExplanations = data.response.rule_engine.module_explanations;
+    }
+    else {
+      moduleExplanations = {
+        misinfome: {
+          explanationFormat: "link",
+          explanation: "https://misinfo.me/misinfo/home"
+        },
+        content_analysis: {
+          explanationFormat: "text",
+          explanation: "Plain text example for CA analysis description"
+        },
+        claim_similarity: {
+          explanationFormat: "markdown",
+          explanation: "Markdown text *example* for **CS** analysis explanation"
+        }
+      };
+    }
+    credibilityModules = parseModulesValues(data.response.rule_engine.module_labels, data.response.rule_engine.module_values, moduleExplanations);
     classifyTweet(tweetInfo, credibilityLabel, credibilityModules);
     tweetInfo.domObject.queryId = data.query_id;
   }
@@ -1018,23 +1038,23 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
       if (modules[key].confidence != null) moduleConfidence = Math.round(parseFloat(modules[key].confidence) * 100);
       let moduleAnalysisValuesHtml = browserAPI.i18n.getMessage('module_analysis_result__html', [moduleLabelTxt, moduleCredibility, moduleConfidence]);
 
-      let moduleExplainadilityHtml = null;
+      let moduleExplainabilityHtml = null;
       if (modules[key].explanationFormat != null) {
         if (modules[key].explanationFormat.localeCompare('text') === 0) {
-          moduleExplainadilityHtml = browserAPI.i18n.getMessage('module_explainability_text') + ':' + modules[key].explanation;
+          moduleExplainabilityHtml = browserAPI.i18n.getMessage('module_explainability_text') + ': ' + modules[key].explanation;
         }
         else if (modules[key].explanationFormat.localeCompare('link') === 0) {
-          moduleExplainadilityHtml = browserAPI.i18n.getMessage('module_explainability_link') + ': <a href="' + modules[key].explanation + '">' + browserAPI.i18n.getMessage('here') + '</a>';
+          moduleExplainabilityHtml = browserAPI.i18n.getMessage('module_explainability_link') + ': <a href="' + modules[key].explanation + '"  target="_blank" rel="noopener noreferrer">' + browserAPI.i18n.getMessage('here') + '</a>';
         }
         else if (modules[key].explanationFormat.localeCompare('markdown') === 0) {
           let ShowDownConverter = new ShowDown.Converter();
           let auxHtmlExplanationHtml = ShowDownConverter.makeHtml(modules[key].explanation);
-          moduleExplainadilityHtml = browserAPI.i18n.getMessage('module_explainability_text') + ':' + auxHtmlExplanationHtml;
+          moduleExplainabilityHtml = browserAPI.i18n.getMessage('module_explainability_text') + ': ' + auxHtmlExplanationHtml;
         }
       }
 
       infoTooltipListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
-      if (moduleExplainadilityHtml) infoTooltipListItem.innerHTML = infoTooltipListItem.innerHTML + '<br>' + moduleExplainadilityHtml;
+      if (moduleExplainabilityHtml) infoTooltipListItem.innerHTML = infoTooltipListItem.innerHTML + '<br>' + moduleExplainabilityHtml;
 
       infoTooltipList.append(infoTooltipListItem);
     }
