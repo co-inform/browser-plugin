@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Co-Inform",
-    "version": "3.2.0",
+    "version": "3.3.0",
     "default_locale": "en",
     "description": "Context matters. Your sources too.",
     "content_security_policy": "default-src 'self'; connect-src *;",
