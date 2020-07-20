@@ -828,9 +828,16 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
     if (node.coInformLabel) {
       logger.logMessage(CoInformLogger.logTypes.info, `ReClassifying Tweet Label: ${node.coInformLabel} -> ${credibilityLabel}`, tweet.id);
       removeTweetLabel(tweet);
+      // check if it was blurred
       let previousCategory = configuration.coinform.categories[node.coInformLabel];
       if (previousCategory && (previousCategory.localeCompare("blur") === 0)) {
         removeTweetBlurry(tweet);
+      }
+      // remove feedback as label changed
+      let auxPrevious = tweet.domObject.querySelector(".coinformToolbarFeedbackAfterClick");
+      if (auxPrevious || pluginCache[tweet.id].feedback) {
+        pluginCache[tweet.id].feedback = null;
+        auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
       }
     }
     else {
