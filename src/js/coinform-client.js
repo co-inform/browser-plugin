@@ -71,6 +71,7 @@ function postEvaluate(path, tweetId, tweetUrl, evaluation, userToken) {
     rating: evaluation.label,
     comment: evaluation.comment,
     supportingUrl: [],
+    request_factcheck: evaluation.factcheck,
     url: tweetUrl
   };
 

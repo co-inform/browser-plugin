@@ -953,6 +953,11 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   infoLogo.setAttribute("class", "coinformLabelInfoLogo");
   infoLogo.setAttribute("src", infoLogoURL);
   infoContent.append(infoLogo);
+
+  infoLogo.addEventListener("mouseenter", (event) => {
+    // do nothing, the tooltip is shown through CSS
+    let auxHoover = true;
+  });
   
   // create tooltip div with detailed modules info
   let infoTooltip = document.createElement("DIV");
@@ -1230,6 +1235,7 @@ function sendLabelEvaluation(tweetInfo, agreement) {
     }
 
   });
+
 }
 
 function claimClickAction(tweet) {
@@ -1290,9 +1296,12 @@ function openClaimPopup(tweet) {
     confirmButtonText: browserAPI.i18n.getMessage('submit'),
     focusConfirm: true,
     preConfirm: () => {
-      let claimOpt = document.getElementById('swal-input-select').value;
-      let url = document.getElementById('swal-input1').value;
-      let comment = document.getElementById('swal-input2').value;
+      let claimOpt = document.getElementById('claim-input-select').value;
+      let url = document.getElementById('claim-input-url').value;
+      let comment = document.getElementById('claim-input-text').value;
+      let factcheck = "false";
+      let auxCheck = document.getElementById('claim-input-check').checked;
+      if (auxCheck) factcheck = document.getElementById('claim-input-check').value;
       if (!claimOpt) {
         Swal2.showValidationMessage(browserAPI.i18n.getMessage('please_choose_claim'));
         return false;
@@ -1307,7 +1316,7 @@ function openClaimPopup(tweet) {
         Swal2.showValidationMessage(browserAPI.i18n.getMessage('provide_additional_info'));
         return false;
       }
-      return [ claimOpt, url, comment ];
+      return [ claimOpt, url, comment, factcheck ];
     },
     html:
       '<div class="coinformPopupSubtitle">' + 
@@ -1318,11 +1327,13 @@ function openClaimPopup(tweet) {
         '<span>' + provideClaimText1 + '</span>' +
         '<span>' + provideClaimText2 + '</span>' +
       '</div>' +
-      '<select id="swal-input-select" class="swal2-select" required>' +
+      '<select id="claim-input-select" class="swal2-select" required>' +
         htmlSelectInputOptions +
       '</select>' +
-      '<input id="swal-input1" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + ' (' + browserAPI.i18n.getMessage('optional') + ')' + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
-      '<textarea id="swal-input2" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea" required>',
+      '<input id="claim-input-url" placeholder="' + browserAPI.i18n.getMessage('link_to_claim') + ' (' + browserAPI.i18n.getMessage('optional') + ')' + '" type="url" pattern="(ftp|https?):\\/\\/[^\\s]+" class="swal2-input">' +
+      '<textarea id="claim-input-text" placeholder="' + browserAPI.i18n.getMessage('additional_info') + '" class="swal2-textarea" required></textarea>' +
+      '<input type="checkbox" value="true" id="claim-input-check" class="swal2-checkbox">' +
+      '<label id="claim-label-check" for="claim-input-check" class="swal2-label">' + browserAPI.i18n.getMessage('request_factcheck') + '</label>',
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>'
@@ -1333,11 +1344,13 @@ function openClaimPopup(tweet) {
       let claimAccuracyLabel = result.value[0];
       let claimUrl = result.value[1];
       let claimComment = result.value[2];
+      let claimCheck = result.value[3];
 
       let evaluation = {
         'label': claimAccuracyLabel, 
         'url': claimUrl, 
-        'comment': claimComment
+        'comment': claimComment,
+        'factcheck': claimCheck
       }; 
 
       browserAPI.runtime.sendMessage({
@@ -1501,4 +1514,3 @@ function isURL(str) {
   '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
   return pattern.test(str);
 }
-
