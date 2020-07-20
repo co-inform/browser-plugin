@@ -459,6 +459,7 @@ article[coinform-id] {
   transform: translateX(-0px);
   border-radius: 6px;
   filter: invert(100%);
+  pointer-events: none;
 }
 
 .coinformPositiveLogo {
@@ -531,6 +532,7 @@ article[coinform-id] {
   transform: translateX(-0px);
   border-radius: 6px;
   filter: invert(100%);
+  pointer-events: none;
 }
 
 /*[data-testid="toolBar"] [data-testid^="tweetButton"] .spinner-border {

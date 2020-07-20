@@ -549,8 +549,10 @@ const createToolbar = (tweetInfo) => {
   let td4 = tr.insertCell();
   td4.setAttribute("id", `coinformToolbarFeedbackNegative-${tweetInfo.id}`);
 
+  if (pluginCache[tweetInfo.id].feedback) return;
   td4.appendChild(createLogoNegativeFeedback(tweetInfo.id, function () {
     feedbackClickAction(tweetInfo, "disagree");
+    pluginCache[tweetInfo.id].feedback = true;
   }));
   let positiveFeedbackText = document.createElement("SPAN");
   let positiveText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
@@ -558,6 +560,7 @@ const createToolbar = (tweetInfo) => {
   td4.appendChild(positiveFeedbackText);
   td4.classList.add("coinformToolbarNegativeLogo");
 
+  if (pluginCache[tweetInfo.id].feedback) return;
   td4.addEventListener('click', (event) => { 
     // prevent opening the tweet
     event.stopImmediatePropagation();
@@ -565,13 +568,17 @@ const createToolbar = (tweetInfo) => {
     event.stopPropagation();
     feedbackClickAction(tweetInfo, "disagree");
     td4.classList.add("coinformToolbarNegativeLogoAfterClick");
+    document.getElementById(`coinformToolbarFeedbackPositive-${tweetInfo.id}`).classList.remove("coinformToolbarPositiveLogoAfterClick");
+    pluginCache[tweetInfo.id].feedback = true;
   });
 
   let td5 = tr.insertCell();
   td5.setAttribute("id", `coinformToolbarFeedbackPositive-${tweetInfo.id}`);
 
+  if (pluginCache[tweetInfo.id].feedback) return;
   td5.appendChild(createLogoPositiveFeedback(tweetInfo.id, function () {
     feedbackClickAction(tweetInfo, "agree");
+    pluginCache[tweetInfo.id].feedback = true;
   }));
 
   let negativeFeedbackText = document.createElement("SPAN");
@@ -580,6 +587,7 @@ const createToolbar = (tweetInfo) => {
   td5.appendChild(negativeFeedbackText);
   td5.classList.add("coinformToolbarPositiveLogo");
 
+  if (pluginCache[tweetInfo.id].feedback) return;
   td5.addEventListener('click', (event) => { 
     // prevent opening the tweet
     event.stopImmediatePropagation();
@@ -587,6 +595,9 @@ const createToolbar = (tweetInfo) => {
     event.stopPropagation();
     feedbackClickAction(tweetInfo, "agree");
     td5.classList.add("coinformToolbarPositiveLogoAfterClick");
+    document.getElementById(`coinformToolbarFeedbackNegative-${tweetInfo.id}`).classList.remove("coinformToolbarNegativeLogoAfterClick");
+
+    pluginCache[tweetInfo.id].feedback = true;
   });
 
   return tbl;
@@ -735,7 +746,8 @@ const parseApiResponse = (data, tweetInfo) => {
     // Tweet analyzed
     pluginCache[tweetInfo.id] = {
       label: credibilityLabel,
-      modules: credibilityModules
+      modules: credibilityModules,
+      feedback: false
     };
     tweetInfo.domObject.coInfoAnalyzed = true;
     finalizeTweetClassify(tweetInfo, 'done');
