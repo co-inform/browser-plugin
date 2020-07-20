@@ -453,15 +453,6 @@ article[coinform-id] {
   opacity: 1;
 }
 
-.coinformToolbarNegativeLogoAfterClick {
-  color: rgb(68, 65, 65);
-  background-color: #C0C0C0;
-  transform: translateX(-0px);
-  border-radius: 6px;
-  filter: invert(100%);
-  pointer-events: none;
-}
-
 .coinformPositiveLogo {
   padding-top: 2px;
   width: 25px;
@@ -526,7 +517,7 @@ article[coinform-id] {
   opacity: 1;
 }
 
-.coinformToolbarPositiveLogoAfterClick {
+.coinformToolbarFeedbackAfterClick {
   color: rgb(68, 65, 65);
   background-color: #C0C0C0;
   transform: translateX(-0px);

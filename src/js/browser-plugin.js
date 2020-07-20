@@ -7,7 +7,9 @@ const CoInformLogger = require('./coinform-logger');
 
 const browserAPI = chrome || browser;
 
-const pluginCache = {};
+let pluginCache = {};
+const PLUGIN_CACHE_SIZE = 250; // Cache size (number of elements) from where the plugin will try to remove old unused entries
+const PLUGIN_CACHE_TIME = 900; // Time (in seconds) to consider an entry enough old and unused
 
 let logoURL = "/resources/logo_36_20.png";
 let claimURL = "/resources/bubble_claim.png";
@@ -429,7 +431,11 @@ const newTweetCallback = (tweetInfo) => {
   }
   
   if (!pluginCache[tweetInfo.id]) {
-    pluginCache[tweetInfo.id] = false;
+    pluginCache[tweetInfo.id] = {};
+    if (Object.keys(pluginCache).length > PLUGIN_CACHE_SIZE) {
+      freePluginCache();
+    }
+
   }
 
   if (!tweetInfo.domObject.toolBar) {
@@ -441,12 +447,25 @@ const newTweetCallback = (tweetInfo) => {
   }
 
   // If the tweet has already been tagged then we directly classify it
-  if (pluginCache[tweetInfo.id]) {
+  if (pluginCache[tweetInfo.id].status) {
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
-    tweetInfo.domObject.coInfoAnalyzed = true;
+    pluginCache[tweetInfo.id].lastTime = Math.round(Date.now() / 1000);
+    tweetInfo.domObject.queryStatus = pluginCache[tweetInfo.id].status;
+    tweetInfo.domObject.queryId = pluginCache[tweetInfo.id].queryId;
     classifyTweet(tweetInfo, pluginCache[tweetInfo.id].label, pluginCache[tweetInfo.id].modules);
-    finalizeTweetClassify(tweetInfo, 'done');
-    return;
+    if (pluginCache[tweetInfo.id].feedback) {
+      if (pluginCache[tweetInfo.id].feedback == "agree") {
+        tweetInfo.domObject.querySelector(".coinformToolbarPositiveLogo").classList.add("coinformToolbarFeedbackAfterClick");
+      }
+      else if (pluginCache[tweetInfo.id].feedback == "disagree") {
+        tweetInfo.domObject.querySelector(".coinformToolbarNegativeLogo").classList.add("coinformToolbarFeedbackAfterClick");
+      }
+    }
+    if (pluginCache[tweetInfo.id].status == "done") {
+      tweetInfo.domObject.coInfoAnalyzed = true;
+      finalizeTweetClassify(tweetInfo, 'done');
+      return;
+    }
   }
 
   tweetInfo.domObject.coInfoCounter = 0;
@@ -549,10 +568,8 @@ const createToolbar = (tweetInfo) => {
   let td4 = tr.insertCell();
   td4.setAttribute("id", `coinformToolbarFeedbackNegative-${tweetInfo.id}`);
 
-  if (pluginCache[tweetInfo.id].feedback) return;
   td4.appendChild(createLogoNegativeFeedback(tweetInfo.id, function () {
-    feedbackClickAction(tweetInfo, "disagree");
-    pluginCache[tweetInfo.id].feedback = true;
+    feedbackClickAction(td4, tweetInfo, "disagree");
   }));
   let positiveFeedbackText = document.createElement("SPAN");
   let positiveText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
@@ -560,25 +577,19 @@ const createToolbar = (tweetInfo) => {
   td4.appendChild(positiveFeedbackText);
   td4.classList.add("coinformToolbarNegativeLogo");
 
-  if (pluginCache[tweetInfo.id].feedback) return;
   td4.addEventListener('click', (event) => { 
     // prevent opening the tweet
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    feedbackClickAction(tweetInfo, "disagree");
-    td4.classList.add("coinformToolbarNegativeLogoAfterClick");
-    document.getElementById(`coinformToolbarFeedbackPositive-${tweetInfo.id}`).classList.remove("coinformToolbarPositiveLogoAfterClick");
-    pluginCache[tweetInfo.id].feedback = true;
+    feedbackClickAction(td4, tweetInfo, "disagree");
   });
 
   let td5 = tr.insertCell();
   td5.setAttribute("id", `coinformToolbarFeedbackPositive-${tweetInfo.id}`);
 
-  if (pluginCache[tweetInfo.id].feedback) return;
   td5.appendChild(createLogoPositiveFeedback(tweetInfo.id, function () {
-    feedbackClickAction(tweetInfo, "agree");
-    pluginCache[tweetInfo.id].feedback = true;
+    feedbackClickAction(td5, tweetInfo, "agree");
   }));
 
   let negativeFeedbackText = document.createElement("SPAN");
@@ -587,17 +598,12 @@ const createToolbar = (tweetInfo) => {
   td5.appendChild(negativeFeedbackText);
   td5.classList.add("coinformToolbarPositiveLogo");
 
-  if (pluginCache[tweetInfo.id].feedback) return;
   td5.addEventListener('click', (event) => { 
     // prevent opening the tweet
     event.stopImmediatePropagation();
     event.preventDefault();
     event.stopPropagation();
-    feedbackClickAction(tweetInfo, "agree");
-    td5.classList.add("coinformToolbarPositiveLogoAfterClick");
-    document.getElementById(`coinformToolbarFeedbackNegative-${tweetInfo.id}`).classList.remove("coinformToolbarNegativeLogoAfterClick");
-
-    pluginCache[tweetInfo.id].feedback = true;
+    feedbackClickAction(td5, tweetInfo, "agree");
   });
 
   return tbl;
@@ -733,6 +739,7 @@ const parseApiResponse = (data, tweetInfo) => {
   logger.logMessage(CoInformLogger.logTypes.debug, `${resStatus} response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
 
   tweetInfo.domObject.queryStatus = resStatus;
+  tweetInfo.domObject.queryId = data.query_id;
 
   // If the result ststus is "done" or "partly_done", then we can classify (final or temporary, respectively) the tweet
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
@@ -740,15 +747,16 @@ const parseApiResponse = (data, tweetInfo) => {
     credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g, '_');
     credibilityModules = parseModulesValues(data.response.rule_engine.module_labels, data.response.rule_engine.module_values);
     classifyTweet(tweetInfo, credibilityLabel, credibilityModules);
-    tweetInfo.domObject.queryId = data.query_id;
   }
+
+  // Save/replace tweet analyzed status
+  pluginCache[tweetInfo.id].status = resStatus;
+  pluginCache[tweetInfo.id].queryId = data.query_id;
+  pluginCache[tweetInfo.id].label = credibilityLabel;
+  pluginCache[tweetInfo.id].modules = credibilityModules;
+  pluginCache[tweetInfo.id].lastTime = Math.round(Date.now() / 1000);
+
   if (resStatus && (resStatus.localeCompare('done') === 0)) {
-    // Tweet analyzed
-    pluginCache[tweetInfo.id] = {
-      label: credibilityLabel,
-      modules: credibilityModules,
-      feedback: false
-    };
     tweetInfo.domObject.coInfoAnalyzed = true;
     finalizeTweetClassify(tweetInfo, 'done');
   }
@@ -1127,23 +1135,27 @@ function openLabelPopup(tweet) {
 
 }
 
-function feedbackClickAction(tweet, agreement) {
+function feedbackClickAction(targetButton, tweet, agreement) {
 
   let node = tweet.domObject;
 
-  if (!node.coInformLabel) {
-    openNotTaggedFeedbackPopup(tweet);
-  }
-  else if (!coinformUserToken) {
-    openNotLoggedFeedbackPopup(tweet);
-  }
-  else {
-    sendLabelEvaluation(tweet, agreement);
+  if (!targetButton.classList.contains("coinformToolbarFeedbackAfterClick")) {
+
+    if (!node.coInformLabel) {
+      openNotTaggedFeedbackPopup(tweet);
+    }
+    else if (!coinformUserToken) {
+      openNotLoggedFeedbackPopup(tweet);
+    }
+    else {
+      sendLabelEvaluation(targetButton, tweet, agreement);
+    }
+
   }
 
 }
 
-function sendLabelEvaluation(tweetInfo, agreement) {
+function sendLabelEvaluation(targetButton, tweetInfo, agreement) {
 
   let ratedCredibility = tweetInfo.domObject.coInformLabel;
   let moduleResponse = tweetInfo.domObject.queryId;
@@ -1162,6 +1174,10 @@ function sendLabelEvaluation(tweetInfo, agreement) {
     if (resStatus.localeCompare('200') === 0) {
       logger.logMessage(CoInformLogger.logTypes.info, `Reaction registered successfully`);
       Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage("feedback_sent"), 'success');
+      let auxPrevious = tweetInfo.domObject.querySelector(".coinformToolbarFeedbackAfterClick");
+      if (auxPrevious) auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
+      targetButton.classList.add("coinformToolbarFeedbackAfterClick");
+      pluginCache[tweetInfo.id].feedback = agreement;
     } 
     else {
       Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
@@ -1413,6 +1429,15 @@ function openNotLoggedClaimPopup(tweet) {
     }
   });
 
+}
+
+function freePluginCache() {
+  let now = Math.round(Date.now() / 1000);
+  for (const [key, value] of Object.entries(pluginCache)) {
+    if ((now - value.lastTime) > PLUGIN_CACHE_TIME) {
+      delete pluginCache[key];
+    }
+  }
 }
 
 function ignoreClick(event) {
