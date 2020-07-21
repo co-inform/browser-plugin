@@ -160,7 +160,7 @@ const init = () => {
       coinformUserMail = res.userMail;
       coinformUserID = res.userID;
       displayLogout();
-      document.querySelector('input[name="account-usermail"]').value = coinformUserMail;
+      refreshDisplayedAccount(coinformUserMail);
     }
     else {
       displayLogin();
@@ -172,10 +172,7 @@ const init = () => {
   }, function(res) {
     if (res.options) {
       logger.logMessage(CoInformLogger.logTypes.debug, `Options retrieved`);
-      if (res.options.testMode !== undefined) {
-        let valCheckbox = (res.options.testMode.localeCompare("true") === 0);
-        document.querySelector('input[name="options-test-mode"]').checked = valCheckbox;
-      }
+      refreshDisplayedOptions(res.options);
     }
   });
 
@@ -185,21 +182,21 @@ const init = () => {
       coinformUserToken = request.token;
       coinformUserMail = request.userMail;
       coinformUserID = request.userID;
-      document.querySelector('input[name="account-usermail"]').value = request.userMail;
+      refreshDisplayedAccount(request.userMail);
     }
     else if (request.messageId === "userLogout") {
       logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
       coinformUserToken = null;
       coinformUserMail = null;
       coinformUserID = null;
-      document.querySelector('input[name="account-usermail"]').value = null;
+      refreshDisplayedAccount(null);
     }
     else if (request.messageId === "renewUserToken") {
       logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
       coinformUserToken = request.token;
       coinformUserMail = request.userMail;
       coinformUserID = request.userID;
-      document.querySelector('input[name="account-usermail"]').value = request.userMail;
+      refreshDisplayedAccount(request.userMail);
     }
   });
 
@@ -237,6 +234,15 @@ const displayOptions = () => {
   document.getElementById('menu-logged').classList.remove("hidden");
   document.getElementById('menu-options').classList.add("actual");
   document.getElementById('options-form').classList.remove("hidden");
+
+  // check if options have changed
+  browserAPI.runtime.sendMessage({
+    messageId: "GetOptions"
+  }, function(res) {
+    if (res.options) {
+      refreshDisplayedOptions(res.options);
+    }
+  });
 };
 
 const displayAccount = () => {
@@ -244,6 +250,19 @@ const displayAccount = () => {
   document.getElementById('menu-logged').classList.remove("hidden");
   document.getElementById('menu-account').classList.add("actual");
   document.getElementById('account-form').classList.remove("hidden");
+
+  // check if account has changed or logged out
+  browserAPI.runtime.sendMessage({
+    messageId: "GetSession"
+  }, function(res) {
+    if (res.token) {
+      refreshDisplayedAccount(res.userMail);
+    }
+    else {
+      displayLogin();
+    }
+  });
+
 };
 
 const isOptionsDisplayed = () => {
@@ -252,6 +271,17 @@ const isOptionsDisplayed = () => {
 
 const isAccountDisplayed = () => {
   return (document.getElementById('menu-account').classList.contains("actual"));
+};
+
+const refreshDisplayedAccount = (accountMail) => {
+  document.querySelector('input[name="account-usermail"]').value = accountMail;
+};
+
+const refreshDisplayedOptions = (options) => {
+  if (options.testMode !== undefined) {
+    let valCheckbox = (options.testMode.localeCompare("true") === 0);
+    document.querySelector('input[name="options-test-mode"]').checked = valCheckbox;
+  }
 };
 
 
