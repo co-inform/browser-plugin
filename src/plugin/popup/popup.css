@@ -26,6 +26,15 @@ body {
   height: 60px;
 }
 
+#popup-header .version-text {
+  position: absolute;
+  float: left;
+  top: 50px;
+  left: 80px;
+  z-index: 1;
+  font-size: 0.8em;
+}
+
 #popup-title {
   position: relative;
   padding-top: 15px;

@@ -32,6 +32,17 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
     logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
     client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
+    let manifestData = chrome.runtime.getManifest();
+    if (manifestData && manifestData.version_name) {
+      configuration.pluginVersion = manifestData.version_name;
+    }
+    else if (manifestData && manifestData.version) {
+      configuration.pluginVersion = manifestData.version;
+    }
+    else {
+      configuration.pluginVersion = "?";
+    }
+
     browserAPI.runtime.onMessage.addListener(listenerRuntime);
 
     browserAPI.cookies.getAll({
@@ -69,7 +80,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
 
   })
   .catch(err => {
-    console.error('Could not load configuration file', err)
+    console.error('Could not load plugin configuration', err);
   });
 
 const listenerRuntime = function(request, sender, sendResponse) {

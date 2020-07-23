@@ -24,7 +24,16 @@ window.addEventListener("load", function(){
     if (res.configuration) {
       configuration = res.configuration;
       logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
+
+      let versionSpan = document.createElement("SPAN");
+      versionSpan.classList.add("version-text");
+      versionSpan.textContent = `ver ${configuration.pluginVersion}`;
+      document.getElementById('popup-header').prepend(versionSpan);
+
       init();
+    }
+    else {
+      showMessage("err", "error_loading_configuration");
     }
   });
 
