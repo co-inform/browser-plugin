@@ -74,6 +74,9 @@
   "inaccurate__info": {
     "message": "The $1 is inaccurate"
   },
+  "error_loading_configuration" : {
+    "message": "Could not load plugin configuration"
+  },
   "checking_tweet_coinform": {
     "message": "Checking tweet info with CoInform"
   },
@@ -369,10 +372,10 @@
     "message": "<b>$1</b> (with <b>$2</b> of credibility value, and <b>$3%</b> of confidence)"
   },
   "module_explainability_text": {
-    "message": "Explanation"
+    "message": "Detailed analysis explanation"
   },
   "module_explainability_link": {
-    "message": "More information"
+    "message": "More analysis information"
   },
   "here": {
     "message": "here"

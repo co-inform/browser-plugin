@@ -44,6 +44,9 @@ browserAPI.runtime.sendMessage({
     logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
     setTimeout(start, 1000);
   }
+  else {
+    console.error('Could not load plugin configuration');
+  }
 });
 
 // Set listener for background scrpit messages
@@ -719,22 +722,6 @@ const parseApiResponse = (data, tweetInfo) => {
     if (data.response.rule_engine.module_explanations) {
       moduleExplanations = data.response.rule_engine.module_explanations;
     }
-    else {
-      moduleExplanations = {
-        misinfome: {
-          explanationFormat: "link",
-          explanation: "https://misinfo.me/misinfo/home"
-        },
-        content_analysis: {
-          explanationFormat: "text",
-          explanation: "Plain text example for CA analysis description"
-        },
-        claim_similarity: {
-          explanationFormat: "markdown",
-          explanation: "Markdown text *example* for **CS** analysis explanation"
-        }
-      };
-    }
     credibilityModules = parseModulesValues(data.response.rule_engine.module_labels, data.response.rule_engine.module_values, moduleExplanations);
     classifyTweet(tweetInfo, credibilityLabel, credibilityModules);
     tweetInfo.domObject.queryId = data.query_id;
@@ -768,10 +755,10 @@ const parseModulesValues = (moduleLabels, moduleValues, moduleExplanations) => {
       let cred = null;
       let expFormat = null;
       let expContent = null;
-      if (moduleValues[key] && (moduleValues[key].confidence != null)) conf = parseFloat(moduleValues[key].confidence).toFixed(2);
-      if (moduleValues[key] && (moduleValues[key].credibility != null)) cred = parseFloat(moduleValues[key].credibility).toFixed(2);
-      if (moduleExplanations[key] && (moduleExplanations[key].explanationFormat != null)) expFormat = moduleExplanations[key].explanationFormat;
-      if (moduleExplanations[key] && (moduleExplanations[key].explanation != null)) expContent = moduleExplanations[key].explanation;
+      if (moduleValues && moduleValues[key] && (moduleValues[key].confidence != null)) conf = parseFloat(moduleValues[key].confidence).toFixed(2);
+      if (moduleValues && moduleValues[key] && (moduleValues[key].credibility != null)) cred = parseFloat(moduleValues[key].credibility).toFixed(2);
+      if (moduleExplanations && moduleExplanations[key] && (moduleExplanations[key].rating_explanation_format != null)) expFormat = moduleExplanations[key].rating_explanation_format;
+      if (moduleExplanations && moduleExplanations[key] && (moduleExplanations[key].rating_explanation != null)) expContent = moduleExplanations[key].rating_explanation;
       credibilityModules[key] = {
         label: value,
         confidence: conf,
@@ -1041,20 +1028,20 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
       let moduleExplainabilityHtml = null;
       if (modules[key].explanationFormat != null) {
         if (modules[key].explanationFormat.localeCompare('text') === 0) {
-          moduleExplainabilityHtml = browserAPI.i18n.getMessage('module_explainability_text') + ': ' + modules[key].explanation;
+          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + ':</summary><p>' + modules[key].explanation + '</p></details>';
         }
-        else if (modules[key].explanationFormat.localeCompare('link') === 0) {
-          moduleExplainabilityHtml = browserAPI.i18n.getMessage('module_explainability_link') + ': <a href="' + modules[key].explanation + '"  target="_blank" rel="noopener noreferrer">' + browserAPI.i18n.getMessage('here') + '</a>';
+        else if ((modules[key].explanationFormat.localeCompare('link') === 0) || (modules[key].explanationFormat.localeCompare('url') === 0)) {
+          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_link') + ' <a href="' + modules[key].explanation + '"  target="_blank" rel="noopener noreferrer">' + browserAPI.i18n.getMessage('here') + '</a></summary></details>';
         }
         else if (modules[key].explanationFormat.localeCompare('markdown') === 0) {
           let ShowDownConverter = new ShowDown.Converter();
           let auxHtmlExplanationHtml = ShowDownConverter.makeHtml(modules[key].explanation);
-          moduleExplainabilityHtml = browserAPI.i18n.getMessage('module_explainability_text') + ': ' + auxHtmlExplanationHtml;
+          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + ':</summary><p>' + auxHtmlExplanationHtml + '</p></details>';
         }
       }
 
       infoTooltipListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
-      if (moduleExplainabilityHtml) infoTooltipListItem.innerHTML = infoTooltipListItem.innerHTML + '<br>' + moduleExplainabilityHtml;
+      if (moduleExplainabilityHtml) infoTooltipListItem.innerHTML = infoTooltipListItem.innerHTML + '<br><br>' + moduleExplainabilityHtml;
 
       infoTooltipList.append(infoTooltipListItem);
     }
