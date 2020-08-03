@@ -517,6 +517,15 @@ article[coinform-id] {
   opacity: 1;
 }
 
+.coinformToolbarFeedbackAfterClick {
+  color: rgb(68, 65, 65);
+  background-color: #C0C0C0;
+  transform: translateX(-0px);
+  border-radius: 6px;
+  filter: invert(100%);
+  pointer-events: none;
+}
+
 /*[data-testid="toolBar"] [data-testid^="tweetButton"] .spinner-border {
   width: 28px;
   height: 28px;
