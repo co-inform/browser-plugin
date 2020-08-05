@@ -169,6 +169,8 @@
   font-size: 1.5em !important;
   font-weight: 700 !important;
   color: black !important;
+  width: 100% !important;
+  text-align: center;
 }
 
 .swal2-popup .swal2-header .swal2-pretitle {
@@ -178,6 +180,7 @@
   position: absolute !important;
   top: -140px !important;
   width: 100% !important;
+  text-align: center;
 }
 
 .coinform-padding-top-10 {
@@ -209,7 +212,6 @@
   justify-content: flex-end;
   cursor: default;
 }
-
 
 article[coinform-id] {
   display: block;
@@ -305,7 +307,7 @@ article[coinform-id] {
   float: left;
   display: none;
   z-index: -1;
-  width: 300px;
+  width: 400px;
   padding: 10px;
   background-color: white;
   color: #3b444b;
@@ -313,6 +315,7 @@ article[coinform-id] {
   border-radius: 8px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
   font-size: 0.8em;
+  font-weight: normal;
 }
 
 .coinformLabelInfoContent .coinformLabelInfoTooltip h2 {
@@ -321,17 +324,17 @@ article[coinform-id] {
 }
 
 .coinformLabelInfoContent .coinformLabelInfoTooltip ul {
-  margin-bottom: 0px;
+  margin-bottom: 0.6em;
   margin-top: 0.6em;
-}
-
-.coinformLabelInfoContent .coinformLabelInfoTooltip span {
-  font-weight: normal;
 }
 
 .coinformLabelInfoContent:hover .coinformLabelInfoTooltip {
   display: block;
   z-index: 9999;
+}
+
+.coinformAnalysisExplainability li {
+  padding-bottom: 20px;
 }
 
 .coinformToolbarButton {

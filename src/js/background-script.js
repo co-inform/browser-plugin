@@ -32,16 +32,30 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
     logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
     client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
+    let manifestData = chrome.runtime.getManifest();
+    if (manifestData && manifestData.version_name) {
+      configuration.pluginVersion = manifestData.version_name;
+    }
+    else if (manifestData && manifestData.version) {
+      configuration.pluginVersion = manifestData.version;
+    }
+    else {
+      configuration.pluginVersion = "?";
+    }
+
     browserAPI.runtime.onMessage.addListener(listenerRuntime);
 
     browserAPI.cookies.getAll({
       url: configuration.coinform.apiUrl
     }, cookies => {
+
+      // parse all cookies
       for (let i = 0; i < cookies.length; i++) {
         if (cookies[i].name == "userToken") coinformUserToken = cookies[i].value;
         else if (cookies[i].name == "userMail") coinformUserMail = cookies[i].value;
         else if (cookies[i].name == "userID") coinformUserID = cookies[i].value;
       }
+
       if (coinformUserToken) {
         let res = checkAndSaveToken(coinformUserToken);
         if (res.ok) {
@@ -59,19 +73,19 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
       else {
         renewUserToken();
       }
+
+      checkStoredUserOptions();
+
     });
 
   })
   .catch(err => {
-    console.error('Could not load configuration file', err)
+    console.error('Could not load plugin configuration', err);
   });
 
 const listenerRuntime = function(request, sender, sendResponse) {
 
-  if (request.messageId === "ConfigureBackground") {
-    configureBackground(request, sendResponse);
-  }
-  else if (request.messageId === "GetCookie") {
+  if (request.messageId === "GetCookie") {
     getCookie(request.cookieName, sendResponse);
   }
   else if (request.messageId === "SetCookie") {
@@ -102,6 +116,11 @@ const listenerRuntime = function(request, sender, sendResponse) {
       token: coinformUserToken
     });
   }
+  else if (request.messageId === "GetConfig") {
+    sendResponse({
+      configuration: configuration
+    });
+  }
   else if (request.messageId === "GetOptions") {
     sendResponse({
       options: configuration.coinform.options
@@ -110,6 +129,13 @@ const listenerRuntime = function(request, sender, sendResponse) {
   else if (request.messageId === "OptionsChange") {
     if (request.options !== undefined) {
       configuration.coinform.options = request.options;
+      let auxUserId = '';
+      if (coinformUserID) auxUserId = coinformUserID;
+      for (let [key, value] of Object.entries(request.options)) {
+        let auxOption = {};
+        auxOption[`coinform_${key}_${auxUserId}`] = value;
+        chrome.storage.sync.set(auxOption, function() {});
+      }
     }
     sendMessageToAllScripts(request);
     sendResponse({
@@ -133,20 +159,6 @@ const listenerRuntime = function(request, sender, sendResponse) {
   }
 
   return true;
-
-};
-
-const configureBackground = function(request, configureCallback) {
-
-  if (request.coinformApiUrl) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Configuring client API url: ${request.coinformApiUrl}`);
-    client = new CoinformClient(fetch, request.coinformApiUrl);
-  }
-  if (request.logLevel) {
-    logger.logMessage(CoInformLogger.logTypes.debug, `Configuring Log level: ${request.logLevel}`);
-    logger = new CoInformLogger(CoInformLogger.logTypes[request.logLevel]);
-  }
-  if (configureCallback) configureCallback();
 
 };
 
@@ -234,6 +246,8 @@ const checkAndSaveToken = function(token, scriptId) {
     setTimeout(function() {
       renewUserToken();
     }, timeToRenew);
+
+    checkStoredUserOptions();
   }
   return res;
 
@@ -548,4 +562,18 @@ const removeCookie = function(cookieName, cookieCallback) {
     logger.logMessage(CoInformLogger.logTypes.error, `Cokkie Remove Parameters Error`);
   }
 
+};
+
+const checkStoredUserOptions = function () {
+  // try to get local strored options
+  let auxUserId = '';
+  if (coinformUserID) auxUserId = coinformUserID;
+  for (let [key, value] of Object.entries(configuration.coinform.options)) {
+    let auxOptionName = `coinform_${key}_${auxUserId}`;
+    browserAPI.storage.sync.get([auxOptionName], result => {
+      if (result[auxOptionName]) {
+        configuration.coinform.options[key] = result[auxOptionName];
+      }
+    });
+  }
 };

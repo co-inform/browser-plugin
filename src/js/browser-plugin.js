@@ -1,6 +1,7 @@
 
 const $ = require('jquery');
 const Swal2 = require('sweetalert2');
+const ShowDown = require('showdown');
 const TweetParser = require('./tweet-parser');
 const FacebookParser = require('./facebook-parser');
 const CoInformLogger = require('./coinform-logger');
@@ -37,23 +38,18 @@ let coinformUserToken = null;
 let coinformUserMail = null;
 
 // Read the configuration file and if it was successful, start
-fetch(browserAPI.runtime.getURL('../resources/config.json'), {
-  mode: 'cors',
-  header: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }
-})
-  .then(res => res.json())
-  .then(res => {
-
-    configuration = res;
+browserAPI.runtime.sendMessage({
+  messageId: "GetConfig"
+}, function(res) {
+  if (res.configuration) {
+    configuration = res.configuration;
+    logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
     setTimeout(start, 1000);
-
-  })
-  .catch(err => {
-    console.error('Could not load configuration file', err)
-  });
+  }
+  else {
+    console.error('Could not load plugin configuration');
+  }
+});
 
 // Set listener for background scrpit messages
 browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -84,8 +80,6 @@ browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse)
 
 // Initialize objects, variables, and listeners
 const start = () => {
-
-  logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
 
   logoURL = browserAPI.extension.getURL(logoURL);
   claimURL = browserAPI.extension.getURL(claimURL);
@@ -745,7 +739,11 @@ const parseApiResponse = (data, tweetInfo) => {
   if (resStatus && ((resStatus.localeCompare('done') === 0) || (resStatus.localeCompare('partly_done') === 0))) {
     // Result from API call
     credibilityLabel = JSON.stringify(data.response.rule_engine.final_credibility).replace(/['"]+/g, '').replace(/\s+/g, '_');
-    credibilityModules = parseModulesValues(data.response.rule_engine.module_labels, data.response.rule_engine.module_values);
+    let moduleExplanations = null;
+    if (data.response.rule_engine.module_explanations) {
+      moduleExplanations = data.response.rule_engine.module_explanations;
+    }
+    credibilityModules = parseModulesValues(data.response.rule_engine.module_labels, data.response.rule_engine.module_values, moduleExplanations);
     classifyTweet(tweetInfo, credibilityLabel, credibilityModules);
   }
 
@@ -771,19 +769,25 @@ const parseApiResponse = (data, tweetInfo) => {
   
 };
 
-const parseModulesValues = (moduleLabels, moduleValues) => {
+const parseModulesValues = (moduleLabels, moduleValues, moduleExplanations) => {
   let credibilityModules = {};
 
   if (moduleLabels) {
     for (let [key, value] of Object.entries(moduleLabels)) {
       let conf = null;
       let cred = null;
-      if (moduleValues[key] && (moduleValues[key].confidence != null)) conf = parseFloat(moduleValues[key].confidence).toFixed(2);
-      if (moduleValues[key] && (moduleValues[key].credibility != null)) cred = parseFloat(moduleValues[key].credibility).toFixed(2);
+      let expFormat = null;
+      let expContent = null;
+      if (moduleValues && moduleValues[key] && (moduleValues[key].confidence != null)) conf = parseFloat(moduleValues[key].confidence).toFixed(2);
+      if (moduleValues && moduleValues[key] && (moduleValues[key].credibility != null)) cred = parseFloat(moduleValues[key].credibility).toFixed(2);
+      if (moduleExplanations && moduleExplanations[key] && (moduleExplanations[key].rating_explanation_format != null)) expFormat = moduleExplanations[key].rating_explanation_format;
+      if (moduleExplanations && moduleExplanations[key] && (moduleExplanations[key].rating_explanation != null)) expContent = moduleExplanations[key].rating_explanation;
       credibilityModules[key] = {
         label: value,
         confidence: conf,
-        credibility: cred
+        credibility: cred,
+        explanationFormat: expFormat,
+        explanation: expContent
       }
     }
   }
@@ -971,10 +975,6 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   let infoTooltip = document.createElement("DIV");
   infoTooltip.setAttribute("id", `coinformLabelInfoTooltip-${tweet.id}`);
   infoTooltip.setAttribute("class", "coinformLabelInfoTooltip");
-  let infoTooltipTitle = document.createElement("H2");
-  let titleTxt = document.createTextNode(browserAPI.i18n.getMessage(label));
-  infoTooltipTitle.append(titleTxt);
-  infoTooltip.append(infoTooltipTitle);
   let infoTooltipContent = createLabelModulesInfoContent(label, modules);
   infoTooltip.append(infoTooltipContent);
 
@@ -992,24 +992,87 @@ const createTweetLabel = (tweet, label, modules, callback) => {
 const createLabelModulesInfoContent = (label, modules) => {
 
   let infoTooltipContent = document.createElement("DIV");
+  infoTooltipContent.setAttribute("class", "coinformAnalysisExplainability");
   let infoTooltipText = document.createElement("SPAN");
   let auxLabel = browserAPI.i18n.getMessage(label);
   if (!auxLabel) auxLabel = label;
-  let textTxt = document.createTextNode(browserAPI.i18n.getMessage('content_tagged_as_modules_result', [auxLabel, Object.keys(modules).length]));
-  infoTooltipText.append(textTxt);
+  let textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
+  infoTooltipText.innerHTML = textHtml;
   infoTooltipContent.append(infoTooltipText);
   let infoTooltipList = document.createElement("UL");
   if (modules) {
     for (let [key, value] of Object.entries(modules)) {
       let infoTooltipListItem = document.createElement("LI");
+
+      let moduleName = browserAPI.i18n.getMessage(key);
+      let moduleAnalysisInfoHtml = browserAPI.i18n.getMessage('module_analysis_short_info__html', moduleName);
+
+      let moduleLabelTxt = browserAPI.i18n.getMessage(modules[key].label);
       let moduleCredibility = '?';
       if (modules[key].credibility != null) moduleCredibility = modules[key].credibility;
-      let moduleLabelTxt = browserAPI.i18n.getMessage(modules[key].label);
+      let moduleConfidence = '?';
+      if (modules[key].confidence != null) moduleConfidence = Math.round(parseFloat(modules[key].confidence) * 100);
+      let moduleAnalysisValuesHtml = browserAPI.i18n.getMessage('module_analysis_result__html', [moduleLabelTxt, moduleCredibility, moduleConfidence]);
+
+      infoTooltipListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
+      infoTooltipList.append(infoTooltipListItem);
+    }
+  }
+  infoTooltipContent.append(infoTooltipList);
+  
+  let infoTooltipMoreinfo = document.createElement("SPAN");
+  let moreinfoTxt = document.createTextNode(browserAPI.i18n.getMessage('more_analysis_info'));
+  infoTooltipMoreinfo.append(moreinfoTxt);
+  infoTooltipContent.append(infoTooltipMoreinfo);
+
+  return infoTooltipContent;
+
+};
+
+const createLabelModulesExplainabilityContent = (label, modules) => {
+
+  let infoTooltipContent = document.createElement("DIV");
+  infoTooltipContent.setAttribute("class", "coinformAnalysisExplainability");
+  let infoTooltipText = document.createElement("SPAN");
+  let auxLabel = browserAPI.i18n.getMessage(label);
+  if (!auxLabel) auxLabel = label;
+  let textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
+  infoTooltipText.innerHTML = textHtml;
+  infoTooltipContent.append(infoTooltipText);
+  let infoTooltipList = document.createElement("UL");
+  if (modules) {
+    for (let [key, value] of Object.entries(modules)) {
+      let infoTooltipListItem = document.createElement("LI");
+
       let moduleName = browserAPI.i18n.getMessage(key);
-      let confidenceTxt = '';
-      if (modules[key].confidence != null) confidenceTxt = ' (' + Math.round(parseFloat(modules[key].confidence) * 100) + '% ' + browserAPI.i18n.getMessage('confidence') + ')';
-      let infoTooltipListItemText = document.createTextNode(moduleCredibility + ': ' + moduleLabelTxt + ' - ' + moduleName + confidenceTxt);
-      infoTooltipListItem.append(infoTooltipListItemText);
+      let moduleBased = browserAPI.i18n.getMessage(`${key}_based_info`);
+      let moduleAnalysisInfoHtml = browserAPI.i18n.getMessage('module_analysis_long_info__html', [moduleName, moduleBased]);
+
+      let moduleLabelTxt = browserAPI.i18n.getMessage(modules[key].label);
+      let moduleCredibility = '?';
+      if (modules[key].credibility != null) moduleCredibility = modules[key].credibility;
+      let moduleConfidence = '?';
+      if (modules[key].confidence != null) moduleConfidence = Math.round(parseFloat(modules[key].confidence) * 100);
+      let moduleAnalysisValuesHtml = browserAPI.i18n.getMessage('module_analysis_result__html', [moduleLabelTxt, moduleCredibility, moduleConfidence]);
+
+      let moduleExplainabilityHtml = null;
+      if (modules[key].explanationFormat != null) {
+        if (modules[key].explanationFormat.localeCompare('text') === 0) {
+          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + ':</summary><p>' + modules[key].explanation + '</p></details>';
+        }
+        else if ((modules[key].explanationFormat.localeCompare('link') === 0) || (modules[key].explanationFormat.localeCompare('url') === 0)) {
+          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_link') + ' <a href="' + modules[key].explanation + '"  target="_blank" rel="noopener noreferrer">' + browserAPI.i18n.getMessage('here') + '</a></summary></details>';
+        }
+        else if (modules[key].explanationFormat.localeCompare('markdown') === 0) {
+          let ShowDownConverter = new ShowDown.Converter();
+          let auxHtmlExplanationHtml = ShowDownConverter.makeHtml(modules[key].explanation);
+          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + ':</summary><p>' + auxHtmlExplanationHtml + '</p></details>';
+        }
+      }
+
+      infoTooltipListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
+      if (moduleExplainabilityHtml) infoTooltipListItem.innerHTML = infoTooltipListItem.innerHTML + '<br><br>' + moduleExplainabilityHtml;
+
       infoTooltipList.append(infoTooltipListItem);
     }
   }
@@ -1085,7 +1148,7 @@ function openLabelPopup(tweet) {
     moreInfo.append(document.createElement('BR'));
 
     let auxModules = node.coInformModules;
-    let auxContent = createLabelModulesInfoContent(node.coInformLabel, auxModules);
+    let auxContent = createLabelModulesExplainabilityContent(node.coInformLabel, auxModules);
     moreInfo.append(auxContent);
 
     let category = configuration.coinform.categories[node.coInformLabel];
@@ -1110,6 +1173,7 @@ function openLabelPopup(tweet) {
 
   return Swal2.fire({
     type: (meterLogoSrc ? null : 'question'),
+    width: 500,
     imageUrl: meterLogoSrc,
     imageHeight: 100,
     title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
