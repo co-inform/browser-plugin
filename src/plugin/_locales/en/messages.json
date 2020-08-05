@@ -176,6 +176,9 @@
   "additional_info": {
     "message": "Additional info"
   },
+  "request_factcheck": {
+    "message": "Request claim to be fact-checked"
+  },
   "please_choose_claim": {
     "message": "Please choose a claim"
   },

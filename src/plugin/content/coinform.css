@@ -183,6 +183,10 @@
   text-align: center;
 }
 
+.swal2-popup .swal2-content input.swal2-checkbox {
+  margin-right: 8px;
+}
+
 .coinform-padding-top-10 {
   padding-top: 10px;
 }
