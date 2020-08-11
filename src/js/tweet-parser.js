@@ -5,9 +5,10 @@ const ChangeObserver = require('./change-observer');
 
 module.exports = TweetParser;
 
-let tweetIdIndex = 0;
-const idAttribute = "coinform-id";
-const usernameAttribute = "coinform-username";
+let lastPageUrl = null;
+let tweetPageIndex = 0;
+
+const coinformParsedAttribute = "coinform-parsed";
 
 // selector for main div
 const mainWrapperSelector = "main[role='main']";
@@ -81,7 +82,6 @@ window.addEventListener('popstate', function(){
 
 function TweetParser() {
 
-  this.usernameAttribute = usernameAttribute;
   this.trustedAttribute = "coinform-trusted";
   this.untrustedAttribute = "coinform-untrusted";
 
@@ -153,6 +153,11 @@ const checkPageCase = () => {
     pageCase = "unknown";
   }
 
+  if (window.location.href != lastPageUrl) {
+    lastPageUrl = window.location.href;
+    tweetPageIndex = 0;
+  }
+
 };
 
 const checkUserCase = () => {
@@ -183,24 +188,25 @@ const getTweetInfo = (tweet, num) => {
 
   let selectorUserCase = (userCase === null) ? "not-user-logged" : "user-logged";
 
-  // Get the tweet Id
+  // Trying to see if we can check the kind of tweet (main page tweet) from it's style
+  //let tweetStyles = getComputedStyle(tweet);
+
+  // Get the tweet Id (normally found on a link on the twet time div)
+  let timeNode = tweet.querySelector(tweetIdSelectors[selectorUserCase]) ? tweet.querySelector(tweetIdSelectors[selectorUserCase]) : null;
+  if (timeNode) {
+    let link = timeNode.parentNode;
+    if (link && link.href.match(/\d+\b/g)) {
+      tweetUrl = link.href;
+      let auxMatch = link.href.match(/\d+\b/g);
+      if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
+    }
+  }
   // Special case, when we are in a Tweet Page, with its responses, the first one is the main Tweet, and we do not have the tweet link to parse the id, so we get the id from the url
-  if ( (pageCase === "tweet") && (num === 0) ) {
+  else if ( (pageCase === "tweet") && (num === 0) ) {
     tweetUrl = window.location.href;
     let auxMatch = tweetUrl.match(/\d+\b/g);
     if (auxMatch.length > 0) {
       tweetid = auxMatch[auxMatch.length - 1];
-    }
-  }
-  else {
-    let timeNode = tweet.querySelector(tweetIdSelectors[selectorUserCase]) ? tweet.querySelector(tweetIdSelectors[selectorUserCase]) : null;
-    if (timeNode) {
-      link = timeNode.parentNode;
-      if (link && link.href.match(/\d+\b/g)) {
-        tweetUrl = link.href;
-        let auxMatch = link.href.match(/\d+\b/g);
-        if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
-      }
     }
   }
   if (!tweetid) {
@@ -244,14 +250,17 @@ const getTweetInfo = (tweet, num) => {
 
 };
 
-const treatNewTweet = (tweet, num, callback) => {
+const treatNewTweet = (tweet, callback) => {
 
-  const tweetInfo = getTweetInfo(tweet, num);
+  const tweetInfo = getTweetInfo(tweet, tweetPageIndex);
 
-  if (tweetInfo.username) {
+  if (tweetInfo.id != null) {
 
-    idAssignator(tweet);
-    tweet.setAttribute(usernameAttribute, tweetInfo.username);
+    if (!tweet.hasAttribute(coinformParsedAttribute)) {
+      tweet.setAttribute(coinformParsedAttribute, 'true');
+      tweetPageIndex++;
+    }
+
     callback(tweetInfo);
 
   }
@@ -262,7 +271,7 @@ const indexTweets = (callback) => {
 
   tweetsList.forEach((tweet, num) => {
 
-    treatNewTweet(tweet, num, callback);
+    treatNewTweet(tweet, callback);
 
   });
 
@@ -312,7 +321,7 @@ const mainChangeCallback = (newNode, callback) => {
   }
   else if (auxTweetNode) {
     // new tweet added, we parse and treat the tweet
-    treatNewTweet(newTweetNode, tweetIdIndex, callback);
+    treatNewTweet(newTweetNode, callback);
   }
 
 };
@@ -321,15 +330,6 @@ const tweetsListUpdate = () => {
 
   let selectorCase = (userCase === null) ? "not-user-logged" : "user-logged";
   tweetsList = document.querySelectorAll(tweetSelectors[selectorCase]);
-
-};
-
-const idAssignator = (node) => {
-
-  if (!node.hasAttribute(idAttribute)) {
-    node.setAttribute(idAttribute, tweetIdIndex);
-    tweetIdIndex++;
-  }
 
 };
 

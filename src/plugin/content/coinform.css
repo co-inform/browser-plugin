@@ -217,7 +217,7 @@
   cursor: default;
 }
 
-article[coinform-id] {
+article[coinform-parsed] {
   display: block;
   flex-wrap: wrap;
 }
