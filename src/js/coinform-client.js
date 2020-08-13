@@ -38,8 +38,8 @@ CoinformClient.prototype = {
     return getHttpRequest(this.baseURL + '/twitter/user/' + username);
   },
 
-  postUserLogin: function (email, password) {
-    return postLogin(this.baseURL + '/login/', email, password);
+  postUserLogin: function (email, password, pluginVersion) {
+    return postLogin(this.baseURL + '/login/', email, password, pluginVersion);
   },
 
   postUserLogout: function (userToken) {
@@ -50,8 +50,8 @@ CoinformClient.prototype = {
     return postRegister(this.baseURL + '/register/', email, password);
   },
 
-  postRenewUserToken: function () {
-    return postRenewToken(this.baseURL + '/renew-token/');
+  postRenewUserToken: function (pluginVersion) {
+    return postRenewToken(this.baseURL + '/renew-token/', pluginVersion);
   },
 
   postUserChangePass: function (password, newpassword, userToken) {
@@ -187,11 +187,12 @@ function getResponseTweet(path) {
 
 function getCheckUrl(path, url) {
 
-  const data = {source: url};
-  const urlParams = buildUrl(path, data);
+  let fetchUrl = new URL(path);
+  let getParams = {source: url};
+  Object.keys(getParams).forEach(key => fetchUrl.searchParams.append(key, getParams[key]));
 
   return new Promise((resolve, reject) => {
-    f(urlParams, {
+    f(fetchUrl, {
       method: 'GET',
       // mode: 'cors',
       headers: {
@@ -210,21 +211,6 @@ function getCheckUrl(path, url) {
 
 }
 
-function buildUrl(url, parameters) {
-  let qs = "";
-  for (const key in parameters) {
-    if (parameters.hasOwnProperty(key)) {
-      const value = parameters[key];
-      qs += encodeURIComponent(key) + "=" + encodeURIComponent(value) + "&";
-    }
-  }
-  if (qs.length > 0) {
-    qs = qs.substring(0, qs.length - 1); //chop off last "&"
-    url = url + "?" + qs;
-  }
-  return url;
-}
-
 function getHttpRequest(path) {
 
   return new Promise((resolve, reject) => {
@@ -239,19 +225,23 @@ function getHttpRequest(path) {
 
 }
 
-function postLogin(path, email, password) {
+function postLogin(path, email, password, pluginVersion) {
 
-  const data = {email: email, password: password};
+  let fetchUrl = new URL(path);
+  let getParams = {plugin_version: pluginVersion};
+  Object.keys(getParams).forEach(key => fetchUrl.searchParams.append(key, getParams[key]));
+
+  const postData = {email: email, password: password};
 
   return new Promise((resolve, reject) => {
-    f(path, {
+    f(fetchUrl, {
       method: 'POST',
       mode: 'cors',
-      body: JSON.stringify(data),
+      body: JSON.stringify(postData),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Content-Length': Buffer.byteLength(JSON.stringify(postData)),
         'Connection': 'keep-alive',
         'rejectUnauthorized': false
       }
@@ -344,10 +334,14 @@ function postLogout(path, userToken) {
 
 }
 
-function postRenewToken(path) {
+function postRenewToken(path, pluginVersion) {
+
+  let fetchUrl = new URL(path);
+  let getParams = {plugin_version: pluginVersion};
+  Object.keys(getParams).forEach(key => fetchUrl.searchParams.append(key, getParams[key]));
 
   return new Promise((resolve, reject) => {
-    f(path, {
+    f(fetchUrl, {
       method: 'GET',
       // mode: 'cors',
       headers: {

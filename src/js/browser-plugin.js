@@ -446,7 +446,9 @@ const newTweetCallback = (tweetInfo) => {
     pluginCache[tweetInfo.id].lastTime = Math.round(Date.now() / 1000);
     tweetInfo.domObject.queryStatus = pluginCache[tweetInfo.id].status;
     tweetInfo.domObject.queryId = pluginCache[tweetInfo.id].queryId;
-    classifyTweet(tweetInfo, pluginCache[tweetInfo.id].label, pluginCache[tweetInfo.id].modules);
+    if (pluginCache[tweetInfo.id].label) {
+      classifyTweet(tweetInfo, pluginCache[tweetInfo.id].label, pluginCache[tweetInfo.id].modules);
+    }
     if (pluginCache[tweetInfo.id].feedback) {
       if (pluginCache[tweetInfo.id].feedback == "agree") {
         tweetInfo.domObject.querySelector(".coinformToolbarPositiveLogo").classList.add("coinformToolbarFeedbackAfterClick");
