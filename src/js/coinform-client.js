@@ -10,6 +10,10 @@ function CoinformClient(fetch, host, basePath = '') {
 
 CoinformClient.prototype = {
 
+  postLog2Server: function (logTime, logCategory, relatedItemUrl, relatedItemData, logAction, userToken) {
+    return postUserLog2Server(this.baseURL + '/user/evaluation-log/', logTime, logCategory, relatedItemUrl, relatedItemData, logAction, userToken);
+  },
+
   postCheckTweetInfo: function (tweetId, author, tweetText) {
     return postCheckTweet(this.baseURL + '/twitter/tweet/', tweetId, author, tweetText);
   },
@@ -63,6 +67,40 @@ CoinformClient.prototype = {
   }
 
 };
+
+function postUserLog2Server(path, logTime, logCategory, relatedItemUrl, relatedItemData, logAction, userToken) {
+
+  const data = {
+    log_time: logTime,
+    log_category: logCategory,
+    related_item_url: relatedItemUrl,
+    related_item_data: relatedItemData,
+    log_action: logAction
+  };
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers: {
+        'Authorization': 'Bearer ' + userToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
 
 function postEvaluate(path, tweetId, tweetUrl, evaluation, userToken) {
 

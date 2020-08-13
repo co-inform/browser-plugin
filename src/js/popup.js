@@ -49,6 +49,7 @@ window.addEventListener("load", function(){
   document.getElementById('account-auth-newpass2').placeholder = browserAPI.i18n.getMessage("retype_new_password");
   document.getElementById('account-change-pass-info').innerHTML = browserAPI.i18n.getMessage("change_password_info");
   document.getElementById('account-info-title').innerHTML = browserAPI.i18n.getMessage("account_information");
+  document.getElementById('logged-text').querySelector('span').innerHTML = browserAPI.i18n.getMessage("already_logged");
   document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("options_title");
   document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");

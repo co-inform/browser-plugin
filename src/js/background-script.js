@@ -157,9 +157,30 @@ const listenerRuntime = function(request, sender, sendResponse) {
   else if (request.messageId === "EvaluateTweet") {
     evaluateTweet(request, sender.id, sendResponse);
   }
+  else if (request.messageId === "SendLog2Server") {
+    sendLog2Server(request.logData, sender.id, sendResponse);
+  }
 
   return true;
 
+};
+
+const sendLog2Server = function(request, scriptId, logCallback) {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `SERVER LOG: ${request.log_time} | ${request.log_category} | ${request.log_action}`, scriptId);
+
+  client.postLog2Server(request.log_time, request.log_category, request.related_item_url, request.related_item_data, request.log_action, request.coinformUserToken).then(res => {
+    let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+    if (resStatus.localeCompare('200') === 0) {
+
+      if (logCallback) logCallback(res);
+    }
+    else {
+
+    }
+  }).catch(err => {
+    logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
+  });
 };
 
 const logInAPI = function(request, scriptId, loginCallback) {

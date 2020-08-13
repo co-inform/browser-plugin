@@ -1204,9 +1204,11 @@ function openLabelPopup(tweet) {
     if(result.value === true){
       if (nodeBlurred) {
         removeTweetBlurry(tweet);
+        log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, 'Unblur tweet');
       }
       else if (nodeBlurrable) {
         createTweetBlurry(tweet);
+        log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, 'Blur again tweet');
       }
     }
   });
@@ -1515,6 +1517,32 @@ function openNotLoggedClaimPopup(tweet) {
     }
   });
 
+}
+
+function log2Server (category, itemUrl, itemData, message) {
+
+  const logTime = new Date().toISOString();
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `SERVER LOG: ${logTime} | ${category} | ${message}`);
+
+  const logData = {
+    log_time: logTime,
+    log_category: category,
+    related_item_url: itemUrl,
+    related_item_data: itemData,
+    log_action: message, 
+    coinformUserToken: coinformUserToken
+  };
+
+  browserAPI.runtime.sendMessage({
+    messageId: "SendLog2Server",
+    logData: logData
+  }, function(res) {
+    if (!res) {
+      console.error('Could not send the log');
+    }
+  });
+  
 }
 
 function freePluginCache() {
