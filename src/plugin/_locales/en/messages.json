@@ -213,7 +213,7 @@
     "message": "Co-Inform Login"
   },
   "already_logged": {
-    "message": "You are already logged"
+    "message": "You are logged in"
   },
   "register_title": {
     "message": "Co-Inform Register"
