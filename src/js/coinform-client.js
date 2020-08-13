@@ -70,13 +70,15 @@ CoinformClient.prototype = {
 
 function postUserLog2Server(path, logTime, logCategory, relatedItemUrl, relatedItemData, logAction, userToken) {
 
-  const data = {
-    log_time: logTime,
-    log_category: logCategory,
-    related_item_url: relatedItemUrl,
-    related_item_data: relatedItemData,
-    log_action: logAction
-  };
+  const data = [
+    {
+      log_time: logTime,
+      log_category: logCategory,
+      related_item_url: relatedItemUrl,
+      related_item_data: relatedItemData,
+      log_action: logAction
+    }
+  ];
 
   return new Promise((resolve, reject) => {
     f(path, {
