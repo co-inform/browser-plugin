@@ -201,8 +201,10 @@ const getTweetInfo = (tweet, num) => {
       if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
     }
   }
-  // Special case, when we are in a Tweet Page, with its responses, the first one is the main Tweet, and we do not have the tweet link to parse the id, so we get the id from the url
-  else if ( (pageCase === "tweet") && (num === 0) ) {
+  //  Special case when we are in a Tweet Page, since and we do not have the tweet link to parse the id, we 
+  //  get the id from the url. Sometimes this main Tweet is not located at the top of the page, that's why we need 
+  //  to check and retrieve this main Tweet's id from the url
+  else if ( (pageCase === "tweet") && timeNode === null) {
     tweetUrl = window.location.href;
     let auxMatch = tweetUrl.match(/\d+\b/g);
     if (auxMatch.length > 0) {
