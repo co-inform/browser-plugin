@@ -166,7 +166,7 @@ const logInAPI = function(request, scriptId, loginCallback) {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `Logging In (user ${request.userMail})`, scriptId);
 
-  client.postUserLogin(request.userMail, request.userPass).then(res => {
+  client.postUserLogin(request.userMail, request.userPass, configuration.pluginVersion).then(res => {
     
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
     if (resStatus.localeCompare('200') === 0) {
@@ -276,7 +276,7 @@ const renewUserToken = function(retryNum = 0) {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `Requesting New Token..`);
 
-  client.postRenewUserToken().then(res => {
+  client.postRenewUserToken(configuration.pluginVersion).then(res => {
 
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
     // Discard requests with 400 http return codes
