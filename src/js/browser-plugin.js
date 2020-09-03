@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 
 const $ = require('jquery');
 const Swal2 = require('sweetalert2');
@@ -426,6 +427,7 @@ const newTweetCallback = (tweetInfo) => {
   
   if (!pluginCache[tweetInfo.id]) {
     pluginCache[tweetInfo.id] = {};
+    pluginCache[tweetInfo.id].feedback = {};
     if (Object.keys(pluginCache).length > PLUGIN_CACHE_SIZE) {
       freePluginCache();
     }
@@ -449,11 +451,11 @@ const newTweetCallback = (tweetInfo) => {
     if (pluginCache[tweetInfo.id].label) {
       classifyTweet(tweetInfo, pluginCache[tweetInfo.id].label, pluginCache[tweetInfo.id].modules);
     }
-    if (pluginCache[tweetInfo.id].feedback) {
-      if (pluginCache[tweetInfo.id].feedback == "agree") {
+    if (pluginCache[tweetInfo.id].feedback.userFeedback) {
+      if (pluginCache[tweetInfo.id].feedback.userFeedback == "agree") {
         tweetInfo.domObject.querySelector(".coinformToolbarPositiveLogo").classList.add("coinformToolbarFeedbackAfterClick");
       }
-      else if (pluginCache[tweetInfo.id].feedback == "disagree") {
+      else if (pluginCache[tweetInfo.id].feedback.userFeedback == "disagree") {
         tweetInfo.domObject.querySelector(".coinformToolbarNegativeLogo").classList.add("coinformToolbarFeedbackAfterClick");
       }
     }
@@ -567,11 +569,17 @@ const createToolbar = (tweetInfo) => {
   td4.appendChild(createLogoNegativeFeedback(tweetInfo.id, function () {
     feedbackClickAction(td4, tweetInfo, "disagree");
   }));
-  let positiveFeedbackText = document.createElement("SPAN");
-  let positiveText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
-  positiveFeedbackText.append(positiveText);
-  td4.appendChild(positiveFeedbackText);
-  td4.classList.add("coinformToolbarNegativeLogo");
+
+  let negativeFeedbackAgg = document.createElement("SPAN");
+  negativeFeedbackAgg.classList.add("coinformFeedbackAgg");
+  td4.appendChild(negativeFeedbackAgg);
+
+  let negativeFeedbackText = document.createElement("SPAN");
+  negativeFeedbackText.classList.add("coinformFeedbackDescription");
+  let negativeText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
+  negativeFeedbackText.append(negativeText);
+  td4.appendChild(negativeFeedbackText);
+  td4.classList.add("coinformToolbarFeedbackLogo");
 
   td4.addEventListener('click', (event) => { 
     // prevent opening the tweet
@@ -588,11 +596,16 @@ const createToolbar = (tweetInfo) => {
     feedbackClickAction(td5, tweetInfo, "agree");
   }));
 
-  let negativeFeedbackText = document.createElement("SPAN");
-  let negativeText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
-  negativeFeedbackText.append(negativeText);
-  td5.appendChild(negativeFeedbackText);
-  td5.classList.add("coinformToolbarPositiveLogo");
+  let positiveFeedbackAgg = document.createElement("SPAN");
+  positiveFeedbackAgg.classList.add("coinformFeedbackAgg");
+  td5.appendChild(positiveFeedbackAgg);
+
+  let positiveFeedbackText = document.createElement("SPAN");
+  positiveFeedbackText.classList.add("coinformFeedbackDescription");
+  let positiveText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
+  positiveFeedbackText.append(positiveText);
+  td5.appendChild(positiveFeedbackText);
+  td5.classList.add("coinformToolbarFeedbackLogo");
 
   td5.addEventListener('click', (event) => { 
     // prevent opening the tweet
@@ -627,7 +640,7 @@ const createLogoPositiveFeedback = (tweetId, callback) => {
 
   let agree = document.createElement("IMG");
   agree.setAttribute("id", `coinformPositiveLogo-${tweetId}`);
-  agree.classList.add("coinformPositiveLogo");
+  agree.classList.add("coinformFeedbackLogo");
   agree.setAttribute("src", agreeURL);
 
   agree.addEventListener('click', (event) => {
@@ -645,7 +658,7 @@ const createLogoNegativeFeedback = (tweetId, callback) => {
 
   let disagree = document.createElement("IMG");
   disagree.setAttribute("id", `coinformNegativeLogo-${tweetId}`);
-  disagree.classList.add("coinformNegativeLogo");
+  disagree.classList.add("coinformFeedbackLogo");
   disagree.setAttribute("src", disagreeURL);
 
   disagree.addEventListener('click', (event) => {
@@ -841,8 +854,8 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
       }
       // remove feedback as label changed
       let auxPrevious = tweet.domObject.querySelector(".coinformToolbarFeedbackAfterClick");
-      if (auxPrevious || pluginCache[tweet.id].feedback) {
-        pluginCache[tweet.id].feedback = null;
+      if (auxPrevious || pluginCache[tweet.id].feedback.userFeedback) {
+        pluginCache[tweet.id].feedback.userFeedback = null;
         auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
       }
     }
@@ -1252,10 +1265,8 @@ function sendLabelEvaluation(targetButton, tweetInfo, agreement) {
     if (resStatus.localeCompare('200') === 0) {
       logger.logMessage(CoInformLogger.logTypes.info, `Reaction registered successfully`);
       Swal2.fire(browserAPI.i18n.getMessage('sent'), browserAPI.i18n.getMessage("feedback_sent"), 'success');
-      let auxPrevious = tweetInfo.domObject.querySelector(".coinformToolbarFeedbackAfterClick");
-      if (auxPrevious) auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
-      targetButton.classList.add("coinformToolbarFeedbackAfterClick");
-      pluginCache[tweetInfo.id].feedback = agreement;
+      updateLabelEvaluation(targetButton, tweetInfo, agreement);
+      updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, "add", 1);
     } 
     else {
       Swal2.fire(browserAPI.i18n.getMessage('error'), browserAPI.i18n.getMessage('feedback_not_sent'), 'error');
@@ -1263,6 +1274,35 @@ function sendLabelEvaluation(targetButton, tweetInfo, agreement) {
 
   });
 
+}
+
+function updateLabelEvaluation(targetButton, tweetInfo, agreement) {
+  if (pluginCache[tweetInfo.id].feedback.userFeedback != undefined) {
+    let auxPrevious = tweetInfo.domObject.querySelector(".coinformToolbarFeedbackAfterClick");
+    if (auxPrevious) {
+      auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
+    }
+    updateLabelEvaluationAgg(auxPrevious, tweetInfo, pluginCache[tweetInfo.id].feedback.userFeedback, "remove", 1);
+  }
+  targetButton.classList.add("coinformToolbarFeedbackAfterClick");
+  pluginCache[tweetInfo.id].feedback.userFeedback = agreement;
+}
+
+function updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, operation, num) {
+  let totalNum = 0;
+  if (pluginCache[tweetInfo.id].feedback[agreement] != undefined) {
+    totalNum = pluginCache[tweetInfo.id].feedback[agreement];
+  }
+  if (operation == 'add') totalNum = totalNum + num;
+  else if (operation == 'remove') totalNum = totalNum - num;
+  else if (operation == 'update') totalNum = num;
+  if (totalNum >= 1) {
+    targetButton.querySelector(".coinformFeedbackAgg").innerHTML = totalNum;
+  }
+  else {
+    targetButton.querySelector(".coinformFeedbackAgg").innerHTML = '';
+  }
+  pluginCache[tweetInfo.id].feedback[agreement] = totalNum;
 }
 
 function claimClickAction(tweet) {
