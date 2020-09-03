@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 
 const $ = require('jquery');
 const Swal2 = require('sweetalert2');
