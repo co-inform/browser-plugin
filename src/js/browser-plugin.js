@@ -946,11 +946,11 @@ const removeTweetBlurry = (tweet) => {
   node.removeAttribute(parser.untrustedAttribute);
 
   let auxPrevious = null;
-  auxPrevious = node.querySelector(`#whyButton-${tweet.id}`);
+  auxPrevious = node.querySelector(`#whyButton-${tweet.tweetid}`);
   if (auxPrevious) {
     auxPrevious.remove();
   }
-  auxPrevious = node.querySelector(`#feedback-button-container-${tweet.id}`);
+  auxPrevious = node.querySelector(`#feedback-button-container-${tweet.tweetid}`);
   if (auxPrevious) {
     auxPrevious.remove();
   }
@@ -1129,7 +1129,7 @@ const createCannotSeeTweetButton = (tweet, callback) => {
   div.setAttribute('class', 'feedback-button-container');
 
   const button = document.createElement('BUTTON');
-  button.setAttribute('id', `whyButton-${tweet.tweeti}`);
+  button.setAttribute('id', `whyButton-${tweet.tweetid}`);
   button.setAttribute('type', 'button');
   button.setAttribute('class', 'coinform-button coinform-button-primary whyButton');
   button.innerText = browserAPI.i18n.getMessage('why_cant_see');
@@ -1229,7 +1229,6 @@ function openLabelPopup(tweet) {
     focusConfirm: true
   }).then(function (result) {
     if(result.value === true){
-      log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, 'click on explainability popup ok button');
       if (nodeBlurred) {
         removeTweetBlurry(tweet);
         log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, 'Unblur tweet');
@@ -1238,6 +1237,7 @@ function openLabelPopup(tweet) {
         createTweetBlurry(tweet);
         log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, 'Blur again tweet');
       }
+      log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, 'click on explainability popup ok button');
     }
   })
 }
