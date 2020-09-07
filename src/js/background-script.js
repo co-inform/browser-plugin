@@ -376,7 +376,7 @@ const registerAPI = function(request, scriptId, registerCallback) {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `Registering (user ${request.userMail})`, scriptId);
 
-  client.postUserRegister(request.userMail, request.userPass).then(res => registerCallback(res)).catch(err => {
+  client.postUserRegister(request.userMail, request.userPass, request.userOptions).then(res => registerCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
   });
 

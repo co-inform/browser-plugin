@@ -46,8 +46,8 @@ CoinformClient.prototype = {
     return postLogout(this.baseURL + '/exit/', userToken);
   },
 
-  postUserRegister: function (email, password) {
-    return postRegister(this.baseURL + '/register/', email, password);
+  postUserRegister: function (email, password, options) {
+    return postRegister(this.baseURL + '/register/', email, password, options);
   },
 
   postRenewUserToken: function (pluginVersion) {
@@ -256,9 +256,14 @@ function postLogin(path, email, password, pluginVersion) {
 
 }
 
-function postRegister(path, email, password) {
+function postRegister(path, email, password, options) {
 
-  const data = {email: email, password: password};
+  const data = {
+    email: email,
+    password: password,
+    research: options.research,
+    communication: options.communication
+  };
 
   return new Promise((resolve, reject) => {
     f(path, {
