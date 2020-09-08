@@ -60,6 +60,10 @@ CoinformClient.prototype = {
 
   postUserForgotPass: function (email) {
     return postForgotPass(this.baseURL + '/reset-password/', email);
+  },
+
+  postUserChangeSettings: function (settings, userToken) {
+    return postChangeSettings(this.baseURL + '/user/change-settings/', settings, userToken);
   }
 
 };
@@ -314,6 +318,33 @@ function postChangePass(path, password, newpassword, userToken) {
       .catch(err => reject(err));
   });
 
+}
+
+function postChangeSettings(path, settings, userToken) {
+
+  const data = {research: settings.participation, communication: settings.followup};
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers: {
+        'Authorization': 'Bearer ' + userToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
 }
 
 function postLogout(path, userToken) {

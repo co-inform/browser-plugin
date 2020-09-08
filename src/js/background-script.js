@@ -74,7 +74,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
         renewUserToken();
       }
 
-      checkStoredUserOptions();
+      //checkStoredUserOptions();
 
     });
 
@@ -127,16 +127,7 @@ const listenerRuntime = function(request, sender, sendResponse) {
     });
   }
   else if (request.messageId === "OptionsChange") {
-    if (request.options !== undefined) {
-      configuration.coinform.options = request.options;
-      let auxUserId = '';
-      if (coinformUserID) auxUserId = coinformUserID;
-      for (let [key, value] of Object.entries(request.options)) {
-        let auxOption = {};
-        auxOption[`coinform_${key}_${auxUserId}`] = value;
-        chrome.storage.sync.set(auxOption, function() {});
-      }
-    }
+    changeOptions(request, sender.id, sendResponse);
     sendMessageToAllScripts(request);
     sendResponse({
       options: configuration.coinform.options
@@ -215,6 +206,12 @@ const checkAndSaveToken = function(token, scriptId) {
       userID = tokenDecoded.user.uuid;
     }
   }
+  if (tokenDecoded.user && tokenDecoded.user.research) {
+    configuration.coinform.options.participation = tokenDecoded.user.research;
+  }
+  if (tokenDecoded.user && tokenDecoded.user.communication) {
+    configuration.coinform.options.followup = tokenDecoded.user.communication;
+  }
   if (tokenDecoded.exp < secondsSinceEpoch) {
     logger.logMessage(CoInformLogger.logTypes.warning, `JWT expiring time passed`, scriptId);
   }
@@ -247,7 +244,7 @@ const checkAndSaveToken = function(token, scriptId) {
       renewUserToken();
     }, timeToRenew);
 
-    checkStoredUserOptions();
+    //checkStoredUserOptions();
   }
   return res;
 
@@ -426,7 +423,7 @@ const evaluateLabel = function(request, scriptId, evaluateTweetCallback) {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `Sending Label Evaluation (tweet id ${request.id}): ${request.agreement}`, scriptId);
 
-  client.postEvaluateLabel(request.id, request.url, request.ratedCredibility, request.moduleResponse, request.agreement, request.coinformUserToken).then(res => evaluateTweetCallback(res)).catch(err => {
+  client.postEvaluateLabel(request.id, request.url, request.ratedCredibility, request.moduleResponse, request.agreement, request.userToken).then(res => evaluateTweetCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
 
     if (evaluateTweetCallback) evaluateTweetCallback({
@@ -435,13 +432,13 @@ const evaluateLabel = function(request, scriptId, evaluateTweetCallback) {
     });
   });
 
-}
+};
 
 const evaluateTweet = function(request, scriptId, twitterEvaluateCallback) {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `Sending Tweet Evaluation (tweet id ${request.id})`, scriptId);
 
-  client.postEvaluateTweet(request.id, request.url, request.evaluation, request.coinformUserToken).then(res => twitterEvaluateCallback(res)).catch (err => {
+  client.postEvaluateTweet(request.id, request.url, request.evaluation, request.userToken).then(res => twitterEvaluateCallback(res)).catch (err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request error: ${err}`, scriptId);
 
     if (twitterEvaluateCallback) twitterEvaluateCallback({
@@ -450,7 +447,7 @@ const evaluateTweet = function(request, scriptId, twitterEvaluateCallback) {
     });
   });
 
-}
+};
 
 const forgotPass = function(request, scriptId, forgotPassCallback) {
 
@@ -466,13 +463,13 @@ const forgotPass = function(request, scriptId, forgotPassCallback) {
     
   });
 
-}
+};
 
 const changePass = function(request, scriptId, changePassCallback) {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `Requesting Password Change`, scriptId);
 
-  client.postUserChangePass(request.userPass, request.userNewPass, request.coinformUserToken).then(res => {
+  client.postUserChangePass(request.userPass, request.userNewPass, request.userToken).then(res => {
     
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
     if (resStatus.localeCompare('200') === 0) {
@@ -510,7 +507,33 @@ const changePass = function(request, scriptId, changePassCallback) {
     
   });
 
-}
+};
+
+const changeOptions = function (request, scriptId, changeOptionsCallback) {
+
+  if (request.options !== undefined) {
+
+    logger.logMessage(CoInformLogger.logTypes.debug, `Requesting Settings Change`, scriptId);
+  
+    client.postUserChangeSettings(request.options, request.userToken).then(res => {
+      
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      if (resStatus.localeCompare('200') === 0) {
+        logger.logMessage(CoInformLogger.logTypes.info, `ChangeSettings successful`);
+      }
+      if (changeOptionsCallback) changeOptionsCallback(res);
+  
+    }).catch(err => {
+      logger.logMessage(CoInformLogger.logTypes.error, "ChangeSettings exception: "+JSON.stringify(err), scriptId);
+    });
+
+    configuration.coinform.options = request.options;
+
+    //saveStorageUserOptions(request.options);
+
+  }
+
+};
 
 const getCookie = function(cookieName, cookieCallback) {
     
@@ -562,6 +585,17 @@ const removeCookie = function(cookieName, cookieCallback) {
     logger.logMessage(CoInformLogger.logTypes.error, `Cokkie Remove Parameters Error`);
   }
 
+};
+
+const saveStorageUserOptions = function (options) {
+  // try to set local strored options
+  let auxUserId = '';
+  if (coinformUserID) auxUserId = coinformUserID;
+  for (let [key, value] of Object.entries(options)) {
+    let auxOption = {};
+    auxOption[`coinform_${key}_${auxUserId}`] = value;
+    chrome.storage.sync.set(auxOption, function() {});
+  }
 };
 
 const checkStoredUserOptions = function () {

@@ -1245,7 +1245,7 @@ function sendLabelEvaluation(targetButton, tweetInfo, agreement) {
     ratedCredibility: ratedCredibility,
     moduleResponse: moduleResponse,
     agreement: agreement,
-    coinformUserToken: coinformUserToken
+    userToken: coinformUserToken
   }, function (res) {
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
 
@@ -1385,7 +1385,7 @@ function openClaimPopup(tweet) {
         id: tweet.id,
         url: tweet.url,
         evaluation: evaluation, 
-        coinformUserToken: coinformUserToken
+        userToken: coinformUserToken
       }, function (res) {
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
         if (resStatus.localeCompare('400') === 0) {

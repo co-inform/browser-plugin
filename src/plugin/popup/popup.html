@@ -86,8 +86,8 @@
           <summary>I consent to participate on the Plugin evaluation study.</summary>
           <p>My Plugin and Twitter user data will be used by the Co-Inform platform to analyze and improve the tool experience.</p>
         </details>
-        <input type="radio" name="register-participation" id="yes"><span id="register-participation-yes">Yes, I agree.</span>
-        <input type="radio" name="register-participation" id="no"><span id="register-participation-no">No, I don`t agree.</span>
+        <input type="radio" name="register-participation" id="yes" value="true"><span id="register-participation-yes">Yes, I agree.</span>
+        <input type="radio" name="register-participation" id="no" value="false"><span id="register-participation-no">No, I don`t agree.</span>
       </div>
     </div>
 
@@ -97,8 +97,8 @@
           <summary>I consent follow-up communications.</summary>
           <p>I want to keep informed about the evaluation study process and I agree with Co-Inform follow-up communications by mail.</p>
         </details>
-        <input type="radio" name="register-followup" id="yes"><span id="register-followup-yes">Yes, I agree.</span>
-        <input type="radio" name="register-followup" id="no"><span id="register-followup-no">No, I don`t agree.</span>
+        <input type="radio" name="register-followup" id="yes" value="true"><span id="register-followup-yes">Yes, I agree.</span>
+        <input type="radio" name="register-followup" id="no" value="false"><span id="register-followup-no">No, I don`t agree.</span>
       </div>
     </div>
 
@@ -207,6 +207,22 @@
         <span class="coinform-switch-slider"></span>
       </label>
       <label id="options-test-mode-label" class="testmode_label" for="options-test-mode">Test Mode</label>
+    </div>
+
+    <div class="form-control">
+      <label class="coinform-switch">
+        <input type="checkbox" class="input-checkbox-switch" id="options-research-participation" name="options-research-participation" value="true">
+        <span class="coinform-switch-slider"></span>
+      </label>
+      <label id="options-research-participation-label" class="participation_label" for="options-research-participation">Research participation</label>
+    </div>
+
+    <div class="form-control">
+      <label class="coinform-switch">
+        <input type="checkbox" class="input-checkbox-switch" id="options-followup-communications" name="options-followup-communications" value="true">
+        <span class="coinform-switch-slider"></span>
+      </label>
+      <label id="options-followup-communications-label" class="followup_label" for="options-followup-communications">Follow-up communications</label>
     </div>
 
     <div class="form-buttons">

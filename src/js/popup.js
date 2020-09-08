@@ -372,6 +372,14 @@ const refreshDisplayedOptions = (options) => {
     let valCheckbox = (options.testMode.localeCompare("true") === 0);
     document.querySelector('input[name="options-test-mode"]').checked = valCheckbox;
   }
+  if (options.participation !== undefined) {
+    let valCheckbox = (options.participation.localeCompare("true") === 0);
+    document.querySelector('input[name="options-research-participation"]').checked = valCheckbox;
+  }
+  if (options.followup !== undefined) {
+    let valCheckbox = (options.followup.localeCompare("true") === 0);
+    document.querySelector('input[name="options-followup-communications"]').checked = valCheckbox;
+  }
 };
 
 
@@ -512,8 +520,8 @@ const registerAction = (targetButton) => {
   const userMail = document.querySelector('input[name="register-usermail"]').value || null;
   const userPass = document.querySelector('input[name="register-userpass"]').value || null;
   const userPass2 = document.querySelector('input[name="register-userpass2"]').value || null;
-  const userParticipation = document.querySelector('input[name="register-participation"]').value || null;
-  const userFollowup = document.querySelector('input[name="register-followup"]').value || null;
+  const userParticipation = document.querySelector('input[name="register-participation"]:checked').value || null;
+  const userFollowup = document.querySelector('input[name="register-followup"]:checked').value || null;
 
   if (!userMail || !validateEmail(userMail)) {
     showMessage("err", "mail_not_valid", 2000);
@@ -636,10 +644,19 @@ const optionsSaveAction = (targetButton) => {
   if (auxInput) {
     optionsObj.testMode = auxInput.value || "false";
   }
+  auxInput = document.querySelector('input[name="options-research-participation"]:checked');
+  if (auxInput) {
+    optionsObj.participation = auxInput.value || "false";
+  }
+  auxInput = document.querySelector('input[name="options-followup-communications"]:checked');
+  if (auxInput) {
+    optionsObj.followup = auxInput.value || "false";
+  }
 
   browserAPI.runtime.sendMessage({
     messageId: "OptionsChange",
-    options: optionsObj
+    options: optionsObj,
+    userToken: coinformUserToken
   }, function (res) {
 
     logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
@@ -685,7 +702,7 @@ const changePasswordAction = (targetButton) => {
         messageId: "ChangePass",
         userPass: userPass,
         userNewPass: userNewPass,
-        coinformUserToken: coinformUserToken
+        userToken: coinformUserToken
       }, function (res) {
 
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
