@@ -152,7 +152,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
       msg.append(document.createTextNode(". "));
       msg.append(txtContent);
       setTimeout(function() {
-        publishTweetCountdown(targetButton, (TIME_PUBLISH_AWAIT - 1), urls, text);
+        if (urls !== null) publishTweetCountdown(targetButton, (TIME_PUBLISH_AWAIT - 1), urls.join(), text);
       }, 1000);
     }
     else {
@@ -172,7 +172,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
     return true;
   }
 
-  log2Server('publish tweet', urls, `Tweet id: ${tweetText}`, ' click on "publish anyway"');
+  log2Server('publish tweet', urls, `Tweet content: ${tweetText}`, ' click on "publish anyway"');
   logger.logMessage(CoInformLogger.logTypes.debug, `Publish button clicked!!`);
 
   targetButton.setAttribute("disabled", "");
@@ -307,7 +307,7 @@ const publishTweetAlertMisinfo = (label, url, tweetText) => {
   let popupTitle = browserAPI.i18n.getMessage('content_tagged_as', auxlabel);
   let popupButtonText = browserAPI.i18n.getMessage('ok');
   
-  log2Server('publish tweet', url, `Tweet id: ${tweetText}`, 'detected "not credible" tweet before publish'); 
+  log2Server('publish tweet', url, `Tweet id: ${tweetText}`, `detected ${label} tweet before publish`); 
   return Swal2.fire({
     type: 'info',
     title: popupTitle,
@@ -315,7 +315,9 @@ const publishTweetAlertMisinfo = (label, url, tweetText) => {
     showCancelButton: false,
     confirmButtonColor: buttonColor,
     confirmButtonText: popupButtonText,
-    onClose: sendCloseAwaitPopUp,
+    sendCloseAwaitPopUp: (url, tweetText) => {
+      log2Server('publish tweet', node.tweetUrl, `Tweet content: ${tweetText}\n Detected url: ${url}`, 'click on "close" on misinformation popup');
+    },
     html:
       '<span>' + browserAPI.i18n.getMessage('url_detected_misinformation', auxlabel) + '</span><br/>'+
       '<a href="' + url + '">' + url + '</a><br/><br/>'+
@@ -331,10 +333,6 @@ const publishTweetAlertMisinfo = (label, url, tweetText) => {
   });
   
 };
-
-function sendCloseAwaitPopUp(url, tweetText) {
-  log2Server('publish tweet', node.tweetUrl, `Tweet content: ${tweetText}\n Detected url: ${url}`, 'click on "close" on misinformation popup');
-}
 
 const publishTweetCountdown = (targetButton, iteration, url, tweetText) => {
   let msg = document.getElementById("coinformPublishMessages");
@@ -1213,7 +1211,9 @@ function openLabelPopup(tweet) {
     confirmButtonText: buttonText,
     reverseButtons: true,
     focusCancel: true,
-    onClose: sendCloseLabelPopUpLog,
+    sendCloseLabelPopUpLog: () => {
+      log2Server('explainability', node.tweetUrl, `Tweet id: ${node.tweetid}\nTweet label: ${node.coInformLabel}`, 'click on explainability popup close button');
+    },
     html:
       '<span>' + moreInfo.outerHTML + '</span>',
     footer:
@@ -1233,10 +1233,6 @@ function openLabelPopup(tweet) {
       log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, 'click on explainability popup ok button');
     }
   })
-}
-
-function sendCloseLabelPopUpLog(node) {
-  log2Server('explainability', node.tweetUrl, `Tweet id: ${node.tweetid}\nTweet label: ${node.coInformLabel}`, 'click on explainability popup close button');
 }
 
 function feedbackClickAction(targetButton, tweet, agreement) {
@@ -1293,7 +1289,6 @@ function sendLabelEvaluation(targetButton, tweetInfo, agreement) {
 
 function claimClickAction(tweet) {
 
-  log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${tweet.coInformLabel}`, `send a claim for a ${tweet.coInformLabel} tweet`);
   if (coinformUserToken) {
     openClaimPopup(tweet);
   }
@@ -1305,6 +1300,7 @@ function claimClickAction(tweet) {
 
 function openClaimPopup(tweet) {
 
+  log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${tweet.coInformLabel}`, `open claim popup for a ${tweet.coInformLabel} tweet`);
   const elementTxt = browserAPI.i18n.getMessage('tweet_post');
 
   let node = tweet.domObject;
@@ -1349,7 +1345,9 @@ function openClaimPopup(tweet) {
     confirmButtonColor: buttonColor,
     confirmButtonText: browserAPI.i18n.getMessage('submit'),
     focusConfirm: true,
-    onClose: sendCloseClaimLog,
+    sendCloseClaimLog: () => {
+      log2Server('claim', node.tweetUrl, `Tweet id: ${node.tweetid}\nTweet label: ${node.coInformLabel}`, 'cancel claim');
+    },
     preConfirm: () => {
       let claimOpt = document.getElementById('claim-input-select').value;
       let url = document.getElementById('claim-input-url').value;
@@ -1444,10 +1442,6 @@ function openClaimPopup(tweet) {
   }
   );
 
-}
-
-function sendCloseClaimLog(node) {
-  log2Server('claim', node.tweetUrl, `Tweet id: ${node.tweetid}\nTweet label: ${node.coInformLabel}`, 'cancel claim');
 }
 
 function openNotTaggedFeedbackPopup(tweet) {
