@@ -315,7 +315,7 @@ const publishTweetAlertMisinfo = (label, url, tweetText) => {
     showCancelButton: false,
     confirmButtonColor: buttonColor,
     confirmButtonText: popupButtonText,
-    sendCloseAwaitPopUp: (url, tweetText) => {
+    onClose: () => {
       log2Server('publish tweet', node.tweetUrl, `Tweet content: ${tweetText}\n Detected url: ${url}`, 'click on "close" on misinformation popup');
     },
     html:
@@ -1211,7 +1211,7 @@ function openLabelPopup(tweet) {
     confirmButtonText: buttonText,
     reverseButtons: true,
     focusCancel: true,
-    sendCloseLabelPopUpLog: () => {
+    onClose: () => {
       log2Server('explainability', node.tweetUrl, `Tweet id: ${node.tweetid}\nTweet label: ${node.coInformLabel}`, 'click on explainability popup close button');
     },
     html:
@@ -1345,7 +1345,7 @@ function openClaimPopup(tweet) {
     confirmButtonColor: buttonColor,
     confirmButtonText: browserAPI.i18n.getMessage('submit'),
     focusConfirm: true,
-    sendCloseClaimLog: () => {
+    onClose: () => {
       log2Server('claim', node.tweetUrl, `Tweet id: ${node.tweetid}\nTweet label: ${node.coInformLabel}`, 'cancel claim');
     },
     preConfirm: () => {
