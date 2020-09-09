@@ -279,16 +279,16 @@
     "message": "Next"
   },
   "consent_participate_summary": {
-    "message": "I consent to participate on the Plugin Evaluation Study."
+    "message": "I agree to participate on the Plugin Evaluation Study."
   },
   "consent_participate_text": {
-    "message": "Some of my Co-Inform Plugin and Twitter user data will be used by the Co-Inform platform to analyze and improve the tool experience."
+    "message": "I want to share my data anonymously for the improvement of the Co-Inform plugin."
   },
   "consent_followup_summary": {
     "message": "I consent follow-up Co-Inform communications."
   },
   "consent_followup_text": {
-    "message": "Co-Inform wil keep me informed about the evaluation study process, and I agree to receive Co-Inform follow-up communications by mail."
+    "message": "I want to get useful email updates and information from Co-Inform."
   },
   "i_agree": {
     "message": "I Agree"
