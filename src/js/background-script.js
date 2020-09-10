@@ -83,6 +83,15 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
     console.error('Could not load plugin configuration', err);
   });
 
+browserAPI.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  if (changeInfo.url) {
+    browserAPI.tabs.sendMessage( tabId, {
+      message: 'tabUrlChanged',
+      url: changeInfo.url
+    });
+  }
+});
+
 const listenerRuntime = function(request, sender, sendResponse) {
 
   if (request.messageId === "GetCookie") {
@@ -158,7 +167,7 @@ const listenerRuntime = function(request, sender, sendResponse) {
     evaluateTweet(request, sender.id, sendResponse);
   }
   else if (request.messageId === "SendLog2Server") {
-    sendLog2Server(request.logData, sender.id, sendResponse);
+    sendLog2Server(request, sender.id, sendResponse);
   }
 
   return true;
@@ -167,20 +176,26 @@ const listenerRuntime = function(request, sender, sendResponse) {
 
 const sendLog2Server = function(request, scriptId, logCallback) {
 
-  logger.logMessage(CoInformLogger.logTypes.debug, `SERVER LOG: ${request.log_time} | ${request.log_category} | ${request.log_action}`, scriptId);
+  if (coinformUserToken) {
 
-  client.postLog2Server(request.log_time, request.log_category, request.related_item_url, request.related_item_data, request.log_action, request.coinformUserToken).then(res => {
-    let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
-    if (resStatus.localeCompare('200') === 0) {
+    let logData = request.logData;
 
-      if (logCallback) logCallback(res);
-    }
-    else {
+    logger.logMessage(CoInformLogger.logTypes.debug, `New Server Log: ${logData.log_time} | ${logData.log_category} | ${logData.log_action}`, scriptId);
 
-    }
-  }).catch(err => {
-    logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
-  });
+    client.postLog2Server(request.logData, request.userToken).then(res => {
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      if (resStatus.localeCompare('200') === 0) {
+        if (logCallback) logCallback(res);
+      }
+      else {
+
+      }
+    }).catch(err => {
+      logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
+    });
+
+  }
+
 };
 
 const logInAPI = function(request, scriptId, loginCallback) {

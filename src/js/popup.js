@@ -339,6 +339,7 @@ const loginAction = (targetButton) => {
             displayLogout();
             targetButton.disabled = false;
           }, 1000);
+          log2Server('login', null, null, `Co-Inform User Logged In`);
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, "Login token error");
@@ -399,6 +400,7 @@ const registerAction = (targetButton) => {
           displayLogin();
           targetButton.disabled = false;
         }, 1000);
+        log2Server('register', null, null, `Co-Inform User Registered`);
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, `Register unknown (${resStatus}) response`);
@@ -425,6 +427,8 @@ const logoutAction = (targetButton) => {
   else {
     
     targetButton.disabled = true;
+
+    log2Server('login', null, null, `Co-Inform User Logging Out`);
     
     browserAPI.runtime.sendMessage({
       messageId: "LogOut",
@@ -660,6 +664,30 @@ const clearAllMessages = () => {
     msgDiv.removeChild(msgDiv.firstChild);
   }
 };
+
+function log2Server (category, itemUrl, itemData, message) {
+
+  const logTime = new Date().toISOString();
+
+  const logData = {
+    log_time: logTime,
+    log_category: category,
+    related_item_url: itemUrl,
+    related_item_data: itemData,
+    log_action: message
+  };
+
+  browserAPI.runtime.sendMessage({
+    messageId: "SendLog2Server",
+    logData: logData, 
+    userToken: coinformUserToken
+  }, function(res) {
+    if (!res) {
+      logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
+    }
+  });
+  
+}
 
 function validateEmail(email) {
   let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

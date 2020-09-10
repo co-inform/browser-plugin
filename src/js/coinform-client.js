@@ -11,8 +11,8 @@ function CoinformClient(fetch, host, basePath = '') {
 
 CoinformClient.prototype = {
 
-  postLog2Server: function (logTime, logCategory, relatedItemUrl, relatedItemData, logAction, userToken) {
-    return postUserLog2Server(this.baseURL + '/user/evaluation-log/', logTime, logCategory, relatedItemUrl, relatedItemData, logAction, userToken);
+  postLog2Server: function (logData, userToken) {
+    return postUserLog2Server(this.baseURL + '/user/evaluation-log/', logData, userToken);
   },
 
   postCheckTweetInfo: function (tweetId, author, tweetText) {
@@ -69,15 +69,15 @@ CoinformClient.prototype = {
 
 };
 
-function postUserLog2Server(path, logTime, logCategory, relatedItemUrl, relatedItemData, logAction, userToken) {
+function postUserLog2Server(path, logData, userToken) {
 
   const data = [
     {
-      log_time: logTime,
-      log_category: logCategory,
-      related_item_url: relatedItemUrl,
-      related_item_data: relatedItemData,
-      log_action: logAction
+      log_time: logData.log_time,
+      log_category: logData.log_category,
+      related_item_url: logData.related_item_url,
+      related_item_data: logData.related_item_data,
+      log_action: logData.log_action
     }
   ];
 

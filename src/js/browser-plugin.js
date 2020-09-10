@@ -54,7 +54,11 @@ browserAPI.runtime.sendMessage({
 
 // Set listener for background scrpit messages
 browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.messageId === "userLogin") {
+  if (request.message === 'tabUrlChanged') {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Url changed: ${request.url}`);
+    log2Server('page', request.url, null, `Page Url Changed`);
+  }
+  else if (request.messageId === "userLogin") {
     logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`);
     coinformUserToken = request.token;
     coinformUserMail = request.userMail;
@@ -1591,23 +1595,21 @@ function log2Server (category, itemUrl, itemData, message) {
 
   const logTime = new Date().toISOString();
 
-  logger.logMessage(CoInformLogger.logTypes.debug, `SERVER LOG: ${logTime} | ${category} | ${message}`);
-
   const logData = {
     log_time: logTime,
     log_category: category,
     related_item_url: itemUrl,
     related_item_data: itemData,
-    log_action: message, 
-    coinformUserToken: coinformUserToken
+    log_action: message
   };
 
   browserAPI.runtime.sendMessage({
     messageId: "SendLog2Server",
-    logData: logData
+    logData: logData, 
+    userToken: coinformUserToken
   }, function(res) {
     if (!res) {
-      console.error('Could not send the log');
+      logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
     }
   });
   
