@@ -55,6 +55,16 @@ window.addEventListener("load", function(){
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
   document.getElementById('options-test-mode-label').innerHTML = browserAPI.i18n.getMessage("options_test_mode");
 
+  document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
+  document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+  document.getElementById('register-step2-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
+  document.getElementById('register-step2-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+
+  document.getElementById('register-followup-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
+  document.getElementById('register-followup-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
+  document.getElementById('register-step3-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
+  document.getElementById('register-step3-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
+
   // Set the header logo image
   let img = document.createElement("IMG");
   img.classList.add("logo");
@@ -90,6 +100,42 @@ window.addEventListener("load", function(){
   logoutButton.innerHTML = browserAPI.i18n.getMessage("log_out");
   logoutButton.addEventListener('click', (event) => {
     logoutAction(logoutButton);
+  });
+  
+  let registerNext1Button = document.getElementById('register-next1-button');
+  registerNext1Button.innerHTML = browserAPI.i18n.getMessage("next");
+  registerNext1Button.addEventListener('click', (event) => {
+    registerNextAction(registerNext1Button, 1);
+  });
+  
+  let registerNext2Button = document.getElementById('register-next2-button');
+  registerNext2Button.innerHTML = browserAPI.i18n.getMessage("next");
+  registerNext2Button.addEventListener('click', (event) => {
+    registerNextAction(registerNext2Button, 2);
+  });
+  
+  let registerStep2AgreeButton = document.getElementById('register-step2-agree-button');
+  registerStep2AgreeButton.innerHTML = browserAPI.i18n.getMessage("i_agree");
+  registerStep2AgreeButton.addEventListener('click', (event) => {
+    registerStep2Action(registerStep2AgreeButton, "agree");
+  });
+  
+  let registerStep2DisagreeButton = document.getElementById('register-step2-disagree-button');
+  registerStep2DisagreeButton.innerHTML = browserAPI.i18n.getMessage("i_disagree");
+  registerStep2DisagreeButton.addEventListener('click', (event) => {
+    registerStep2Action(registerStep2AgreeButton, "disagree");
+  });
+  
+  let registerStep3AgreeButton = document.getElementById('register-step3-agree-button');
+  registerStep3AgreeButton.innerHTML = browserAPI.i18n.getMessage("i_agree");
+  registerStep3AgreeButton.addEventListener('click', (event) => {
+    registerStep3Action(registerStep3AgreeButton, "agree");
+  });
+  
+  let registerStep3DisagreeButton = document.getElementById('register-step3-disagree-button');
+  registerStep3DisagreeButton.innerHTML = browserAPI.i18n.getMessage("i_disagree");
+  registerStep3DisagreeButton.addEventListener('click', (event) => {
+    registerStep3Action(registerStep3DisagreeButton, "disagree");
   });
   
   let registerButton = document.getElementById('register-button');
@@ -232,11 +278,46 @@ const displayLogout = () => {
   document.getElementById('registered-div').classList.remove("hidden");
 };
 
-const displayRegister = () => {
+const displayRegister = (step = 0) => {
   resetAllDisplays();
   document.getElementById('menu-notlogged').classList.remove("hidden");
   document.getElementById('menu-register').classList.add("actual");
   document.getElementById('register-form').classList.remove("hidden");
+  if (step == 1) {
+    document.getElementById('register-participation-input').classList.remove("hidden");
+    document.getElementById('register-followup-input').classList.add("hidden");
+    document.getElementById('register-next1-button').classList.add("hidden");
+    document.getElementById('register-next2-button').classList.remove("hidden");
+    document.getElementById('register-button').classList.add("hidden");
+  }
+  else if (step == 2) {
+    document.getElementById('register-participation-input').classList.remove("hidden");
+    document.getElementById('register-followup-input').classList.remove("hidden");
+    document.getElementById('register-next1-button').classList.add("hidden");
+    document.getElementById('register-next2-button').classList.add("hidden");
+    document.getElementById('register-button').classList.remove("hidden");
+  }
+  else {
+    document.getElementById('register-participation-input').classList.add("hidden");
+    document.getElementById('register-followup-input').classList.add("hidden");
+    document.getElementById('register-next1-button').classList.remove("hidden");
+    document.getElementById('register-next2-button').classList.add("hidden");
+    document.getElementById('register-button').classList.add("hidden");
+  }
+};
+
+const displayRegisterStep2 = () => {
+  resetAllDisplays();
+  document.getElementById('menu-notlogged').classList.remove("hidden");
+  document.getElementById('menu-register').classList.add("actual");
+  document.getElementById('register-form-step2').classList.remove("hidden");
+};
+
+const displayRegisterStep3 = () => {
+  resetAllDisplays();
+  document.getElementById('menu-notlogged').classList.remove("hidden");
+  document.getElementById('menu-register').classList.add("actual");
+  document.getElementById('register-form-step3').classList.remove("hidden");
 };
 
 const displayOptions = () => {
@@ -291,6 +372,14 @@ const refreshDisplayedOptions = (options) => {
   if (options.testMode !== undefined) {
     let valCheckbox = (options.testMode.localeCompare("true") === 0);
     document.querySelector('input[name="options-test-mode"]').checked = valCheckbox;
+  }
+  if (options.participation !== undefined) {
+    let valCheckbox = (options.participation.localeCompare("true") === 0);
+    document.querySelector('input[name="options-research-participation"]').checked = valCheckbox;
+  }
+  if (options.followup !== undefined) {
+    let valCheckbox = (options.followup.localeCompare("true") === 0);
+    document.querySelector('input[name="options-followup-communications"]').checked = valCheckbox;
   }
 };
 
@@ -359,8 +448,8 @@ const loginAction = (targetButton) => {
   
 };
 
-// Parse Register form, and comunicate with API
-const registerAction = (targetButton) => {
+// Parse Register form
+const registerNextAction = (targetButton, step) => {
   
   if (targetButton.disabled) {
     return false;
@@ -376,14 +465,92 @@ const registerAction = (targetButton) => {
   else if (!userPass || !userPass2 || (userPass !== userPass2) || !validatePass(userPass)) {
     showMessage("err", "password_not_valid_info", 4000);
   }
+  else if (step == 1) {
+    displayRegisterStep2();
+  }
+  else if (step == 2) {
+    displayRegisterStep3();
+  }
+
+};
+
+// Parse Register form
+const registerStep2Action = (targetButton, agreement) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  if (agreement == "agree") {
+    document.querySelector('input[name="register-participation"][id="yes"]').checked = true;
+  }
+  else if (agreement == "disagree") {
+    document.querySelector('input[name="register-participation"][id="no"]').checked = true;
+  }
+  document.getElementById('register-participation-input').classList.remove("hidden");
+
+  displayRegister(1);
+
+};
+
+// Parse Register form
+const registerStep3Action = (targetButton, agreement) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  if (agreement == "agree") {
+    document.querySelector('input[name="register-followup"][id="yes"]').checked = true;
+  }
+  else if (agreement == "disagree") {
+    document.querySelector('input[name="register-followup"][id="no"]').checked = true;
+  }
+  document.getElementById('register-followup-input').classList.remove("hidden");
+
+  displayRegister(2);
+
+};
+
+// Parse Register form, and comunicate with API
+const registerAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  const userMail = document.querySelector('input[name="register-usermail"]').value || null;
+  const userPass = document.querySelector('input[name="register-userpass"]').value || null;
+  const userPass2 = document.querySelector('input[name="register-userpass2"]').value || null;
+  const userParticipation = document.querySelector('input[name="register-participation"]:checked').value || null;
+  const userFollowup = document.querySelector('input[name="register-followup"]:checked').value || null;
+
+  if (!userMail || !validateEmail(userMail)) {
+    showMessage("err", "mail_not_valid", 2000);
+  }
+  else if (!userPass || !userPass2 || (userPass !== userPass2) || !validatePass(userPass)) {
+    showMessage("err", "password_not_valid_info", 4000);
+  }
+  else if (!userParticipation) {
+    showMessage("err", "read_and_answer_participation", 4000);
+  }
+  else if (!userFollowup) {
+    showMessage("err", "read_and_answer_followup", 4000);
+  }
   else {
     
     targetButton.disabled = true;
+
+    let userOptions = {
+      research: userParticipation,
+      communication: userFollowup
+    };
     
     browserAPI.runtime.sendMessage({
       messageId: "Register",
       userMail: userMail,
-      userPass: userPass
+      userPass: userPass,
+      userOptions: userOptions
     }, function(res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
@@ -482,10 +649,19 @@ const optionsSaveAction = (targetButton) => {
   if (auxInput) {
     optionsObj.testMode = auxInput.value || "false";
   }
+  auxInput = document.querySelector('input[name="options-research-participation"]:checked');
+  if (auxInput) {
+    optionsObj.participation = auxInput.value || "false";
+  }
+  auxInput = document.querySelector('input[name="options-followup-communications"]:checked');
+  if (auxInput) {
+    optionsObj.followup = auxInput.value || "false";
+  }
 
   browserAPI.runtime.sendMessage({
     messageId: "OptionsChange",
-    options: optionsObj
+    options: optionsObj,
+    userToken: coinformUserToken
   }, function (res) {
 
     logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
@@ -531,7 +707,7 @@ const changePasswordAction = (targetButton) => {
         messageId: "ChangePass",
         userPass: userPass,
         userNewPass: userNewPass,
-        coinformUserToken: coinformUserToken
+        userToken: coinformUserToken
       }, function (res) {
 
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');

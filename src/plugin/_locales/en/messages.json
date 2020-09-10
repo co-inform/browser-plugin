@@ -233,6 +233,12 @@
   "mail_password_not_found": {
     "message": "User mail not found or wrong password"
   },
+  "read_and_answer_participation": {
+    "message": "You must read and answer the participation question"
+  },
+  "read_and_answer_followup": {
+    "message": "You must read and answer the follow-up question"
+  },
   "login_ok": {
     "message": "User succesfully logged in"
   },
@@ -268,6 +274,27 @@
   },
   "log_out": {
     "message": "Log Out"
+  },
+  "next": {
+    "message": "Next"
+  },
+  "consent_participate_summary": {
+    "message": "I agree to participate on the Plugin Evaluation Study."
+  },
+  "consent_participate_text": {
+    "message": "I want to share my data anonymously for the improvement of the Co-Inform plugin."
+  },
+  "consent_followup_summary": {
+    "message": "I consent follow-up Co-Inform communications."
+  },
+  "consent_followup_text": {
+    "message": "I want to get useful email updates and information from Co-Inform."
+  },
+  "i_agree": {
+    "message": "I Agree"
+  },
+  "i_disagree": {
+    "message": "I Don't Agree"
   },
   "register": {
     "message": "Register"
