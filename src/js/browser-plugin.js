@@ -436,11 +436,13 @@ const likeTweetCallback = (clickEvent, targetButton) => {
   // get tweet
   let tweet = targetButton.closest("article");
 
+  log2Server('tweet', tweet.baseURI, `Tweet id: ${tweet.id}\nTweet label: ${tweet.coInformLabel}`, 'Click on like in tweet');    
+
   if (tweet.coInformLabel) {
     logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Label: ${tweet.coInformLabel}`);
     let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
     if (!labelCategory) {
-      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${tweet.coInformLabel}`);
     }
     else if (labelCategory.localeCompare("blur") === 0) {
       logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Misinfo Label: ${tweet.coInformLabel}`);
@@ -456,11 +458,13 @@ const unlikeTweetCallback = (clickEvent, targetButton) => {
   // get tweet
   let tweet = targetButton.closest("article");
 
+  log2Server('tweet', tweet.baseURI, `Tweet id: ${tweet.id}\nTweet label: ${tweet.coInformLabel}`, 'Click on unlike in tweet');    
+
   if (tweet.coInformLabel) {
     logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Label: ${tweet.coInformLabel}`);
     let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
     if (!labelCategory) {
-      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${tweet.coInformLabel}`);
     }
     else if (labelCategory.localeCompare("blur") === 0) {
       logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Misinfo Label: ${tweet.coInformLabel}`);
