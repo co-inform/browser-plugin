@@ -114,7 +114,7 @@ const start = () => {
     parser.listenPublishTweet(publishTweetCallback);
     parser.listenRetweetTweet(retweetTweetCallback);
     parser.listenLikeTweet(likeTweetCallback);
-    parser.listenUnikeTweet(unlikeTweetCallback);
+    parser.listenUnlikeTweet(unlikeTweetCallback);
     parser.triggerFirstTweetBatch(newTweetCallback);
   }
   else if (window.location.hostname.indexOf('facebook.com') >= 0) {
