@@ -641,22 +641,18 @@ const optionsSaveAction = (targetButton) => {
     
   targetButton.disabled = true;
 
-  //TODO: here we can implement options save action
   let optionsObj = {
     testMode: "false"
   };
+
   let auxInput = document.querySelector('input[name="options-test-mode"]:checked');
-  if (auxInput) {
-    optionsObj.testMode = auxInput.value || "false";
-  }
+  optionsObj.testMode = (auxInput && auxInput.value) ? auxInput.value : "false";
+
   auxInput = document.querySelector('input[name="options-research-participation"]:checked');
-  if (auxInput) {
-    optionsObj.participation = auxInput.value || "false";
-  }
+  optionsObj.participation = (auxInput && auxInput.value) ? auxInput.value : "false";
+
   auxInput = document.querySelector('input[name="options-followup-communications"]:checked');
-  if (auxInput) {
-    optionsObj.followup = auxInput.value || "false";
-  }
+  optionsObj.followup = (auxInput && auxInput.value) ? auxInput.value : "false";
 
   browserAPI.runtime.sendMessage({
     messageId: "OptionsChange",
@@ -843,25 +839,31 @@ const clearAllMessages = () => {
 
 function log2Server (category, itemUrl, itemData, message) {
 
-  const logTime = new Date().toISOString();
+  const userOpts = configuration.coinform.options;
 
-  const logData = {
-    log_time: logTime,
-    log_category: category,
-    related_item_url: itemUrl,
-    related_item_data: itemData,
-    log_action: message
-  };
+  if (coinformUserToken && userOpts && (userOpts.participation == "true")) {
 
-  browserAPI.runtime.sendMessage({
-    messageId: "SendLog2Server",
-    logData: logData, 
-    userToken: coinformUserToken
-  }, function(res) {
-    if (!res) {
-      logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
-    }
-  });
+    const logTime = new Date().toISOString();
+
+    const logData = {
+      log_time: logTime,
+      log_category: category,
+      related_item_url: itemUrl,
+      related_item_data: itemData,
+      log_action: message
+    };
+
+    browserAPI.runtime.sendMessage({
+      messageId: "SendLog2Server",
+      logData: logData, 
+      userToken: coinformUserToken
+    }, function(res) {
+      if (!res) {
+        logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
+      }
+    });
+
+  }
   
 }
 

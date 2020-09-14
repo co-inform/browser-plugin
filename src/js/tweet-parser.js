@@ -59,6 +59,10 @@ const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetB
 
 const retweetTweetButtonSelector = "[role='group'] [data-testid='retweet']";
 
+const likeTweetButtonSelector = "[role='group'] [data-testid='like']";
+
+const unlikeTweetButtonSelector = "[role='group'] [data-testid='unlike']";
+
 // selector for user presentation menu item
 const userPresentationSelector = "header[role='banner'] a[role='link'] div[role='presentation']";
 
@@ -128,6 +132,26 @@ TweetParser.prototype = {
       let target = event.target.closest(retweetTweetButtonSelector);
       if (target) {
         retweetTweetCallback(event, target);
+      }
+    }, true); // important to set it true so the event propagation is capturing and not bubbling
+
+  },
+  listenLikeTweet: (likeTweetCallback) => {
+
+    document.addEventListener('click', function (event) {
+      let target = event.target.closest(likeTweetButtonSelector);
+      if (target) {
+        likeTweetCallback(event, target);
+      }
+    }, true); // important to set it true so the event propagation is capturing and not bubbling
+
+  },
+  listenUnlikeTweet: (unlikeTweetCallback) => {
+
+    document.addEventListener('click', function (event) {
+      let target = event.target.closest(unlikeTweetButtonSelector);
+      if (target) {
+        unlikeTweetCallback(event, target);
       }
     }, true); // important to set it true so the event propagation is capturing and not bubbling
 

@@ -167,7 +167,9 @@ const listenerRuntime = function(request, sender, sendResponse) {
 
 const sendLog2Server = function(request, scriptId, logCallback) {
 
-  if (coinformUserToken) {
+  const userOpts = configuration.coinform.options;
+
+  if (coinformUserToken && userOpts && (userOpts.participation == "true")) {
 
     let logData = request.logData;
 

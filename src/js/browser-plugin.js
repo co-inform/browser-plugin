@@ -113,6 +113,8 @@ const start = () => {
     parser.listenForMainChanges(newTweetCallback);
     parser.listenPublishTweet(publishTweetCallback);
     parser.listenRetweetTweet(retweetTweetCallback);
+    parser.listenLikeTweet(likeTweetCallback);
+    parser.listenUnikeTweet(unlikeTweetCallback);
     parser.triggerFirstTweetBatch(newTweetCallback);
   }
   else if (window.location.hostname.indexOf('facebook.com') >= 0) {
@@ -425,6 +427,46 @@ const retweetTweetAlertMisinfo = (tweet, label) => {
     }
   });
   
+};
+
+const likeTweetCallback = (clickEvent, targetButton) => {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Like button clicked!!`);
+
+  // get tweet
+  let tweet = targetButton.closest("article");
+
+  if (tweet.coInformLabel) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Label: ${tweet.coInformLabel}`);
+    let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
+    if (!labelCategory) {
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
+    }
+    else if (labelCategory.localeCompare("blur") === 0) {
+      logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Misinfo Label: ${tweet.coInformLabel}`);
+    }
+  }
+
+};
+
+const unlikeTweetCallback = (clickEvent, targetButton) => {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Unlike button clicked!!`);
+
+  // get tweet
+  let tweet = targetButton.closest("article");
+
+  if (tweet.coInformLabel) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Label: ${tweet.coInformLabel}`);
+    let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
+    if (!labelCategory) {
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
+    }
+    else if (labelCategory.localeCompare("blur") === 0) {
+      logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Misinfo Label: ${tweet.coInformLabel}`);
+    }
+  }
+
 };
 
 const newTweetCallback = (tweetInfo) => {
@@ -1593,25 +1635,31 @@ function openNotLoggedClaimPopup(tweet) {
 
 function log2Server (category, itemUrl, itemData, message) {
 
-  const logTime = new Date().toISOString();
+  const userOpts = configuration.coinform.options;
 
-  const logData = {
-    log_time: logTime,
-    log_category: category,
-    related_item_url: itemUrl,
-    related_item_data: itemData,
-    log_action: message
-  };
+  if (coinformUserToken && userOpts && (userOpts.participation == "true")) {
 
-  browserAPI.runtime.sendMessage({
-    messageId: "SendLog2Server",
-    logData: logData, 
-    userToken: coinformUserToken
-  }, function(res) {
-    if (!res) {
-      logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
-    }
-  });
+    const logTime = new Date().toISOString();
+
+    const logData = {
+      log_time: logTime,
+      log_category: category,
+      related_item_url: itemUrl,
+      related_item_data: itemData,
+      log_action: message
+    };
+
+    browserAPI.runtime.sendMessage({
+      messageId: "SendLog2Server",
+      logData: logData, 
+      userToken: coinformUserToken
+    }, function(res) {
+      if (!res) {
+        logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
+      }
+    });
+
+  }
   
 }
 
