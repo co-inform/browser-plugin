@@ -443,7 +443,7 @@ const likeTweetCallback = (clickEvent, targetButton) => {
     let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
     if (!labelCategory) {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${tweet.coInformLabel}`);
-    }
+    } 
     else if (labelCategory.localeCompare("blur") === 0) {
       logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Misinfo Label: ${tweet.coInformLabel}`);
     }
@@ -508,7 +508,7 @@ const newTweetCallback = (tweetInfo) => {
   }
 
   // If the tweet has already been tagged then we directly classify it
-  if (pluginCache[tweetInfo.id].status) {
+  if (pluginCache[tweetInfo.id].status) { 
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
     pluginCache[tweetInfo.id].lastTime = Math.round(Date.now() / 1000);
     tweetInfo.domObject.queryStatus = pluginCache[tweetInfo.id].status;
@@ -1496,7 +1496,8 @@ function openClaimPopup(tweet) {
         logMessage = logMessage + " with request to Fact-Check"
       }
       logMessage = logMessage + `\nAccuracy: ${claimAccuracyLabel}\nPopup time spent: ${auxPopupSpentTime} sec`;
-      log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, logMessage);
+      log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}\nUser claim: 
+      ${claimUrl}\nAdditional info${claimComment}\nFact checked ${claimCheck}`, logMessage);
 
       browserAPI.runtime.sendMessage({
         messageId: "EvaluateTweet",
