@@ -52,7 +52,7 @@ browserAPI.runtime.sendMessage({
   }
 });
 
-// Set listener for background scrpit messages
+// Set listener for background script messages
 browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.message === 'tabUrlChanged') {
     logger.logMessage(CoInformLogger.logTypes.debug, `Url changed: ${request.url}`);
@@ -1495,8 +1495,8 @@ function openClaimPopup(tweet) {
       if (claimCheck == "true") {
         logMessage = logMessage + " with request to Fact-Check"
       }
-      logMessage = logMessage + `\nAccuracy: ${claimAccuracyLabel}\nUser claim: ${claimUrl}\nPopup time spent: ${auxPopupSpentTime} sec`;
-      log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}\nAdditional info${claimComment}`, logMessage);
+      logMessage = logMessage + `\nAccuracy: ${claimAccuracyLabel}\nUser claim: ${claimUrl}\nAdditional info${claimComment}\nPopup time spent: ${auxPopupSpentTime} sec`;
+      log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, logMessage);
 
       browserAPI.runtime.sendMessage({
         messageId: "EvaluateTweet",
