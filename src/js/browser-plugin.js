@@ -1495,9 +1495,8 @@ function openClaimPopup(tweet) {
       if (claimCheck == "true") {
         logMessage = logMessage + " with request to Fact-Check"
       }
-      logMessage = logMessage + `\nAccuracy: ${claimAccuracyLabel}\nPopup time spent: ${auxPopupSpentTime} sec`;
-      log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}\nUser claim: 
-      ${claimUrl}\nAdditional info${claimComment}\nFact checked ${claimCheck}`, logMessage);
+      logMessage = logMessage + `\nAccuracy: ${claimAccuracyLabel}\nUser claim: ${claimUrl}\nPopup time spent: ${auxPopupSpentTime} sec`;
+      log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}\nAdditional info${claimComment}`, logMessage);
 
       browserAPI.runtime.sendMessage({
         messageId: "EvaluateTweet",
