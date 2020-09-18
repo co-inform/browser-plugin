@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Co-Inform",
     "version": "4.0.0",
-    "version_name": "4.0.0 RV",
+    "version_name": "4.0.0 RV Beta",
     "default_locale": "en",
     "description": "Context matters. Your sources too.",
     "content_security_policy": "default-src 'self'; connect-src *;",
