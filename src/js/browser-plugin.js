@@ -37,6 +37,7 @@ let parser;
 
 let coinformUserToken = null;
 let coinformUserMail = null;
+let coinformUserID = null;
 
 // Read the configuration file and if it was successful, start
 browserAPI.runtime.sendMessage({
@@ -473,7 +474,9 @@ const newTweetCallback = (tweetInfo) => {
     messageId: "CheckTweetInfo",
     id: tweetInfo.id,
     username: tweetInfo.username,
-    text: tweetInfo.text
+    text: tweetInfo.text,
+    coinformUserID: coinformUserID,
+    userToken: coinformUserToken
   }, function (res) {
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
     
@@ -760,6 +763,11 @@ const parseApiResponse = (data, tweetInfo) => {
     }
     credibilityModules = parseModulesValues(data.response.rule_engine.module_labels, data.response.rule_engine.module_values, moduleExplanations);
     classifyTweet(tweetInfo, credibilityLabel, credibilityModules);
+    let feedbackObject = null;
+    if (data.response["(dis)agreement_feedback"] && data.response["(dis)agreement_feedback"][credibilityLabel]) {
+      feedbackObject = data.response["(dis)agreement_feedback"][credibilityLabel];
+      setLabelEvaluation(tweetInfo, feedbackObject);
+    }
   }
 
   // Save/replace tweet analyzed status
@@ -1276,6 +1284,23 @@ function sendLabelEvaluation(targetButton, tweetInfo, agreement) {
 
 }
 
+function setLabelEvaluation(tweetInfo, feedbackObject) {
+  let positiveFeedback = tweetInfo.domObject.querySelector(`#coinformToolbarFeedbackPositive-${tweetInfo.id}`);
+  let negativeFeedback = tweetInfo.domObject.querySelector(`#coinformToolbarFeedbackNegative-${tweetInfo.id}`);
+  updateLabelEvaluationAgg(positiveFeedback, tweetInfo, "agree", "update", feedbackObject['total_agree']);
+  updateLabelEvaluationAgg(negativeFeedback, tweetInfo, "disagree", "update", feedbackObject['total_disagree']);
+  if (feedbackObject['user_feedback']) {
+    if (feedbackObject['user_feedback'] == 'agree') {
+      positiveFeedback.classList.add("coinformToolbarFeedbackAfterClick");
+      pluginCache[tweetInfo.id].feedback.userFeedback = feedbackObject['user_feedback'];
+    }
+    else if (feedbackObject['user_feedback'] == 'disagree') {
+      negativeFeedback.classList.add("coinformToolbarFeedbackAfterClick");
+      pluginCache[tweetInfo.id].feedback.userFeedback = feedbackObject['user_feedback'];
+    }
+  }
+}
+
 function updateLabelEvaluation(targetButton, tweetInfo, agreement) {
   if (pluginCache[tweetInfo.id].feedback.userFeedback != undefined) {
     let auxPrevious = tweetInfo.domObject.querySelector(".coinformToolbarFeedbackAfterClick");
@@ -1297,7 +1322,16 @@ function updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, operation,
   else if (operation == 'remove') totalNum = totalNum - num;
   else if (operation == 'update') totalNum = num;
   if (totalNum >= 1) {
-    targetButton.querySelector(".coinformFeedbackAgg").innerHTML = totalNum;
+    let numTxt = totalNum;
+    if (totalNum > 999999) {
+      let auxNumTxt = parseFloat(totalNum / 1000000).toFixed(1);
+      numTxt = `${auxNumTxt}M`
+    }
+    else if (totalNum > 999) {
+      let auxNumTxt = parseFloat(totalNum / 1000).toFixed(1);
+      numTxt = `${auxNumTxt}K`
+    }
+    targetButton.querySelector(".coinformFeedbackAgg").innerHTML = numTxt;
   }
   else {
     targetButton.querySelector(".coinformFeedbackAgg").innerHTML = '';
