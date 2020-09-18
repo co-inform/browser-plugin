@@ -33,6 +33,8 @@ body {
   left: 80px;
   z-index: 1;
   font-size: 0.8em;
+  font-weight: 600;
+  color: darkgrey;
 }
 
 #popup-title {
@@ -162,7 +164,7 @@ body {
   float: left;
 }
 
-.form-control-group input {
+.form-control-group input[type="email"], .form-control-group input[type="password"] {
   float: left;
   width: 90%;
   outline: 0;
@@ -236,6 +238,10 @@ body {
   float: right;
 }
 
+.form-control .consent-text {
+  font-size: 0.8em;
+}
+
 .form-control:not(:last-child) {
   margin-bottom: .5em;
 }
@@ -262,7 +268,7 @@ body {
   line-height: 2em;
   padding: 0;
   padding-left: 1em;
-  padding-right: 1.6em;
+  padding-right: 2em;
   margin: 0;
   border-radius: 2em;
   border: none;
@@ -306,7 +312,7 @@ body {
   font-style: normal;
   font-weight: 900;
   font-display: auto;
-  margin-left: 1em;
+  margin-left: 0.6em;
 }
 
 #login-button::after {
@@ -323,6 +329,18 @@ body {
 
 #logout-button::after {
   content: "\f2f5";
+}
+
+#register-next1-button::after, #register-next2-button::after {
+  content: "\f061";
+}
+
+#register-step2-agree-button::after, #register-step3-agree-button::after {
+  content: "\f00c";
+}
+
+#register-step2-disagree-button::after, #register-step3-disagree-button::after {
+  content: "\f00d";
 }
 
 .coinform-button:hover::after {
@@ -386,7 +404,12 @@ body {
   margin: auto;
   display: block;
   box-shadow: 2px 3px 5px #888888;
-  width: 40%;
+  width: auto;
+}
+
+.inline-buttons .coinform-button {
+  display: inline-block;
+  margin-right: 10px;
 }
 
 .popup-link-text {
@@ -396,6 +419,10 @@ body {
 }
 .popup-link-text:hover {
   text-decoration: none;
+}
+
+.consent-text summary:focus{
+  outline: none;
 }
 
 .hidden {

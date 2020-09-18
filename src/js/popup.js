@@ -49,10 +49,21 @@ window.addEventListener("load", function(){
   document.getElementById('account-auth-newpass2').placeholder = browserAPI.i18n.getMessage("retype_new_password");
   document.getElementById('account-change-pass-info').innerHTML = browserAPI.i18n.getMessage("change_password_info");
   document.getElementById('account-info-title').innerHTML = browserAPI.i18n.getMessage("account_information");
+  document.getElementById('logged-text').querySelector('span').innerHTML = browserAPI.i18n.getMessage("already_logged");
   document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("options_title");
   document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
   document.getElementById('options-test-mode-label').innerHTML = browserAPI.i18n.getMessage("options_test_mode");
+
+  document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
+  document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+  document.getElementById('register-step2-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
+  document.getElementById('register-step2-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+
+  document.getElementById('register-followup-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
+  document.getElementById('register-followup-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
+  document.getElementById('register-step3-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
+  document.getElementById('register-step3-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
 
   // Set the header logo image
   let img = document.createElement("IMG");
@@ -89,6 +100,42 @@ window.addEventListener("load", function(){
   logoutButton.innerHTML = browserAPI.i18n.getMessage("log_out");
   logoutButton.addEventListener('click', (event) => {
     logoutAction(logoutButton);
+  });
+  
+  let registerNext1Button = document.getElementById('register-next1-button');
+  registerNext1Button.innerHTML = browserAPI.i18n.getMessage("next");
+  registerNext1Button.addEventListener('click', (event) => {
+    registerNextAction(registerNext1Button, 1);
+  });
+  
+  let registerNext2Button = document.getElementById('register-next2-button');
+  registerNext2Button.innerHTML = browserAPI.i18n.getMessage("next");
+  registerNext2Button.addEventListener('click', (event) => {
+    registerNextAction(registerNext2Button, 2);
+  });
+  
+  let registerStep2AgreeButton = document.getElementById('register-step2-agree-button');
+  registerStep2AgreeButton.innerHTML = browserAPI.i18n.getMessage("i_agree");
+  registerStep2AgreeButton.addEventListener('click', (event) => {
+    registerStep2Action(registerStep2AgreeButton, "agree");
+  });
+  
+  let registerStep2DisagreeButton = document.getElementById('register-step2-disagree-button');
+  registerStep2DisagreeButton.innerHTML = browserAPI.i18n.getMessage("i_disagree");
+  registerStep2DisagreeButton.addEventListener('click', (event) => {
+    registerStep2Action(registerStep2AgreeButton, "disagree");
+  });
+  
+  let registerStep3AgreeButton = document.getElementById('register-step3-agree-button');
+  registerStep3AgreeButton.innerHTML = browserAPI.i18n.getMessage("i_agree");
+  registerStep3AgreeButton.addEventListener('click', (event) => {
+    registerStep3Action(registerStep3AgreeButton, "agree");
+  });
+  
+  let registerStep3DisagreeButton = document.getElementById('register-step3-disagree-button');
+  registerStep3DisagreeButton.innerHTML = browserAPI.i18n.getMessage("i_disagree");
+  registerStep3DisagreeButton.addEventListener('click', (event) => {
+    registerStep3Action(registerStep3DisagreeButton, "disagree");
   });
   
   let registerButton = document.getElementById('register-button');
@@ -231,11 +278,46 @@ const displayLogout = () => {
   document.getElementById('registered-div').classList.remove("hidden");
 };
 
-const displayRegister = () => {
+const displayRegister = (step = 0) => {
   resetAllDisplays();
   document.getElementById('menu-notlogged').classList.remove("hidden");
   document.getElementById('menu-register').classList.add("actual");
   document.getElementById('register-form').classList.remove("hidden");
+  if (step == 1) {
+    document.getElementById('register-participation-input').classList.remove("hidden");
+    document.getElementById('register-followup-input').classList.add("hidden");
+    document.getElementById('register-next1-button').classList.add("hidden");
+    document.getElementById('register-next2-button').classList.remove("hidden");
+    document.getElementById('register-button').classList.add("hidden");
+  }
+  else if (step == 2) {
+    document.getElementById('register-participation-input').classList.remove("hidden");
+    document.getElementById('register-followup-input').classList.remove("hidden");
+    document.getElementById('register-next1-button').classList.add("hidden");
+    document.getElementById('register-next2-button').classList.add("hidden");
+    document.getElementById('register-button').classList.remove("hidden");
+  }
+  else {
+    document.getElementById('register-participation-input').classList.add("hidden");
+    document.getElementById('register-followup-input').classList.add("hidden");
+    document.getElementById('register-next1-button').classList.remove("hidden");
+    document.getElementById('register-next2-button').classList.add("hidden");
+    document.getElementById('register-button').classList.add("hidden");
+  }
+};
+
+const displayRegisterStep2 = () => {
+  resetAllDisplays();
+  document.getElementById('menu-notlogged').classList.remove("hidden");
+  document.getElementById('menu-register').classList.add("actual");
+  document.getElementById('register-form-step2').classList.remove("hidden");
+};
+
+const displayRegisterStep3 = () => {
+  resetAllDisplays();
+  document.getElementById('menu-notlogged').classList.remove("hidden");
+  document.getElementById('menu-register').classList.add("actual");
+  document.getElementById('register-form-step3').classList.remove("hidden");
 };
 
 const displayOptions = () => {
@@ -291,6 +373,14 @@ const refreshDisplayedOptions = (options) => {
     let valCheckbox = (options.testMode.localeCompare("true") === 0);
     document.querySelector('input[name="options-test-mode"]').checked = valCheckbox;
   }
+  if (options.participation !== undefined) {
+    let valCheckbox = (options.participation.localeCompare("true") === 0);
+    document.querySelector('input[name="options-research-participation"]').checked = valCheckbox;
+  }
+  if (options.followup !== undefined) {
+    let valCheckbox = (options.followup.localeCompare("true") === 0);
+    document.querySelector('input[name="options-followup-communications"]').checked = valCheckbox;
+  }
 };
 
 
@@ -338,6 +428,7 @@ const loginAction = (targetButton) => {
             displayLogout();
             targetButton.disabled = false;
           }, 1000);
+          log2Server('login', null, null, `Co-Inform User Logged In`);
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, "Login token error");
@@ -357,8 +448,8 @@ const loginAction = (targetButton) => {
   
 };
 
-// Parse Register form, and comunicate with API
-const registerAction = (targetButton) => {
+// Parse Register form
+const registerNextAction = (targetButton, step) => {
   
   if (targetButton.disabled) {
     return false;
@@ -374,14 +465,92 @@ const registerAction = (targetButton) => {
   else if (!userPass || !userPass2 || (userPass !== userPass2) || !validatePass(userPass)) {
     showMessage("err", "password_not_valid_info", 4000);
   }
+  else if (step == 1) {
+    displayRegisterStep2();
+  }
+  else if (step == 2) {
+    displayRegisterStep3();
+  }
+
+};
+
+// Parse Register form
+const registerStep2Action = (targetButton, agreement) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  if (agreement == "agree") {
+    document.querySelector('input[name="register-participation"][id="yes"]').checked = true;
+  }
+  else if (agreement == "disagree") {
+    document.querySelector('input[name="register-participation"][id="no"]').checked = true;
+  }
+  document.getElementById('register-participation-input').classList.remove("hidden");
+
+  displayRegister(1);
+
+};
+
+// Parse Register form
+const registerStep3Action = (targetButton, agreement) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  if (agreement == "agree") {
+    document.querySelector('input[name="register-followup"][id="yes"]').checked = true;
+  }
+  else if (agreement == "disagree") {
+    document.querySelector('input[name="register-followup"][id="no"]').checked = true;
+  }
+  document.getElementById('register-followup-input').classList.remove("hidden");
+
+  displayRegister(2);
+
+};
+
+// Parse Register form, and comunicate with API
+const registerAction = (targetButton) => {
+  
+  if (targetButton.disabled) {
+    return false;
+  }
+
+  const userMail = document.querySelector('input[name="register-usermail"]').value || null;
+  const userPass = document.querySelector('input[name="register-userpass"]').value || null;
+  const userPass2 = document.querySelector('input[name="register-userpass2"]').value || null;
+  const userParticipation = document.querySelector('input[name="register-participation"]:checked').value || null;
+  const userFollowup = document.querySelector('input[name="register-followup"]:checked').value || null;
+
+  if (!userMail || !validateEmail(userMail)) {
+    showMessage("err", "mail_not_valid", 2000);
+  }
+  else if (!userPass || !userPass2 || (userPass !== userPass2) || !validatePass(userPass)) {
+    showMessage("err", "password_not_valid_info", 4000);
+  }
+  else if (!userParticipation) {
+    showMessage("err", "read_and_answer_participation", 4000);
+  }
+  else if (!userFollowup) {
+    showMessage("err", "read_and_answer_followup", 4000);
+  }
   else {
     
     targetButton.disabled = true;
+
+    let userOptions = {
+      research: userParticipation,
+      communication: userFollowup
+    };
     
     browserAPI.runtime.sendMessage({
       messageId: "Register",
       userMail: userMail,
-      userPass: userPass
+      userPass: userPass,
+      userOptions: userOptions
     }, function(res) {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
@@ -398,6 +567,7 @@ const registerAction = (targetButton) => {
           displayLogin();
           targetButton.disabled = false;
         }, 1000);
+        log2Server('register', null, null, `Co-Inform User Registered`);
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, `Register unknown (${resStatus}) response`);
@@ -424,6 +594,8 @@ const logoutAction = (targetButton) => {
   else {
     
     targetButton.disabled = true;
+
+    log2Server('login', null, null, `Co-Inform User Logging Out`);
     
     browserAPI.runtime.sendMessage({
       messageId: "LogOut",
@@ -469,18 +641,23 @@ const optionsSaveAction = (targetButton) => {
     
   targetButton.disabled = true;
 
-  //TODO: here we can implement options save action
   let optionsObj = {
     testMode: "false"
   };
+
   let auxInput = document.querySelector('input[name="options-test-mode"]:checked');
-  if (auxInput) {
-    optionsObj.testMode = auxInput.value || "false";
-  }
+  optionsObj.testMode = (auxInput && auxInput.value) ? auxInput.value : "false";
+
+  auxInput = document.querySelector('input[name="options-research-participation"]:checked');
+  optionsObj.participation = (auxInput && auxInput.value) ? auxInput.value : "false";
+
+  auxInput = document.querySelector('input[name="options-followup-communications"]:checked');
+  optionsObj.followup = (auxInput && auxInput.value) ? auxInput.value : "false";
 
   browserAPI.runtime.sendMessage({
     messageId: "OptionsChange",
-    options: optionsObj
+    options: optionsObj,
+    userToken: coinformUserToken
   }, function (res) {
 
     logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
@@ -526,7 +703,7 @@ const changePasswordAction = (targetButton) => {
         messageId: "ChangePass",
         userPass: userPass,
         userNewPass: userNewPass,
-        coinformUserToken: coinformUserToken
+        userToken: coinformUserToken
       }, function (res) {
 
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
@@ -659,6 +836,36 @@ const clearAllMessages = () => {
     msgDiv.removeChild(msgDiv.firstChild);
   }
 };
+
+function log2Server (category, itemUrl, itemData, message) {
+
+  const userOpts = configuration.coinform.options;
+
+  if (coinformUserToken && userOpts && (userOpts.participation == "true")) {
+
+    const logTime = new Date().toISOString();
+
+    const logData = {
+      log_time: logTime,
+      log_category: category,
+      related_item_url: itemUrl,
+      related_item_data: itemData,
+      log_action: message
+    };
+
+    browserAPI.runtime.sendMessage({
+      messageId: "SendLog2Server",
+      logData: logData, 
+      userToken: coinformUserToken
+    }, function(res) {
+      if (!res) {
+        logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
+      }
+    });
+
+  }
+  
+}
 
 function validateEmail(email) {
   let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

@@ -53,9 +53,13 @@ browserAPI.runtime.sendMessage({
   }
 });
 
-// Set listener for background scrpit messages
+// Set listener for background script messages
 browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.messageId === "userLogin") {
+  if (request.message === 'tabUrlChanged') {
+    logger.logMessage(CoInformLogger.logTypes.debug, `Url changed: ${request.url}`);
+    log2Server('page', request.url, null, `Page Url Changed`);
+  }
+  else if (request.messageId === "userLogin") {
     logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${request.userMail}`);
     coinformUserToken = request.token;
     coinformUserMail = request.userMail;
@@ -110,6 +114,8 @@ const start = () => {
     parser.listenForMainChanges(newTweetCallback);
     parser.listenPublishTweet(publishTweetCallback);
     parser.listenRetweetTweet(retweetTweetCallback);
+    parser.listenLikeTweet(likeTweetCallback);
+    parser.listenUnlikeTweet(unlikeTweetCallback);
     parser.triggerFirstTweetBatch(newTweetCallback);
   }
   else if (window.location.hostname.indexOf('facebook.com') >= 0) {
@@ -121,45 +127,6 @@ const start = () => {
 };
 
 const publishTweetCallback = (clickEvent, targetButton) => {
-
-  // click situation when we already procesed the tweet and the await time has finished
-  if (targetButton.coInformed) {
-    if (targetButton.foundMisinfo) {
-      // TODO: if the content is missinfo, put a timer of 5 or 10 seconds before publishing it, and then set the CoInformed property tu false and raise the click event again
-      targetButton.setAttribute("disabled", "");
-      targetButton.setAttribute("aria-disabled", "true");
-      let msg = document.getElementById("coinformPublishMessages");
-      let txtContent = document.createElement("SPAN");
-      txtContent.classList.add("blink_me");
-      let txt = document.createTextNode(browserAPI.i18n.getMessage("published_in_seconds", `${TIME_PUBLISH_AWAIT}`));
-      txtContent.append(txt);
-      msg.append(document.createTextNode(". "));
-      msg.append(txtContent);
-      setTimeout(function() {
-        publishTweetCountdown(targetButton, (TIME_PUBLISH_AWAIT - 1));
-      }, 1000);
-    }
-    else {
-      targetButton.coInformed = false;
-      logger.logMessage(CoInformLogger.logTypes.debug, `Publish button procesed!!`);
-      return true;
-    }
-  }
-
-  // prevent the submiting of the tweet
-  clickEvent.stopImmediatePropagation();
-  clickEvent.preventDefault();
-  clickEvent.stopPropagation();
-
-  // if disabled we are still waiting, so just finish it, with the click event propagation stopped
-  if (targetButton.hasAttribute("disabled")) {
-    return true;
-  }
-
-  logger.logMessage(CoInformLogger.logTypes.debug, `Publish button clicked!!`);
-  
-  targetButton.setAttribute("disabled", "");
-  targetButton.setAttribute("aria-disabled", "true");
 
   // get text
   let tweetText = null;
@@ -176,6 +143,47 @@ const publishTweetCallback = (clickEvent, targetButton) => {
   if (tweetText) {
     urls = tweetText.match(/((ftp|https?):\/\/([^\s]+)([^.,;:\s]))/g);
   }
+
+  // click situation when we already procesed the tweet and the await time has finished
+  if (targetButton.coInformed) {
+    if (targetButton.foundMisinfo) {
+
+      // TODO: if the content is missinfo, put a timer of 5 or 10 seconds before publishing it, and then set the CoInformed property tu false and raise the click event again
+      targetButton.setAttribute("disabled", "");
+      targetButton.setAttribute("aria-disabled", "true");
+      let msg = document.getElementById("coinformPublishMessages");
+      let txtContent = document.createElement("SPAN");
+      txtContent.classList.add("blink_me");
+      let txt = document.createTextNode(browserAPI.i18n.getMessage("published_in_seconds", `${TIME_PUBLISH_AWAIT}`));
+      txtContent.append(txt);
+      msg.append(document.createTextNode(". "));
+      msg.append(txtContent);
+      setTimeout(function() {
+        log2Server('publish tweet', urls.join(), `Tweet content: ${tweetText}`, `publish tweet anyway`);
+        publishTweetCountdown(targetButton, (TIME_PUBLISH_AWAIT - 1), urls.join(), tweetText);
+      }, 1000);
+    }
+    else {
+      targetButton.coInformed = false;
+      logger.logMessage(CoInformLogger.logTypes.debug, `Publish button processed!!`);
+      return true;
+    }
+  }
+
+  // prevent the submiting of the tweet
+  clickEvent.stopImmediatePropagation();
+  clickEvent.preventDefault();
+  clickEvent.stopPropagation();
+
+  // if disabled we are still waiting, so just finish it, with the click event propagation stopped
+  if (targetButton.hasAttribute("disabled")) {
+    return true;
+  }
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Publish button clicked!!`);
+
+  targetButton.setAttribute("disabled", "");
+  targetButton.setAttribute("aria-disabled", "true");
 
   if (urls) {
 
@@ -222,7 +230,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         // Hack to force a misinformation url detection, and a missinformation user tweets detection
         // Active only in test use mode
         if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(misInfoUrlRegExpTest)) {
-          targetButton.foundMisinfo = targetButton.foundMisinfo || publishTweetCheckLabel("not_credible", urls[i]);
+          targetButton.foundMisinfo = targetButton.foundMisinfo || publishTweetCheckLabel("not_credible", urls[i], tweetText);
         }
 
         else if ((resStatus.localeCompare('400') === 0)) {
@@ -231,7 +239,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         else if (resStatus.localeCompare('200') === 0) {
           let data = res.data;
           let accuracyLabel = JSON.stringify(data.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
-          targetButton.foundMisinfo = targetButton.foundMisinfo || publishTweetCheckLabel(accuracyLabel, urls[i]);
+          targetButton.foundMisinfo = targetButton.foundMisinfo || publishTweetCheckLabel(accuracyLabel, urls[i], tweetText);
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response`);
@@ -252,6 +260,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 };
 
 const publishTweetPostAction = (targetButton) => {
+
   // Undo changes to the publish button
   /*let load = targetButton.querySelector('.spinner-border');
   if (load) load.parentNode.removeChild(load);
@@ -282,7 +291,7 @@ const publishTweetPostAction = (targetButton) => {
   }
 };
 
-const publishTweetCheckLabel = (label, url) => {
+const publishTweetCheckLabel = (label, url, tweetText) => {
   let misInfo = false;
   if (label) {
     let labelCategory = configuration.coinform.categories[label];
@@ -290,25 +299,27 @@ const publishTweetCheckLabel = (label, url) => {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
     }
     else if (labelCategory.localeCompare("blur") === 0) {
-      publishTweetAlertMisinfo(label, url);
+      publishTweetAlertMisinfo(label, url, tweetText);
       misInfo = true;
     }
   }
   return misInfo;
 };
 
-const publishTweetAlertMisinfo = (label, url) => {
+const publishTweetAlertMisinfo = (label, url, tweetText) => {
 
   let auxlabel = browserAPI.i18n.getMessage(label);
   if (!auxlabel) auxlabel = label;
   let popupTitle = browserAPI.i18n.getMessage('content_tagged_as', auxlabel);
   let popupButtonText = browserAPI.i18n.getMessage('ok');
   
+  log2Server('publish tweet', url, `Tweet content: ${tweetText}`, `detected ${label} tweet before publish`); 
   return Swal2.fire({
     type: 'info',
     title: popupTitle,
     showCloseButton: true,
     showCancelButton: false,
+    showConfirmButton: true,
     confirmButtonColor: buttonColor,
     confirmButtonText: popupButtonText,
     html:
@@ -320,18 +331,25 @@ const publishTweetAlertMisinfo = (label, url) => {
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
     focusConfirm: true,
   }).then(function (result) {
-    if(result.value === true){
+
+    if (result.value) {
+      log2Server('publish tweet', url, `Tweet content: ${tweetText}`, 'click on "ok" on misinformation popup'); 
+
+    } else if (result.dismiss) {
+      log2Server('publish tweet', url, `Tweet content: ${tweetText}`, 'click on "close" on misinformation popup');
+
     }
+
   });
   
 };
 
-const publishTweetCountdown = (targetButton, iteration) => {
+const publishTweetCountdown = (targetButton, iteration, url, tweetText) => {
   let msg = document.getElementById("coinformPublishMessages");
   if (iteration > 0) {
     msg.querySelector("span").innerText = browserAPI.i18n.getMessage("published_in_seconds", `${iteration}`);
     setTimeout(function() {
-      publishTweetCountdown(targetButton, (iteration - 1));
+      publishTweetCountdown(targetButton, (iteration - 1), url, tweetText);
     }, 1000);
   }
   else {
@@ -340,6 +358,8 @@ const publishTweetCountdown = (targetButton, iteration) => {
     targetButton.removeAttribute("aria-disabled");
     if (msg) msg.parentNode.removeChild(msg);
     targetButton.click();
+    // Countdown finished
+    log2Server('publish tweet', url, `Tweet content: ${tweetText}`, 'tweet published after the await countdown has finished');
   }
 };
 
@@ -371,7 +391,7 @@ const retweetTweetCallback = (clickEvent, targetButton) => {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
     }
     else if (labelCategory.localeCompare("blur") === 0) {
-      retweetTweetAlertMisinfo(tweet.coInformLabel);
+      retweetTweetAlertMisinfo(tweet, tweet.coInformLabel);
     }
   }
   else {
@@ -380,13 +400,15 @@ const retweetTweetCallback = (clickEvent, targetButton) => {
 
 };
 
-const retweetTweetAlertMisinfo = (label) => {
+const retweetTweetAlertMisinfo = (tweet, label) => {
 
   let auxlabel = browserAPI.i18n.getMessage(label);
   if (!auxlabel) auxlabel = label;
   let popupTitle = browserAPI.i18n.getMessage('content_tagged_as', auxlabel);
   let popupButtonText = browserAPI.i18n.getMessage('ok');
   
+  // log2Server('publish tweet', tweet.url, `Tweet content: ${tweet.text}`, `detected ${tweet.coInformLabel} tweet before publish`);
+
   return Swal2.fire({
     type: 'info',
     title: popupTitle,
@@ -402,10 +424,54 @@ const retweetTweetAlertMisinfo = (label) => {
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
     focusConfirm: true,
   }).then(function (result) {
-    if(result.value === true){
+    if(result.value === true) {
     }
   });
   
+};
+
+const likeTweetCallback = (clickEvent, targetButton) => {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Like button clicked!!`);
+
+  // get tweet
+  let tweet = targetButton.closest("article");
+
+  log2Server('tweet', tweet.baseURI, `Tweet id: ${tweet.id}\nTweet label: ${tweet.coInformLabel}`, 'Click on like in tweet');    
+
+  if (tweet.coInformLabel) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Label: ${tweet.coInformLabel}`);
+    let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
+    if (!labelCategory) {
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${tweet.coInformLabel}`);
+    } 
+    else if (labelCategory.localeCompare("blur") === 0) {
+      logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Misinfo Label: ${tweet.coInformLabel}`);
+    }
+  }
+
+};
+
+const unlikeTweetCallback = (clickEvent, targetButton) => {
+
+  logger.logMessage(CoInformLogger.logTypes.debug, `Unlike button clicked!!`);
+
+  // get tweet
+  let tweet = targetButton.closest("article");
+
+  log2Server('tweet', tweet.baseURI, `Tweet id: ${tweet.id}\nTweet label: ${tweet.coInformLabel}`, 'Click on unlike in tweet');    
+
+  if (tweet.coInformLabel) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Label: ${tweet.coInformLabel}`);
+    let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
+    if (!labelCategory) {
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${tweet.coInformLabel}`);
+    }
+    else if (labelCategory.localeCompare("blur") === 0) {
+      logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Misinfo Label: ${tweet.coInformLabel}`);
+    }
+  }
+
 };
 
 const newTweetCallback = (tweetInfo) => {
@@ -444,7 +510,7 @@ const newTweetCallback = (tweetInfo) => {
   }
 
   // If the tweet has already been tagged then we directly classify it
-  if (pluginCache[tweetInfo.id].status) {
+  if (pluginCache[tweetInfo.id].status) { 
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
     pluginCache[tweetInfo.id].lastTime = Math.round(Date.now() / 1000);
     tweetInfo.domObject.queryStatus = pluginCache[tweetInfo.id].status;
@@ -547,7 +613,7 @@ const createToolbar = (tweetInfo) => {
   let td3 = tr.insertCell();
   td3.setAttribute("id", `coinformToolbarFeedback-${tweetInfo.id}`);
   
-  td3.appendChild(createLogoClaim(tweetInfo.id, function () {
+  td3.appendChild(createLogoClaim(tweetInfo, function () {
     claimClickAction(tweetInfo);
   }));
   td3.classList.add("coinformToolbarButton");
@@ -569,7 +635,7 @@ const createToolbar = (tweetInfo) => {
   let td4 = tr.insertCell();
   td4.setAttribute("id", `coinformToolbarFeedbackNegative-${tweetInfo.id}`);
 
-  td4.appendChild(createLogoNegativeFeedback(tweetInfo.id, function () {
+  td4.appendChild(createLogoNegativeFeedback(tweetInfo, function () {
     feedbackClickAction(td4, tweetInfo, "disagree");
   }));
 
@@ -595,7 +661,7 @@ const createToolbar = (tweetInfo) => {
   let td5 = tr.insertCell();
   td5.setAttribute("id", `coinformToolbarFeedbackPositive-${tweetInfo.id}`);
 
-  td5.appendChild(createLogoPositiveFeedback(tweetInfo.id, function () {
+  td5.appendChild(createLogoPositiveFeedback(tweetInfo, function () {
     feedbackClickAction(td5, tweetInfo, "agree");
   }));
 
@@ -621,10 +687,10 @@ const createToolbar = (tweetInfo) => {
   return tbl;
 };
 
-const createLogoClaim = (tweetId, callback) => {
+const createLogoClaim = (tweet, callback) => {
 
   let claim = document.createElement("IMG");
-  claim.setAttribute("id", `coinformToolbarClaim-${tweetId}`);
+  claim.setAttribute("id", `coinformToolbarClaim-${tweet.id}`);
   claim.classList.add("coinformClaimLogo");
   claim.setAttribute("src", claimURL);
 
@@ -639,11 +705,11 @@ const createLogoClaim = (tweetId, callback) => {
   return claim;
 };
 
-const createLogoPositiveFeedback = (tweetId, callback) => {
+const createLogoPositiveFeedback = (tweet, callback) => {
 
   let agree = document.createElement("IMG");
-  agree.setAttribute("id", `coinformPositiveLogo-${tweetId}`);
-  agree.classList.add("coinformFeedbackLogo");
+  agree.setAttribute("id", `coinformPositiveLogo-${tweet.id}`);
+  agree.classList.add("coinformPositiveLogo");
   agree.setAttribute("src", agreeURL);
 
   agree.addEventListener('click', (event) => {
@@ -657,11 +723,11 @@ const createLogoPositiveFeedback = (tweetId, callback) => {
   return agree;
 };
 
-const createLogoNegativeFeedback = (tweetId, callback) => {
+const createLogoNegativeFeedback = (tweet, callback) => {
 
   let disagree = document.createElement("IMG");
-  disagree.setAttribute("id", `coinformNegativeLogo-${tweetId}`);
-  disagree.classList.add("coinformFeedbackLogo");
+  disagree.setAttribute("id", `coinformNegativeLogo-${tweet.id}`);
+  disagree.classList.add("coinformNegativeLogo");
   disagree.setAttribute("src", disagreeURL);
 
   disagree.addEventListener('click', (event) => {
@@ -930,7 +996,7 @@ const createTweetBlurry = (tweet) => {
   let node = tweet.domObject;
   node.setAttribute(parser.untrustedAttribute, 'true');
 
-  let buttonContainer = createCannotSeeTweetButton(tweet.id, function() {
+  let buttonContainer = createCannotSeeTweetButton(tweet, function() {
     openLabelPopup(tweet);
   });
 
@@ -977,6 +1043,7 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   labelcat.append(txt);
 
   labelcat.addEventListener('click', (event) => {
+    log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${label}`, 'Click on label to open explainability popup');    
     event.preventDefault();
     event.stopPropagation();
     callback();
@@ -993,10 +1060,26 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   infoLogo.setAttribute("class", "coinformLabelInfoLogo");
   infoLogo.setAttribute("src", infoLogoURL);
   infoContent.append(infoLogo);
+  
+  let auxHoover = true;
+  let auxHoverTime = null;
 
   infoLogo.addEventListener("mouseenter", (event) => {
+    auxHoover = true;
+    auxHoverTime = Date.now();
+    log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${tweet.domObject.coInformLabel}`, 'Open explainability tooltip on hover');
     // do nothing, the tooltip is shown through CSS
-    let auxHoover = true;
+  });
+
+  infoLogo.addEventListener("mouseleave", (event) => {
+    auxHoover = false;
+    let auxHoverSpentTime = "?";
+    if (auxHoverTime) {
+      auxHoverSpentTime = Math.round((Date.now() - auxHoverTime) / 1000);
+    }
+    auxHoverTime = null;
+    log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${tweet.domObject.coInformLabel}`, `Close explainability tooltip on hover out\nTooltip time spent: ${auxHoverSpentTime} sec`);
+    // do nothing, the tooltip is shown through CSS
   });
   
   // create tooltip div with detailed modules info
@@ -1118,21 +1201,22 @@ const removeTweetLabel = (tweet) => {
 
 };
 
-const createCannotSeeTweetButton = (tweetId, callback) => {
+const createCannotSeeTweetButton = (tweet, callback) => {
 
   const div = document.createElement('DIV');
-  div.setAttribute('id', `feedback-button-container-${tweetId}`);
+  div.setAttribute('id', `feedback-button-container-${tweet.id}`);
   div.setAttribute('class', 'feedback-button-container');
 
   const button = document.createElement('BUTTON');
-  button.setAttribute('id', `whyButton-${tweetId}`);
+  button.setAttribute('id', `whyButton-${tweet.id}`);
   button.setAttribute('type', 'button');
   button.setAttribute('class', 'coinform-button coinform-button-primary whyButton');
   button.innerText = browserAPI.i18n.getMessage('why_cant_see');
 
   div.addEventListener('click', ignoreClick);
-
+  
   button.addEventListener('click', (event) => {
+    log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${tweet.domObject.coInformLabel}`, 'Click on "why cannot see" button to open explainability popup');
     event.preventDefault();
     event.stopPropagation();
     callback();
@@ -1151,7 +1235,7 @@ function openLabelPopup(tweet) {
   let node = tweet.domObject;
   let nodeBlurred = isBlurred(tweet);
   let nodeBlurrable = false;
-  let showConfirm = false;
+  let showCancel = false;
   let buttonText = "";
 
   let popupPreTitle = '';
@@ -1191,13 +1275,15 @@ function openLabelPopup(tweet) {
   }
 
   if (nodeBlurred) {
-    showConfirm = true;
+    showCancel = true;
     buttonText = browserAPI.i18n.getMessage('see_anyway', elementTxt);
   }
   else if (nodeBlurrable) {
-    showConfirm = true;
+    showCancel = true;
     buttonText = browserAPI.i18n.getMessage('blur_again', elementTxt);
   }
+
+  let auxPopupTime = Date.now();
 
   return Swal2.fire({
     type: (meterLogoSrc ? null : 'question'),
@@ -1206,13 +1292,13 @@ function openLabelPopup(tweet) {
     imageHeight: 100,
     title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
       '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
-    showConfirmButton: showConfirm,
+    showCancelButton: showCancel,
     showCloseButton: true,
-    showCancelButton: true,
+    showConfirmButton: true,
     cancelButtonColor: buttonColor,
     confirmButtonColor: buttonColor,
-    cancelButtonText: browserAPI.i18n.getMessage('ok'),
-    confirmButtonText: buttonText,
+    confirmButtonText: browserAPI.i18n.getMessage('ok'),
+    cancelButtonText: buttonText,
     reverseButtons: true,
     focusCancel: true,
     html:
@@ -1222,16 +1308,30 @@ function openLabelPopup(tweet) {
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
     focusConfirm: true
   }).then(function (result) {
-    if(result.value === true){
+
+    let auxPopupSpentTime = "?";
+    if (auxPopupTime) {
+      auxPopupSpentTime = Math.round((Date.now() - auxPopupTime) / 1000);
+    }
+    auxPopupTime = null;
+
+    if (result.value) {      
+      log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on explainability popup "ok" button\nPopup time spent: ${auxPopupSpentTime} sec`);
+    
+    } else if (result.dismiss == 'cancel') {
+
       if (nodeBlurred) {
         removeTweetBlurry(tweet);
+        log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on "See tweet post anyway" to unblur tweet\nPopup time spent: ${auxPopupSpentTime} sec`);
       }
       else if (nodeBlurrable) {
         createTweetBlurry(tweet);
+        log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on "blur tweet post again"\nPopup time spent: ${auxPopupSpentTime} sec`);
       }
-    }
-  });
-
+    } else if (result.dismiss) {
+      log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on explainability popup "close" button\nPopup time spent: ${auxPopupSpentTime} sec`);
+    } 
+  })
 }
 
 function feedbackClickAction(targetButton, tweet, agreement) {
@@ -1247,6 +1347,7 @@ function feedbackClickAction(targetButton, tweet, agreement) {
       openNotLoggedFeedbackPopup(tweet);
     }
     else {
+      log2Server('feedback', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${tweet.domObject.coInformLabel}`, `Click on ${agreement} feedback button`);
       sendLabelEvaluation(targetButton, tweet, agreement);
     }
 
@@ -1266,7 +1367,7 @@ function sendLabelEvaluation(targetButton, tweetInfo, agreement) {
     ratedCredibility: ratedCredibility,
     moduleResponse: moduleResponse,
     agreement: agreement,
-    coinformUserToken: coinformUserToken
+    userToken: coinformUserToken
   }, function (res) {
     let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
 
@@ -1352,6 +1453,7 @@ function claimClickAction(tweet) {
 
 function openClaimPopup(tweet) {
 
+  log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${tweet.domObject.coInformLabel}`, `Open claim popup for a ${tweet.domObject.coInformLabel} tweet`);
   const elementTxt = browserAPI.i18n.getMessage('tweet_post');
 
   let node = tweet.domObject;
@@ -1384,6 +1486,8 @@ function openClaimPopup(tweet) {
     //provideClaimText = browserAPI.i18n.getMessage("provide_claim");
     meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
   }
+
+  let auxPopupTime = Date.now();
 
   return Swal2.fire({
     type: (meterLogoSrc ? null : 'question'),
@@ -1440,8 +1544,14 @@ function openClaimPopup(tweet) {
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>'
   }).then(function (result) {
 
+    let auxPopupSpentTime = "?";
+    if (auxPopupTime) {
+      auxPopupSpentTime = Math.round((Date.now() - auxPopupTime) / 1000);
+    }
+    auxPopupTime = null;
+
     if (result.value) {
-      
+
       let claimAccuracyLabel = result.value[0];
       let claimUrl = result.value[1];
       let claimComment = result.value[2];
@@ -1452,14 +1562,21 @@ function openClaimPopup(tweet) {
         'url': claimUrl, 
         'comment': claimComment,
         'factcheck': claimCheck
-      }; 
+      };
+      
+      let logMessage = `Click on a claim "submit" button`;
+      if (claimCheck == "true") {
+        logMessage = logMessage + " with request to Fact-Check"
+      }
+      logMessage = logMessage + `\nAccuracy: ${claimAccuracyLabel}\nUser claim: ${claimUrl}\nAdditional info${claimComment}\nPopup time spent: ${auxPopupSpentTime} sec`;
+      log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, logMessage);
 
       browserAPI.runtime.sendMessage({
         messageId: "EvaluateTweet",
         id: tweet.id,
         url: tweet.url,
         evaluation: evaluation, 
-        coinformUserToken: coinformUserToken
+        userToken: coinformUserToken
       }, function (res) {
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
         if (resStatus.localeCompare('400') === 0) {
@@ -1484,7 +1601,9 @@ function openClaimPopup(tweet) {
         }
       });
 
-    }
+    } else if (result.dismiss) {
+      log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Cancel sending of a claim\nPopup time spent: ${auxPopupSpentTime} sec`);
+    } 
     
   });
 
@@ -1589,6 +1708,36 @@ function openNotLoggedClaimPopup(tweet) {
     }
   });
 
+}
+
+function log2Server (category, itemUrl, itemData, message) {
+
+  const userOpts = configuration.coinform.options;
+
+  if (coinformUserToken && userOpts && (userOpts.participation == "true")) {
+
+    const logTime = new Date().toISOString();
+
+    const logData = {
+      log_time: logTime,
+      log_category: category,
+      related_item_url: itemUrl,
+      related_item_data: itemData,
+      log_action: message
+    };
+
+    browserAPI.runtime.sendMessage({
+      messageId: "SendLog2Server",
+      logData: logData, 
+      userToken: coinformUserToken
+    }, function(res) {
+      if (!res) {
+        logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
+      }
+    });
+
+  }
+  
 }
 
 function freePluginCache() {

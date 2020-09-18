@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 
 module.exports = CoinformClient;
 
@@ -9,6 +10,10 @@ function CoinformClient(fetch, host, basePath = '') {
 }
 
 CoinformClient.prototype = {
+
+  postLog2Server: function (logData, userToken) {
+    return postUserLog2Server(this.baseURL + '/user/evaluation-log/', logData, userToken);
+  },
 
   postCheckTweetInfo: function (tweetId, author, tweetText, coinformUserID, userToken) {
     return postCheckTweet(this.baseURL + '/twitter/tweet/', tweetId, author, tweetText, coinformUserID, userToken);
@@ -46,8 +51,8 @@ CoinformClient.prototype = {
     return postLogout(this.baseURL + '/exit/', userToken);
   },
 
-  postUserRegister: function (email, password) {
-    return postRegister(this.baseURL + '/register/', email, password);
+  postUserRegister: function (email, password, options) {
+    return postRegister(this.baseURL + '/register/', email, password, options);
   },
 
   postRenewUserToken: function (pluginVersion) {
@@ -60,9 +65,49 @@ CoinformClient.prototype = {
 
   postUserForgotPass: function (email) {
     return postForgotPass(this.baseURL + '/reset-password/', email);
+  },
+
+  postUserChangeSettings: function (settings, userToken) {
+    return postChangeSettings(this.baseURL + '/user/change-settings/', settings, userToken);
   }
 
 };
+
+function postUserLog2Server(path, logData, userToken) {
+
+  const data = [
+    {
+      log_time: logData.log_time,
+      log_category: logData.log_category,
+      related_item_url: logData.related_item_url,
+      related_item_data: logData.related_item_data,
+      log_action: logData.log_action
+    }
+  ];
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers: {
+        'Authorization': 'Bearer ' + userToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+
+}
 
 function postEvaluate(path, tweetId, tweetUrl, evaluation, userToken) {
 
@@ -271,9 +316,14 @@ function postLogin(path, email, password, pluginVersion) {
 
 }
 
-function postRegister(path, email, password) {
+function postRegister(path, email, password, options) {
 
-  const data = {email: email, password: password};
+  const data = {
+    email: email,
+    password: password,
+    research: options.research,
+    communication: options.communication
+  };
 
   return new Promise((resolve, reject) => {
     f(path, {
@@ -324,6 +374,33 @@ function postChangePass(path, password, newpassword, userToken) {
       .catch(err => reject(err));
   });
 
+}
+
+function postChangeSettings(path, settings, userToken) {
+
+  const data = {research: settings.participation, communication: settings.followup};
+
+  return new Promise((resolve, reject) => {
+    f(path, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(data),
+      headers: {
+        'Authorization': 'Bearer ' + userToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
+    })
+      .then(res => res.json().then(json => ({
+        status: res.status,
+        data: json
+      })))
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
 }
 
 function postLogout(path, userToken) {

@@ -80,13 +80,71 @@
       <input type="password" id="register-auth-pass2" name="register-userpass2" minlength="6" placeholder="Retype your password" required>
     </div>
 
+    <div id="register-participation-input" class="form-control hidden">
+      <div class="consent-text">
+        <details>
+          <summary>I consent to participate on the Plugin evaluation study.</summary>
+          <p>My Plugin and Twitter user data will be used by the Co-Inform platform to analyze and improve the tool experience.</p>
+        </details>
+        <input type="radio" name="register-participation" id="yes" value="true"><span id="register-participation-yes">Yes, I agree.</span>
+        <input type="radio" name="register-participation" id="no" value="false"><span id="register-participation-no">No, I don`t agree.</span>
+      </div>
+    </div>
+
+    <div id="register-followup-input" class="form-control hidden">
+      <div class="consent-text">
+        <details>
+          <summary>I consent follow-up communications.</summary>
+          <p>I want to keep informed about the evaluation study process and I agree with Co-Inform follow-up communications by mail.</p>
+        </details>
+        <input type="radio" name="register-followup" id="yes" value="true"><span id="register-followup-yes">Yes, I agree.</span>
+        <input type="radio" name="register-followup" id="no" value="false"><span id="register-followup-no">No, I don`t agree.</span>
+      </div>
+    </div>
+
     <div class="form-buttons">
-      <button class="coinform-button coinform-button-primary" type="button" id="register-button">Register</button>
+      <button class="coinform-button coinform-button-primary" type="button" id="register-next1-button">Next</button>
+      <button class="coinform-button coinform-button-primary hidden" type="button" id="register-next2-button">Next</button>
+      <button class="coinform-button coinform-button-primary hidden" type="button" id="register-button">Register</button>
       <br class="clearBoth" />
     </div>
 
     <div class="form-bottom-text">
       <span id="register-login-question">Already have an account?</span>&nbsp;<span id="register-login-answer" class="popup-link-text">Login</span>
+    </div>
+
+  </div>
+
+  <div class="form-control-group" id="register-form-step2" class="hidden">
+
+    <div class="form-control">
+      <div id="register-step2-text">
+        <h3>I consent to participate on the Plugin evaluation study.</h3>
+        <p>My Plugin and Twitter user data will be used by the Co-Inform platform to analyze and improve the tool experience.</p>
+      </div>
+    </div>
+
+    <div class="form-buttons inline-buttons">
+      <button class="coinform-button coinform-button-primary" type="button" id="register-step2-agree-button">I agree</button>
+      <button class="coinform-button coinform-button-secondary" type="button" id="register-step2-disagree-button">I don`t agree</button>
+      <br class="clearBoth" />
+    </div>
+
+  </div>
+
+  <div class="form-control-group" id="register-form-step3" class="hidden">
+
+    <div class="form-control">
+      <div id="register-step3-text">
+        <h3>I consent follow-up communications.</h3>
+        <p>I want to keep informed about the evaluation study process and I agree with Co-Inform follow-up communications by mail.</p>
+      </div>
+    </div>
+
+    <div class="form-buttons inline-buttons">
+      <button class="coinform-button coinform-button-primary" type="button" id="register-step3-agree-button">I agree</button>
+      <button class="coinform-button coinform-button-secondary" type="button" id="register-step3-disagree-button">I don`t agree</button>
+      <br class="clearBoth" />
     </div>
 
   </div>
@@ -149,6 +207,22 @@
         <span class="coinform-switch-slider"></span>
       </label>
       <label id="options-test-mode-label" class="testmode_label" for="options-test-mode">Test Mode</label>
+    </div>
+
+    <div class="form-control">
+      <label class="coinform-switch">
+        <input type="checkbox" class="input-checkbox-switch" id="options-research-participation" name="options-research-participation" value="true">
+        <span class="coinform-switch-slider"></span>
+      </label>
+      <label id="options-research-participation-label" class="participation_label" for="options-research-participation">Research participation</label>
+    </div>
+
+    <div class="form-control">
+      <label class="coinform-switch">
+        <input type="checkbox" class="input-checkbox-switch" id="options-followup-communications" name="options-followup-communications" value="true">
+        <span class="coinform-switch-slider"></span>
+      </label>
+      <label id="options-followup-communications-label" class="followup_label" for="options-followup-communications">Follow-up communications</label>
     </div>
 
     <div class="form-buttons">
