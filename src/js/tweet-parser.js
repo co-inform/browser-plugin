@@ -67,7 +67,7 @@ const unlikeTweetButtonSelector = "[role='group'] [data-testid='unlike']";
 const userPresentationSelector = "header[role='banner'] a[role='link'] div[role='presentation']";
 
 // Selector for the currently logged user
-const userlogged = "header[role='banner'] > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) [aria-label='Profile']";
+const userlogged = "header[role='banner'] > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > nav";
 
 // [data-testid='tweet'] > div:nth-child(2)
 
@@ -192,7 +192,8 @@ const checkPageCase = () => {
 const checkUserCase = () => {
 
   let user = document.querySelector(userlogged);
-  let username = user.getAttribute("href");
+  let childs = user.childNodes;
+  let userName = childs[6].getAttribute("href").replace(/[^\w\s]/gi, '');
 
   // Check if we are in the User logged case or not
   let presentationNode = document.querySelector(userlogged);
@@ -202,7 +203,7 @@ const checkUserCase = () => {
       if ( userMenuLink.matches("[role='link']") ) break;
     }
     if (userMenuLink) {
-      let userName = userMenuLink.getAttribute("href");
+      userName = userMenuLink.getAttribute("href");
       if (userName) {
         userCase = userName;
       }
