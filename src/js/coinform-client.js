@@ -187,8 +187,7 @@ function postCheckTweet(path, tweetId, author, tweetText, coinformUserID, userTo
   const data = {
     tweet_id: tweetId, 
     tweet_author: author, 
-    tweet_text: tweetText,
-    coinform_user_id: coinformUserID
+    tweet_text: tweetText
   };
 
   if (coinformUserID) {

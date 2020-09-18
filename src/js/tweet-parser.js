@@ -160,6 +160,12 @@ TweetParser.prototype = {
       }
     }, true); // important to set it true so the event propagation is capturing and not bubbling
 
+  },
+  getPageCase: () => {
+    return pageCase;
+  },
+  getUserCase: () => {
+    return userCase;
   }
 
 };
@@ -196,7 +202,7 @@ const checkUserCase = () => {
   let userName = childs[6].getAttribute("href").replace(/[^\w\s]/gi, '');
 
   // Check if we are in the User logged case or not
-  let presentationNode = document.querySelector(userlogged);
+  /*let presentationNode = document.querySelector(userlogged);
   if (presentationNode) {
     let userMenuLink = presentationNode.offsetParent;
     for ( ; userMenuLink && userMenuLink !== document; userMenuLink = userMenuLink.parentNode ) {
@@ -208,6 +214,10 @@ const checkUserCase = () => {
         userCase = userName;
       }
     }
+  }*/
+
+  if (userName) {
+    userCase = userName;
   }
 
 };
