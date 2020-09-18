@@ -10,8 +10,8 @@ function CoinformClient(fetch, host, basePath = '') {
 
 CoinformClient.prototype = {
 
-  postCheckTweetInfo: function (tweetId, author, tweetText) {
-    return postCheckTweet(this.baseURL + '/twitter/tweet/', tweetId, author, tweetText);
+  postCheckTweetInfo: function (tweetId, author, tweetText, coinformUserID, userToken) {
+    return postCheckTweet(this.baseURL + '/twitter/tweet/', tweetId, author, tweetText, coinformUserID, userToken);
   },
 
   getResponseTweetInfo: function (queryID) {
@@ -141,22 +141,37 @@ function postEvaluateLabel(path, tweetId, tweetUrl, ratedCredibility, moduleResp
 
 }
 
-function postCheckTweet(path, tweetId, author, tweetText) {
+function postCheckTweet(path, tweetId, author, tweetText, coinformUserID, userToken) {
 
-  const data = {tweet_id: tweetId, tweet_author: author, tweet_text: tweetText};
+  const data = {
+    tweet_id: tweetId, 
+    tweet_author: author, 
+    tweet_text: tweetText,
+    coinform_user_id: coinformUserID
+  };
+
+  if (coinformUserID) {
+    data.coinform_user_id = coinformUserID;
+  }
+
+  let headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+    'Connection': 'keep-alive',
+    'rejectUnauthorized': false
+  };
+
+  if (userToken) {
+    headers['Authorization'] = 'Bearer ' + userToken;
+  }
 
   return new Promise((resolve, reject) => {
     f(path, {
       method: 'POST',
       mode: 'cors',
       body: JSON.stringify(data),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
-        'Connection': 'keep-alive',
-        'rejectUnauthorized': false
-      }
+      headers: headers
     })
       .then(res => res.json().then(json => ({
         status: res.status,
