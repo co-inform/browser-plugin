@@ -522,20 +522,16 @@ const newTweetCallback = (tweetInfo) => {
   }
 
   // If the tweet has already been tagged then we directly classify it
-  if (pluginCache[tweetInfo.id].status) { 
+  if (pluginCache[tweetInfo.id].status) {
     logger.logMessage(CoInformLogger.logTypes.debug, `Already analyzed tweet`, tweetInfo.id);
     pluginCache[tweetInfo.id].lastTime = Math.round(Date.now() / 1000);
     tweetInfo.domObject.queryStatus = pluginCache[tweetInfo.id].status;
     tweetInfo.domObject.queryId = pluginCache[tweetInfo.id].queryId;
     if (pluginCache[tweetInfo.id].label) {
       classifyTweet(tweetInfo, pluginCache[tweetInfo.id].label, pluginCache[tweetInfo.id].modules);
-    }
-    if (pluginCache[tweetInfo.id].feedback.userFeedback) {
-      if (pluginCache[tweetInfo.id].feedback.userFeedback == "agree") {
-        tweetInfo.domObject.querySelector(".coinformToolbarPositiveLogo").classList.add("coinformToolbarFeedbackAfterClick");
-      }
-      else if (pluginCache[tweetInfo.id].feedback.userFeedback == "disagree") {
-        tweetInfo.domObject.querySelector(".coinformToolbarNegativeLogo").classList.add("coinformToolbarFeedbackAfterClick");
+      if (pluginCache[tweetInfo.id].feedback) {
+        let feedbackObject = pluginCache[tweetInfo.id].feedback;
+        setLabelEvaluation(tweetInfo, feedbackObject);
       }
     }
     if (pluginCache[tweetInfo.id].status == "done") {
@@ -942,8 +938,8 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
       }
       // remove feedback as label changed
       let auxPrevious = tweet.domObject.querySelector(".coinformToolbarFeedbackAfterClick");
-      if (auxPrevious || pluginCache[tweet.id].feedback.userFeedback) {
-        pluginCache[tweet.id].feedback.userFeedback = null;
+      if (auxPrevious || pluginCache[tweet.id].feedback.user_feedback) {
+        pluginCache[tweet.id].feedback.user_feedback = null;
         auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
       }
     }
@@ -1430,31 +1426,31 @@ function setLabelEvaluation(tweetInfo, feedbackObject) {
   if (feedbackObject['user_feedback']) {
     if (feedbackObject['user_feedback'] == 'agree') {
       positiveFeedback.classList.add("coinformToolbarFeedbackAfterClick");
-      pluginCache[tweetInfo.id].feedback.userFeedback = feedbackObject['user_feedback'];
+      pluginCache[tweetInfo.id].feedback.user_feedback = feedbackObject['user_feedback'];
     }
     else if (feedbackObject['user_feedback'] == 'disagree') {
       negativeFeedback.classList.add("coinformToolbarFeedbackAfterClick");
-      pluginCache[tweetInfo.id].feedback.userFeedback = feedbackObject['user_feedback'];
+      pluginCache[tweetInfo.id].feedback.user_feedback = feedbackObject['user_feedback'];
     }
   }
 }
 
 function updateLabelEvaluation(targetButton, tweetInfo, agreement) {
-  if (pluginCache[tweetInfo.id].feedback.userFeedback != undefined) {
+  if (pluginCache[tweetInfo.id].feedback.user_feedback != undefined) {
     let auxPrevious = tweetInfo.domObject.querySelector(".coinformToolbarFeedbackAfterClick");
     if (auxPrevious) {
       auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
     }
-    updateLabelEvaluationAgg(auxPrevious, tweetInfo, pluginCache[tweetInfo.id].feedback.userFeedback, "remove", 1);
+    updateLabelEvaluationAgg(auxPrevious, tweetInfo, pluginCache[tweetInfo.id].feedback.user_feedback, "remove", 1);
   }
   targetButton.classList.add("coinformToolbarFeedbackAfterClick");
-  pluginCache[tweetInfo.id].feedback.userFeedback = agreement;
+  pluginCache[tweetInfo.id].feedback.user_feedback = agreement;
 }
 
 function updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, operation, num) {
   let totalNum = 0;
-  if (pluginCache[tweetInfo.id].feedback[agreement] != undefined) {
-    totalNum = pluginCache[tweetInfo.id].feedback[agreement];
+  if (pluginCache[tweetInfo.id].feedback[`total_${agreement}`] != undefined) {
+    totalNum = pluginCache[tweetInfo.id].feedback[`total_${agreement}`];
   }
   if (operation == 'add') totalNum = totalNum + num;
   else if (operation == 'remove') totalNum = totalNum - num;
@@ -1474,7 +1470,7 @@ function updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, operation,
   else {
     targetButton.querySelector(".coinformFeedbackAgg").innerHTML = '';
   }
-  pluginCache[tweetInfo.id].feedback[agreement] = totalNum;
+  pluginCache[tweetInfo.id].feedback[`total_${agreement}`] = totalNum;
 }
 
 function claimClickAction(tweet) {
