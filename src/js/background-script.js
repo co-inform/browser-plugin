@@ -435,7 +435,7 @@ const checkTweetInfo = function(request, scriptId, tweetInfoCallback) {
 
   logger.logMessage(CoInformLogger.logTypes.debug, `Check Tweet Info (tweet id ${request.id})`, scriptId);
 
-  client.postCheckTweetInfo(request.id, request.username, request.text).then(res => tweetInfoCallback(res)).catch(err => {
+  client.postCheckTweetInfo(request.id, request.username, request.text, request.coinformUserID, request.userToken).then(res => tweetInfoCallback(res)).catch(err => {
     logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
 
     if (tweetInfoCallback) tweetInfoCallback({

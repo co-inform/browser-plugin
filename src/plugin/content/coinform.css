@@ -396,22 +396,23 @@ article[coinform-parsed] {
   opacity: 1;
 }
 
-.coinformNegativeLogo {
+.coinformFeedbackLogo {
   padding-top: 2px;
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   border-radius: 3px;
   border-radius: 20%;
   background-clip: content-box;
 }
 
-.coinformToolbarNegativeLogo {
+.coinformToolbarFeedbackLogo {
   color: #6c3b5d;
   position: relative;
   float: right;
   top: 0px;
   right: -0px;
   width: fit-content;
+  height: 30px;
   align-self: flex-end;
   cursor: pointer;
   padding-left: 5px;
@@ -425,28 +426,40 @@ article[coinform-parsed] {
   transform: scale(1);
 }
 
-.coinformToolbarNegativeLogo > img {
+.coinformToolbarFeedbackLogo > img {
   position: relative;
   top: 2px;
+  padding-right: 2px;
   display: inline-block;
 }
 
-.coinformToolbarNegativeLogo > span {
+.coinformToolbarFeedbackLogo > span.coinformFeedbackAgg {
+  position: absolute;
+  float: left;
+  bottom: 0px;
+  right: 1px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+  font-size: 0.7em;
+  color: rgb(59, 68, 75);
+  background: inherit;
+}
+
+.coinformToolbarFeedbackLogo > span.coinformFeedbackDescription {
   position: relative;
   top: -7px;
-  padding-left: 8px;
+  padding-left: 6px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
   font-size: 0.8em;
 }
 
-.coinformToolbarNegativeLogo > span {
+.coinformToolbarFeedbackLogo > span.coinformFeedbackDescription {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s, opacity 0.5s linear;
   display: none;
 }
 
-.coinformToolbarNegativeLogo:hover {
+.coinformToolbarFeedbackLogo:hover {
   color: rgb(68, 65, 65);
   background-color: #C0C0C0;
   transform: translateX(-0px);
@@ -454,71 +467,7 @@ article[coinform-parsed] {
   filter: invert(100%);
 }
 
-.coinformToolbarNegativeLogo:hover > span {
-  display: inline-block;
-  visibility: visible;
-  opacity: 1;
-}
-
-.coinformPositiveLogo {
-  padding-top: 2px;
-  width: 25px;
-  height: 25px;
-  border-radius: 3px;
-  border-radius: 20%;
-  background-clip: content-box;
-}
-
-.coinformToolbarPositiveLogo {
-  color: #6c3b5d;
-  position: relative;
-  float: right;
-  top: 0px;
-  right: -0px;
-  width: fit-content;
-  align-self: flex-end;
-  cursor: pointer;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-color: rgba(0, 0, 0, .2);
-  border-width: 1px; 
-  border-style: hidden hidden hidden solid;
-  transition: transform 0.5s linear;
-  transition-duration: 0.5s;
-  transform: translateX(0px);
-  transform: scale(1);
-}
-
-.coinformToolbarPositiveLogo > img {
-  position: relative;
-  top: 2px;
-  display: inline-block;
-}
-
-.coinformToolbarPositiveLogo > span {
-  position: relative;
-  top: -7px;
-  padding-left: 8px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-  font-size: 0.8em;
-}
-
-.coinformToolbarPositiveLogo > span {
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s, opacity 0.5s linear;
-  display: none;
-}
-
-.coinformToolbarPositiveLogo:hover {
-  color: rgb(68, 65, 65);
-  background-color: #C0C0C0;
-  transform: translateX(-0px);
-  border-radius: 6px;
-  filter: invert(100%);
-}
-
-.coinformToolbarPositiveLogo:hover > span {
+.coinformToolbarFeedbackLogo:hover > span.coinformFeedbackDescription {
   display: inline-block;
   visibility: visible;
   opacity: 1;
