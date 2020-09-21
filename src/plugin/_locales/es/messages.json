@@ -1,0 +1,446 @@
+{
+   "credible": {
+      "message": "Creíble"
+   },
+   "credible__info": {
+      "message": "El $1 parece ser bastante preciso, de acuerdo con los análisis que se realizaron"
+   },
+   "mostly_credible": {
+      "message": "Mayormente creíble"
+   },
+   "mostly_credible__info": {
+      "message": "El $1 parece ser preciso, aunque puede contener algunas inexactitudes menores, de acuerdo con los análisis que se realizaron"
+   },
+   "credibility_uncertain": {
+      "message": "Credibilidad incierta"
+   },
+   "credibility_uncertain__info": {
+      "message": "El $1 probablemente mezcla contenidos precisos y erroneos (o no verificables)"
+   },
+   "mostly_not_credible": {
+      "message": "Mayormente no creíble"
+   },
+   "mostly_not_credible__info": {
+      "message": "El $1 parece ser impreciso, de acuerdo con los análisis que se realizaron"
+   },
+   "not_credible": {
+      "message": "No creíble"
+   },
+   "not_credible__info": {
+      "message": "El $1 parece ser impreciso, de acuerdo con los análisis que se realizaron"
+   },
+   "not_verifiable": {
+      "message": "No verificable"
+   },
+   "not_verifiable__info": {
+      "message": "El $1 no contiene contenido verificable (son opiniones o especulaciones), o no se pudo encontrar suficientes signos de apoyo/rechazo del contenido del $1"
+   },
+   "tweet_post": {
+      "message": "Tweet"
+   },
+   "not_tagged": {
+      "message": "El $1 no tiene análisis"
+   },
+   "not_tagged__info": {
+      "message": "El $1 aún no ha sido analizado por el sistema"
+   },
+   "accurate": {
+      "message": "Preciso"
+   },
+   "accurate__info": {
+      "message": "El $1 es preciso"
+   },
+   "accurate_with_considerations": {
+      "message": "Preciso con consideraciones"
+   },
+   "accurate_with_considerations__info": {
+      "message": "El $1 contiene algunas imprecisiones"
+   },
+   "unsubstantiated": {
+      "message": "No corroborado"
+   },
+   "unsubstantiated__info": {
+      "message": "El $1 no esta corroborado"
+   },
+   "inaccurate_with_considerations": {
+      "message": "Impreciso con consideraciones"
+   },
+   "inaccurate_with_considerations__info": {
+      "message": "El $1 mezcla contenido preciso y impreciso"
+   },
+   "inaccurate": {
+      "message": "Impreciso"
+   },
+   "inaccurate__info": {
+      "message": "El $1 es impreciso"
+   },
+   "error_loading_configuration": {
+      "message": "Could not load plugin configuration"
+   },
+   "checking_tweet_coinform": {
+      "message": "Checking tweet info with CoInform"
+   },
+   "detected_misinfo_content": {
+      "message": "Some content is detected to be Misinformation"
+   },
+   "publish_anyway": {
+      "message": "Publish anyway"
+   },
+   "content_tagged_as": {
+      "message": "Detected content tagged as $1"
+   },
+   "url_detected_misinformation": {
+      "message": "The following URL is detected to be $1:"
+   },
+   "check_content_before_publish": {
+      "message": "Please, check the content again before sharing it."
+   },
+   "published_in_seconds": {
+      "message": "The tweet will be published in $1 seconds"
+   },
+   "why_cant_see": {
+      "message": "¿Por qué no puedo ver esto?"
+   },
+   "element_tagged_as": {
+      "message": "Este $1 ha sido etiquetado como: $2"
+   },
+   "see_anyway": {
+      "message": "Ver el $1"
+   },
+   "blur_again": {
+      "message": "Difuminar el $1"
+   },
+   "provide_claim_title": {
+      "message": "Help us improve Co-Inform AI"
+   },
+   "provide_claim": {
+      "message": "If you think this is not accurate please provide a claim and a link to a post that supports that claim"
+   },
+   "provide_claim_text1": {
+      "message": "Based on your ratings, we may suggest ways to improve media literacy"
+   },
+   "provide_claim_text2": {
+      "message": "You can help us by telling us whether you think the $1 is accurate or not and include a link to a source providing evidence"
+   },
+   "provide_claim_untagged": {
+      "message": "If you want you can provide a claim and a link to a post that supports that claim"
+   },
+   "not_logged": {
+      "message": "Not logged in"
+   },
+   "provide_feedback_with_login": {
+      "message": "To provide your feedback about the Co-Inform labeling you must be a logged in Co-Inform user"
+   },
+   "wait_label_for_feedback": {
+      "message": "You must wait for the $1 to be tagged before providing your feedback"
+   },
+   "provide_claim_with_login": {
+      "message": "If you think this is not accurate you can provide a claim by logging in with your Co-Inform user"
+   },
+   "login_register_instructions": {
+      "message": "Click on the Co-Inform logo on the top right corner of your browser to open the login/register popup"
+   },
+   "ok": {
+      "message": "Ok"
+   },
+   "close": {
+      "message": "Cerrar"
+   },
+   "submit": {
+      "message": "Enviar"
+   },
+   "url": {
+      "message": "URL"
+   },
+   "comment": {
+      "message": "Comentario"
+   },
+   "choose_claim": {
+      "message": "Escoger una reclamación"
+   },
+   "make_claim": {
+      "message": "Enviar una reclamación"
+   },
+   "link_to_claim": {
+      "message": "Enlace a una fuente correctiva"
+   },
+   "optional": {
+      "message": "opcional"
+   },
+   "positive_feedback": {
+      "message": "Estoy de acuerdo con la etiqueta"
+   },
+   "negative_feedback": {
+      "message": "No estoy de acuerdo con la etiqueta"
+   },
+   "additional_info": {
+      "message": "Información adicional"
+   },
+   "request_factcheck": {
+     "message": "Solicitar que se verifique la reclamación (fact-check)"
+   },
+   "please_choose_claim": {
+      "message": "Please choose a claim"
+   },
+   "invalid_url": {
+      "message": "The url introduced is not valid"
+   },
+   "provide_url": {
+      "message": "Please provide a link to your claim"
+   },
+   "provide_additional_info": {
+      "message": "Please provide some additional information"
+   },
+   "popup_footer_text": {
+      "message": "Think - Check - Share"
+   },
+   "sent": {
+      "message": "Enviado!"
+   },
+   "feedback_sent": {
+      "message": "Your feedback has been sent"
+   },
+   "error": {
+      "message": "Error!"
+   },
+   "feedback_not_sent": {
+      "message": "Your feedback was not sent"
+   },
+   "popup_plugin_title": {
+      "message": "The plugin that helps you Think - Check - Share on Twitter"
+   },
+   "login_title": {
+      "message": "Co-Inform Login"
+   },
+   "already_logged": {
+      "message": "Sesión iniciada"
+   },
+   "register_title": {
+      "message": "Co-Inform Registro"
+   },
+   "provide_mail": {
+      "message": "You must provide your email"
+   },
+   "mail_not_valid": {
+      "message": "The text introduced is not a valid email"
+   },
+   "password_not_valid": {
+      "message": "Check again the password introduced"
+   },
+   "password_not_valid_info": {
+      "message": "Check again the passwords introduced. The minimum length is 6 characters, and the 2 password inputs must coincide"
+   },
+   "mail_password_not_found": {
+      "message": "User mail not found or wrong password"
+   },
+   "read_and_answer_participation": {
+     "message": "You must read and answer the participation question"
+   },
+   "read_and_answer_followup": {
+     "message": "You must read and answer the follow-up question"
+   },
+   "login_ok": {
+      "message": "User succesfully logged in"
+   },
+   "login_error": {
+      "message": "Login unknown error"
+   },
+   "login_not_valid": {
+      "message": "Login not valid"
+   },
+   "register_problem": {
+      "message": "Something went wrong during the registration. Try again"
+   },
+   "register_ok": {
+      "message": "User succesfully registered. You will receive an email with instructions to validate your account. You need to validate the account prior to log in."
+   },
+   "register_error": {
+      "message": "Register unknown error"
+   },
+   "register_not_valid": {
+      "message": "Register not valid. Check your data again"
+   },
+   "logout_ok": {
+      "message": "User succesfully logged out"
+   },
+   "logout_problem": {
+      "message": "Something went wrong during the logout. Try again"
+   },
+   "logout_error": {
+      "message": "Logout unknown error"
+   },
+   "log_in": {
+      "message": "Log In"
+   },
+   "log_out": {
+      "message": "Log Out"
+   },
+   "next": {
+     "message": "Siguiente"
+   },
+   "consent_participate_summary": {
+     "message": "I agree to participate on the Plugin Evaluation Study."
+   },
+   "consent_participate_text": {
+     "message": "I want to share my data anonymously for the improvement of the Co-Inform plugin."
+   },
+   "consent_followup_summary": {
+     "message": "I consent follow-up Co-Inform communications."
+   },
+   "consent_followup_text": {
+     "message": "I want to get useful email updates and information from Co-Inform."
+   },
+   "i_agree": {
+     "message": "Acepto"
+   },
+   "i_disagree": {
+     "message": "No acepto"
+   },
+   "register": {
+      "message": "Registro"
+   },
+   "login": {
+      "message": "Login"
+   },
+   "account": {
+      "message": "Cuenta"
+   },
+   "options": {
+      "message": "Opciones"
+   },
+   "options_test_mode": {
+      "message": "Modo Test"
+   },
+   "change": {
+      "message": "Cambiar"
+   },
+   "save": {
+      "message": "Guardar"
+   },
+   "options_save_ok": {
+      "message": "Options Saved OK"
+   },
+   "user_mail": {
+      "message": "Tu email"
+   },
+   "password": {
+      "message": "Tu password"
+   },
+   "retype_password": {
+      "message": "Repite tu password"
+   },
+   "new_password": {
+      "message": "Tu nuevo password"
+   },
+   "retype_new_password": {
+      "message": "Repite tu nuevo password"
+   },
+   "misinformation_restriction_level": {
+      "message": "Misinforming restriction level"
+   },
+   "low": {
+      "message": "Low"
+   },
+   "medium": {
+      "message": "Medium"
+   },
+   "high": {
+      "message": "High"
+   },
+   "change_password_problem": {
+      "message": "Something went wrong during the password change. Try again"
+   },
+   "change_password_ok": {
+      "message": "User succesfully changed the password"
+   },
+   "change_password_error": {
+      "message": "Change password unknown error"
+   },
+   "forgot_password_ok": {
+      "message": "A mail has been sent to recover your password"
+   },
+   "forgot_password_problem": {
+      "message": "Something went wrong during the forgot password request. Try again"
+   },
+   "forgot_password_error": {
+      "message": "Forgot password unknown error"
+   },
+   "change_password_info": {
+      "message": "Aquí puedes modificar tu password"
+   },
+   "forgot_password_question": {
+      "message": "¿Has olvidado tu password?"
+   },
+   "account_information": {
+      "message": "Información de la cuenta"
+   },
+   "options_title": {
+      "message": "Opciones del Plugin"
+   },
+   "dont_have_account_question": {
+      "message": "¿No tienes una cuenta?"
+   },
+   "already_have_account_question": {
+      "message": "¿Ya estás registrado?"
+   },
+   "sign_up": {
+      "message": "Regístrate"
+   },
+   "content_deemed_due_analysis__html": {
+      "message": "This content has been deemed as <b>$1</b>, due to the result of this <b>$2</b> different analysis:"
+   },
+   "more_analysis_info": {
+      "message": "For more information about the analysis click on the credibility label"
+   },
+   "module_analysis_long_info__html": {
+      "message": "A <b>$1</b> analysis, based on $2, generated this assessment:"
+   },
+   "module_analysis_short_info__html": {
+      "message": "A <b>$1</b> analysis generated this assessment:"
+   },
+   "module_analysis_result__html": {
+      "message": "<b>$1</b> (with <b>$2</b> of credibility value, and <b>$3%</b> of confidence)"
+   },
+   "module_explainability_text": {
+      "message": "Detailed analysis explanation"
+   },
+   "module_explainability_link": {
+      "message": "More analysis information"
+   },
+   "here": {
+      "message": "here"
+   },
+   "claim_similarity": {
+      "message": "Claim Similarity"
+   },
+   "claim_similarity_based_info": {
+      "message": "similar articles"
+   },
+   "misinfome": {
+      "message": "Misinformation Identification"
+   },
+   "misinfome_based_info": {
+      "message": "the source authour reputation"
+   },
+   "content_analysis": {
+      "message": "Content Stance"
+   },
+   "content_analysis_based_info": {
+      "message": "the tweet content and its replies"
+   },
+   "processing_labeling": {
+      "message": "Analizando.."
+   },
+   "labeling_done": {
+      "message": "Análisis finalizado"
+   },
+   "labeling_partly_done": {
+      "message": "Análisis interrumpido"
+   },
+   "labeling_timeout": {
+      "message": "Tiempo de espera agotado"
+   },
+   "labeling_undone": {
+      "message": "Análisis no realizado"
+   }
+}

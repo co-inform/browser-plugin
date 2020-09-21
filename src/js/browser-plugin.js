@@ -627,10 +627,11 @@ const createToolbar = (tweetInfo) => {
   td3.classList.add("coinformToolbarButton");
   td3.classList.add("coinformToolbarClaim");
   
-  let auxtext = document.createElement("SPAN");
-  let txt = document.createTextNode(browserAPI.i18n.getMessage('make_claim'));
-  auxtext.append(txt);
-  td3.appendChild(auxtext);
+  let claimDescription = document.createElement("SPAN");
+  claimDescription.classList.add("coinformToolbarButtonDescription");
+  let claimText = document.createTextNode(browserAPI.i18n.getMessage('make_claim'));
+  claimDescription.append(claimText);
+  td3.appendChild(claimDescription);
   
   td3.addEventListener('click', (event) => { 
     // prevent opening the tweet
@@ -651,12 +652,13 @@ const createToolbar = (tweetInfo) => {
   negativeFeedbackAgg.classList.add("coinformFeedbackAgg");
   td4.appendChild(negativeFeedbackAgg);
 
-  let negativeFeedbackText = document.createElement("SPAN");
-  negativeFeedbackText.classList.add("coinformFeedbackDescription");
-  let negativeText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
-  negativeFeedbackText.append(negativeText);
-  td4.appendChild(negativeFeedbackText);
-  td4.classList.add("coinformToolbarFeedbackLogo");
+  let negativeFeedbackDescription = document.createElement("SPAN");
+  negativeFeedbackDescription.classList.add("coinformToolbarButtonDescription");
+  let negativeFeedbackText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
+  negativeFeedbackDescription.append(negativeFeedbackText);
+  td4.appendChild(negativeFeedbackDescription);
+  td4.classList.add("coinformToolbarButton");
+  td4.classList.add("coinformToolbarFeedbackNegative");
 
   td4.addEventListener('click', (event) => { 
     // prevent opening the tweet
@@ -677,12 +679,13 @@ const createToolbar = (tweetInfo) => {
   positiveFeedbackAgg.classList.add("coinformFeedbackAgg");
   td5.appendChild(positiveFeedbackAgg);
 
-  let positiveFeedbackText = document.createElement("SPAN");
-  positiveFeedbackText.classList.add("coinformFeedbackDescription");
-  let positiveText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
-  positiveFeedbackText.append(positiveText);
-  td5.appendChild(positiveFeedbackText);
-  td5.classList.add("coinformToolbarFeedbackLogo");
+  let positiveFeedbackDescription = document.createElement("SPAN");
+  positiveFeedbackDescription.classList.add("coinformToolbarButtonDescription");
+  let positiveFeedbackText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
+  positiveFeedbackDescription.append(positiveFeedbackText);
+  td5.appendChild(positiveFeedbackDescription);
+  td5.classList.add("coinformToolbarButton");
+  td5.classList.add("coinformToolbarFeedbackPositive");
 
   td5.addEventListener('click', (event) => { 
     // prevent opening the tweet
