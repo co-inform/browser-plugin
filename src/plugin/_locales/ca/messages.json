@@ -320,6 +320,9 @@
    "options_save_ok": {
       "message": "Options Saved OK"
    },
+   "user_id": {
+     "message": "El teu ID"
+   },
    "user_mail": {
       "message": "El teu email"
    },
