@@ -40,13 +40,27 @@ window.addEventListener("load", function(){
   // Set language messages to the HTML
   document.getElementById('popup-title').innerHTML = browserAPI.i18n.getMessage("popup_plugin_title");
   document.getElementById('login-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('login-mail-label').title = browserAPI.i18n.getMessage("user_mail");
   document.getElementById('login-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
+  document.getElementById('login-pass-label').title = browserAPI.i18n.getMessage("password");
   document.getElementById('register-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('register-mail-label').title = browserAPI.i18n.getMessage("user_mail");
   document.getElementById('register-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
+  document.getElementById('register-pass-label').title = browserAPI.i18n.getMessage("password");
   document.getElementById('register-auth-pass2').placeholder = browserAPI.i18n.getMessage("retype_password");
+  document.getElementById('register-pass2-label').title = browserAPI.i18n.getMessage("retype_password");
+  document.getElementById('account-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('account-auth-mail').title = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('account-mail-label').title = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('account-auth-id').placeholder = browserAPI.i18n.getMessage("user_id");
+  document.getElementById('account-auth-id').title = browserAPI.i18n.getMessage("user_id");
+  document.getElementById('account-id-label').title = browserAPI.i18n.getMessage("user_id");
   document.getElementById('account-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
+  document.getElementById('account-pass-label').title = browserAPI.i18n.getMessage("password");
   document.getElementById('account-auth-newpass').placeholder = browserAPI.i18n.getMessage("new_password");
+  document.getElementById('account-newpass-label').title = browserAPI.i18n.getMessage("new_password");
   document.getElementById('account-auth-newpass2').placeholder = browserAPI.i18n.getMessage("retype_new_password");
+  document.getElementById('account-newpass2-label').title = browserAPI.i18n.getMessage("retype_new_password");
   document.getElementById('account-change-pass-info').innerHTML = browserAPI.i18n.getMessage("change_password_info");
   document.getElementById('account-info-title').innerHTML = browserAPI.i18n.getMessage("account_information");
   document.getElementById('logged-text').querySelector('span').innerHTML = browserAPI.i18n.getMessage("already_logged");
@@ -216,7 +230,7 @@ const init = () => {
       coinformUserMail = res.userMail;
       coinformUserID = res.userID;
       displayLogout();
-      refreshDisplayedAccount(coinformUserMail);
+      refreshDisplayedAccount(coinformUserMail, coinformUserID);
     }
     else {
       displayLogin();
@@ -228,6 +242,7 @@ const init = () => {
   }, function(res) {
     if (res.options) {
       logger.logMessage(CoInformLogger.logTypes.debug, `Options retrieved`);
+      configuration.coinform.options = res.options;
       refreshDisplayedOptions(res.options);
     }
   });
@@ -238,21 +253,32 @@ const init = () => {
       coinformUserToken = request.token;
       coinformUserMail = request.userMail;
       coinformUserID = request.userID;
-      refreshDisplayedAccount(request.userMail);
+      configuration.coinform.options = request.userOptions;
+      refreshDisplayedAccount(request.userMail, request.userID);
     }
     else if (request.messageId === "userLogout") {
       logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
       coinformUserToken = null;
       coinformUserMail = null;
       coinformUserID = null;
-      refreshDisplayedAccount(null);
+      configuration.coinform.options = null;
+      if (request.defaultOptions) {
+        configuration.coinform.options = request.defaultOptions;
+      }
+      refreshDisplayedAccount(null, null);
     }
     else if (request.messageId === "renewUserToken") {
       logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
       coinformUserToken = request.token;
       coinformUserMail = request.userMail;
       coinformUserID = request.userID;
-      refreshDisplayedAccount(request.userMail);
+      configuration.coinform.options = request.userOptions;
+      refreshDisplayedAccount(request.userMail, request.userID);
+    }
+    else if (request.messageId === "OptionsChange") {
+      if (request.options !== undefined) {
+        configuration.coinform.options = request.options;
+      }
     }
   });
 
@@ -347,7 +373,7 @@ const displayAccount = () => {
     messageId: "GetSession"
   }, function(res) {
     if (res.token) {
-      refreshDisplayedAccount(res.userMail);
+      refreshDisplayedAccount(res.userMail, user.userID);
     }
     else {
       displayLogin();
@@ -364,8 +390,9 @@ const isAccountDisplayed = () => {
   return (document.getElementById('menu-account').classList.contains("actual"));
 };
 
-const refreshDisplayedAccount = (accountMail) => {
+const refreshDisplayedAccount = (accountMail, accountID) => {
   document.querySelector('input[name="account-usermail"]').value = accountMail;
+  document.querySelector('input[name="account-userid"]').value = accountID;
 };
 
 const refreshDisplayedOptions = (options) => {

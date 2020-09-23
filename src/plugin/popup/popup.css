@@ -134,7 +134,7 @@ body {
 }
 
 .form-control label::before {
-  margin-right: 10px;
+  margin-right: 5px;
   font-family: "Font Awesome 5 Free";
   font-style: normal;
   font-weight: 900;
@@ -146,12 +146,20 @@ body {
   content: "\f0e0";
 }
 
+.form-control .id_label::before {
+  content: "\f2c1";
+}
+
 .form-control .pass_label::before {
   content: "\f084";
 }
 
 .form-control .devmode_label::before {
   content: "\f121";
+}
+
+#account-auth-id {
+  width: 250px;
 }
 
 .form-control-group {
@@ -162,6 +170,7 @@ body {
 
 .form-control-group label {
   float: left;
+  margin-right: 5px;
 }
 
 .form-control-group input[type="email"], .form-control-group input[type="password"] {
@@ -268,7 +277,7 @@ body {
   line-height: 2em;
   padding: 0;
   padding-left: 1em;
-  padding-right: 2em;
+  padding-right: 1em;
   margin: 0;
   border-radius: 2em;
   border: none;
@@ -276,6 +285,11 @@ body {
   color: rgba(0,0,0,.87);
   cursor: pointer;
   outline: 0;
+  transition: 0.5s;
+}
+
+.coinform-button:hover {
+  padding-right: 2.2em;
 }
 
 .coinform-button.coinform-button-primary {
@@ -325,6 +339,10 @@ body {
 
 #saveOptions-button::after {
   content: "\f0c7";
+}
+
+#changePassword-button::after {
+  content: "\f4ff";
 }
 
 #logout-button::after {
