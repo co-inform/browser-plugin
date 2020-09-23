@@ -68,6 +68,8 @@ window.addEventListener("load", function(){
   document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
   document.getElementById('options-test-mode-label').innerHTML = browserAPI.i18n.getMessage("options_test_mode");
+  document.getElementById('options-research-participation-label').innerHTML = browserAPI.i18n.getMessage("options_research_participation");
+  document.getElementById('options-followup-communications-label').innerHTML = browserAPI.i18n.getMessage("options_followup_communications");
 
   document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
   document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");

@@ -311,6 +311,12 @@
    "options_test_mode": {
       "message": "Modo Test"
    },
+   "options_research_participation": {
+     "message": "Participar en el estudio de evaluación"
+   },
+   "options_followup_communications": {
+     "message": "Recibir comunicaciones de seguimiento"
+   },
    "change": {
       "message": "Cambiar"
    },
