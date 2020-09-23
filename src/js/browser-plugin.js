@@ -64,18 +64,24 @@ browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse)
     coinformUserToken = request.token;
     coinformUserMail = request.userMail;
     coinformUserID = request.userID;
+    configuration.coinform.options = request.userOptions;
   }
   else if (request.messageId === "userLogout") {
     logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
     coinformUserToken = null;
     coinformUserMail = null;
     coinformUserID = null;
+    configuration.coinform.options = null;
+    if (request.defaultOptions) {
+      configuration.coinform.options = request.defaultOptions;
+    }
   }
   else if (request.messageId === "renewUserToken") {
     logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
     coinformUserToken = request.token;
     coinformUserMail = request.userMail;
     coinformUserID = request.userID;
+    configuration.coinform.options = request.userOptions;
   }
   else if (request.messageId === "OptionsChange") {
     if (request.options !== undefined) {
@@ -1087,13 +1093,14 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   let auxScoresLog = createModulesCredibilityScoresLog(modules);
 
   infoLogo.addEventListener("mouseenter", (event) => {
+    openLabelInfoTooltip(event, tweet, label, modules);
     auxHoover = true;
     auxHoverTime = Date.now();
     log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${label}\nCredibility Scores: ${auxScoresLog}`, 'Opened explainability tooltip on hover');
-    // do nothing, the tooltip is shown through CSS
   });
 
   infoLogo.addEventListener("mouseleave", (event) => {
+    closeLabelInfoTooltip(event, tweet);
     auxHoover = false;
     let auxHoverSpentTime = "?";
     if (auxHoverTime) {
@@ -1101,17 +1108,7 @@ const createTweetLabel = (tweet, label, modules, callback) => {
     }
     auxHoverTime = null;
     log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${label}`, `Closed explainability tooltip on hover out\nTooltip time spent: ${auxHoverSpentTime} sec`);
-    // do nothing, the tooltip is shown through CSS
   });
-  
-  // create tooltip div with detailed modules info
-  let infoTooltip = document.createElement("DIV");
-  infoTooltip.setAttribute("id", `coinformLabelInfoTooltip-${tweet.id}`);
-  infoTooltip.setAttribute("class", "coinformLabelInfoTooltip");
-  let infoTooltipContent = createLabelModulesInfoContent(label, modules);
-  infoTooltip.append(infoTooltipContent);
-
-  infoContent.append(infoTooltip);
 
   infoContent.addEventListener('click', (event) => {
     event.preventDefault();
@@ -1234,9 +1231,10 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
 
 const removeTweetLabel = (tweet) => {
 
-  let node = tweet.domObject.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
-  node.querySelectorAll('.coinformToolbarLabel').forEach(n => n.remove());
-  node.querySelectorAll('.coinformLabelInfoContent').forEach(n => n.remove());
+  let node = tweet.domObject;
+  let labelNode = node.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
+  labelNode.querySelectorAll('.coinformToolbarLabel').forEach(n => n.remove());
+  labelNode.querySelectorAll('.coinformLabelInfoContent').forEach(n => n.remove());
 
 };
 
@@ -1265,6 +1263,42 @@ const createCannotSeeTweetButton = (tweet, callback) => {
   return div;
 
 };
+
+function openLabelInfoTooltip(event, tweet, label, modules) {
+
+  let layersDiv = document.querySelector('#layers');
+  if (!layersDiv) {
+    layersDiv = document.querySelector("main");
+  }
+  
+  // create tooltip div with detailed modules info
+  let infoTooltip = document.createElement("DIV");
+  infoTooltip.setAttribute("id", `coinformLabelInfoTooltip-${tweet.id}`);
+  infoTooltip.setAttribute("class", "coinformLabelInfoTooltip");
+  let infoTooltipContent = createLabelModulesInfoContent(label, modules);
+  infoTooltip.append(infoTooltipContent);
+
+  infoTooltip.style.left = event.pageX + 'px';
+  infoTooltip.style.top = event.pageY + 'px';
+
+  layersDiv.append(infoTooltip);
+
+}
+
+function closeLabelInfoTooltip(event, tweet) {
+
+  let layersDiv = document.querySelector('#layers');
+  if (!layersDiv) {
+    layersDiv = document.querySelector("main");
+  }
+  
+  let infoTooltip = document.getElementById(`coinformLabelInfoTooltip-${tweet.id}`);
+
+  if (infoTooltip) {
+    layersDiv.removeChild(infoTooltip);
+  }
+
+}
 
 function openLabelPopup(tweet) {
 

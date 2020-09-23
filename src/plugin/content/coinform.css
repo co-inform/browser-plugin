@@ -289,11 +289,11 @@ article[coinform-parsed] {
   width: 15px;
 }
 
-.coinformLabelInfoContent .coinformLabelInfoTooltip {
+.coinformLabelInfoTooltip {
   position: absolute;
   float: left;
-  display: none;
-  z-index: -1;
+  display: block;
+  z-index: 9999;
   width: 400px;
   padding: 10px;
   background-color: white;
@@ -306,19 +306,14 @@ article[coinform-parsed] {
   white-space: normal;
 }
 
-.coinformLabelInfoContent .coinformLabelInfoTooltip h2 {
+.coinformLabelInfoTooltip h2 {
   margin-top: 0px;
   margin-bottom: 0.5em;
 }
 
-.coinformLabelInfoContent .coinformLabelInfoTooltip ul {
+.coinformLabelInfoTooltip ul {
   margin-bottom: 0.6em;
   margin-top: 0.6em;
-}
-
-.coinformLabelInfoContent:hover .coinformLabelInfoTooltip {
-  display: block;
-  z-index: 9999;
 }
 
 .coinformAnalysisExplainability li {

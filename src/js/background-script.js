@@ -29,6 +29,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   .then(res => {
 
     configuration = res;
+    configuration.coinform.defaultOptions = Object.assign({}, configuration.coinform.options);
     logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
     client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
@@ -63,7 +64,8 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
             messageId: "renewUserToken",
             userMail: res.userMail,
             userID: res.userID,
-            token: res.token
+            token: res.token,
+            userOptions: configuration.coinform.options
           });
         }
         else {
@@ -209,7 +211,8 @@ const logInAPI = function(request, scriptId, loginCallback) {
             messageId: "userLogin",
             userMail: res.userMail,
             userID: res.userID,
-            token: res.token
+            token: res.token,
+            userOptions: configuration.coinform.options
           });
         }
         else {
@@ -331,7 +334,8 @@ const renewUserToken = function(retryNum = 0) {
             messageId: "renewUserToken",
             userMail: res.userMail,
             userID: res.userID,
-            token: res.token
+            token: res.token,
+            userOptions: configuration.coinform.options
           });
         }
         else {
@@ -400,7 +404,8 @@ const logOutActions = function(scriptId) {
   removeCookie("userID");
 
   sendMessageToAllScripts({
-    messageId: "userLogout"
+    messageId: "userLogout",
+    defaultOptions: configuration.coinform.defaultOptions
   });
 
   logger.logMessage(CoInformLogger.logTypes.info, `User logged out`, scriptId);
