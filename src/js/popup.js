@@ -107,7 +107,7 @@ window.addEventListener("load", function(){
   });
   
   let registerAnswerLink = document.getElementById('register-login-answer');
-  registerAnswerLink.innerHTML = browserAPI.i18n.getMessage("login");
+  registerAnswerLink.innerHTML = browserAPI.i18n.getMessage("log_in");
   registerAnswerLink.addEventListener('click', (event) => {
     loginStartAction();
   });
