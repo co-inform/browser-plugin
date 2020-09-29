@@ -197,9 +197,16 @@ const checkPageCase = () => {
 
 const checkUserCase = () => {
 
+  let userName = null;
   let user = document.querySelector(userlogged);
-  let childs = user.childNodes;
-  let userName = childs[6].getAttribute("href").replace(/[^\w\s]/gi, '');
+  if (user) {
+    let childs = user.childNodes;
+    if (childs && childs[6]) {
+      if (childs[6].getAttribute("href")) {
+        userName = childs[6].getAttribute("href").replace(/[^\w\s]/gi, '');
+      }
+    }
+  }
 
   // Check if we are in the User logged case or not
   /*let presentationNode = document.querySelector(userlogged);
