@@ -207,7 +207,7 @@
       "message": "No se puedo enviar tu evaluación"
    },
    "popup_plugin_title": {
-      "message": "El plugin que te ayuda a Pensar - Comprobar - Compartir en Twitter"
+      "message": "El plugin que te ayuda a Pensar-Comprobar-Compartir en Twitter"
    },
    "login_title": {
       "message": "Iniciar sesión en Co-Inform"
@@ -396,7 +396,7 @@
       "message": "Regístrate"
    },
    "content_deemed_due_analysis__html": {
-      "message": "Este contenido se considera <b>$1</b>, como resultado de estos <b>$2</b> análisis:"
+      "message": "El contenido se considera <b>$1</b>, como resultado de estos <b>$2</b> análisis:"
    },
    "more_analysis_info": {
       "message": "Para más información acerca de los análisis puedes clickar en la etiqueta de credibilidad"
@@ -405,7 +405,7 @@
       "message": "Un análisis llamado <b>$1</b>, basado en $2, ha generado esta valoración:"
    },
    "module_analysis_short_info__html": {
-      "message": "Un análisis llamado <b>$1</b> ha generado esta valoración:"
+      "message": "El análisis <b>$1</b> ha generado esta valoración:"
    },
    "module_analysis_result__html": {
       "message": "<b>$1</b> (con un valor de credibilidad de <b>$2</b>, y un porcentaje de confianza de <b>$3%</b>)"

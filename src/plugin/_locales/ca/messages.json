@@ -207,7 +207,7 @@
       "message": "No s'ha pogut enviar la teva avaluació"
    },
    "popup_plugin_title": {
-      "message": "El Plugin que t'ajuda a Pensar - Combrovar - Compartir a Twitter"
+      "message": "El Plugin que t'ajuda a Pensar-Comprovar-Compartir a Twitter"
    },
    "login_title": {
       "message": "Iniciar sessió a Co-Inform"
@@ -396,7 +396,7 @@
       "message": "Registra't"
    },
    "content_deemed_due_analysis__html": {
-      "message": "Aquest contingut es considera <b>$1</b>, com a resultat dels següents <b>$2</b> anàlisis:"
+      "message": "El contingut es considera <b>$1</b>, com a resultat dels següents <b>$2</b> anàlisis:"
    },
    "more_analysis_info": {
       "message": "Per a més informació sobre els anàlisis realitzats pots clickar sobre l'etiqueta de credibilitat"
@@ -405,7 +405,7 @@
       "message": "Un anàlisi anomenat <b>$1</b>, basat en $2, ha generat aquesta valoració:"
    },
    "module_analysis_short_info__html": {
-      "message": "Un anàlisi anomenat <b>$1</b> ha generat aquesta valoració:"
+      "message": "L'anàlisi <b>$1</b> ha generat aquesta valoració:"
    },
    "module_analysis_result__html": {
       "message": "<b>$1</b> (amb un valor de credibilitat de <b>$2</b>, i un percentatge de confiança del <b>$3%</b>)"
