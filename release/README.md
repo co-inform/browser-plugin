@@ -1,7 +1,7 @@
 # Co-Inform Browser Extension
 Here you can find the built packed code for the browser plugin extension of Co-Inform.
 
-As of right now this extension is compatible with Mozilla Firefox and Google Chrome. It has not been tested in other browsers yet.
+As of right now this extension is compatible with Google Chrome, Mozilla Firefox and Opera. It has not been tested in other browsers yet.
 
 ## How to Install from ZIP
 The distributed packed plugin is a ZIP file containing the content of the build folder.
@@ -31,3 +31,14 @@ If you want to install the plugin from the distributed packed ZIP you can follow
 6. Navigate to the folder where you have the plugin ZIP file and select it
 7. Click the `Open` button
 8. At this point the plugin should be already installed and you should see it listen in the `Debugging` and `Add-ons Manager > Extensions` pages
+
+### Opera:
+1. Unzip the plugin ZIP file in some folder in your computer
+2. Open Opera, and go to the `Extensions` page. To reach that page the user has 2 different options:
+    - Type the url [`opera://extensions/`](chrome://extensions/)
+    - Go to the browser top left corner chrome logo menu, and choose the submenu: `Extensions > Extensions`
+3. Activate the `Developer mode` checkbox on the "Extensions" page top right corner
+4. Click on top page `Load unpacked` button
+5. Navigate to the folder where you unzipped the plugin release
+6. Click the `Select Folder` button (without selecting any file)
+7. At this point the plugin should be already installed and you should see it listed in the `Extensions` page
