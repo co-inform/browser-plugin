@@ -40,19 +40,46 @@ window.addEventListener("load", function(){
   // Set language messages to the HTML
   document.getElementById('popup-title').innerHTML = browserAPI.i18n.getMessage("popup_plugin_title");
   document.getElementById('login-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('login-mail-label').title = browserAPI.i18n.getMessage("user_mail");
   document.getElementById('login-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
+  document.getElementById('login-pass-label').title = browserAPI.i18n.getMessage("password");
   document.getElementById('register-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('register-mail-label').title = browserAPI.i18n.getMessage("user_mail");
   document.getElementById('register-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
+  document.getElementById('register-pass-label').title = browserAPI.i18n.getMessage("password");
   document.getElementById('register-auth-pass2').placeholder = browserAPI.i18n.getMessage("retype_password");
+  document.getElementById('register-pass2-label').title = browserAPI.i18n.getMessage("retype_password");
+  document.getElementById('account-auth-mail').placeholder = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('account-auth-mail').title = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('account-mail-label').title = browserAPI.i18n.getMessage("user_mail");
+  document.getElementById('account-auth-id').placeholder = browserAPI.i18n.getMessage("user_id");
+  document.getElementById('account-auth-id').title = browserAPI.i18n.getMessage("user_id");
+  document.getElementById('account-id-label').title = browserAPI.i18n.getMessage("user_id");
   document.getElementById('account-auth-pass').placeholder = browserAPI.i18n.getMessage("password");
+  document.getElementById('account-pass-label').title = browserAPI.i18n.getMessage("password");
   document.getElementById('account-auth-newpass').placeholder = browserAPI.i18n.getMessage("new_password");
+  document.getElementById('account-newpass-label').title = browserAPI.i18n.getMessage("new_password");
   document.getElementById('account-auth-newpass2').placeholder = browserAPI.i18n.getMessage("retype_new_password");
+  document.getElementById('account-newpass2-label').title = browserAPI.i18n.getMessage("retype_new_password");
   document.getElementById('account-change-pass-info').innerHTML = browserAPI.i18n.getMessage("change_password_info");
   document.getElementById('account-info-title').innerHTML = browserAPI.i18n.getMessage("account_information");
+  document.getElementById('logged-text').querySelector('span').innerHTML = browserAPI.i18n.getMessage("already_logged");
   document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("options_title");
   document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
   document.getElementById('options-test-mode-label').innerHTML = browserAPI.i18n.getMessage("options_test_mode");
+  document.getElementById('options-research-participation-label').innerHTML = browserAPI.i18n.getMessage("options_research_participation");
+  document.getElementById('options-followup-communications-label').innerHTML = browserAPI.i18n.getMessage("options_followup_communications");
+
+  document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
+  document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+  document.getElementById('register-step2-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
+  document.getElementById('register-step2-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+
+  document.getElementById('register-followup-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
+  document.getElementById('register-followup-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
+  document.getElementById('register-step3-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
+  document.getElementById('register-step3-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
 
   document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
   document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
@@ -90,7 +117,7 @@ window.addEventListener("load", function(){
   });
   
   let registerAnswerLink = document.getElementById('register-login-answer');
-  registerAnswerLink.innerHTML = browserAPI.i18n.getMessage("login");
+  registerAnswerLink.innerHTML = browserAPI.i18n.getMessage("log_in");
   registerAnswerLink.addEventListener('click', (event) => {
     loginStartAction();
   });
@@ -215,7 +242,7 @@ const init = () => {
       coinformUserMail = res.userMail;
       coinformUserID = res.userID;
       displayLogout();
-      refreshDisplayedAccount(coinformUserMail);
+      refreshDisplayedAccount(coinformUserMail, coinformUserID);
     }
     else {
       displayLogin();
@@ -227,6 +254,7 @@ const init = () => {
   }, function(res) {
     if (res.options) {
       logger.logMessage(CoInformLogger.logTypes.debug, `Options retrieved`);
+      configuration.coinform.options = res.options;
       refreshDisplayedOptions(res.options);
     }
   });
@@ -237,21 +265,32 @@ const init = () => {
       coinformUserToken = request.token;
       coinformUserMail = request.userMail;
       coinformUserID = request.userID;
-      refreshDisplayedAccount(request.userMail);
+      configuration.coinform.options = request.userOptions;
+      refreshDisplayedAccount(request.userMail, request.userID);
     }
     else if (request.messageId === "userLogout") {
       logger.logMessage(CoInformLogger.logTypes.info, `User logged out`);
       coinformUserToken = null;
       coinformUserMail = null;
       coinformUserID = null;
-      refreshDisplayedAccount(null);
+      configuration.coinform.options = null;
+      if (request.defaultOptions) {
+        configuration.coinform.options = request.defaultOptions;
+      }
+      refreshDisplayedAccount(null, null);
     }
     else if (request.messageId === "renewUserToken") {
       logger.logMessage(CoInformLogger.logTypes.debug, `Renewed User Token`);
       coinformUserToken = request.token;
       coinformUserMail = request.userMail;
       coinformUserID = request.userID;
-      refreshDisplayedAccount(request.userMail);
+      configuration.coinform.options = request.userOptions;
+      refreshDisplayedAccount(request.userMail, request.userID);
+    }
+    else if (request.messageId === "OptionsChange") {
+      if (request.options !== undefined) {
+        configuration.coinform.options = request.options;
+      }
     }
   });
 
@@ -346,7 +385,7 @@ const displayAccount = () => {
     messageId: "GetSession"
   }, function(res) {
     if (res.token) {
-      refreshDisplayedAccount(res.userMail);
+      refreshDisplayedAccount(res.userMail, user.userID);
     }
     else {
       displayLogin();
@@ -363,8 +402,9 @@ const isAccountDisplayed = () => {
   return (document.getElementById('menu-account').classList.contains("actual"));
 };
 
-const refreshDisplayedAccount = (accountMail) => {
+const refreshDisplayedAccount = (accountMail, accountID) => {
   document.querySelector('input[name="account-usermail"]').value = accountMail;
+  document.querySelector('input[name="account-userid"]').value = accountID;
 };
 
 const refreshDisplayedOptions = (options) => {
@@ -427,6 +467,7 @@ const loginAction = (targetButton) => {
             displayLogout();
             targetButton.disabled = false;
           }, 1000);
+          log2Server('login', null, null, `Co-Inform User Logged In`);
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, "Login token error");
@@ -565,6 +606,7 @@ const registerAction = (targetButton) => {
           displayLogin();
           targetButton.disabled = false;
         }, 1000);
+        log2Server('register', null, null, `Co-Inform User Registered`);
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, `Register unknown (${resStatus}) response`);
@@ -591,6 +633,8 @@ const logoutAction = (targetButton) => {
   else {
     
     targetButton.disabled = true;
+
+    log2Server('login', null, null, `Co-Inform User Logging Out`);
     
     browserAPI.runtime.sendMessage({
       messageId: "LogOut",
@@ -636,22 +680,18 @@ const optionsSaveAction = (targetButton) => {
     
   targetButton.disabled = true;
 
-  //TODO: here we can implement options save action
   let optionsObj = {
     testMode: "false"
   };
+
   let auxInput = document.querySelector('input[name="options-test-mode"]:checked');
-  if (auxInput) {
-    optionsObj.testMode = auxInput.value || "false";
-  }
+  optionsObj.testMode = (auxInput && auxInput.value) ? auxInput.value : "false";
+
   auxInput = document.querySelector('input[name="options-research-participation"]:checked');
-  if (auxInput) {
-    optionsObj.participation = auxInput.value || "false";
-  }
+  optionsObj.participation = (auxInput && auxInput.value) ? auxInput.value : "false";
+
   auxInput = document.querySelector('input[name="options-followup-communications"]:checked');
-  if (auxInput) {
-    optionsObj.followup = auxInput.value || "false";
-  }
+  optionsObj.followup = (auxInput && auxInput.value) ? auxInput.value : "false";
 
   browserAPI.runtime.sendMessage({
     messageId: "OptionsChange",
@@ -835,6 +875,36 @@ const clearAllMessages = () => {
     msgDiv.removeChild(msgDiv.firstChild);
   }
 };
+
+function log2Server (category, itemUrl, itemData, message) {
+
+  const userOpts = configuration.coinform.options;
+
+  if (coinformUserToken && userOpts && (userOpts.participation == "true")) {
+
+    const logTime = new Date().toISOString();
+
+    const logData = {
+      log_time: logTime,
+      log_category: category,
+      related_item_url: itemUrl,
+      related_item_data: itemData,
+      log_action: message
+    };
+
+    browserAPI.runtime.sendMessage({
+      messageId: "SendLog2Server",
+      logData: logData, 
+      userToken: coinformUserToken
+    }, function(res) {
+      if (!res) {
+        logger.logMessage(CoInformLogger.logTypes.error, `Error sending Server Log`);
+      }
+    });
+
+  }
+  
+}
 
 function validateEmail(email) {
   let re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

@@ -110,7 +110,41 @@
     </div>
 
     <div class="form-bottom-text">
-      <span id="register-login-question">Already have an account?</span>&nbsp;<span id="register-login-answer" class="popup-link-text">Login</span>
+      <span id="register-login-question">Already have an account?</span>&nbsp;<span id="register-login-answer" class="popup-link-text">Log In</span>
+    </div>
+
+  </div>
+
+  <div class="form-control-group" id="register-form-step2" class="hidden">
+
+    <div class="form-control">
+      <div id="register-step2-text">
+        <h3>I consent to participate on the Plugin evaluation study.</h3>
+        <p>My Plugin and Twitter user data will be used by the Co-Inform platform to analyze and improve the tool experience.</p>
+      </div>
+    </div>
+
+    <div class="form-buttons inline-buttons">
+      <button class="coinform-button coinform-button-primary" type="button" id="register-step2-agree-button">I agree</button>
+      <button class="coinform-button coinform-button-secondary" type="button" id="register-step2-disagree-button">I don`t agree</button>
+      <br class="clearBoth" />
+    </div>
+
+  </div>
+
+  <div class="form-control-group" id="register-form-step3" class="hidden">
+
+    <div class="form-control">
+      <div id="register-step3-text">
+        <h3>I consent follow-up communications.</h3>
+        <p>I want to keep informed about the evaluation study process and I agree with Co-Inform follow-up communications by mail.</p>
+      </div>
+    </div>
+
+    <div class="form-buttons inline-buttons">
+      <button class="coinform-button coinform-button-primary" type="button" id="register-step3-agree-button">I agree</button>
+      <button class="coinform-button coinform-button-secondary" type="button" id="register-step3-disagree-button">I don`t agree</button>
+      <br class="clearBoth" />
     </div>
 
   </div>
@@ -165,8 +199,13 @@
     </div>
 
     <div class="form-control">
-      <label id="account-mail-label" class="mail_label" for="account-auth-mail"></label>
+      <label id="account-mail-label" class="mail_label" for="account-auth-mail" title=""></label>
       <input type="email" id="account-auth-mail" name="account-usermail" value="" disabled>
+    </div>
+
+    <div class="form-control">
+      <label id="account-id-label" class="id_label" for="account-auth-id" title=""></label>
+      <input type="text" id="account-auth-id" name="account-userid" value="" disabled>
     </div>
 
     <div class="form-info-text">

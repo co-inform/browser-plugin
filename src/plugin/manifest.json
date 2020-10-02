@@ -1,10 +1,11 @@
 {
     "manifest_version": 2,
     "name": "Co-Inform",
-    "version": "3.3.0",
-    "version_name": "3.3.0",
+    "version": "4.0.0",
+    "version_name": "4.0.0 RV",
     "default_locale": "en",
     "description": "Context matters. Your sources too.",
+    "homepage_url": "https://coinform.eu/",
     "content_security_policy": "default-src 'self'; connect-src *;",
     "browser_action": {
       "default_icon": "resources/coinform16.png",
@@ -16,10 +17,6 @@
       "48": "resources/coinform48.png",
       "96": "resources/coinform96.png",
       "128": "resources/coinform128.png"
-    },
-    "options_ui": {
-      "page": "options/options.html",
-      "open_in_tab": false
     },
     "background": {
       "scripts": ["background/background-script.js"]

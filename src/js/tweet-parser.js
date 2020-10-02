@@ -59,8 +59,17 @@ const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetB
 
 const retweetTweetButtonSelector = "[role='group'] [data-testid='retweet']";
 
+const likeTweetButtonSelector = "[role='group'] [data-testid='like']";
+
+const unlikeTweetButtonSelector = "[role='group'] [data-testid='unlike']";
+
 // selector for user presentation menu item
 const userPresentationSelector = "header[role='banner'] a[role='link'] div[role='presentation']";
+
+// Selector for the currently logged user
+const userlogged = "header[role='banner'] > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > nav";
+
+// [data-testid='tweet'] > div:nth-child(2)
 
 const $ = jQuery;
 let tweetsList = [];
@@ -131,6 +140,32 @@ TweetParser.prototype = {
       }
     }, true); // important to set it true so the event propagation is capturing and not bubbling
 
+  },
+  listenLikeTweet: (likeTweetCallback) => {
+
+    document.addEventListener('click', function (event) {
+      let target = event.target.closest(likeTweetButtonSelector);
+      if (target) {
+        likeTweetCallback(event, target);
+      }
+    }, true); // important to set it true so the event propagation is capturing and not bubbling
+
+  },
+  listenUnlikeTweet: (unlikeTweetCallback) => {
+
+    document.addEventListener('click', function (event) {
+      let target = event.target.closest(unlikeTweetButtonSelector);
+      if (target) {
+        unlikeTweetCallback(event, target);
+      }
+    }, true); // important to set it true so the event propagation is capturing and not bubbling
+
+  },
+  getPageCase: () => {
+    return pageCase;
+  },
+  getUserCase: () => {
+    return userCase;
   }
 
 };
@@ -162,19 +197,34 @@ const checkPageCase = () => {
 
 const checkUserCase = () => {
 
+  let userName = null;
+  let user = document.querySelector(userlogged);
+  if (user) {
+    let childs = user.childNodes;
+    if (childs && childs[6]) {
+      if (childs[6].getAttribute("href")) {
+        userName = childs[6].getAttribute("href").replace(/[^\w\s]/gi, '');
+      }
+    }
+  }
+
   // Check if we are in the User logged case or not
-  let presentationNode = document.querySelector(userPresentationSelector);
+  /*let presentationNode = document.querySelector(userlogged);
   if (presentationNode) {
     let userMenuLink = presentationNode.offsetParent;
     for ( ; userMenuLink && userMenuLink !== document; userMenuLink = userMenuLink.parentNode ) {
       if ( userMenuLink.matches("[role='link']") ) break;
     }
     if (userMenuLink) {
-      let userName = userMenuLink.getAttribute("href");
+      userName = userMenuLink.getAttribute("href");
       if (userName) {
         userCase = userName;
       }
     }
+  }*/
+
+  if (userName) {
+    userCase = userName;
   }
 
 };

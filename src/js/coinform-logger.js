@@ -32,13 +32,6 @@ CoInformLogger.prototype = {
       }
     }
     
-  },
-  log2Server: function (logType, user, time, category, item, message) {
-
-    if (logType <= this.logLevel) {
-      console.log(`${time} | ${user} | ${category} | ${item} | ${message}`);
-    }
-    
   }
 
 };

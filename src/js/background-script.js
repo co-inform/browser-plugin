@@ -29,6 +29,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   .then(res => {
 
     configuration = res;
+    configuration.coinform.defaultOptions = Object.assign({}, configuration.coinform.options);
     logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
     client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
@@ -63,7 +64,8 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
             messageId: "renewUserToken",
             userMail: res.userMail,
             userID: res.userID,
-            token: res.token
+            token: res.token,
+            userOptions: configuration.coinform.options
           });
         }
         else {
@@ -82,6 +84,15 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   .catch(err => {
     console.error('Could not load plugin configuration', err);
   });
+
+browserAPI.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  if (changeInfo.url) {
+    browserAPI.tabs.sendMessage( tabId, {
+      message: 'tabUrlChanged',
+      url: changeInfo.url
+    });
+  }
+});
 
 const listenerRuntime = function(request, sender, sendResponse) {
 
@@ -148,8 +159,37 @@ const listenerRuntime = function(request, sender, sendResponse) {
   else if (request.messageId === "EvaluateTweet") {
     evaluateTweet(request, sender.id, sendResponse);
   }
+  else if (request.messageId === "SendLog2Server") {
+    sendLog2Server(request, sender.id, sendResponse);
+  }
 
   return true;
+
+};
+
+const sendLog2Server = function(request, scriptId, logCallback) {
+
+  const userOpts = configuration.coinform.options;
+
+  if (coinformUserToken && userOpts && (userOpts.participation == "true")) {
+
+    let logData = request.logData;
+
+    logger.logMessage(CoInformLogger.logTypes.debug, `New Server Log: ${logData.log_time} | ${logData.log_category} | ${logData.log_action}`, scriptId);
+
+    client.postLog2Server(request.logData, request.userToken).then(res => {
+      let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+      if (resStatus.localeCompare('200') === 0) {
+        if (logCallback) logCallback(res);
+      }
+      else {
+
+      }
+    }).catch(err => {
+      logger.logMessage(CoInformLogger.logTypes.error, `Request Error: ${err}`, scriptId);
+    });
+
+  }
 
 };
 
@@ -171,7 +211,8 @@ const logInAPI = function(request, scriptId, loginCallback) {
             messageId: "userLogin",
             userMail: res.userMail,
             userID: res.userID,
-            token: res.token
+            token: res.token,
+            userOptions: configuration.coinform.options
           });
         }
         else {
@@ -293,7 +334,8 @@ const renewUserToken = function(retryNum = 0) {
             messageId: "renewUserToken",
             userMail: res.userMail,
             userID: res.userID,
-            token: res.token
+            token: res.token,
+            userOptions: configuration.coinform.options
           });
         }
         else {
@@ -362,7 +404,8 @@ const logOutActions = function(scriptId) {
   removeCookie("userID");
 
   sendMessageToAllScripts({
-    messageId: "userLogout"
+    messageId: "userLogout",
+    defaultOptions: configuration.coinform.defaultOptions
   });
 
   logger.logMessage(CoInformLogger.logTypes.info, `User logged out`, scriptId);

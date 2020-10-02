@@ -238,6 +238,7 @@ article[coinform-parsed] {
   margin-right: 10px;
   border: 2px;
   border-radius: 3px;
+  white-space: nowrap;
 }
 
 .coinformToolbarLogoContent {
@@ -249,24 +250,6 @@ article[coinform-parsed] {
   margin-left: 10px;
   padding-top: 5px;
   align-self: flex-start;
-}
-
-.coinformToolbarLabelContent {
-  padding-left: 8px;
-  display: table-cell;
-}
-
-.coinformToolbarLabel {
-  position: relative;
-  display: inline-block;
-  align-self: flex-start;
-  color: #3b444b;
-  padding: 1px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-  font-size: 1em;
-  cursor: pointer;
-  white-space: nowrap;
-  width: fit-content;
 }
 
 .coinformClaimLogo {
@@ -306,11 +289,11 @@ article[coinform-parsed] {
   width: 15px;
 }
 
-.coinformLabelInfoContent .coinformLabelInfoTooltip {
+.coinformLabelInfoTooltip {
   position: absolute;
   float: left;
-  display: none;
-  z-index: -1;
+  display: block;
+  z-index: 9999;
   width: 400px;
   padding: 10px;
   background-color: white;
@@ -320,21 +303,17 @@ article[coinform-parsed] {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
   font-size: 0.8em;
   font-weight: normal;
+  white-space: normal;
 }
 
-.coinformLabelInfoContent .coinformLabelInfoTooltip h2 {
+.coinformLabelInfoTooltip h2 {
   margin-top: 0px;
   margin-bottom: 0.5em;
 }
 
-.coinformLabelInfoContent .coinformLabelInfoTooltip ul {
+.coinformLabelInfoTooltip ul {
   margin-bottom: 0.6em;
   margin-top: 0.6em;
-}
-
-.coinformLabelInfoContent:hover .coinformLabelInfoTooltip {
-  display: block;
-  z-index: 9999;
 }
 
 .coinformAnalysisExplainability li {
@@ -348,6 +327,10 @@ article[coinform-parsed] {
   top: 0px;
   right: 0px;
   width: fit-content;
+  max-width: 200px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  height: 30px;
   align-self: flex-end;
   cursor: pointer;
   padding-left: 5px;
@@ -364,18 +347,19 @@ article[coinform-parsed] {
 .coinformToolbarButton > img {
   position: relative;
   top: 2px;
+  padding-right: 2px;
   display: inline-block;
 }
 
-.coinformToolbarButton > span {
+.coinformToolbarButton > span.coinformToolbarButtonDescription {
   position: relative;
   top: -7px;
-  padding-left: 8px;
+  padding-left: 6px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
   font-size: 0.8em;
 }
 
-.coinformToolbarButton > span {
+.coinformToolbarButton > span.coinformToolbarButtonDescription {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s, opacity 0.5s linear;
@@ -390,7 +374,7 @@ article[coinform-parsed] {
   filter: invert(100%);
 }
 
-.coinformToolbarButton:hover > span {
+.coinformToolbarButton:hover > span.coinformToolbarButtonDescription {
   display: inline-block;
   visibility: visible;
   opacity: 1;
@@ -405,35 +389,7 @@ article[coinform-parsed] {
   background-clip: content-box;
 }
 
-.coinformToolbarFeedbackLogo {
-  color: #6c3b5d;
-  position: relative;
-  float: right;
-  top: 0px;
-  right: -0px;
-  width: fit-content;
-  height: 30px;
-  align-self: flex-end;
-  cursor: pointer;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-color: rgba(0, 0, 0, .2);
-  border-width: 1px; 
-  border-style: hidden hidden hidden solid;
-  transition: transform 0.5s linear;
-  transition-duration: 0.5s;
-  transform: translateX(0px);
-  transform: scale(1);
-}
-
-.coinformToolbarFeedbackLogo > img {
-  position: relative;
-  top: 2px;
-  padding-right: 2px;
-  display: inline-block;
-}
-
-.coinformToolbarFeedbackLogo > span.coinformFeedbackAgg {
+.coinformToolbarButton > span.coinformFeedbackAgg {
   position: absolute;
   float: left;
   bottom: 0px;
@@ -442,35 +398,6 @@ article[coinform-parsed] {
   font-size: 0.7em;
   color: rgb(59, 68, 75);
   background: inherit;
-}
-
-.coinformToolbarFeedbackLogo > span.coinformFeedbackDescription {
-  position: relative;
-  top: -7px;
-  padding-left: 6px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
-  font-size: 0.8em;
-}
-
-.coinformToolbarFeedbackLogo > span.coinformFeedbackDescription {
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s, opacity 0.5s linear;
-  display: none;
-}
-
-.coinformToolbarFeedbackLogo:hover {
-  color: rgb(68, 65, 65);
-  background-color: #C0C0C0;
-  transform: translateX(-0px);
-  border-radius: 6px;
-  filter: invert(100%);
-}
-
-.coinformToolbarFeedbackLogo:hover > span.coinformFeedbackDescription {
-  display: inline-block;
-  visibility: visible;
-  opacity: 1;
 }
 
 .coinformToolbarFeedbackAfterClick {

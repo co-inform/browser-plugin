@@ -231,7 +231,13 @@
     "message": "Check again the passwords introduced. The minimum length is 6 characters, and the 2 password inputs must coincide"
   },
   "mail_password_not_found": {
-    "message": "User mail not found or wrong password"
+    "message": "User email not found or wrong password"
+  },
+  "read_and_answer_participation": {
+    "message": "You must read and answer the evaluation participation question"
+  },
+  "read_and_answer_followup": {
+    "message": "You must read and answer the follow-up question"
   },
   "read_and_answer_participation": {
     "message": "You must read and answer the participation question"
@@ -311,6 +317,12 @@
   "options_test_mode": {
     "message": "Test Mode"
   },
+  "options_research_participation": {
+    "message": "Evaluation Study participation"
+  },
+  "options_followup_communications": {
+    "message": "Follow-up communications"
+  },
   "change": {
     "message": "Change"
   },
@@ -319,6 +331,9 @@
   },
   "options_save_ok": {
     "message": "Options Saved OK"
+  },
+  "user_id": {
+    "message": "Your ID"
   },
   "user_mail": {
     "message": "Your email"
@@ -357,7 +372,7 @@
     "message": "Change password unknown error"
   },
   "forgot_password_ok": {
-    "message": "A mail has been sent to recover your password"
+    "message": "An email has been sent to recover your password"
   },
   "forgot_password_problem": {
     "message": "Something went wrong during the forgot password request. Try again"
@@ -387,7 +402,7 @@
     "message": "Sign Up"
   },
   "content_deemed_due_analysis__html": {
-    "message": "This content has been deemed as <b>$1</b>, due to the result of this <b>$2</b> different analysis:"
+    "message": "This content has been deemed as <b>$1</b>, due to the result of this <b>$2</b> analysis:"
   },
   "more_analysis_info": {
     "message": "For more information about the analysis click on the credibility label"
