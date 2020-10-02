@@ -3,13 +3,13 @@
       "message": "Creïble"
    },
    "credible__info": {
-      "message": "El $1 sembla ser bastant precís, d'acord amb els anàlisis realitzats"
+      "message": "El $1 sembla ser bastant precís, d'acord amb les anàlisis realitzades"
    },
    "mostly_credible": {
       "message": "Majorment creïble"
    },
    "mostly_credible__info": {
-      "message": "El $1 sembla ser precís, tot i que pot contenir algunes inexactituds menors, d'acord amb els anàlisis realitzats"
+      "message": "El $1 sembla ser precís, tot i que pot contenir algunes inexactituds menors, d'acord amb les anàlisis realitzades"
    },
    "credibility_uncertain": {
       "message": "Credibilitat incerta"
@@ -21,13 +21,13 @@
       "message": "Majorment no creïble"
    },
    "mostly_not_credible__info": {
-      "message": "El $1 sembla ser imprecís, d'acord amb els anàlisis realitzats"
+      "message": "El $1 sembla ser imprecís, d'acord amb les anàlisis realitzades"
    },
    "not_credible": {
       "message": "No creïble"
    },
    "not_credible__info": {
-      "message": "El $1 sembla ser imprecís, d'acord amb els anàlisis realitzats"
+      "message": "El $1 sembla ser imprecís, d'acord amb les anàlisis realitzades"
    },
    "not_verifiable": {
       "message": "No verificable"
@@ -42,7 +42,7 @@
       "message": "El $1 no té anàlisi"
    },
    "not_tagged__info": {
-      "message": "El $1 encara no ha estat analitzat per el sistema"
+      "message": "El $1 encara no ha estat analitzat pel sistema"
    },
    "accurate": {
       "message": "Precís"
@@ -78,7 +78,7 @@
       "message": "No s'ha pogut carregar la configuració del plugin"
    },
    "checking_tweet_coinform": {
-      "message": "Comprobant la informació del tweet amb Co-Inform"
+      "message": "Comprovant la informació del tweet amb Co-Inform"
    },
    "detected_misinfo_content": {
       "message": "S'ha detectat contingut amb desinformació"
@@ -93,10 +93,10 @@
       "message": "La següent URL s'ha detectat com a $1:"
    },
    "check_content_before_publish": {
-      "message": "Si us plau, comproba el contingut de nou abans de compartir."
+      "message": "Si us plau, comprova el contingut de nou abans de compartir."
    },
    "published_in_seconds": {
-      "message": "El Tweet es publicará en $1 segons"
+      "message": "El Tweet es publicarà en $1 segons"
    },
    "why_cant_see": {
       "message": "Per què no puc veure això?"
@@ -114,10 +114,10 @@
       "message": "Ajuda'ns a millorar la IA de Co-Inform"
    },
    "provide_claim": {
-      "message": "Si consideres que no es precís, pots enviar una reclamació i un enllaç a un article que ho corrobori"
+      "message": "Si consideres que no és precís, pots enviar una reclamació i un enllaç a un article que ho corrobori"
    },
    "provide_claim_text1": {
-      "message": "Basant-nos en les teves contribucions, podem trobar formes de millorar la educació mediàtica"
+      "message": "Basant-nos en les teves contribucions, podem trobar formes de millorar l'alfabetització mediàtica"
    },
    "provide_claim_text2": {
       "message": "Pots ajudar explicant-nos si creus que el $1 és o no precís, i incloent un enllaç a una font que ho corrobori"
@@ -138,7 +138,7 @@
       "message": "Si creus que no és precís pots enviar una reclamació iniciant sessió amb el teu compte de Co-Inform"
    },
    "login_register_instructions": {
-      "message": "Pots clickar en el logo de Co-Inform a la part superior dreta del navegador per obrir la finestra de registre / inici de sessió"
+      "message": "Pots clicar en el logo de Co-Inform a la part superior dreta del navegador per obrir la finestra de registre / inici de sessió"
    },
    "ok": {
       "message": "Ok"
@@ -156,10 +156,10 @@
       "message": "Comentari"
    },
    "choose_claim": {
-      "message": "Escollir una reclamació"
+      "message": "Escollir una opció"
    },
    "make_claim": {
-      "message": "Enviar una reclamació"
+      "message": "Dóna'ns la teva opinió"
    },
    "link_to_claim": {
       "message": "Enllaç a una font correctiva"
@@ -174,7 +174,7 @@
       "message": "Estic en desacord amb l'etiqueta"
    },
    "additional_info": {
-      "message": "Informació adicional"
+      "message": "Informació addicional"
    },
    "request_factcheck": {
      "message": "Sol·licitar que es verifiqui la reclamació (fact-check)"
@@ -183,13 +183,13 @@
       "message": "Necessites escollir una reclamació"
    },
    "invalid_url": {
-      "message": "La URL introduïda no es vàlida"
+      "message": "L'URL introduït no és vàlid"
    },
    "provide_url": {
       "message": "Has de proporcionar un enllaç a un article que corrobori la reclamació"
    },
    "provide_additional_info": {
-      "message": "Has de proporcionar informació adicional"
+      "message": "Has de proporcionar informació addicional"
    },
    "popup_footer_text": {
       "message": "Pensa - Comprova - Comparteix"
@@ -228,19 +228,19 @@
       "message": "Comprova de nou la contrasenya introduïda"
    },
    "password_not_valid_info": {
-      "message": "Comprova de nou la contrasenya introduïda. La longitud mínima es de 6 caràcters, i les 2 contrasenyes han de ser idèntiques"
+      "message": "Comprova de nou la contrasenya introduïda. La longitud mínima és de 6 caràcters, i les 2 contrasenyes han de ser idèntiques"
    },
    "mail_password_not_found": {
-      "message": "No s'ha trobat el email o la contrasenya és incorrecta"
+      "message": "No s'ha trobat l'email o la contrasenya és incorrecta"
    },
    "read_and_answer_participation": {
-     "message": "És necessari llegir i respondre la pregunta sobre la participació en la avaluació"
+     "message": "És necessari llegir i respondre la pregunta sobre la participació en l'avaluació"
    },
    "read_and_answer_followup": {
      "message": "És necessari llegir i respondre la pregunta sobre les comunicacions de seguiment"
    },
    "login_ok": {
-      "message": "Usuari identificat correctemant"
+      "message": "Usuari identificat correctament"
    },
    "login_error": {
       "message": "Error d'identificació desconegut"
@@ -282,7 +282,7 @@
      "message": "Accepto participar en l'estudi d'avaluació del Plugin."
    },
    "consent_participate_text": {
-     "message": "Vull compartir les meves dades anónimament per a millorar l'experiencia del Plugin de Co-Inform."
+     "message": "Vull compartir les meves dades anònimament per a millorar l'experiència del Plugin de Co-Inform."
    },
    "consent_followup_summary": {
      "message": "Accepto rebre comunicacions per part de Co-Inform."
@@ -312,7 +312,7 @@
       "message": "Mode Test"
    },
    "options_research_participation": {
-     "message": "Participar en l'estudio d'avaluació"
+     "message": "Participar en l'estudi d'avaluació"
    },
    "options_followup_communications": {
      "message": "Rebre comunicacions de seguiment"
@@ -324,7 +324,7 @@
       "message": "Guardar"
    },
    "options_save_ok": {
-      "message": "Options Saved OK"
+      "message": "Opcions guardades correctament"
    },
    "user_id": {
      "message": "El teu ID"
@@ -369,7 +369,7 @@
       "message": "S'ha enviat un email per a recuperar el compte"
    },
    "forgot_password_problem": {
-      "message": "Ha fallat alguna cosa durant el procés de solicitud de recuperació del compte. Torna-ho a provar"
+      "message": "Ha fallat alguna cosa durant el procés de sol·licitud de recuperació del compte. Torna-ho a provar"
    },
    "forgot_password_error": {
       "message": "Error desconegut durant el procés de recuperació del compte"
@@ -399,10 +399,10 @@
       "message": "El contingut es considera <b>$1</b>, com a resultat dels següents <b>$2</b> anàlisis:"
    },
    "more_analysis_info": {
-      "message": "Per a més informació sobre els anàlisis realitzats pots clickar sobre l'etiqueta de credibilitat"
+      "message": "Per a més informació sobre les anàlisis realitzades pots clicar sobre l'etiqueta de credibilitat"
    },
    "module_analysis_long_info__html": {
-      "message": "Un anàlisi anomenat <b>$1</b>, basat en $2, ha generat aquesta valoració:"
+      "message": "Una anàlisi anomenada <b>$1</b>, basat en $2, ha generat aquesta valoració:"
    },
    "module_analysis_short_info__html": {
       "message": "L'anàlisi <b>$1</b> ha generat aquesta valoració:"
@@ -426,7 +426,7 @@
       "message": "articles similars"
    },
    "misinfome": {
-      "message": "Itentificació de Desinformació"
+      "message": "Identificació de Desinformació"
    },
    "misinfome_based_info": {
       "message": "la reputació de la font"

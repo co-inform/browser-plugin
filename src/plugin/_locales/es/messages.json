@@ -15,7 +15,7 @@
       "message": "Credibilidad incierta"
    },
    "credibility_uncertain__info": {
-      "message": "El $1 probablemente mezcla contenidos precisos y erroneos (o no verificables)"
+      "message": "El $1 probablemente mezcla contenidos precisos y erróneos (o no verificables)"
    },
    "mostly_not_credible": {
       "message": "Mayormente no creíble"
@@ -60,13 +60,13 @@
       "message": "No corroborado"
    },
    "unsubstantiated__info": {
-      "message": "El $1 no esta corroborado"
+      "message": "El $1 no está corroborado"
    },
    "inaccurate_with_considerations": {
       "message": "Impreciso con consideraciones"
    },
    "inaccurate_with_considerations__info": {
-      "message": "El $1 mezcla contenido preciso y impreciso"
+      "message": "El $1 mezcla contenido preciso e impreciso"
    },
    "inaccurate": {
       "message": "Impreciso"
@@ -117,7 +117,7 @@
       "message": "Si consideras que no es preciso por favor envía una reclamación y un enlace a un artículo que corrobore dicha reclamación"
    },
    "provide_claim_text1": {
-      "message": "Basándonos en tus contribuciones, podemos encontrar formas de mejorar la educación mediática"
+      "message": "Basándonos en tus contribuciones, podemos encontrar formas de mejorar la alfabetización mediática"
    },
    "provide_claim_text2": {
       "message": "Puedes ayudarnos contándonos si consideras o no el $1 preciso, y proporcionar un enlace a una fuente que lo corrobore"
@@ -156,10 +156,10 @@
       "message": "Comentario"
    },
    "choose_claim": {
-      "message": "Escoger una reclamación"
+      "message": "Escoge una opción"
    },
    "make_claim": {
-      "message": "Enviar una reclamación"
+      "message": "Danos tu opinión"
    },
    "link_to_claim": {
       "message": "Enlace a una fuente correctiva"
@@ -204,7 +204,7 @@
       "message": "Error!"
    },
    "feedback_not_sent": {
-      "message": "No se puedo enviar tu evaluación"
+      "message": "No se pudo enviar tu evaluación"
    },
    "popup_plugin_title": {
       "message": "El plugin que te ayuda a Pensar-Comprobar-Compartir en Twitter"
@@ -228,7 +228,7 @@
       "message": "Comprueba de nuevo la contraseña introducida"
    },
    "password_not_valid_info": {
-      "message": "Comprueba de nuevo las contraseñas introducidas. La longitud mínima son 6 carácteres, y las 2 contraseñas deben ser idénticas"
+      "message": "Comprueba de nuevo las contraseñas introducidas. La longitud mínima son 6 caracteres, y las 2 contraseñas deben ser idénticas"
    },
    "mail_password_not_found": {
       "message": "No se ha encontrado el email o la contraseña no es correcta"
@@ -288,7 +288,7 @@
      "message": "Acepto recibir comunicaciones por parte de Co-Inform."
    },
    "consent_followup_text": {
-     "message": "Quiero recibir futuras actualizaciones y información de Co-Inform mediante el envío de emails."
+     "message": "Quiero recibir futuras actualizaciones e información de Co-Inform mediante el envío de emails."
    },
    "i_agree": {
      "message": "Acepto"
@@ -414,7 +414,7 @@
       "message": "Explicación detallada sobre el análisis"
    },
    "module_explainability_link": {
-      "message": "Más información sore el análisis"
+      "message": "Más información sobre el análisis"
    },
    "here": {
       "message": "aquí"
@@ -423,7 +423,7 @@
       "message": "Similitud de Aserciones"
    },
    "claim_similarity_based_info": {
-      "message": "articulos similares"
+      "message": "artículos similares"
    },
    "misinfome": {
       "message": "Identificación de Desinformación"

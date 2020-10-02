@@ -1,419 +1,455 @@
 {
-   "credible": {
-      "message": "Trovärdigt"
-   },
-   "credible__info": {
-      "message": "The $1 is most likely to be accurate, according to strong signals we found"
-   },
-   "mestadels_credible": {
-      "message": "mestadels trovärdigt"
-   },
-   "mestadels_credible__info": {
-      "message": " $1 kan vara trovärdigt, men kan innehålla små felaktighter enligt de signaler vi uppfattar. "
-   },
-   "credibility_uncertain": {
-      "message": "Osäker trovärdighet"
-   },
-   "credibility_uncertain__info": {
-      "message": "$1 blandar korrekta och felaktiga uppgifter "
-   },
-   "mestadels_inte_credible": {
-      "message": "mestadels inte trovärdigt"
-   },
-   "mestadels_inte_credible__info": {
-      "message": " $1 är sannolikt ej trovärdigt enligt starka indikationer"
-   },
-   "inte_credible": {
-      "message": "inte trovärdigt"
-   },
-   "inte_credible__info": {
-      "message": "$1 är sannolikt ej trovärdigt enligt starka indikationer"
-   },
-   "inte_verifiable": {
-      "message": "ej verifierbart"
-   },
-   "inte_verifiable__info": {
-      "message": "The $1 does inte contain verifiable claims (it's all opinions or speculations), or we could inte find sufficient signals supporting/refuting the claims in the $1"
-   },
-   "tweet_post": {
-      "message": "Tweet post"
-   },
-   "inte_tagged": {
-      "message": "The $1 is inte tagged"
-   },
-   "inte_tagged__info": {
-      "message": "The $1 has inte yet been tagged by the system"
-   },
-   "accurate": {
-      "message": "Accurate"
-   },
-   "accurate__info": {
-      "message": "The $1 is accurate"
-   },
-   "accurate_with_considerations": {
-      "message": "Accurate with considerations"
-   },
-   "accurate_with_considerations__info": {
-      "message": "The $1 contain minor inaccuracies"
-   },
-   "unsubstantiated": {
-      "message": "Unsubstantiated"
-   },
-   "unsubstantiated__info": {
-      "message": "The $1 is unsubstantiated"
-   },
-   "inaccurate_with_considerations": {
-      "message": "Inaccurate with considerations"
-   },
-   "inaccurate_with_considerations__info": {
-      "message": "The $1 mixes accurate and inaccurate subcontent"
-   },
-   "inaccurate": {
-      "message": "Inaccurate"
-   },
-   "inaccurate__info": {
-      "message": "The $1 is inaccurate"
-   },
-   "error_loading_configuration": {
-      "message": "Could inte load plugin configuration"
-   },
-   "checking_tweet_coinform": {
-      "message": "Checking tweet info with CoInform"
-   },
-   "detected_misinfo_content": {
-      "message": "Some content is detected to be Misinformation"
-   },
-   "publish_anyway": {
-      "message": "Publish anyway"
-   },
-   "content_tagged_as": {
-      "message": "Detected content tagged as $1"
-   },
-   "url_detected_misinformation": {
-      "message": "The following URL is detected to be $1:"
-   },
-   "check_content_before_publish": {
-      "message": "Please, check the content again before sharing it."
-   },
-   "published_in_seconds": {
-      "message": "The tweet will be published in $1 seconds"
-   },
-   "why_cant_see": {
-      "message": "Why can't I see this?"
-   },
-   "element_tagged_as": {
-      "message": "This $1 has been tagged as: $2"
-   },
-   "see_anyway": {
-      "message": "See $1 anyway"
-   },
-   "blur_again": {
-      "message": "Blur $1 again"
-   },
-   "provide_claim_title": {
-      "message": "Help us improve Co-Inform AI"
-   },
-   "provide_claim": {
-      "message": "If you think this is inte accurate please provide a claim and a link to a post that supports that claim"
-   },
-   "provide_claim_text1": {
-      "message": "Based on your ratings, we may suggest ways to improve media literacy"
-   },
-   "provide_claim_text2": {
-      "message": "You can help us by telling us whether you think the $1 is accurate or inte and include a link to a source providing evidence"
-   },
-   "provide_claim_untagged": {
-      "message": "If you want you can provide a claim and a link to a post that supports that claim"
-   },
-   "inte_logged": {
-      "message": "inte logged in"
-   },
-   "provide_feedback_with_login": {
-      "message": "To provide your feedback about the Co-Inform labeling you must be a logged in Co-Inform user"
-   },
-   "wait_label_for_feedback": {
-      "message": "You must wait for the $1 to be tagged before providing your feedback"
-   },
-   "provide_claim_with_login": {
-      "message": "If you think this is inte accurate you can provide a claim by logging in with your Co-Inform user"
-   },
-   "login_register_instructions": {
-      "message": "Click on the Co-Inform logo on the top right corner of your browser to open the login/register popup"
-   },
-   "ok": {
-      "message": "Ok"
-   },
-   "close": {
-      "message": "Close"
-   },
-   "submit": {
-      "message": "Submit"
-   },
-   "url": {
-      "message": "URL"
-   },
-   "comment": {
-      "message": "Comment"
-   },
-   "choose_claim": {
-      "message": "Choose a claim"
-   },
-   "make_claim": {
-      "message": "I want to make a claim"
-   },
-   "link_to_claim": {
-      "message": "Link to corrective source"
-   },
-   "optional": {
-      "message": "optional"
-   },
-   "positive_feedback": {
-      "message": "I agree with the tweet label"
-   },
-   "negative_feedback": {
-      "message": "I disagree with the tweet label"
-   },
-   "additional_info": {
-      "message": "Additional info"
-   },
-   "request_factcheck": {
-      "message": "Request claim to be fact-checked"
-   },
-   "please_choose_claim": {
-      "message": "Please choose a claim"
-   },
-   "invalid_url": {
-      "message": "The url introduced is inte valid"
-   },
-   "provide_url": {
-      "message": "Please provide a link to your claim"
-   },
-   "provide_additional_info": {
-      "message": "Please provide some additional information"
-   },
-   "popup_footer_text": {
-      "message": "Think - Check - Share"
-   },
-   "sent": {
-      "message": "Sent!"
-   },
-   "feedback_sent": {
-      "message": "Your feedback has been sent"
-   },
-   "error": {
-      "message": "Error!"
-   },
-   "feedback_inte_sent": {
-      "message": "Your feedback was inte sent"
-   },
-   "popup_plugin_title": {
-      "message": "The plugin that helps you Think - Check - Share on Twitter"
-   },
-   "login_title": {
-      "message": "Co-Inform Login"
-   },
-   "already_logged": {
-      "message": "You are already logged"
-   },
-   "register_title": {
-      "message": "Co-Inform Register"
-   },
-   "provide_mail": {
-      "message": "You must provide your email"
-   },
-   "mail_inte_valid": {
-      "message": "The text introduced is inte a valid email"
-   },
-   "password_inte_valid": {
-      "message": "Check again the password introduced"
-   },
-   "password_inte_valid_info": {
-      "message": "Check again the passwords introduced. The minimum length is 6 characters, and the 2 password inputs must coincide"
-   },
-   "mail_password_inte_found": {
-      "message": "User mail inte found or wrong password"
-   },
-   "login_ok": {
-      "message": "User succesfully logged in"
-   },
-   "login_error": {
-      "message": "Login unknown error"
-   },
-   "login_inte_valid": {
-      "message": "Login inte valid"
-   },
-   "register_problem": {
-      "message": "Something went wrong during the registration. Try again"
-   },
-   "register_ok": {
-      "message": "User succesfully registered. You will receive an email with instructions to validate your account. You need to validate the account prior to log in."
-   },
-   "register_error": {
-      "message": "Register unknown error"
-   },
-   "register_inte_valid": {
-      "message": "Register inte valid. Check your data again"
-   },
-   "logout_ok": {
-      "message": "User succesfully logged out"
-   },
-   "logout_problem": {
-      "message": "Something went wrong during the logout. Try again"
-   },
-   "logout_error": {
-      "message": "Logout unknown error"
-   },
-   "log_in": {
-      "message": "Log In"
-   },
-   "log_out": {
-      "message": "Log Out"
-   },
-   "register": {
-      "message": "Register"
-   },
-   "login": {
-      "message": "Login"
-   },
-   "account": {
-      "message": "Account"
-   },
-   "options": {
-      "message": "Options"
-   },
-   "options_test_mode": {
-      "message": "Test Mode"
-   },
-   "change": {
-      "message": "Change"
-   },
-   "save": {
-      "message": "Save"
-   },
-   "options_save_ok": {
-      "message": "Options Saved OK"
-   },
-   "user_mail": {
-      "message": "Your email"
-   },
-   "password": {
-      "message": "Your password"
-   },
-   "retype_password": {
-      "message": "Retype your password"
-   },
-   "new_password": {
-      "message": "Your new password"
-   },
-   "retype_new_password": {
-      "message": "Retype your new password"
-   },
-   "misinformation_restriction_level": {
-      "message": "Misinforming restriction level"
-   },
-   "low": {
-      "message": "Low"
-   },
-   "medium": {
-      "message": "Medium"
-   },
-   "high": {
-      "message": "High"
-   },
-   "change_password_problem": {
-      "message": "Something went wrong during the password change. Try again"
-   },
-   "change_password_ok": {
-      "message": "User succesfully changed the password"
-   },
-   "change_password_error": {
-      "message": "Change password unknown error"
-   },
-   "forgot_password_ok": {
-      "message": "A mail has been sent to recover your password"
-   },
-   "forgot_password_problem": {
-      "message": "Something went wrong during the forgot password request. Try again"
-   },
-   "forgot_password_error": {
-      "message": "Forgot password unknown error"
-   },
-   "change_password_info": {
-      "message": "Here you can change your password"
-   },
-   "forgot_password_question": {
-      "message": "Forgot your password?"
-   },
-   "account_information": {
-      "message": "Account information"
-   },
-   "options_title": {
-      "message": "Plugin Options"
-   },
-   "dont_have_account_question": {
-      "message": "Don't have an account?"
-   },
-   "already_have_account_question": {
-      "message": "Already have an account?"
-   },
-   "sign_up": {
-      "message": "Sign Up"
-   },
-   "content_deemed_due_analysis__html": {
-      "message": "This content has been deemed as <b>$1</b>, due to the result of this <b>$2</b> different analysis:"
-   },
-   "more_analysis_info": {
-      "message": "For more information about the analysis click on the credibility label"
-   },
-   "module_analysis_long_info__html": {
-      "message": "A <b>$1</b> analysis, based on $2, generated this assessment:"
-   },
-   "module_analysis_short_info__html": {
-      "message": "A <b>$1</b> analysis generated this assessment:"
-   },
-   "module_analysis_result__html": {
-      "message": "<b>$1</b> (with <b>$2</b> of credibility value, and <b>$3%</b> of confidence)"
-   },
-   "module_explainability_text": {
-      "message": "Detailed analysis explanation"
-   },
-   "module_explainability_link": {
-      "message": "More analysis information"
-   },
-   "here": {
-      "message": "here"
-   },
-   "claim_similarity": {
-      "message": "Claim Similarity"
-   },
-   "claim_similarity_based_info": {
-      "message": "similar articles"
-   },
-   "misinfome": {
-      "message": "Misinformation Identification"
-   },
-   "misinfome_based_info": {
-      "message": "the source authour reputation"
-   },
-   "content_analysis": {
-      "message": "Content Stance"
-   },
-   "content_analysis_based_info": {
-      "message": "the tweet content and its replies"
-   },
-   "processing_labeling": {
-      "message": "Processing the label.."
-   },
-   "labeling_done": {
-      "message": "Labeling done"
-   },
-   "labeling_partly_done": {
-      "message": "Labeling partly done"
-   },
-   "labeling_timeout": {
-      "message": "Labeling timeout"
-   },
-   "labeling_undone": {
-      "message": "Labeling undone"
-   }
+  "credible": {
+    "message": "Trovärdig"
+  },
+  "credible__info": {
+    "message": "$1 är mycket troligt korrekt, enligt mycket övertyggande signaler vi hittat"
+  },
+  "mostly_credible": {
+    "message": "Övervägande trovärdig"
+  },
+  "mostly_credible__info": {
+    "message": "$1 är sannolikt korrekt, men kan innehålla mindre felaktigheter, enligt övertygande signaler vi hittat"
+  },
+  "credibility_uncertain": {
+    "message": "Osäker trovärdighet"
+  },
+  "credibility_uncertain__info": {
+    "message": "$1 blandar förmodligen både korrekta och inkorrekta (eller ej verifierbara) anspråk"
+  },
+  "mostly_not_credible": {
+    "message": "Övervägande låg trovärdighet"
+  },
+  "mostly_not_credible__info": {
+    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat"
+  },
+  "not_credible": {
+    "message": "Inte trovärdigt"
+  },
+  "not_credible__info": {
+    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat"
+  },
+  "not_verifiable": {
+    "message": "Ej verifierbart"
+  },
+  "not_verifiable__info": {
+    "message": "$1 innehåller inga verifierbara anspråk (det är bara åsikter eller spekuleringar), eller så kunde vi inte hitta tillräckliga signaler som stödjer/motsäger anspråken i $1"
+  },
+  "tweet_post": {
+    "message": "Tweet meddelande"
+  },
+  "not_tagged": {
+    "message": "$1 är ej taggat"
+  },
+  "not_tagged__info": {
+    "message": "$1 har ännu inte taggats av systemet"
+  },
+  "accurate": {
+    "message": "Korrekt"
+  },
+  "accurate__info": {
+    "message": "$1 är korrekt"
+  },
+  "accurate_with_considerations": {
+    "message": "Övervägande korrekt"
+  },
+  "accurate_with_considerations__info": {
+    "message": "$1 innehåller små felaktigheter"
+  },
+  "unsubstantiated": {
+    "message": "Ogrundat"
+  },
+  "unsubstantiated__info": {
+    "message": "$1 är ogrundat/obekräftat"
+  },
+  "inaccurate_with_considerations": {
+    "message": "Övervägande felaktigt"
+  },
+  "inaccurate_with_considerations__info": {
+    "message": "$1 blandar korrekta och felaktiga innehåll"
+  },
+  "inaccurate": {
+    "message": "Felaktigt"
+  },
+  "inaccurate__info": {
+    "message": "$1 är felaktigt"
+  },
+  "error_loading_configuration" : {
+    "message": "Kunnde inte läsa in konfigurationen för pluginen"
+  },
+  "checking_tweet_coinform": {
+    "message": "Kontrollerar Tweeten mot CoInform systemet"
+  },
+  "detected_misinfo_content": {
+    "message": "Delar av innehållet innehåller felaktig information"
+  },
+  "publish_anyway": {
+    "message": "Publicera ändå"
+  },
+  "content_tagged_as": {
+    "message": "Upptäckte innehåll som taggats som $1"
+  },
+  "url_detected_misinformation": {
+    "message": "Följande URL upptäcktes vara $1:"
+  },
+  "check_content_before_publish": {
+    "message": "Vänligen, kontrollera innehållet en gång till innan det delas."
+  },
+  "published_in_seconds": {
+    "message": "Tweeten kommer publiceras om $1 sekunder"
+  },
+  "why_cant_see": {
+    "message": "Varför kan jag inte se detta?"
+  },
+  "element_tagged_as": {
+    "message": "Denna $1 har markerats som: $2"
+  },
+  "see_anyway": {
+    "message": "Se $1 ändå"
+  },
+  "blur_again": {
+    "message": "Gör $1 suddig igen"
+  },
+  "provide_claim_title": {
+    "message": "Hjälp oss förbättra CoInforms AI"
+  },
+  "provide_claim": {
+    "message": "Om du tror att detta inte är korrekt vänligen delge ett anspråk och länk till information som stödjer ditt anspråk"
+  },
+  "provide_claim_text1": {
+    "message": "Baserat på dina graderingar, kan vi delge sätt att förbättra din mediekunskap"
+  },
+  "provide_claim_text2": {
+    "message": "Du kan hjälpa oss genom att säga om du tycker att $1 är korrekt eller ej och delge en länk till en källa som bestyrker detta"
+  },
+  "provide_claim_untagged": {
+    "message": "Om du vill kan du delge ett anspråk och länk till ett inlägg som stödjer detta"
+  },
+  "not_logged": {
+    "message": "Ej inloggad"
+  },
+  "provide_feedback_with_login": {
+    "message": "För att delge din feedback till CoInform behöver du vara inloggad som användare av CoInform"
+  },
+  "wait_label_for_feedback": {
+    "message": "Du måste invänta att $1 har blivit taggat innan du kan delge din feedback"
+  },
+  "provide_claim_with_login": {
+    "message": "Om du tycker att detta är felaktigt kan du delge din åsikt genom att logga in som CoInform användare"
+  },
+  "login_register_instructions": {
+    "message": "Klicka på CoInform loggam uppe till höger i din browser för att öpnna login/registrera vyn"
+  },
+  "ok": {
+    "message": "Ok"
+  },
+  "close": {
+    "message": "Stäng"
+  },
+  "submit": {
+    "message": "Skicka"
+  },
+  "url": {
+    "message": "URL"
+  },
+  "comment": {
+    "message": "Kommentera"
+  },
+  "choose_claim": {
+    "message": "Välj ett anspråk"
+  },
+  "make_claim": {
+    "message": "Jag vill göra ett anspråk"
+  },
+  "link_to_claim": {
+    "message": "Länk till källa"
+  },
+  "optional": {
+    "message": "frivillig"
+  },
+  "positive_feedback": {
+    "message": "Jag håller med tweetens märkning"
+  },
+  "negative_feedback": {
+    "message": "Jag håller inte med tweetens märkning"
+  },
+  "additional_info": {
+    "message": "Ytterligare information"
+  },
+  "request_factcheck": {
+    "message": "Begär en faktakontroll av detta anspråk"
+  },
+  "please_choose_claim": {
+    "message": "Vänligen välj anspråk"
+  },
+  "invalid_url": {
+    "message": "Detta är inte en giltig/korrekt url"
+  },
+  "provide_url": {
+    "message": "Vänligen delge en länk till ditt anspråk"
+  },
+  "provide_additional_info": {
+    "message": "Vänligen delge ytterligare information"
+  },
+  "popup_footer_text": {
+    "message": "Tänk - Kontrollera - Dela"
+  },
+  "sent": {
+    "message": "Skickat!"
+  },
+  "feedback_sent": {
+    "message": "Din feedback har skickats"
+  },
+  "error": {
+    "message": "Tilt!"
+  },
+  "feedback_not_sent": {
+    "message": "Din feedback har inte skickats"
+  },
+  "popup_plugin_title": {
+    "message": "Pluginen som hjälper dig Tänka - Kontrollera - Dela på Twitter"
+  },
+  "login_title": {
+    "message": "Co-Inform Login"
+  },
+  "already_logged": {
+    "message": "Du är inloggad"
+  },
+  "register_title": {
+    "message": "Co-Inform Registrera"
+  },
+  "provide_mail": {
+    "message": "Du måste delge din email"
+  },
+  "mail_not_valid": {
+    "message": "Det är inte en korrekt email"
+  },
+  "password_not_valid": {
+    "message": "Kontroller lösenordet igen"
+  },
+  "password_not_valid_info": {
+    "message": "Kontrollera lösenordet igen. Det måste vara minst 6 tecken och båda måste vara likadana"
+  },
+  "mail_password_not_found": {
+    "message": "Email kunde ej hittas eller så är det fel password"
+  },
+  "read_and_answer_participation": {
+    "message": "Du måste läsa och svara på frågan angående deltagandet i utvärderingen"
+  },
+  "read_and_answer_followup": {
+    "message": "Du måste läsa och svara på uppföljningsfrågan"
+  },
+  "login_ok": {
+    "message": "Framgångsrik inloggning"
+  },
+  "login_error": {
+    "message": "Okänt fel vid inloggning"
+  },
+  "login_not_valid": {
+    "message": "Inte en godkänd inloggning"
+  },
+  "register_problem": {
+    "message": "Något gick fel vid registrering. Försök igen"
+  },
+  "register_ok": {
+    "message": "Användare registrerad. Du kommer få ett email med isntruktioner för att validera ditt nya konto. Detta behöver göras innan du kan logga in på kontot"
+  },
+  "register_error": {
+    "message": "Okänt fel vid registrering"
+  },
+  "register_not_valid": {
+    "message": "Något gick fel vid kontroll av den angivna informationen. Kontrolera och försök igen"
+  },
+  "logout_ok": {
+    "message": "Användare utloggad"
+  },
+  "logout_problem": {
+    "message": "Något gick fel vid utloggning. Försök igen"
+  },
+  "logout_error": {
+    "message": "Okänt fel vid utloggning"
+  },
+  "log_in": {
+    "message": "Logga In"
+  },
+  "log_out": {
+    "message": "Logga Ut"
+  },
+  "next": {
+    "message": "Nästa"
+  },
+  "consent_participate_summary": {
+    "message": "Jag samtycker till att delta i Plugin Utvärderings Studie"
+  },
+  "consent_participate_text": {
+    "message": "Jag godkänner att min data delas anonymt med CoInform för att möjliggöra förbättringar"
+  },
+  "consent_followup_summary": {
+    "message": "Jag godkänner att CoInform kan skicka email/notiser till mig för uppföljning"
+  },
+  "consent_followup_text": {
+    "message": "Jag vill ha uppdateringar och information från CoInform"
+  },
+  "i_agree": {
+    "message": "Jag samtycker"
+  },
+  "i_disagree": {
+    "message": "Jag samtycker ej"
+  },
+  "register": {
+    "message": "Registrera"
+  },
+  "login": {
+    "message": "Login"
+  },
+  "account": {
+    "message": "Konto"
+  },
+  "options": {
+    "message": "Inställningar"
+  },
+  "options_test_mode": {
+    "message": "Testläge"
+  },
+  "options_research_participation": {
+    "message": "Deltagande i Utvärderingsstudie"
+  },
+  "options_followup_communications": {
+    "message": "Kommunikation i uppföljningssyfte"
+  },
+  "change": {
+    "message": "Ändra"
+  },
+  "save": {
+    "message": "Spara"
+  },
+  "options_save_ok": {
+    "message": "Inställningar sparade OK"
+  },
+  "user_id": {
+    "message": "Ditt ID"
+  },
+  "user_mail": {
+    "message": "Din email"
+  },
+  "password": {
+    "message": "Ditt lösenord"
+  },
+  "retype_password": {
+    "message": "Skriv lösenord igen"
+  },
+  "new_password": {
+    "message": "Ditt nya lösenord"
+  },
+  "retype_new_password": {
+    "message": "Skriv ditt nya lösenord igen"
+  },
+  "misinformation_restriction_level": {
+    "message": "Begränsning av felinformation"
+  },
+  "low": {
+    "message": "Låg"
+  },
+  "medium": {
+    "message": "Medel"
+  },
+  "high": {
+    "message": "Hög"
+  },
+  "change_password_problem": {
+    "message": "Något gick fel vid byte av lösenord. Försök igen"
+  },
+  "change_password_ok": {
+    "message": "Lösenord bytt"
+  },
+  "change_password_error": {
+    "message": "Okänt fel vid byte av lösenord"
+  },
+  "forgot_password_ok": {
+    "message": "Ett email har skickats för att återfå ditt lösenord"
+  },
+  "forgot_password_problem": {
+    "message": "Något gick fel vid försök att återställa lösenordet. Försök igen."
+  },
+  "forgot_password_error": {
+    "message": "Okänt fel vid glömt lösenord"
+  },
+  "change_password_info": {
+    "message": "Här kan du ändra ditt lösenord"
+  },
+  "forgot_password_question": {
+    "message": "Glömt ditt lösenord?"
+  },
+  "account_information": {
+    "message": "Konto information"
+  },
+  "options_title": {
+    "message": "Plugin inställningar"
+  },
+  "dont_have_account_question": {
+    "message": "Har du inget konto?"
+  },
+  "already_have_account_question": {
+    "message": "Har du redan ett konto?"
+  },
+  "sign_up": {
+    "message": "Sign Up"
+  },
+  "content_deemed_due_analysis__html": {
+    "message": "Detta innehåll har bedömts som <b>$1</b>, på grund av resultatet av denna <b>$2</b> analys:"
+  },
+  "more_analysis_info": {
+    "message": "För mer information om analysen klicka på trovärdighets taggen"
+  },
+  "module_analysis_long_info__html": {
+    "message": "En <b>$1</b> analys, baserad på $2, genererade detta svar:"
+  },
+  "module_analysis_short_info__html": {
+    "message": "En <b>$1</b> analys genererade denna bedömning:"
+  },
+  "module_analysis_result__html": {
+    "message": "<b>$1</b> (med <b>$2</b> som trovärdighetsvärde, och <b>$3%</b> som tillförsiktsvärde)"
+  },
+  "module_explainability_text": {
+    "message": "Detaljerad förklaring av analysen"
+  },
+  "module_explainability_link": {
+    "message": "Mer information om analysen"
+  },
+  "here": {
+    "message": "här"
+  },
+  "claim_similarity": {
+    "message": "Claim Similarity"
+  },
+  "claim_similarity_based_info": {
+    "message": "liknande artiklar"
+  },
+  "misinfome": {
+    "message": "Misinformation Identification"
+  },
+  "misinfome_based_info": {
+    "message": "Renomme för källans författare"
+  },
+  "content_analysis": {
+    "message": "Content Stance"
+  },
+  "content_analysis_based_info": {
+    "message": "tweetens svar sam dess nnehåll"
+  },
+  "processing_labeling": {
+    "message": "Processar taggen..."
+  },
+  "labeling_done": {
+    "message": "Märkning klar"
+  },
+  "labeling_partly_done": {
+    "message": "Märkning delvis klar"
+  },
+  "labeling_timeout": {
+    "message": "Märkning timeout"
+  },
+  "labeling_undone": {
+    "message": "Märkning ångrad"
+  }
 }
