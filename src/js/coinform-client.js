@@ -194,24 +194,23 @@ function postCheckTweet(path, tweetId, author, tweetText, coinformUserID, userTo
     data.coinform_user_id = coinformUserID;
   }
 
-  let headers = {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-    'Content-Length': Buffer.byteLength(JSON.stringify(data)),
-    'Connection': 'keep-alive',
-    'rejectUnauthorized': false
-  };
-
+  /*let headers = ...;
   if (userToken) {
     headers['Authorization'] = 'Bearer ' + userToken;
-  }
+  }*/
 
   return new Promise((resolve, reject) => {
     f(path, {
       method: 'POST',
       mode: 'cors',
       body: JSON.stringify(data),
-      headers: headers
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(JSON.stringify(data)),
+        'Connection': 'keep-alive',
+        'rejectUnauthorized': false
+      }
     })
       .then(res => res.json().then(json => ({
         status: res.status,
