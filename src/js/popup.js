@@ -81,6 +81,16 @@ window.addEventListener("load", function(){
   document.getElementById('register-step3-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
   document.getElementById('register-step3-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
 
+  document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
+  document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+  document.getElementById('register-step2-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
+  document.getElementById('register-step2-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+
+  document.getElementById('register-followup-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
+  document.getElementById('register-followup-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
+  document.getElementById('register-step3-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
+  document.getElementById('register-step3-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
+
   // Set the header logo image
   let img = document.createElement("IMG");
   img.classList.add("logo");

@@ -239,6 +239,12 @@
   "read_and_answer_followup": {
     "message": "You must read and answer the follow-up question"
   },
+  "read_and_answer_participation": {
+    "message": "You must read and answer the participation question"
+  },
+  "read_and_answer_followup": {
+    "message": "You must read and answer the follow-up question"
+  },
   "login_ok": {
     "message": "User succesfully logged in"
   },
