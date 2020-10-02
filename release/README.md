@@ -3,6 +3,9 @@ Here you can find the built packed code for the browser plugin extension of Co-I
 
 As of right now this extension is compatible with Google Chrome, Mozilla Firefox and Opera. It has not been tested in other browsers yet.
 
+## Download ZIP packed release
+The last packed version of the Co-Inform Plugin Extension is the [4.0.0 RV](coinform-extension-v4_rv.zip) present in this same folder.
+
 ## How to Install from ZIP
 The distributed packed plugin is a ZIP file containing the content of the build folder.
 
