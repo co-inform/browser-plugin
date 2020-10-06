@@ -73,21 +73,15 @@ window.addEventListener("load", function(){
 
   document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
   document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
+  document.getElementById('register-participation-yes-text').innerHTML = browserAPI.i18n.getMessage("i_agree");
+  document.getElementById('register-participation-no-text').innerHTML = browserAPI.i18n.getMessage("i_disagree");
   document.getElementById('register-step2-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
   document.getElementById('register-step2-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
 
   document.getElementById('register-followup-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
   document.getElementById('register-followup-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
-  document.getElementById('register-step3-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
-  document.getElementById('register-step3-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
-
-  document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
-  document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
-  document.getElementById('register-step2-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
-  document.getElementById('register-step2-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
-
-  document.getElementById('register-followup-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
-  document.getElementById('register-followup-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
+  document.getElementById('register-followup-yes-text').innerHTML = browserAPI.i18n.getMessage("i_agree");
+  document.getElementById('register-followup-no-text').innerHTML = browserAPI.i18n.getMessage("i_disagree");
   document.getElementById('register-step3-text').querySelector('h3').innerHTML = browserAPI.i18n.getMessage("consent_followup_summary");
   document.getElementById('register-step3-text').querySelector('p').innerHTML = browserAPI.i18n.getMessage("consent_followup_text");
 
@@ -521,10 +515,10 @@ const registerStep2Action = (targetButton, agreement) => {
   }
 
   if (agreement == "agree") {
-    document.querySelector('input[name="register-participation"][id="yes"]').checked = true;
+    document.querySelector('input[name="register-participation"][id="register-participation-yes"]').checked = true;
   }
   else if (agreement == "disagree") {
-    document.querySelector('input[name="register-participation"][id="no"]').checked = true;
+    document.querySelector('input[name="register-participation"][id="register-participation-no"]').checked = true;
   }
   document.getElementById('register-participation-input').classList.remove("hidden");
 
@@ -540,10 +534,10 @@ const registerStep3Action = (targetButton, agreement) => {
   }
 
   if (agreement == "agree") {
-    document.querySelector('input[name="register-followup"][id="yes"]').checked = true;
+    document.querySelector('input[name="register-followup"][id="register-followup-yes"]').checked = true;
   }
   else if (agreement == "disagree") {
-    document.querySelector('input[name="register-followup"][id="no"]').checked = true;
+    document.querySelector('input[name="register-followup"][id="register-followup-no"]').checked = true;
   }
   document.getElementById('register-followup-input').classList.remove("hidden");
 
