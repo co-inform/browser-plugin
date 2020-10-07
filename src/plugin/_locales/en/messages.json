@@ -239,12 +239,6 @@
   "read_and_answer_followup": {
     "message": "You must read and answer the follow-up question"
   },
-  "read_and_answer_participation": {
-    "message": "You must read and answer the participation question"
-  },
-  "read_and_answer_followup": {
-    "message": "You must read and answer the follow-up question"
-  },
   "login_ok": {
     "message": "User succesfully logged in"
   },
@@ -285,13 +279,13 @@
     "message": "Next"
   },
   "consent_participate_summary": {
-    "message": "I agree to participate on the Plugin Evaluation Study."
+    "message": "I agree to participate in the plugin evaluation study."
   },
   "consent_participate_text": {
     "message": "I want to share my data anonymously for the improvement of the Co-Inform plugin."
   },
   "consent_followup_summary": {
-    "message": "I consent follow-up Co-Inform communications."
+    "message": "I consent to follow-up Co-Inform communications."
   },
   "consent_followup_text": {
     "message": "I want to get useful email updates and information from Co-Inform."

@@ -20,14 +20,14 @@ const mainWrapperSelector = "main[role='main']";
 const sectionSelectors = {
   "user-logged": "[role='main'] [data-testid='primaryColumn'] section",
   "not-user-logged": "[role='main'] [data-testid='primaryColumn'] section"
-}
+};
 
 // selectors for tweets divs
 // for different user cases: user-logged and not-user-logged cases
 const tweetSelectors = {
   "user-logged": "article",
   "not-user-logged": "article"
-}
+};
 
 // selectors for tweet username
 // for different user cases: user-logged and not-user-logged cases
@@ -43,16 +43,16 @@ const usernameSelectors = {
 const tweetIdSelectors = {
   "user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href*='/status/'] > time",
   "not-user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href*='/status/'] > time"
-}
+};
 // const tweetIdAttribute = "data-tweet-id";
 
 // selectors for tweet text
 // for different page cases: tweet-page-main-tweet case, tweet-page-response-tweet case, and tweet-default (home and user page) case
 const textSelectors = {
-  "tweet-default": "[data-testid='tweet'] > div:nth-child(2) > div:nth-child(2)",
+  "tweet-default": "[data-testid='tweet'] > div:nth-child(2) > div:nth-child(2) div[lang]",
   "tweet-page-main-tweet": "article > div:first-child div[lang]",
-  "tweet-page-response-tweet": "[data-testid='tweet'] > div:nth-child(2) > div[lang]"
-}
+  "tweet-page-response-tweet": "[data-testid='tweet'] > div:nth-child(2) > div:nth-child(2) div[lang]"
+};
 
 // selector for publish tweet button
 const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetButton']"; // we detected 2 cases for the second data-testid (tweetButton and tweetButtonInline)

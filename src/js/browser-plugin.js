@@ -46,7 +46,26 @@ browserAPI.runtime.sendMessage({
   if (res.configuration) {
     configuration = res.configuration;
     logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
-    setTimeout(start, 1000);
+
+    browserAPI.runtime.sendMessage({
+      messageId: "GetSession"
+    }, function(res) {
+      if (res.token) {
+        logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${res.userMail}`);
+        coinformUserToken = res.token;
+        coinformUserMail = res.userMail;
+        coinformUserID = res.userID;
+      }
+      else {
+        logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
+      }
+
+      logger.logMessage(CoInformLogger.logTypes.debug, `Url opened: ${window.location.href}`);
+      log2Server('page', window.location.href, null, `Opened User Page Url`);
+      
+      setTimeout(start, 1000);
+    });
+
   }
   else {
     console.error('Could not load plugin configuration');
@@ -99,20 +118,6 @@ const start = () => {
   infoLogoURL = browserAPI.extension.getURL(infoLogoURL);
   disagreeURL = browserAPI.extension.getURL(disagreeURL);
   agreeURL = browserAPI.extension.getURL(agreeURL);
-
-  browserAPI.runtime.sendMessage({
-    messageId: "GetSession"
-  }, function(res) {
-    if (res.token) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `User already logged: ${res.userMail}`);
-      coinformUserToken = res.token;
-      coinformUserMail = res.userMail;
-      coinformUserID = res.userID;
-    }
-    else {
-      logger.logMessage(CoInformLogger.logTypes.debug, "User not logged");
-    }
-  });
 
   if (window.location.hostname.indexOf('twitter.com') >= 0) {
     parser = new TweetParser();
