@@ -316,8 +316,57 @@ article[coinform-parsed] {
   margin-top: 0.6em;
 }
 
-.coinformAnalysisExplainability li {
+.coinformLabelInfoTooltip .coinformAnalysisPopupInfo {
+  font-weight: 700;
+}
+
+.coinformAnalysisExplainability > ul > li {
   padding-bottom: 20px;
+}
+
+.coinformAnalysisExplainability .coinformAnalysisMoreInfo {
+  margin-top: 8px;
+}
+
+.coinformAnalysisExplainability details {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: .5em .5em 0;
+}
+
+.coinformAnalysisExplainability summary {
+  margin: -.5em -.5em 0;
+  padding: .3em;
+  cursor: pointer;
+}
+.coinformAnalysisExplainability summary::-webkit-details-marker {
+  display: none;
+}
+.coinformAnalysisExplainability summary:after {
+  border-radius: 5px; 
+  content: "+";
+  float: left;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: -7px 0px 0 0;
+  padding: 0;
+  text-align: center;
+  width: 20px;
+}
+.coinformAnalysisExplainability details[open] {
+  padding: .5em;
+}
+.coinformAnalysisExplainability details[open] summary {
+  border-bottom: 1px solid #aaa;
+  margin-bottom: .3em;
+}
+.coinformAnalysisExplainability details[open] summary:after {
+  content: "-";
+}
+
+.coinformAnalysisExplainability details > p, .coinformAnalysisExplainability details > ul {
+  margin-block-start: 5px;
+  margin-block-end: 5px;
 }
 
 .coinformToolbarButton {

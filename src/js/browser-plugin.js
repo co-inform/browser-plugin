@@ -130,9 +130,9 @@ const start = () => {
     parser.triggerFirstTweetBatch(newTweetCallback);
   }
   else if (window.location.hostname.indexOf('facebook.com') >= 0) {
-    parser = new FacebookParser();
+    /*parser = new FacebookParser();
     parser.fromBrowser(newFacebookPostCallback);
-    parser.listenForNewPosts(newFacebookPostCallback);
+    parser.listenForNewPosts(newFacebookPostCallback);*/
   }
 
 };
@@ -1148,13 +1148,16 @@ const createLabelModulesInfoContent = (label, modules) => {
   let infoTooltipText = document.createElement("SPAN");
   let auxLabel = browserAPI.i18n.getMessage(label);
   if (!auxLabel) auxLabel = label;
-  let textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
+  let textHtml = null;
+  if (Object.keys(modules).length > 1) textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
+  else textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel]);
   infoTooltipText.innerHTML = textHtml;
   infoTooltipContent.append(infoTooltipText);
   let infoTooltipList = document.createElement("UL");
   if (modules) {
     for (let [key, value] of Object.entries(modules)) {
       let infoTooltipListItem = document.createElement("LI");
+      infoTooltipListItem.setAttribute("class", "coinformAnalysisModuleInfo");
 
       let moduleName = browserAPI.i18n.getMessage(key);
       let moduleAnalysisInfoHtml = browserAPI.i18n.getMessage('module_analysis_short_info__html', moduleName);
@@ -1173,6 +1176,7 @@ const createLabelModulesInfoContent = (label, modules) => {
   infoTooltipContent.append(infoTooltipList);
   
   let infoTooltipMoreinfo = document.createElement("SPAN");
+  infoTooltipMoreinfo.setAttribute("class", "coinformAnalysisPopupInfo");
   let moreinfoTxt = document.createTextNode(browserAPI.i18n.getMessage('more_analysis_info'));
   infoTooltipMoreinfo.append(moreinfoTxt);
   infoTooltipContent.append(infoTooltipMoreinfo);
@@ -1188,13 +1192,16 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
   let infoTooltipText = document.createElement("SPAN");
   let auxLabel = browserAPI.i18n.getMessage(label);
   if (!auxLabel) auxLabel = label;
-  let textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
+  let textHtml = null;
+  if (Object.keys(modules).length > 1) textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
+  else textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel]);
   infoTooltipText.innerHTML = textHtml;
   infoTooltipContent.append(infoTooltipText);
   let infoTooltipList = document.createElement("UL");
   if (modules) {
     for (let [key, value] of Object.entries(modules)) {
       let infoTooltipListItem = document.createElement("LI");
+      infoTooltipListItem.setAttribute("class", "coinformAnalysisModuleInfo");
 
       let moduleName = browserAPI.i18n.getMessage(key);
       let moduleBased = browserAPI.i18n.getMessage(`${key}_based_info`);
@@ -1210,20 +1217,22 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
       let moduleExplainabilityHtml = null;
       if (modules[key].explanationFormat != null) {
         if (modules[key].explanationFormat.localeCompare('text') === 0) {
-          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + ':</summary><p>' + modules[key].explanation + '</p></details>';
+          moduleExplainabilityHtml = '<details class="coinformAnalysisMoreInfo"><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + '</summary><p>' + modules[key].explanation + '</p></details>';
         }
         else if ((modules[key].explanationFormat.localeCompare('link') === 0) || (modules[key].explanationFormat.localeCompare('url') === 0)) {
-          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_link') + ' <a href="' + modules[key].explanation + '"  target="_blank" rel="noopener noreferrer">' + browserAPI.i18n.getMessage('here') + '</a></summary></details>';
+          moduleExplainabilityHtml = '<span class="coinformAnalysisMoreInfo">' + browserAPI.i18n.getMessage('module_explainability_link') + ' <a href="' + modules[key].explanation + '"  target="_blank" rel="noopener noreferrer">' + browserAPI.i18n.getMessage('here') + '</a></span>';
         }
         else if (modules[key].explanationFormat.localeCompare('markdown') === 0) {
           let ShowDownConverter = new ShowDown.Converter();
           let auxHtmlExplanationHtml = ShowDownConverter.makeHtml(modules[key].explanation);
-          moduleExplainabilityHtml = '<details><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + ':</summary><p>' + auxHtmlExplanationHtml + '</p></details>';
+          moduleExplainabilityHtml = '<details class="coinformAnalysisMoreInfo"><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + '</summary>' + auxHtmlExplanationHtml + '</details>';
         }
       }
 
       infoTooltipListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
-      if (moduleExplainabilityHtml) infoTooltipListItem.innerHTML = infoTooltipListItem.innerHTML + '<br><br>' + moduleExplainabilityHtml;
+      if (moduleExplainabilityHtml) {
+        infoTooltipListItem.innerHTML = infoTooltipListItem.innerHTML + moduleExplainabilityHtml;
+      }
 
       infoTooltipList.append(infoTooltipListItem);
     }
@@ -1276,6 +1285,11 @@ function openLabelInfoTooltip(event, tweet, label, modules) {
     layersDiv = document.querySelector("main");
   }
   
+  let oldInfoTooltip = document.getElementById(`coinformLabelInfoTooltip-${tweet.id}`);
+  if (oldInfoTooltip) {
+    layersDiv.removeChild(oldInfoTooltip);
+  }
+  
   // create tooltip div with detailed modules info
   let infoTooltip = document.createElement("DIV");
   infoTooltip.setAttribute("id", `coinformLabelInfoTooltip-${tweet.id}`);
@@ -1298,7 +1312,6 @@ function closeLabelInfoTooltip(event, tweet) {
   }
   
   let infoTooltip = document.getElementById(`coinformLabelInfoTooltip-${tweet.id}`);
-
   if (infoTooltip) {
     layersDiv.removeChild(infoTooltip);
   }
