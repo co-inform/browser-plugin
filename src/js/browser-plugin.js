@@ -242,7 +242,8 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         // Hack to force a misinformation url detection, and a missinformation user tweets detection
         // Active only in test use mode
         if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(misInfoUrlRegExpTest)) {
-          targetButton.foundMisinfo = targetButton.foundMisinfo || publishTweetCheckLabel("not_credible", urls[i], tweetText);
+          targetButton.foundMisinfo = true; 
+          publishTweetAlertMisinfo("not_credible", urls[i], tweetText);
         }
 
         else if ((resStatus.localeCompare('400') === 0)) {
@@ -251,7 +252,11 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         else if (resStatus.localeCompare('200') === 0) {
           let data = res.data;
           let accuracyLabel = JSON.stringify(data.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
-          targetButton.foundMisinfo = targetButton.foundMisinfo || publishTweetCheckLabel(accuracyLabel, urls[i], tweetText);
+          let isMisinfo = checkLabelMisinfo(accuracyLabel);
+          if (isMisinfo) {
+            targetButton.foundMisinfo = true; 
+            publishTweetAlertMisinfo(accuracyLabel, urls[i], tweetText);
+          }
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, `Request unknown (${resStatus}) response`);
@@ -301,21 +306,6 @@ const publishTweetPostAction = (targetButton) => {
       });
     });
   }
-};
-
-const publishTweetCheckLabel = (label, url, tweetText) => {
-  let misInfo = false;
-  if (label) {
-    let labelCategory = configuration.coinform.categories[label];
-    if (!labelCategory) {
-      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
-    }
-    else if (labelCategory.localeCompare("blur") === 0) {
-      publishTweetAlertMisinfo(label, url, tweetText);
-      misInfo = true;
-    }
-  }
-  return misInfo;
 };
 
 const publishTweetAlertMisinfo = (label, url, tweetText) => {
@@ -403,13 +393,12 @@ const retweetTweetCallback = (clickEvent, targetButton) => {
 
   if (tweet.coInformLabel) {
     logger.logMessage(CoInformLogger.logTypes.info, `Retweet Tweet Label: ${tweet.coInformLabel}`);
-    let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
-    if (!labelCategory) {
-      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
-    }
-    else if (labelCategory.localeCompare("blur") === 0) {
-      retweetTweetAlertMisinfo(tweet, tweet.coInformLabel);
-    }
+  }
+
+  let isMisinfo = checkLabelMisinfo(tweet.coInformLabel);
+  if (isMisinfo) {
+    targetButton.foundMisinfo = true;
+    retweetTweetAlertMisinfo(tweet, tweet.coInformLabel);
   }
   else {
     targetButton.click();
@@ -460,17 +449,14 @@ const likeTweetCallback = (clickEvent, targetButton) => {
   // get tweet
   let tweet = targetButton.closest("article");
 
-  log2Server('like', tweet.coInformTweetUrl, `Tweet id: ${tweet.coInformTweetId}\nTweet label: ${tweet.coInformLabel}`, 'Click on "like" tweet');    
-
   if (tweet.coInformLabel) {
+    log2Server('like', tweet.coInformTweetUrl, `Tweet id: ${tweet.coInformTweetId}\nTweet label: ${tweet.coInformLabel}`, 'Click on "like" tweet');
     logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Label: ${tweet.coInformLabel}`);
-    let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
-    if (!labelCategory) {
-      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${tweet.coInformLabel}`);
-    } 
-    else if (labelCategory.localeCompare("blur") === 0) {
-      logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Misinfo Label: ${tweet.coInformLabel}`);
-    }
+  }
+
+  let isMisinfo = checkLabelMisinfo(tweet.coInformLabel);
+  if (isMisinfo) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Like Tweet Misinfo Label: ${tweet.coInformLabel}`);
   }
 
 };
@@ -482,19 +468,30 @@ const unlikeTweetCallback = (clickEvent, targetButton) => {
   // get tweet
   let tweet = targetButton.closest("article");
 
-  log2Server('like', tweet.coInformTweetUrl, `Tweet id: ${tweet.coInformTweetId}\nTweet label: ${tweet.coInformLabel}`, 'Click on "unlike" tweet');    
-
   if (tweet.coInformLabel) {
+    log2Server('like', tweet.coInformTweetUrl, `Tweet id: ${tweet.coInformTweetId}\nTweet label: ${tweet.coInformLabel}`, 'Click on "unlike" tweet');
     logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Label: ${tweet.coInformLabel}`);
-    let labelCategory = configuration.coinform.categories[tweet.coInformLabel];
-    if (!labelCategory) {
-      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${tweet.coInformLabel}`);
-    }
-    else if (labelCategory.localeCompare("blur") === 0) {
-      logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Misinfo Label: ${tweet.coInformLabel}`);
-    }
   }
 
+  let isMisinfo = checkLabelMisinfo(tweet.coInformLabel);
+  if (isMisinfo) {
+    logger.logMessage(CoInformLogger.logTypes.info, `Unlike Tweet Misinfo Label: ${tweet.coInformLabel}`);
+  }
+
+};
+
+const checkLabelMisinfo = (label) => {
+  let misInfo = false;
+  if (label) {
+    let labelCategory = configuration.coinform.categories[label];
+    if (!labelCategory) {
+      logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
+    }
+    else if (labelCategory.localeCompare("blur") === 0) {
+      misInfo = true;
+    }
+  }
+  return misInfo;
 };
 
 const newTweetCallback = (tweetInfo) => {
@@ -1143,21 +1140,21 @@ const createModulesCredibilityScoresLog = (modules) => {
 
 const createLabelModulesInfoContent = (label, modules) => {
 
-  let infoTooltipContent = document.createElement("DIV");
-  infoTooltipContent.setAttribute("class", "coinformAnalysisExplainability");
-  let infoTooltipText = document.createElement("SPAN");
+  let shortInfoContent = document.createElement("DIV");
+  shortInfoContent.setAttribute("class", "coinformAnalysisExplainability");
+  let shortInfoText = document.createElement("SPAN");
   let auxLabel = browserAPI.i18n.getMessage(label);
   if (!auxLabel) auxLabel = label;
   let textHtml = null;
   if (Object.keys(modules).length > 1) textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
   else textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel]);
-  infoTooltipText.innerHTML = textHtml;
-  infoTooltipContent.append(infoTooltipText);
-  let infoTooltipList = document.createElement("UL");
+  shortInfoText.innerHTML = textHtml;
+  shortInfoContent.append(shortInfoText);
+  let shortInfoList = document.createElement("UL");
   if (modules) {
     for (let [key, value] of Object.entries(modules)) {
-      let infoTooltipListItem = document.createElement("LI");
-      infoTooltipListItem.setAttribute("class", "coinformAnalysisModuleInfo");
+      let shortInfoListItem = document.createElement("LI");
+      shortInfoListItem.setAttribute("class", "coinformAnalysisModuleInfo");
 
       let moduleName = browserAPI.i18n.getMessage(key);
       let moduleAnalysisInfoHtml = browserAPI.i18n.getMessage('module_analysis_short_info__html', moduleName);
@@ -1169,39 +1166,39 @@ const createLabelModulesInfoContent = (label, modules) => {
       if (modules[key].confidence != null) moduleConfidence = Math.round(parseFloat(modules[key].confidence) * 100);
       let moduleAnalysisValuesHtml = browserAPI.i18n.getMessage('module_analysis_result__html', [moduleLabelTxt, moduleCredibility, moduleConfidence]);
 
-      infoTooltipListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
-      infoTooltipList.append(infoTooltipListItem);
+      shortInfoListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
+      shortInfoList.append(shortInfoListItem);
     }
   }
-  infoTooltipContent.append(infoTooltipList);
+  shortInfoContent.append(shortInfoList);
   
-  let infoTooltipMoreinfo = document.createElement("SPAN");
-  infoTooltipMoreinfo.setAttribute("class", "coinformAnalysisPopupInfo");
+  let shortInfoMoreinfo = document.createElement("SPAN");
+  shortInfoMoreinfo.setAttribute("class", "coinformAnalysisPopupInfo");
   let moreinfoTxt = document.createTextNode(browserAPI.i18n.getMessage('more_analysis_info'));
-  infoTooltipMoreinfo.append(moreinfoTxt);
-  infoTooltipContent.append(infoTooltipMoreinfo);
+  shortInfoMoreinfo.append(moreinfoTxt);
+  shortInfoContent.append(shortInfoMoreinfo);
 
-  return infoTooltipContent;
+  return shortInfoContent;
 
 };
 
 const createLabelModulesExplainabilityContent = (label, modules) => {
 
-  let infoTooltipContent = document.createElement("DIV");
-  infoTooltipContent.setAttribute("class", "coinformAnalysisExplainability");
-  let infoTooltipText = document.createElement("SPAN");
+  let explainInfoContent = document.createElement("DIV");
+  explainInfoContent.setAttribute("class", "coinformAnalysisExplainability");
+  let explainInfoText = document.createElement("SPAN");
   let auxLabel = browserAPI.i18n.getMessage(label);
   if (!auxLabel) auxLabel = label;
   let textHtml = null;
   if (Object.keys(modules).length > 1) textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
   else textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel]);
-  infoTooltipText.innerHTML = textHtml;
-  infoTooltipContent.append(infoTooltipText);
-  let infoTooltipList = document.createElement("UL");
+  explainInfoText.innerHTML = textHtml;
+  explainInfoContent.append(explainInfoText);
+  let explainInfoList = document.createElement("UL");
   if (modules) {
     for (let [key, value] of Object.entries(modules)) {
-      let infoTooltipListItem = document.createElement("LI");
-      infoTooltipListItem.setAttribute("class", "coinformAnalysisModuleInfo");
+      let explainInfoListItem = document.createElement("LI");
+      explainInfoListItem.setAttribute("class", "coinformAnalysisModuleInfo");
 
       let moduleName = browserAPI.i18n.getMessage(key);
       let moduleBased = browserAPI.i18n.getMessage(`${key}_based_info`);
@@ -1229,17 +1226,17 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
         }
       }
 
-      infoTooltipListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
+      explainInfoListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
       if (moduleExplainabilityHtml) {
-        infoTooltipListItem.innerHTML = infoTooltipListItem.innerHTML + moduleExplainabilityHtml;
+        explainInfoListItem.innerHTML = explainInfoListItem.innerHTML + moduleExplainabilityHtml;
       }
 
-      infoTooltipList.append(infoTooltipListItem);
+      explainInfoList.append(explainInfoListItem);
     }
   }
-  infoTooltipContent.append(infoTooltipList);
+  explainInfoContent.append(explainInfoList);
 
-  return infoTooltipContent;
+  return explainInfoContent;
 
 };
 
