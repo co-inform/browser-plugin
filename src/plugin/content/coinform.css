@@ -306,6 +306,11 @@ article[coinform-parsed] {
   white-space: normal;
 }
 
+.coinformLabelInfoTooltip .coinformAnalysisExplainability span {
+  display: block;
+  padding-bottom: 10px;
+}
+
 .coinformLabelInfoTooltip h2 {
   margin-top: 0px;
   margin-bottom: 0.5em;

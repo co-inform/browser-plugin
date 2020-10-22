@@ -3,46 +3,46 @@
       "message": "Creíble"
    },
    "credible__info": {
-      "message": "El $1 parece ser bastante preciso, de acuerdo con los análisis que se realizaron"
+      "message": "El $1 parece ser bastante preciso, de acuerdo con los análisis que se realizaron."
    },
    "mostly_credible": {
       "message": "Mayormente creíble"
    },
    "mostly_credible__info": {
-      "message": "El $1 parece ser preciso, aunque puede contener algunas inexactitudes menores, de acuerdo con los análisis que se realizaron"
+      "message": "El $1 parece ser preciso, aunque puede contener algunas inexactitudes menores, de acuerdo con los análisis que se realizaron."
    },
    "credibility_uncertain": {
       "message": "Credibilidad incierta"
    },
    "credibility_uncertain__info": {
-      "message": "El $1 probablemente mezcla contenidos precisos y erróneos (o no verificables)"
+      "message": "El $1 probablemente mezcla contenidos precisos y erróneos (o no verificables)."
    },
    "mostly_not_credible": {
       "message": "Mayormente no creíble"
    },
    "mostly_not_credible__info": {
-      "message": "El $1 parece ser impreciso, de acuerdo con los análisis que se realizaron"
+      "message": "El $1 parece ser impreciso, de acuerdo con los análisis que se realizaron."
    },
    "not_credible": {
       "message": "No creíble"
    },
    "not_credible__info": {
-      "message": "El $1 parece ser impreciso, de acuerdo con los análisis que se realizaron"
+      "message": "El $1 parece ser impreciso, de acuerdo con los análisis que se realizaron."
    },
    "not_verifiable": {
       "message": "No verificable"
    },
    "not_verifiable__info": {
-      "message": "El $1 no contiene contenido verificable (son opiniones o especulaciones), o no se pudo encontrar suficientes signos de apoyo/rechazo del contenido del $1"
+      "message": "El $1 no contiene contenido verificable (son opiniones o especulaciones), o no se pudo encontrar suficientes signos de apoyo/rechazo del contenido del $1."
    },
    "tweet_post": {
-      "message": "Tweet"
+      "message": "tweet"
    },
    "not_tagged": {
       "message": "El $1 no tiene análisis"
    },
    "not_tagged__info": {
-      "message": "El $1 aún no ha sido analizado por el sistema"
+      "message": "El $1 aún no ha sido analizado por el sistema."
    },
    "accurate": {
       "message": "Preciso"
@@ -114,31 +114,31 @@
       "message": "Ayúdanos a mejorar la IA de Co-Inform"
    },
    "provide_claim": {
-      "message": "Si consideras que no es preciso por favor envía una reclamación y un enlace a un artículo que corrobore dicha reclamación"
+      "message": "Si consideras que no es preciso por favor envía una reclamación y un enlace a un artículo que corrobore dicha reclamación."
    },
    "provide_claim_text1": {
-      "message": "Basándonos en tus contribuciones, podemos encontrar formas de mejorar la alfabetización mediática"
+      "message": "Basándonos en tus contribuciones, podemos encontrar formas de mejorar la alfabetización mediática."
    },
    "provide_claim_text2": {
-      "message": "Puedes ayudarnos contándonos si consideras o no el $1 preciso, y proporcionar un enlace a una fuente que lo corrobore"
+      "message": "Puedes ayudarnos contándonos si consideras o no el $1 preciso, y proporcionar un enlace a una fuente que lo corrobore."
    },
    "provide_claim_untagged": {
-      "message": "Si quieres puedes enviar una reclamación con un enlace a un artículo que corrobore la reclamación"
+      "message": "Si quieres puedes enviar una reclamación con un enlace a un artículo que corrobore la reclamación."
    },
    "not_logged": {
       "message": "Sesión no iniciada"
    },
    "provide_feedback_with_login": {
-      "message": "Para enviar tu evaluación sobre el etiquetado de Co-Inform debes registrarte / identificarte con una cuenta de Co-Inform"
+      "message": "Para enviar tu evaluación sobre el etiquetado de Co-Inform debes registrarte / identificarte con una cuenta de Co-Inform."
    },
    "wait_label_for_feedback": {
-      "message": "El $1 debe estar etiquetado para poder enviar tu evaluación sobre la etiqueta"
+      "message": "El $1 debe estar etiquetado para poder enviar tu evaluación sobre la etiqueta."
    },
    "provide_claim_with_login": {
-      "message": "Si consideras que no es preciso puedes enviar una reclamación iniciando sesión con tu cuenta de Co-Inform"
+      "message": "Si consideras que no es preciso puedes enviar una reclamación iniciando sesión con tu cuenta de Co-Inform."
    },
    "login_register_instructions": {
-      "message": "Puedes clickar en el logo de Co-Inform en la parte superior derecha de tu navegador para abrir la ventana de registro / inicio de sesión"
+      "message": "Puedes clickar en el logo de Co-Inform en la parte superior derecha de tu navegador para abrir la ventana de registro / inicio de sesión."
    },
    "ok": {
       "message": "Ok"
@@ -414,7 +414,7 @@
       "message": "Explicación detallada sobre el análisis"
    },
    "module_explainability_link": {
-      "message": "Más información sobre el análisis"
+      "message": "Para más información sobre este análisis, clickar"
    },
    "here": {
       "message": "aquí"
@@ -438,7 +438,7 @@
       "message": "el contenido del tweet y sus reacciones"
    },
    "processing_labeling": {
-      "message": "Analizando.."
+      "message": "Analizando..."
    },
    "labeling_done": {
       "message": "Análisis finalizado"

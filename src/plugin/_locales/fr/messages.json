@@ -3,43 +3,43 @@
       "message": "Crédible"
    },
    "credible__info": {
-      "message": "Le $1 est probablement exact, suivant les forts signaux decouverts"
+      "message": "Le $1 est probablement exact, suivant les forts signaux decouverts."
    },
    "mostly_credible": {
       "message": "Pour la plupart crédible"
    },
    "mostly_credible__info": {
-      "message": "Le $1 est probablement correct mais peut contenir quelques inexactidutes mineures suivant les (forts) signaux decouverts"
+      "message": "Le $1 est probablement correct mais peut contenir quelques inexactidutes mineures suivant les (forts) signaux decouverts."
    },
    "credibility_uncertain": {
       "message": "Crédibilité incertaine"
    },
    "credibility_uncertain__info": {
-      "message": "Le $1 probablement contient quelques revendications exactes et inexactes (ou non verifiables)"
+      "message": "Le $1 probablement contient quelques revendications exactes et inexactes (ou non verifiables)."
    },
    "mostly_not_credible": {
       "message": "Pour la plupart non credible"
    },
    "mostly_not_credible__info": {
-      "message": "Le $1 est probablement inexact, suivant les forts signaux decouverts"
+      "message": "Le $1 est probablement inexact, suivant les forts signaux decouverts."
    },
    "not_credible": {
       "message": "Pas crédible"
    },
    "not_credible__info": {
-      "message": "Le $1 est probablement inexact, suivant les forts signaux decouverts"
+      "message": "Le $1 est probablement inexact, suivant les forts signaux decouverts."
    },
    "not_verifiable": {
       "message": "Non vérifiable"
    },
    "not_verifiable__info": {
-      "message": "Le $1 ne contient pas de revendications verifiables (seuelement des opinion et spéculations) ou ce n'etait pas possible de trouver de signaux suffisants soutenant/refutant les revendications dans le $1"
+      "message": "Le $1 ne contient pas de revendications verifiables (seuelement des opinion et spéculations) ou ce n'etait pas possible de trouver de signaux suffisants soutenant/refutant les revendications dans le $1."
    },
    "tweet_post": {
-      "message": "Tweet post"
+      "message": "tweet post"
    },
    "not_tagged": {
-      "message": "Le $1 n'est pas etiqueté."
+      "message": "Le $1 n'est pas etiqueté"
    },
    "not_tagged__info": {
       "message": "Le $1 n'a pas encore etiqueté dans le système."
@@ -114,31 +114,31 @@
       "message": "Aidez-nous à améliorer l'Intelligence Artificielle de CoInform"
    },
    "provide_claim": {
-      "message": "Si vous pensez que ceci n'est pas exact s'il vous plait procurez une revendicaion est un lien la soutenant"
+      "message": "Si vous pensez que ceci n'est pas exact s'il vous plait procurez une revendicaion est un lien la soutenant."
    },
    "provide_claim_text1": {
-      "message": "En se basant sur vos notes on pourrait suggerer des façons d'améliorer l'éducation aux médias"
+      "message": "En se basant sur vos notes on pourrait suggerer des façons d'améliorer l'éducation aux médias."
    },
    "provide_claim_text2": {
-      "message": "Vous pouvez nous aider en nous disant si vous pensez que $1 est exact ou pas et aussi inclure un lien a une source produisant des preuves"
+      "message": "Vous pouvez nous aider en nous disant si vous pensez que $1 est exact ou pas et aussi inclure un lien a une source produisant des preuves."
    },
    "provide_claim_untagged": {
-      "message": "Si vous le voulez vous pouvez procurer une revendication et un lien supportant cette revendication"
+      "message": "Si vous le voulez vous pouvez procurer une revendication et un lien supportant cette revendication."
    },
    "not_logged": {
       "message": "Pas connecté"
    },
    "provide_feedback_with_login": {
-      "message": "Pour procurer votre retour d'information sur l'etiquetage de CoInform"
+      "message": "Pour procurer votre retour d'information sur l'etiquetage de CoInform."
    },
    "wait_label_for_feedback": {
-      "message": "Vous devez attendre que $1 soit etiquete avant de fournir votre retour d'information"
+      "message": "Vous devez attendre que $1 soit etiquete avant de fournir votre retour d'information."
    },
    "provide_claim_with_login": {
-      "message": "Si vous pensez que ceci n'est pas exact vous pouvez fournir votre revendication en vous connectant avec votre compte CoInform"
+      "message": "Si vous pensez que ceci n'est pas exact vous pouvez fournir votre revendication en vous connectant avec votre compte CoInform."
    },
    "login_register_instructions": {
-      "message": "Cliquez sur le logo CoInform au coin en haut a droite de votre navigateur pour ouvrir le pop-up login/register"
+      "message": "Cliquez sur le logo CoInform au coin en haut a droite de votre navigateur pour ouvrir le pop-up login/register."
    },
    "ok": {
       "message": "Ok"
@@ -438,7 +438,7 @@
       "message": "Le contenu du tweet et ses réponses"
    },
    "processing_labeling": {
-      "message": "Traitement de l'etiquette"
+      "message": "Traitement de l'etiquette..."
    },
    "labeling_done": {
       "message": "Etiquettage complété"

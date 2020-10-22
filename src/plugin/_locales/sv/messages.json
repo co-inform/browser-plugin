@@ -3,46 +3,46 @@
     "message": "Trovärdig"
   },
   "credible__info": {
-    "message": "$1 är mycket troligt korrekt, enligt mycket övertyggande signaler vi hittat"
+    "message": "$1 är mycket troligt korrekt, enligt mycket övertyggande signaler vi hittat."
   },
   "mostly_credible": {
     "message": "Övervägande trovärdig"
   },
   "mostly_credible__info": {
-    "message": "$1 är sannolikt korrekt, men kan innehålla mindre felaktigheter, enligt övertygande signaler vi hittat"
+    "message": "$1 är sannolikt korrekt, men kan innehålla mindre felaktigheter, enligt övertygande signaler vi hittat."
   },
   "credibility_uncertain": {
     "message": "Osäker trovärdighet"
   },
   "credibility_uncertain__info": {
-    "message": "$1 blandar förmodligen både korrekta och inkorrekta (eller ej verifierbara) anspråk"
+    "message": "$1 blandar förmodligen både korrekta och inkorrekta (eller ej verifierbara) anspråk."
   },
   "mostly_not_credible": {
     "message": "Övervägande låg trovärdighet"
   },
   "mostly_not_credible__info": {
-    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat"
+    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat."
   },
   "not_credible": {
     "message": "Inte trovärdigt"
   },
   "not_credible__info": {
-    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat"
+    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat."
   },
   "not_verifiable": {
     "message": "Ej verifierbart"
   },
   "not_verifiable__info": {
-    "message": "$1 innehåller inga verifierbara anspråk (det är bara åsikter eller spekuleringar), eller så kunde vi inte hitta tillräckliga signaler som stödjer/motsäger anspråken i $1"
+    "message": "$1 innehåller inga verifierbara anspråk (det är bara åsikter eller spekuleringar), eller så kunde vi inte hitta tillräckliga signaler som stödjer/motsäger anspråken i $1."
   },
   "tweet_post": {
-    "message": "Tweet meddelande"
+    "message": "tweet meddelande"
   },
   "not_tagged": {
     "message": "$1 är ej taggat"
   },
   "not_tagged__info": {
-    "message": "$1 har ännu inte taggats av systemet"
+    "message": "$1 har ännu inte taggats av systemet."
   },
   "accurate": {
     "message": "Korrekt"
@@ -114,31 +114,31 @@
     "message": "Hjälp oss förbättra CoInforms AI"
   },
   "provide_claim": {
-    "message": "Om du tror att detta inte är korrekt vänligen delge ett anspråk och länk till information som stödjer ditt anspråk"
+    "message": "Om du tror att detta inte är korrekt vänligen delge ett anspråk och länk till information som stödjer ditt anspråk."
   },
   "provide_claim_text1": {
-    "message": "Baserat på dina graderingar, kan vi delge sätt att förbättra din mediekunskap"
+    "message": "Baserat på dina graderingar, kan vi delge sätt att förbättra din mediekunskap."
   },
   "provide_claim_text2": {
-    "message": "Du kan hjälpa oss genom att säga om du tycker att $1 är korrekt eller ej och delge en länk till en källa som bestyrker detta"
+    "message": "Du kan hjälpa oss genom att säga om du tycker att $1 är korrekt eller ej och delge en länk till en källa som bestyrker detta."
   },
   "provide_claim_untagged": {
-    "message": "Om du vill kan du delge ett anspråk och länk till ett inlägg som stödjer detta"
+    "message": "Om du vill kan du delge ett anspråk och länk till ett inlägg som stödjer detta."
   },
   "not_logged": {
     "message": "Ej inloggad"
   },
   "provide_feedback_with_login": {
-    "message": "För att delge din feedback till CoInform behöver du vara inloggad som användare av CoInform"
+    "message": "För att delge din feedback till CoInform behöver du vara inloggad som användare av CoInform."
   },
   "wait_label_for_feedback": {
-    "message": "Du måste invänta att $1 har blivit taggat innan du kan delge din feedback"
+    "message": "Du måste invänta att $1 har blivit taggat innan du kan delge din feedback."
   },
   "provide_claim_with_login": {
-    "message": "Om du tycker att detta är felaktigt kan du delge din åsikt genom att logga in som CoInform användare"
+    "message": "Om du tycker att detta är felaktigt kan du delge din åsikt genom att logga in som CoInform användare."
   },
   "login_register_instructions": {
-    "message": "Klicka på CoInform loggam uppe till höger i din browser för att öpnna login/registrera vyn"
+    "message": "Klicka på CoInform loggam uppe till höger i din browser för att öpnna login/registrera vyn."
   },
   "ok": {
     "message": "Ok"

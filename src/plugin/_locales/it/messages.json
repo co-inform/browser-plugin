@@ -3,46 +3,46 @@
       "message": "Credibile"
    },
    "credible__info": {
-      "message": "Molto probabilmente il $1 è accurato, in base a forti segnali trovati"
+      "message": "Molto probabilmente il $1 è accurato, in base a forti segnali trovati."
    },
    "mostly_credible": {
       "message": "Prevalentemente credibile"
    },
    "mostly_credible__info": {
-      "message": "Probabilmente il $1 è accurato, ma potrebbe contenere qualche piccola inaccuratezza, in base ai (forti) segnali trovati"
+      "message": "Probabilmente il $1 è accurato, ma potrebbe contenere qualche piccola inaccuratezza, in base ai (forti) segnali trovati."
    },
    "credibility_uncertain": {
       "message": "Credibilità incerta"
    },
    "credibility_uncertain__info": {
-      "message": "Probabilmente il $1 mescola affermazioni accurate e inaccurate (o non verificabili)"
+      "message": "Probabilmente il $1 mescola affermazioni accurate e inaccurate (o non verificabili)."
    },
    "mostly_not_credible": {
       "message": "Prevalentemente non credibile"
    },
    "mostly_not_credible__info": {
-      "message": "Probabilmente il $1 è inaccurato, in base a forti segnali trovati"
+      "message": "Probabilmente il $1 è inaccurato, in base a forti segnali trovati."
    },
    "not_credible": {
       "message": "Non credibile"
    },
    "not_credible__info": {
-      "message": "Molto probabilmente il $1 è inaccurato, in base a forti segnali trovati"
+      "message": "Molto probabilmente il $1 è inaccurato, in base a forti segnali trovati."
    },
    "not_verifiable": {
       "message": "Non verificabile"
    },
    "not_verifiable__info": {
-      "message": "Il $1 non contiene affermazioni verificabili (si tratta di opinioni o speculazioni), oppure non abbiamo potuto trovare segnali che supportano o smentiscono le affermazioni contenute nel $1"
+      "message": "Il $1 non contiene affermazioni verificabili (si tratta di opinioni o speculazioni), oppure non abbiamo potuto trovare segnali che supportano o smentiscono le affermazioni contenute nel $1."
    },
    "tweet_post": {
-      "message": "Tweet"
+      "message": "tweet"
    },
    "not_tagged": {
       "message": "Il $1 non è etichettato"
    },
    "not_tagged__info": {
-      "message": "Il $1 non è ancora stato etichettato dal sistema"
+      "message": "Il $1 non è ancora stato etichettato dal sistema."
    },
    "accurate": {
       "message": "Accurato"
@@ -114,31 +114,31 @@
       "message": "Aiutaci ad aiutare l'AI di Co-Inform"
    },
    "provide_claim": {
-      "message": "Se pensi che questo non sia accurato, per piacere fornisci una affermazione e un link ad un post che supporti la tua affermazione"
+      "message": "Se pensi che questo non sia accurato, per piacere fornisci una affermazione e un link ad un post che supporti la tua affermazione."
    },
    "provide_claim_text1": {
-      "message": "Basandoci sulle tue valutazioni, potremmo suggerirti modi per migliorare le competenze mediatiche"
+      "message": "Basandoci sulle tue valutazioni, potremmo suggerirti modi per migliorare le competenze mediatiche."
    },
    "provide_claim_text2": {
-      "message": "Puoi aiutarci comunicandoci se credi che il $1 sia accurato o no e includendo un link ad una fonte che ne fornisca evidenza"
+      "message": "Puoi aiutarci comunicandoci se credi che il $1 sia accurato o no e includendo un link ad una fonte che ne fornisca evidenza."
    },
    "provide_claim_untagged": {
-      "message": "Se vuoi puoi fornirci una affermazione e un link ad un post che supporti tale affermazione"
+      "message": "Se vuoi puoi fornirci una affermazione e un link ad un post che supporti tale affermazione."
    },
    "not_logged": {
       "message": "Accesso non effettuato"
    },
    "provide_feedback_with_login": {
-      "message": "Per fornire il tuo feedback sulle etichette di Co-Inform, devi accedere al tuo profilo Co-Inform"
+      "message": "Per fornire il tuo feedback sulle etichette di Co-Inform, devi accedere al tuo profilo Co-Inform."
    },
    "wait_label_for_feedback": {
-      "message": "Attendere che il $1 sia etichettato prima di fornire il tuo feedback"
+      "message": "Attendere che il $1 sia etichettato prima di fornire il tuo feedback."
    },
    "provide_claim_with_login": {
-      "message": "Se pensi che questo non sia accurato, puoi inviarci delle affermazioni dopo aver effettuato l'accesso a Co-Inform"
+      "message": "Se pensi che questo non sia accurato, puoi inviarci delle affermazioni dopo aver effettuato l'accesso a Co-Inform."
    },
    "login_register_instructions": {
-      "message": "Clicca sul logo di Co-Inform nell'angolo in alto a destra del tuo browser per aprire il popup e accedere"
+      "message": "Clicca sul logo di Co-Inform nell'angolo in alto a destra del tuo browser per aprire il popup e accedere."
    },
    "ok": {
       "message": "Ok"
@@ -438,7 +438,7 @@
       "message": "sul contenuto del tweet e le sue risposte"
    },
    "processing_labeling": {
-      "message": "Elaborazione dell'etichetta.."
+      "message": "Elaborazione dell'etichetta..."
    },
    "labeling_done": {
       "message": "Etichetta assegnata"

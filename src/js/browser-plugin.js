@@ -961,26 +961,18 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
     node.coInformLabel = credibilityLabel;
     node.coInformModules = credibilityModules;
 
-    let auxScoresLog = createModulesCredibilityScoresLog(credibilityModules);
+    createTweetLabel(tweet, credibilityLabel, credibilityModules, function() {
+      openLabelPopup(tweet);
+      let auxScoresLog = createModulesCredibilityScoresLog(credibilityModules);
+      log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${credibilityLabel}\nCredibility Scores: ${auxScoresLog}`, 'Opened explainability popup through label click');
+    });
 
     let newCategory = configuration.coinform.categories[credibilityLabel];
     if (!newCategory) {
-      createTweetLabel(tweet, credibilityLabel, credibilityModules, function() {
-        openLabelPopup(tweet);
-        log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${credibilityLabel}\nCredibility Scores: ${auxScoresLog}`, 'Opened explainability popup through label click');
-      });
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${credibilityLabel}`, tweet.id);
     }
-    else {
-      if ((newCategory.localeCompare("blur") === 0) || (newCategory.localeCompare("label") === 0)) {
-        createTweetLabel(tweet, credibilityLabel, credibilityModules, function() {
-          openLabelPopup(tweet);
-          log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${credibilityLabel}\nCredibility Scores: ${auxScoresLog}`, 'Opened explainability popup through label click');
-        });
-      }
-      if (newCategory.localeCompare("blur") === 0) {
-        createTweetBlurry(tweet);
-      }
+    else if (newCategory.localeCompare("blur") === 0) {
+      createTweetBlurry(tweet);
     }
 
   }
@@ -1022,10 +1014,9 @@ const createTweetBlurry = (tweet) => {
   let node = tweet.domObject;
   node.setAttribute(parser.untrustedAttribute, 'true');
 
-  let auxScoresLog = createModulesCredibilityScoresLog(node.coInformModules);
-
   let buttonContainer = createCannotSeeTweetButton(tweet, function() {
     openLabelPopup(tweet);
+    let auxScoresLog = createModulesCredibilityScoresLog(node.coInformModules);
     log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}\nCredibility Scores: ${auxScoresLog}`, 'Opened explainability popup through "why cannot see" button');
   });
 
@@ -1092,13 +1083,13 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   
   let auxHoover = true;
   let auxHoverTime = null;
-  let auxScoresLog = createModulesCredibilityScoresLog(modules);
+  //let auxScoresLog = createModulesCredibilityScoresLog(modules);
 
   infoLogo.addEventListener("mouseenter", (event) => {
     openLabelInfoTooltip(event, tweet, label, modules);
     auxHoover = true;
     auxHoverTime = Date.now();
-    log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${label}\nCredibility Scores: ${auxScoresLog}`, 'Opened explainability tooltip on hover');
+    log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${label}`, 'Opened explainability tooltip on hover');
   });
 
   infoLogo.addEventListener("mouseleave", (event) => {
@@ -1138,7 +1129,7 @@ const createModulesCredibilityScoresLog = (modules) => {
   return resTxt;
 };
 
-const createLabelModulesInfoContent = (label, modules) => {
+/*const createLabelModulesInfoContent_old = (label, modules) => {
 
   let shortInfoContent = document.createElement("DIV");
   shortInfoContent.setAttribute("class", "coinformAnalysisExplainability");
@@ -1180,6 +1171,42 @@ const createLabelModulesInfoContent = (label, modules) => {
 
   return shortInfoContent;
 
+};*/
+
+const createLabelTooltipInfoContent = (label) => {
+
+  let shortInfoContent = document.createElement("DIV");
+  shortInfoContent.setAttribute("class", "coinformAnalysisExplainability");
+  let shortInfoText = document.createElement("SPAN");
+  let auxLabel = browserAPI.i18n.getMessage(label);
+  if (!auxLabel) auxLabel = label;
+  let textHtml = browserAPI.i18n.getMessage('content_tagged_with__html', [auxLabel]);
+  shortInfoText.innerHTML = textHtml;
+  shortInfoContent.append(shortInfoText);
+
+  let shortInfoPart2 = document.createElement("SPAN");
+  let shortInfoPart2Txt = document.createTextNode(browserAPI.i18n.getMessage('coinfomr_plugin_check_content_description'));
+  shortInfoPart2.append(shortInfoPart2Txt);
+  shortInfoContent.append(shortInfoPart2);
+
+  let shortInfoPart3 = document.createElement("SPAN");
+  let shortInfoPart3Txt1 = document.createTextNode(browserAPI.i18n.getMessage('modules_check_description'));
+  shortInfoPart3.append(shortInfoPart3Txt1);
+  let spaceTxt = document.createTextNode(" ");
+  let notVerifiableTxt = browserAPI.i18n.getMessage('not_verifiable');
+  let shortInfoPart3Txt2 = document.createTextNode(browserAPI.i18n.getMessage('not_verifiable_case_description', notVerifiableTxt));
+  shortInfoPart3.append(spaceTxt);
+  shortInfoPart3.append(shortInfoPart3Txt2);
+  shortInfoContent.append(shortInfoPart3);
+  
+  let shortInfoMoreinfo = document.createElement("SPAN");
+  shortInfoMoreinfo.setAttribute("class", "coinformAnalysisPopupInfo");
+  let moreinfoTxt = document.createTextNode(browserAPI.i18n.getMessage('click_label_for_more_info'));
+  shortInfoMoreinfo.append(moreinfoTxt);
+  shortInfoContent.append(shortInfoMoreinfo);
+
+  return shortInfoContent;
+
 };
 
 const createLabelModulesExplainabilityContent = (label, modules) => {
@@ -1189,10 +1216,12 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
   let explainInfoText = document.createElement("SPAN");
   let auxLabel = browserAPI.i18n.getMessage(label);
   if (!auxLabel) auxLabel = label;
-  let textHtml = null;
-  if (Object.keys(modules).length > 1) textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
-  else textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel]);
+  let textHtml = browserAPI.i18n.getMessage('content_tagged_by__html', [auxLabel, Object.keys(modules).length]);
   explainInfoText.innerHTML = textHtml;
+  let spaceTxt = document.createTextNode(" ");
+  explainInfoText.append(spaceTxt);
+  let specificallyTxt = document.createTextNode(browserAPI.i18n.getMessage('specifically'));
+  explainInfoText.append(specificallyTxt);
   explainInfoContent.append(explainInfoText);
   let explainInfoList = document.createElement("UL");
   if (modules) {
@@ -1217,7 +1246,7 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
           moduleExplainabilityHtml = '<details class="coinformAnalysisMoreInfo"><summary>' + browserAPI.i18n.getMessage('module_explainability_text') + '</summary><p>' + modules[key].explanation + '</p></details>';
         }
         else if ((modules[key].explanationFormat.localeCompare('link') === 0) || (modules[key].explanationFormat.localeCompare('url') === 0)) {
-          moduleExplainabilityHtml = '<span class="coinformAnalysisMoreInfo">' + browserAPI.i18n.getMessage('module_explainability_link') + ' <a href="' + modules[key].explanation + '"  target="_blank" rel="noopener noreferrer">' + browserAPI.i18n.getMessage('here') + '</a></span>';
+          moduleExplainabilityHtml = '<span class="coinformAnalysisMoreInfo">' + browserAPI.i18n.getMessage('module_explainability_link') + ' <a href="' + modules[key].explanation + '"  target="_blank" rel="noopener noreferrer">' + browserAPI.i18n.getMessage('here') + '</a>.</span>';
         }
         else if (modules[key].explanationFormat.localeCompare('markdown') === 0) {
           let ShowDownConverter = new ShowDown.Converter();
@@ -1291,7 +1320,8 @@ function openLabelInfoTooltip(event, tweet, label, modules) {
   let infoTooltip = document.createElement("DIV");
   infoTooltip.setAttribute("id", `coinformLabelInfoTooltip-${tweet.id}`);
   infoTooltip.setAttribute("class", "coinformLabelInfoTooltip");
-  let infoTooltipContent = createLabelModulesInfoContent(label, modules);
+  //let infoTooltipContent = createLabelModulesInfoContent(label, modules);
+  let infoTooltipContent = createLabelTooltipInfoContent(label);
   infoTooltip.append(infoTooltipContent);
 
   infoTooltip.style.left = event.pageX + 'px';
@@ -1317,7 +1347,7 @@ function closeLabelInfoTooltip(event, tweet) {
 
 function openLabelPopup(tweet) {
 
-  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+  const elementTxt = browserAPI.i18n.getMessage('post');
 
   let node = tweet.domObject;
   let nodeBlurred = isBlurred(tweet);
@@ -1538,7 +1568,7 @@ function claimClickAction(tweet) {
 
 function openClaimPopup(tweet) {
 
-  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+  const elementTxt = browserAPI.i18n.getMessage('post');
 
   let node = tweet.domObject;
   let resultDropdown;
@@ -1697,7 +1727,7 @@ function openClaimPopup(tweet) {
 
 function openNotTaggedFeedbackPopup(tweet) {
   
-  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+  const elementTxt = browserAPI.i18n.getMessage('post');
 
   let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
   let popupButtonText = browserAPI.i18n.getMessage('ok');
@@ -1753,7 +1783,7 @@ function openNotLoggedFeedbackPopup(tweet) {
 
 function openNotLoggedClaimPopup(tweet) {
   
-  const elementTxt = browserAPI.i18n.getMessage('tweet_post');
+  const elementTxt = browserAPI.i18n.getMessage('post');
 
   let node = tweet.domObject;
 
