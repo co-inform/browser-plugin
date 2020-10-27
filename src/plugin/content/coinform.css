@@ -325,8 +325,13 @@ article[coinform-parsed] {
   font-weight: 700;
 }
 
+.coinformAnalysisExplainability > ul {
+  margin: 0;
+}
+
 .coinformAnalysisExplainability > ul > li {
-  padding-bottom: 20px;
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
 
 .coinformAnalysisExplainability .coinformAnalysisMoreInfo {
