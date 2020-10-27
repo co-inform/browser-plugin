@@ -1585,7 +1585,7 @@ function openClaimPopup(tweet) {
   let moreInfo = browserAPI.i18n.getMessage('not_tagged__info', elementTxt);
   let provideClaimTitle = browserAPI.i18n.getMessage("provide_claim_title");
   //let provideClaimText = browserAPI.i18n.getMessage("provide_claim_untagged");
-  let provideClaimText1 = browserAPI.i18n.getMessage("provide_claim_text1");
+  //let provideClaimText1 = browserAPI.i18n.getMessage("provide_claim_text1");
   let provideClaimText2 = browserAPI.i18n.getMessage("provide_claim_text2", elementTxt);
 
   //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");

@@ -3,76 +3,76 @@
       "message": "Creíble"
    },
    "credible__info": {
-      "message": "El $1 parece ser bastante preciso, de acuerdo con los análisis que se realizaron."
+      "message": "La $1 parece ser bastante precisa, de acuerdo con los análisis que se realizaron."
    },
    "mostly_credible": {
       "message": "Mayormente creíble"
    },
    "mostly_credible__info": {
-      "message": "El $1 parece ser preciso, aunque puede contener algunas inexactitudes menores, de acuerdo con los análisis que se realizaron."
+      "message": "La $1 parece ser precisa, aunque puede contener algunas inexactitudes menores, de acuerdo con los análisis que se realizaron."
    },
    "credibility_uncertain": {
       "message": "Credibilidad incierta"
    },
    "credibility_uncertain__info": {
-      "message": "El $1 probablemente mezcla contenidos precisos y erróneos (o no verificables)."
+      "message": "La $1 probablemente mezcla contenidos precisos y erróneos (o no verificables)."
    },
    "mostly_not_credible": {
       "message": "Mayormente no creíble"
    },
    "mostly_not_credible__info": {
-      "message": "El $1 parece ser impreciso, de acuerdo con los análisis que se realizaron."
+      "message": "La $1 parece ser imprecisa, de acuerdo con los análisis que se realizaron."
    },
    "not_credible": {
       "message": "No creíble"
    },
    "not_credible__info": {
-      "message": "El $1 parece ser impreciso, de acuerdo con los análisis que se realizaron."
+      "message": "La $1 parece ser imprecisa, de acuerdo con los análisis que se realizaron."
    },
    "not_verifiable": {
       "message": "No verificable"
    },
    "not_verifiable__info": {
-      "message": "El $1 no contiene contenido verificable (son opiniones o especulaciones), o no se pudo encontrar suficientes signos de apoyo/rechazo del contenido del $1."
+      "message": "La $1 no contiene contenido verificable (son opiniones o especulaciones), o no se pudo encontrar suficientes signos de apoyo/rechazo del contenido de la $1."
    },
    "tweet_post": {
       "message": "tweet"
    },
    "not_tagged": {
-      "message": "El $1 no tiene análisis"
+      "message": "La $1 no tiene análisis"
    },
    "not_tagged__info": {
-      "message": "El $1 aún no ha sido analizado por el sistema."
+      "message": "La $1 aún no ha sido analizada por el sistema."
    },
    "accurate": {
       "message": "Preciso"
    },
    "accurate__info": {
-      "message": "El $1 es preciso"
+      "message": "La $1 es precisa"
    },
    "accurate_with_considerations": {
       "message": "Preciso con consideraciones"
    },
    "accurate_with_considerations__info": {
-      "message": "El $1 contiene algunas imprecisiones"
+      "message": "La $1 contiene algunas imprecisiones"
    },
    "unsubstantiated": {
       "message": "No corroborado"
    },
    "unsubstantiated__info": {
-      "message": "El $1 no está corroborado"
+      "message": "La $1 no está corroborada"
    },
    "inaccurate_with_considerations": {
       "message": "Impreciso con consideraciones"
    },
    "inaccurate_with_considerations__info": {
-      "message": "El $1 mezcla contenido preciso e impreciso"
+      "message": "La $1 mezcla contenido preciso e impreciso"
    },
    "inaccurate": {
       "message": "Impreciso"
    },
    "inaccurate__info": {
-      "message": "El $1 es impreciso"
+      "message": "La $1 es imprecisa"
    },
    "error_loading_configuration": {
       "message": "No se pudo cargar la configuración del plugin"
@@ -102,13 +102,13 @@
       "message": "¿Por qué no puedo ver esto?"
    },
    "element_tagged_as": {
-      "message": "Este $1 ha sido etiquetado como: $2"
+      "message": "Esta $1 ha sido etiquetada como: $2"
    },
    "see_anyway": {
-      "message": "Ver el $1"
+      "message": "Ver la $1"
    },
    "blur_again": {
-      "message": "Difuminar el $1"
+      "message": "Difuminar la $1"
    },
    "provide_claim_title": {
       "message": "Ayúdanos a mejorar la IA de Co-Inform"
@@ -120,7 +120,7 @@
       "message": "Basándonos en tus contribuciones, podemos encontrar formas de mejorar la alfabetización mediática."
    },
    "provide_claim_text2": {
-      "message": "Puedes ayudarnos contándonos si consideras o no el $1 preciso, y proporcionar un enlace a una fuente que lo corrobore."
+      "message": "Puedes ayudarnos contándonos si consideras o no la $1 precisa, y proporcionar un enlace a una fuente que lo corrobore."
    },
    "provide_claim_untagged": {
       "message": "Si quieres puedes enviar una reclamación con un enlace a un artículo que corrobore la reclamación."
@@ -132,7 +132,7 @@
       "message": "Para enviar tu evaluación sobre el etiquetado de Co-Inform debes registrarte / identificarte con una cuenta de Co-Inform."
    },
    "wait_label_for_feedback": {
-      "message": "El $1 debe estar etiquetado para poder enviar tu evaluación sobre la etiqueta."
+      "message": "La $1 debe estar etiquetada para poder enviar tu evaluación sobre la etiqueta."
    },
    "provide_claim_with_login": {
       "message": "Si consideras que no es preciso puedes enviar una reclamación iniciando sesión con tu cuenta de Co-Inform."
@@ -419,24 +419,6 @@
    "here": {
       "message": "aquí"
    },
-   "claim_similarity": {
-      "message": "Similitud de Aserciones"
-   },
-   "claim_similarity_based_info": {
-      "message": "artículos similares"
-   },
-   "misinfome": {
-      "message": "Identificación de Desinformación"
-   },
-   "misinfome_based_info": {
-      "message": "la reputación de la fuente"
-   },
-   "content_analysis": {
-      "message": "Postura del Contenido"
-   },
-   "content_analysis_based_info": {
-      "message": "el contenido del tweet y sus reacciones"
-   },
    "processing_labeling": {
       "message": "Analizando..."
    },
@@ -451,5 +433,47 @@
    },
    "labeling_undone": {
       "message": "Análisis no realizado"
+   },
+   "post": {
+      "message": "publicación"
+   },
+   "content_tagged_with__html": {
+      "message": "El contenido de esta publicación ha sido etiquetado como <b>$1</b>."
+   },
+   "coinfomr_plugin_check_content_description": {
+      "message": "El plugin de Co-Inform comprueba el contenido de cada publicación contrastándola con información verificada y utiliza tres distintas estrategias de detección de desinformación para identificar información potencialmente engañosa."
+   },
+   "modules_check_description": {
+      "message": "Cada uno de los módulos comprueba distintos aspectos de la información, y cuando dos de los módulos coinciden en el mismo estado de credibilidad, el plugin de Co-Inform lo establece como la etiqueta de credibilidad. Si los módulos asignan distintos estados de credibilidad, la etiqueta de credibilidad depende entonces del valor de confianza asignado por cada módulo."
+   },
+   "not_verifiable_case_description": {
+      "message": "Las publicaciones etiquetadas con \"$1\" hacen referencia a información que no ha sido verificada."
+   },
+   "click_label_for_more_info": {
+      "message": "Puedes clickar en la etiqueta de credibilidad para obtener más información acerca de lo que nuestros módulos de detección de desinformación indican sobre esta publicación."
+   },
+   "content_tagged_by__html": {
+      "message": "Este contenido ha sido etiquetado como <b>$1</b> por <b>$2</b> de los módulos Co-Inform para la detección de desinformación."
+   },
+   "specifically": {
+      "message": "Específicamente:"
+   },
+   "claim_similarity": {
+      "message": "Similitud de Aserciones"
+   },
+   "claim_similarity_based_info": {
+      "message": "la comparación de afirmaciones hechas en la publicación (o en artículos referenciados) contrastada con una base de datos de afirmaciones verificadas"
+   },
+   "misinfome": {
+      "message": "Identificación de Desinformación"
+   },
+   "misinfome_based_info": {
+      "message": "la reputación de credibilidad de las cuentas, fuentes y enlaces involucradas en la publicación y determinado por varias herramientas externas de clasificación y verificación de la información"
+   },
+   "content_analysis": {
+      "message": "Postura del Contenido"
+   },
+   "content_analysis_based_info": {
+      "message": "el contenido de la publicación y un informe sobre si las respuestas a la publicación apoyan, rechazan o cuestionan la afirmación que aparece en ella"
    }
 }

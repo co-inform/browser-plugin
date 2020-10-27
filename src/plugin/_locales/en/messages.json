@@ -444,7 +444,7 @@
     "message": "The Co-Inform plugin checks the content of each post against fact-checked information and uses three different misinformation-detection approaches to spot information that could potentially be misleading."
   },
   "modules_check_description": {
-    "message": "Each of the modules checks different information aspects, and when two of the modules agree on the same credibility status, the Co-Inform plugin attaches that as the credibility label. If the modules assign a different credibility status, the credibility label is depends on the confidence value assigned by each module."
+    "message": "Each of the modules checks different information aspects, and when two of the modules agree on the same credibility status, the Co-Inform plugin attaches that as the credibility label. If the modules assign a different credibility status, the credibility label depends on the confidence value assigned by each module."
   },
   "not_verifiable_case_description": {
     "message": "Posts labelled as \"$1\" refer to information that has not been fact-checked."

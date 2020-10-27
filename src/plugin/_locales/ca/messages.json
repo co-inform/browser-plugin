@@ -3,76 +3,76 @@
       "message": "Creïble"
    },
    "credible__info": {
-      "message": "El $1 sembla ser bastant precís, d'acord amb les anàlisis realitzades."
+      "message": "La $1 sembla ser bastant precisa, d'acord amb les anàlisis realitzades."
    },
    "mostly_credible": {
       "message": "Majorment creïble"
    },
    "mostly_credible__info": {
-      "message": "El $1 sembla ser precís, tot i que pot contenir algunes inexactituds menors, d'acord amb les anàlisis realitzades."
+      "message": "La $1 sembla ser precisa, tot i que pot contenir algunes inexactituds menors, d'acord amb les anàlisis realitzades."
    },
    "credibility_uncertain": {
       "message": "Credibilitat incerta"
    },
    "credibility_uncertain__info": {
-      "message": "El $1 probablement barreja continguts precisos i erronis (o no verificables)."
+      "message": "La $1 probablement barreja continguts precisos i erronis (o no verificables)."
    },
    "mostly_not_credible": {
       "message": "Majorment no creïble"
    },
    "mostly_not_credible__info": {
-      "message": "El $1 sembla ser imprecís, d'acord amb les anàlisis realitzades."
+      "message": "La $1 sembla ser imprecisa, d'acord amb les anàlisis realitzades."
    },
    "not_credible": {
       "message": "No creïble"
    },
    "not_credible__info": {
-      "message": "El $1 sembla ser imprecís, d'acord amb les anàlisis realitzades."
+      "message": "La $1 sembla ser imprecisa, d'acord amb les anàlisis realitzades."
    },
    "not_verifiable": {
       "message": "No verificable"
    },
    "not_verifiable__info": {
-      "message": "El $1 no conté contingut verificable (són opinions o especulacions), o no s'han pogut trobar suficients signes a favor/en contra del contingut del $1."
+      "message": "La $1 no conté contingut verificable (són opinions o especulacions), o no s'han pogut trobar suficients signes a favor/en contra del contingut de la $1."
    },
    "tweet_post": {
       "message": "tweet"
    },
    "not_tagged": {
-      "message": "El $1 no té anàlisi"
+      "message": "La $1 no té anàlisi"
    },
    "not_tagged__info": {
-      "message": "El $1 encara no ha estat analitzat pel sistema."
+      "message": "La $1 encara no ha estat analitzada pel sistema."
    },
    "accurate": {
       "message": "Precís"
    },
    "accurate__info": {
-      "message": "El $1 és precís"
+      "message": "La $1 és precisa"
    },
    "accurate_with_considerations": {
       "message": "Precís amb consideracions"
    },
    "accurate_with_considerations__info": {
-      "message": "El $1 conté algunes imprecisions"
+      "message": "La $1 conté algunes imprecisions"
    },
    "unsubstantiated": {
       "message": "No corroborat"
    },
    "unsubstantiated__info": {
-      "message": "El $1 no està corroborat"
+      "message": "La $1 no està corroborada"
    },
    "inaccurate_with_considerations": {
       "message": "Imprecís amb consideracions"
    },
    "inaccurate_with_considerations__info": {
-      "message": "El $1 barreja contingut precís i imprecís"
+      "message": "La $1 barreja contingut precís i imprecís"
    },
    "inaccurate": {
       "message": "Imprecís"
    },
    "inaccurate__info": {
-      "message": "El $1 és imprecís"
+      "message": "La $1 és imprecisa"
    },
    "error_loading_configuration": {
       "message": "No s'ha pogut carregar la configuració del plugin"
@@ -102,13 +102,13 @@
       "message": "Per què no puc veure això?"
    },
    "element_tagged_as": {
-      "message": "Aquest $1 ha estat etiquetat com: $2"
+      "message": "Aquesta $1 ha estat etiquetada com: $2"
    },
    "see_anyway": {
-      "message": "Veure el $1"
+      "message": "Veure la $1"
    },
    "blur_again": {
-      "message": "Difuminar el $1"
+      "message": "Difuminar la $1"
    },
    "provide_claim_title": {
       "message": "Ajuda'ns a millorar la IA de Co-Inform"
@@ -120,7 +120,7 @@
       "message": "Basant-nos en les teves contribucions, podem trobar formes de millorar l'alfabetització mediàtica."
    },
    "provide_claim_text2": {
-      "message": "Pots ajudar explicant-nos si creus que el $1 és o no precís, i incloent un enllaç a una font que ho corrobori."
+      "message": "Pots ajudar explicant-nos si creus que la $1 és o no precisa, i incloent un enllaç a una font que ho corrobori."
    },
    "provide_claim_untagged": {
       "message": "Si vols pots enviar una reclamació i un enllaç a un article que corrobori la reclamació."
@@ -132,7 +132,7 @@
       "message": "Per enviar la teva avaluació sobre l'etiquetatge de Co-Inform necessites registrar-te / iniciar sessió amb un compte de Co-Inform."
    },
    "wait_label_for_feedback": {
-      "message": "El $1 ha d'estar etiquetat per a poder enviar una avaluació sobre l'etiqueta."
+      "message": "La $1 ha d'estar etiquetada per a poder enviar una avaluació sobre l'etiqueta."
    },
    "provide_claim_with_login": {
       "message": "Si creus que no és precís pots enviar una reclamació iniciant sessió amb el teu compte de Co-Inform."
@@ -419,24 +419,6 @@
    "here": {
       "message": "aquí"
    },
-   "claim_similarity": {
-      "message": "Similitud d'Assercions"
-   },
-   "claim_similarity_based_info": {
-      "message": "articles similars"
-   },
-   "misinfome": {
-      "message": "Identificació de Desinformació"
-   },
-   "misinfome_based_info": {
-      "message": "la reputació de la font"
-   },
-   "content_analysis": {
-      "message": "Postura del Contingut"
-   },
-   "content_analysis_based_info": {
-      "message": "el contingut del Tweet i les seves reaccions"
-   },
    "processing_labeling": {
       "message": "Analitzant..."
    },
@@ -451,5 +433,47 @@
    },
    "labeling_undone": {
       "message": "Anàlisi no realitzat"
+   },
+   "post": {
+      "message": "publicació"
+   },
+   "content_tagged_with__html": {
+      "message": "El contingut d'aquesta publicació ha estat etiquetat com a <b>$1</b>."
+   },
+   "coinfomr_plugin_check_content_description": {
+      "message": "El plugin de Co-Inform comprova el contingut de cada publicació contrastant-la amb informació verificada i utilitza tres diferents estratègies de detecció de desinformació per a identificar informació potencialment enganyosa."
+   },
+   "modules_check_description": {
+      "message": "Cada un dels mòduls comprova diferents aspectes de la informació, i quan dos dels mòduls coincideixen en el mateix estat de credibilitat, el plugin de Co-Inform l'estableix com l'etiqueta de credibilitat. Si els mòduls assignen diferents estats de credibilitat, l'etiqueta de credibilitat depèn aleshores del valor de confiança assignat per cada mòdul."
+   },
+   "not_verifiable_case_description": {
+      "message": "Les publicacions etiquetades com a \"$1\" fan referència a informació que no ha estat verificada."
+   },
+   "click_label_for_more_info": {
+      "message": "Pots clicar a l'etiqueta de credibilitat per a obtenir més informació sobre el que els nostres mòduls de detecció de desinformació indiquen sobre aquesta publicació."
+   },
+   "content_tagged_by__html": {
+      "message": "Aquest contingut ha estat etiquetat com a <b>$1</b> per <b>$2</b> dels mòduls Co-Inform per a la detecció de desinformació."
+   },
+   "specifically": {
+      "message": "Específicament:"
+   },
+   "claim_similarity": {
+      "message": "Similitud d'Assercions"
+   },
+   "claim_similarity_based_info": {
+      "message": "la comparació d'afirmacions realitzades en la publicació (o en articles referenciats) contrastada amb una base de dades d'afirmacions verificades"
+   },
+   "misinfome": {
+      "message": "Identificació de Desinformació"
+   },
+   "misinfome_based_info": {
+      "message": "la reputació de credibilitat dels comptes, fonts i enllaços involucrats en la publicació i determinat per vàries eines externes de classificació i verificació de la informació"
+   },
+   "content_analysis": {
+      "message": "Postura del Contingut"
+   },
+   "content_analysis_based_info": {
+      "message": "el contingut de la publicació i un informe sobre si les respostes a la publicació donen suport, rebutgen o qüestionen l'afirmació que hi apareix"
    }
 }

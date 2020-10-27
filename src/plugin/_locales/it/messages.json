@@ -414,28 +414,10 @@
       "message": "Spiegazione dettagliata dell'analisi"
    },
    "module_explainability_link": {
-      "message": "Maggiori informazioni sull'analisi disponibili"
+      "message": "Per avere maggiori informazioni sull'analisi, cliccare"
    },
    "here": {
       "message": "qui"
-   },
-   "claim_similarity": {
-      "message": "Similarità dell'affermazione"
-   },
-   "claim_similarity_based_info": {
-      "message": "su articoli simili"
-   },
-   "misinfome": {
-      "message": "Identificazione di misinformazione"
-   },
-   "misinfome_based_info": {
-      "message": "sulla reputazione della fonte"
-   },
-   "content_analysis": {
-      "message": "Presa di posizione del contenuto"
-   },
-   "content_analysis_based_info": {
-      "message": "sul contenuto del tweet e le sue risposte"
    },
    "processing_labeling": {
       "message": "Elaborazione dell'etichetta..."
@@ -451,5 +433,47 @@
    },
    "labeling_undone": {
       "message": "Assegnazione dell'etichetta annullata"
+   },
+   "post": {
+      "message": "post"
+   },
+   "content_tagged_with__html": {
+      "message": "Il contenuto di questo post è stato etichettato come <b>$1</b>."
+   },
+   "coinfomr_plugin_check_content_description": {
+      "message": "Il plugin di Co-Inform controlla il contenuto di ciascun post con informazioni verificate e usa tre diversi approcci per identificare la informazioni che possono essere potenzialmente false o ingannevoli."
+   },
+   "modules_check_description": {
+      "message": "Ciascuno dei moduli controlla diversi aspetti dell'informazione, e quando due moduli concordano sullo stesso valore di credibilità, il plugin di Co-Inform attribuisce tale valore come etichetta di credibilità. Se i moduli assegnano valori differenti, il valore risultante di credibiltà dipende dai valore di confidenza espresso da ciascun modulo."
+   },
+   "not_verifiable_case_description": {
+      "message": "Il post etichettato come \"$1\" si riferisce ad informazioni che non sono state verificate."
+   },
+   "click_label_for_more_info": {
+      "message": "Clicca sull'etichetta di credibilità per scoprire cosa viene indicato da ciascuno dei nostri moduli di analisi per questo post."
+   },
+   "content_tagged_by__html": {
+      "message": "Questo contenuto è stato etichettato <b>$1</b> da <b>$2</b> dei moduli di analisi di Co-Inform."
+   },
+   "specifically": {
+      "message": "Nello specifico:"
+   },
+   "claim_similarity": {
+      "message": "Similarità dell'affermazione"
+   },
+   "claim_similarity_based_info": {
+      "message": "un confronto fra le affermazioni fatte nel post (o negli articoli linkati) e un database di affermazioni verificate"
+   },
+   "misinfome": {
+      "message": "Identificazione di misinformazione"
+   },
+   "misinfome_based_info": {
+      "message": "la reputazione di credibilità degli account, delle fonti e dei link coinvolti nel post, determinati a partire da vari strumenti di verifica esterni e informazioni verificate"
+   },
+   "content_analysis": {
+      "message": "Presa di posizione del contenuto"
+   },
+   "content_analysis_based_info": {
+      "message": "il contenuto del post e una analisi di come le risposte al post supportano, negano o mettono in dubbio l'affermazione contenuta in esso"
    }
 }

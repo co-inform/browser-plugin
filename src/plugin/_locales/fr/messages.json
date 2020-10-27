@@ -414,28 +414,10 @@
       "message": "Explication d'analyse detaillée"
    },
    "module_explainability_link": {
-      "message": "Plus d'information sur l'analyse"
+      "message": "Pour plus d'informations sur cette analyse, cliquez"
    },
    "here": {
-      "message": "Ici"
-   },
-   "claim_similarity": {
-      "message": "Similarité entre revendications"
-   },
-   "claim_similarity_based_info": {
-      "message": "Articles similaires"
-   },
-   "misinfome": {
-      "message": "Identification de désinformation"
-   },
-   "misinfome_based_info": {
-      "message": "Réputation de l'auteur de la source"
-   },
-   "content_analysis": {
-      "message": "Position du contenu"
-   },
-   "content_analysis_based_info": {
-      "message": "Le contenu du tweet et ses réponses"
+      "message": "ici"
    },
    "processing_labeling": {
       "message": "Traitement de l'etiquette..."
@@ -451,5 +433,47 @@
    },
    "labeling_undone": {
       "message": "Etiquettage défait"
+   },
+   "post": {
+      "message": "post"
+   },
+   "content_tagged_with__html": {
+      "message": "Le contenu de ce post a été tagué comme  <b>$1</b>."
+   },
+   "coinfomr_plugin_check_content_description": {
+      "message": "Le plug-in Co-inform vérifie le contenu de chaque post en le comparant contre de l'information verifiée par des fact-checkeurs et utilise trois méthodes différente de détection de désinformation pour repérer de l'information potentiellement fallacieuse. "
+   },
+   "modules_check_description": {
+      "message": "Chacun des modules vérifie différents aspects de l'information, et quand deux des modules s'accordent sur le même statut de crédibilité, le plug-in Co-inform attache celui-ci comme étiquette de crédibilité. Si le module assigne un statut de crédibilité différent, l'etiquette de crédibilité dépend de la valeur de confiance assignée par chaque module."
+   },
+   "not_verifiable_case_description": {
+      "message": "Les posts tagués comme \"$1  font réference à de l'information pas encore verifiée."
+   },
+   "click_label_for_more_info": {
+      "message": "Cliquez sur l'étiquette de crédibilité pour en apprendre plus sur ce que notre module de repérage de désinformation indique concernant ce post."
+   },
+   "content_tagged_by__html": {
+      "message": "Ce contenu a été tagué comme <b>$1</b> par <b>$2</b> le module de repérage de désinformation de Co-inform."
+   },
+   "specifically": {
+      "message": "Précisement:"
+   },
+   "claim_similarity": {
+      "message": "Similarité entre revendications"
+   },
+   "claim_similarity_based_info": {
+      "message": "une comparaison des révendications faites dans le post (ou articles liés) contre une base de données de revendications déjà vérifiées"
+   },
+   "misinfome": {
+      "message": "Identification de désinformation"
+   },
+   "misinfome_based_info": {
+      "message": "la réputation de crédibilité des comptes, sources et liens associés au post et déterminés par plusieurs instruments de vérification et d'évaluation exterieurs"
+   },
+   "content_analysis": {
+      "message": "Position du contenu"
+   },
+   "content_analysis_based_info": {
+      "message": "le contenu du post et un rapport expliquant si les réponses au post supportent, réfutent ou questionnent la revendication qui y apparait"
    }
 }

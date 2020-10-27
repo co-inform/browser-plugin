@@ -414,28 +414,10 @@
     "message": "Detaljerad förklaring av analysen"
   },
   "module_explainability_link": {
-    "message": "Mer information om analysen"
+    "message": "För mer information om denna analys, klicka"
   },
   "here": {
     "message": "här"
-  },
-  "claim_similarity": {
-    "message": "Claim Similarity"
-  },
-  "claim_similarity_based_info": {
-    "message": "liknande artiklar"
-  },
-  "misinfome": {
-    "message": "Misinformation Identification"
-  },
-  "misinfome_based_info": {
-    "message": "Renomme för källans författare"
-  },
-  "content_analysis": {
-    "message": "Content Stance"
-  },
-  "content_analysis_based_info": {
-    "message": "tweetens svar sam dess nnehåll"
   },
   "processing_labeling": {
     "message": "Processar taggen..."
@@ -451,5 +433,47 @@
   },
   "labeling_undone": {
     "message": "Märkning ångrad"
+  },
+  "post": {
+     "message": "inlägg"
+  },
+  "content_tagged_with__html": {
+     "message": "Innehållet i denna post har taggats som <b>$1</b>."
+  },
+  "coinfomr_plugin_check_content_description": {
+     "message": "Co-Informs plugin kontrollerar innehållet i varje post mot fakta-kontrollerad information samt använder 3 olika ansatser i identifieringen av misinformation för att upptcäka information som kan vara vilseledande."
+  },
+  "modules_check_description": {
+     "message": "Varje enskild modul kontrollerar olika aspekter av informationen, och när två moduler ger samma tillförlitlighetsstaus ges inlägget den nivån på tillförlitlighet. Om modulerna ger olika status beror den slutgiltiga statusen på modulernas konfidensvärde."
+  },
+  "not_verifiable_case_description": {
+     "message": "Inlägg som märkts med \"$1\" hänvisar till information som inte har faktakontrollerats."
+  },
+  "click_label_for_more_info": {
+     "message": "Klicka på inläggets märkning för tillförlitlighet för att få mer information om vad våra olika misinformations moduler har indikerat för detta inlägg."
+  },
+  "content_tagged_by__html": {
+     "message": "Detta innehåll har taggats som <b>$1</b> av <b>$2</b> för Co-Informs misinformations moduler."
+  },
+  "specifically": {
+     "message": "Specifikt:"
+  },
+  "claim_similarity": {
+    "message": "Claim Similarity"
+  },
+  "claim_similarity_based_info": {
+    "message": "en jämförelse av anspråk gjorda i inlägget (eller länkade artiklar) mot en databas av faktakontrollerade anspråk"
+  },
+  "misinfome": {
+    "message": "Misinformation Identification"
+  },
+  "misinfome_based_info": {
+    "message": "kontonas, källornas och länkarnas anseende i inlägget bedömt av flertalet externa verktyg och faktakontroller"
+  },
+  "content_analysis": {
+    "message": "Content Stance"
+  },
+  "content_analysis_based_info": {
+    "message": "Inläggets innehåll samt en rapport om svaren på inlägget stödjer, bestrider eller ifrågasätter anspråk som gjorts i inlägget"
   }
 }
