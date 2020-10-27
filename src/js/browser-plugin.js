@@ -1324,8 +1324,8 @@ function openLabelInfoTooltip(event, tweet, label, modules) {
   let infoTooltipContent = createLabelTooltipInfoContent(label);
   infoTooltip.append(infoTooltipContent);
 
-  infoTooltip.style.left = event.pageX + 'px';
-  infoTooltip.style.top = event.pageY + 'px';
+  infoTooltip.style.left = (event.pageX + 8) + 'px';
+  infoTooltip.style.top = (event.pageY + 8) + 'px';
 
   layersDiv.append(infoTooltip);
 
@@ -1645,7 +1645,6 @@ function openClaimPopup(tweet) {
       '</div>' + 
       '<div class="coinformProvideClaimText">' +
         '<span class="coinformProvideClaimTitle">' + provideClaimTitle + '</span><br/>' +
-        '<span>' + provideClaimText1 + '</span>' +
         '<span>' + provideClaimText2 + '</span>' +
       '</div>' +
       '<select id="claim-input-select" class="swal2-select" required>' +
