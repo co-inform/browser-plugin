@@ -168,10 +168,10 @@
       "message": "opcional"
    },
    "positive_feedback": {
-      "message": "Estic d'acord amb l'etiqueta"
+      "message": "D'acord amb l'etiqueta"
    },
    "negative_feedback": {
-      "message": "Estic en desacord amb l'etiqueta"
+      "message": "En desacord amb l'etiqueta"
    },
    "additional_info": {
       "message": "Informació addicional"

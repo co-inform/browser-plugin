@@ -120,7 +120,7 @@
       "message": "En se basant sur vos notes on pourrait suggerer des façons d'améliorer l'éducation aux médias."
    },
    "provide_claim_text2": {
-      "message": "Vous pouvez nous aider en nous disant si vous pensez que $1 est exact ou pas et aussi inclure un lien a une source produisant des preuves."
+      "message": "Vous pouvez nous aider en nous disant si vous pensez que le $1 est exact ou pas et aussi y inclure une source produisant des preuves."
    },
    "provide_claim_untagged": {
       "message": "Si vous le voulez vous pouvez procurer une revendication et un lien supportant cette revendication."
@@ -159,7 +159,7 @@
       "message": "Choisissez une revendication"
    },
    "make_claim": {
-      "message": "Je veux faire une revendication"
+      "message": "Faire une revendication"
    },
    "link_to_claim": {
       "message": "Lien vers une source corrective"
@@ -168,10 +168,10 @@
       "message": "Optionnel"
    },
    "positive_feedback": {
-      "message": "Je suis d'accord avec l'etiquetage du tweet"
+      "message": "D'accord avec l'etiquette"
    },
    "negative_feedback": {
-      "message": "Je ne suis pas d'accord avec l'etiquetage du tweet"
+      "message": "Pas d'accord avec l'etiquette"
    },
    "additional_info": {
       "message": "Info supplementaire"
@@ -396,16 +396,16 @@
       "message": "Signez"
    },
    "content_deemed_due_analysis__html": {
-      "message": "Ce contenu a été consideré comme <b>$1</b> à cause du résultat du <b>$2</b> analyse differente"
+      "message": "Ce contenu a été consideré comme <b>$1</b>, à cause du résultat du <b>$2</b> analyse differente:"
    },
    "more_analysis_info": {
       "message": "Pour plus d'information sur l'analyse cliquez sur l'etiquete de credibilité"
    },
    "module_analysis_long_info__html": {
-      "message": "Une <b>$1</b> analyse basee sur $2 a generé cette évaluation"
+      "message": "Une <b>$1</b>, basée sur $2, a generé cette évaluation:"
    },
    "module_analysis_short_info__html": {
-      "message": "Une <b>$1</b> analyse a generé cette évaluation"
+      "message": "Une <b>$1</b> analyse a generé cette évaluation:"
    },
    "module_analysis_result__html": {
       "message": "<b>$1</b> ( avec <b>$2</b> de valeur de credibilite et <b>$3%</b> de confiance)"
@@ -438,40 +438,40 @@
       "message": "post"
    },
    "content_tagged_with__html": {
-      "message": "Le contenu de ce post a été tagué comme  <b>$1</b>."
+      "message": "Le contenu de ce post a été tagué comme de <b>$1</b>."
    },
    "coinfomr_plugin_check_content_description": {
-      "message": "Le plug-in Co-inform vérifie le contenu de chaque post en le comparant contre de l'information verifiée par des fact-checkeurs et utilise trois méthodes différente de détection de désinformation pour repérer de l'information potentiellement fallacieuse. "
+      "message": "Le plug-in Co-inform vérifie le contenu de chaque post en le comparant avec de l'information verifiée par des fact-checkeurs et utilise trois méthodes différentes de détection de désinformation pour repérer de l'information potentiellement fallacieuse."
    },
    "modules_check_description": {
       "message": "Chacun des modules vérifie différents aspects de l'information, et quand deux des modules s'accordent sur le même statut de crédibilité, le plug-in Co-inform attache celui-ci comme étiquette de crédibilité. Si le module assigne un statut de crédibilité différent, l'etiquette de crédibilité dépend de la valeur de confiance assignée par chaque module."
    },
    "not_verifiable_case_description": {
-      "message": "Les posts tagués comme \"$1  font réference à de l'information pas encore verifiée."
+      "message": "Les posts tagués comme \"$1\"  font réference à de l'information pas encore verifiée."
    },
    "click_label_for_more_info": {
       "message": "Cliquez sur l'étiquette de crédibilité pour en apprendre plus sur ce que notre module de repérage de désinformation indique concernant ce post."
    },
    "content_tagged_by__html": {
-      "message": "Ce contenu a été tagué comme <b>$1</b> par <b>$2</b> le module de repérage de désinformation de Co-inform."
+      "message": "Ce contenu a été tagué comme étant de <b>$1</b> par <b>$2</b> modules de repérage de désinformation de Co-inform."
    },
    "specifically": {
-      "message": "Précisement:"
+      "message": "Plus précisement:"
    },
    "claim_similarity": {
-      "message": "Similarité entre revendications"
+      "message": "similarité entre revendications"
    },
    "claim_similarity_based_info": {
-      "message": "une comparaison des révendications faites dans le post (ou articles liés) contre une base de données de revendications déjà vérifiées"
+      "message": "une comparaison des révendications faites dans le post (ou articles liés) avec les revendications deja verifiées das la base de données"
    },
    "misinfome": {
-      "message": "Identification de désinformation"
+      "message": "identification de désinformation"
    },
    "misinfome_based_info": {
       "message": "la réputation de crédibilité des comptes, sources et liens associés au post et déterminés par plusieurs instruments de vérification et d'évaluation exterieurs"
    },
    "content_analysis": {
-      "message": "Position du contenu"
+      "message": "position du contenu"
    },
    "content_analysis_based_info": {
       "message": "le contenu du post et un rapport expliquant si les réponses au post supportent, réfutent ou questionnent la revendication qui y apparait"

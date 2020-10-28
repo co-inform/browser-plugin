@@ -264,6 +264,7 @@ article[coinform-parsed] {
 .coinformToolbarLabelContent {
   padding-left: 8px;
   display: table-cell;
+  max-width: 100px;
 }
 
 .coinformToolbarLabel {

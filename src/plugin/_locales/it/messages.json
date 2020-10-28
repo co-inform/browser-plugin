@@ -159,7 +159,7 @@
       "message": "Seleziona una affermazione"
    },
    "make_claim": {
-      "message": "Voglio presentare una affermazione"
+      "message": "Presentare una affermazione"
    },
    "link_to_claim": {
       "message": "Link alla fonte di correzione"
@@ -168,10 +168,10 @@
       "message": "opzionale"
    },
    "positive_feedback": {
-      "message": "Sono d'accordo con l'etichetta"
+      "message": "Concordo con l'etichetta"
    },
    "negative_feedback": {
-      "message": "Non sono d'accordo con l'etichetta"
+      "message": "Non concordo con l'etichetta"
    },
    "additional_info": {
       "message": "Informazioni aggiuntive"
@@ -441,10 +441,10 @@
       "message": "Il contenuto di questo post è stato etichettato come <b>$1</b>."
    },
    "coinfomr_plugin_check_content_description": {
-      "message": "Il plugin di Co-Inform controlla il contenuto di ciascun post con informazioni verificate e usa tre diversi approcci per identificare la informazioni che possono essere potenzialmente false o ingannevoli."
+      "message": "Il plugin di Co-Inform controlla il contenuto di ciascun post con informazioni verificate e usa tre diversi approcci per identificare le informazioni che possono essere potenzialmente false o ingannevoli."
    },
    "modules_check_description": {
-      "message": "Ciascuno dei moduli controlla diversi aspetti dell'informazione, e quando due moduli concordano sullo stesso valore di credibilità, il plugin di Co-Inform attribuisce tale valore come etichetta di credibilità. Se i moduli assegnano valori differenti, il valore risultante di credibiltà dipende dai valore di confidenza espresso da ciascun modulo."
+      "message": "Ciascuno dei moduli controlla diversi aspetti dell'informazione, e quando due moduli concordano sullo stesso valore di credibilità, il plugin di Co-Inform attribuisce tale valore come etichetta di credibilità. Se i moduli assegnano valori differenti, il valore risultante di credibiltà dipende dai valori di confidenza espresso da ciascun modulo."
    },
    "not_verifiable_case_description": {
       "message": "Il post etichettato come \"$1\" si riferisce ad informazioni che non sono state verificate."
@@ -462,18 +462,18 @@
       "message": "Similarità dell'affermazione"
    },
    "claim_similarity_based_info": {
-      "message": "un confronto fra le affermazioni fatte nel post (o negli articoli linkati) e un database di affermazioni verificate"
+      "message": "sul confronto fra le affermazioni fatte nel post (o negli articoli linkati) e un database di affermazioni verificate"
    },
    "misinfome": {
       "message": "Identificazione di misinformazione"
    },
    "misinfome_based_info": {
-      "message": "la reputazione di credibilità degli account, delle fonti e dei link coinvolti nel post, determinati a partire da vari strumenti di verifica esterni e informazioni verificate"
+      "message": "sulla reputazione di credibilità degli account, delle fonti e dei link coinvolti nel post, determinati a partire da vari strumenti di verifica esterni e informazioni verificate"
    },
    "content_analysis": {
       "message": "Presa di posizione del contenuto"
    },
    "content_analysis_based_info": {
-      "message": "il contenuto del post e una analisi di come le risposte al post supportano, negano o mettono in dubbio l'affermazione contenuta in esso"
+      "message": "sul contenuto del post e una analisi di come le risposte al post supportano, negano o mettono in dubbio l'affermazione contenuta in esso"
    }
 }

@@ -168,10 +168,10 @@
       "message": "opcional"
    },
    "positive_feedback": {
-      "message": "Estoy de acuerdo con la etiqueta"
+      "message": "De acuerdo con la etiqueta"
    },
    "negative_feedback": {
-      "message": "No estoy de acuerdo con la etiqueta"
+      "message": "En desacuerdo con la etiqueta"
    },
    "additional_info": {
       "message": "Información adicional"
