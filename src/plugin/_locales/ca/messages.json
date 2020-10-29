@@ -1,479 +1,473 @@
 {
-   "credible": {
-      "message": "Creïble"
-   },
-   "credible__info": {
-      "message": "La $1 sembla ser bastant precisa, d'acord amb les anàlisis realitzades."
-   },
-   "mostly_credible": {
-      "message": "Majorment creïble"
-   },
-   "mostly_credible__info": {
-      "message": "La $1 sembla ser precisa, tot i que pot contenir algunes inexactituds menors, d'acord amb les anàlisis realitzades."
-   },
-   "credibility_uncertain": {
-      "message": "Credibilitat incerta"
-   },
-   "credibility_uncertain__info": {
-      "message": "La $1 probablement barreja continguts precisos i erronis (o no verificables)."
-   },
-   "mostly_not_credible": {
-      "message": "Majorment no creïble"
-   },
-   "mostly_not_credible__info": {
-      "message": "La $1 sembla ser imprecisa, d'acord amb les anàlisis realitzades."
-   },
-   "not_credible": {
-      "message": "No creïble"
-   },
-   "not_credible__info": {
-      "message": "La $1 sembla ser imprecisa, d'acord amb les anàlisis realitzades."
-   },
-   "not_verifiable": {
-      "message": "No verificable"
-   },
-   "not_verifiable__info": {
-      "message": "La $1 no conté contingut verificable (són opinions o especulacions), o no s'han pogut trobar suficients signes a favor/en contra del contingut de la $1."
-   },
-   "tweet_post": {
-      "message": "tweet"
-   },
-   "not_tagged": {
-      "message": "La $1 no té anàlisi"
-   },
-   "not_tagged__info": {
-      "message": "La $1 encara no ha estat analitzada pel sistema."
-   },
-   "accurate": {
-      "message": "Precís"
-   },
-   "accurate__info": {
-      "message": "La $1 és precisa"
-   },
-   "accurate_with_considerations": {
-      "message": "Precís amb consideracions"
-   },
-   "accurate_with_considerations__info": {
-      "message": "La $1 conté algunes imprecisions"
-   },
-   "unsubstantiated": {
-      "message": "No corroborat"
-   },
-   "unsubstantiated__info": {
-      "message": "La $1 no està corroborada"
-   },
-   "inaccurate_with_considerations": {
-      "message": "Imprecís amb consideracions"
-   },
-   "inaccurate_with_considerations__info": {
-      "message": "La $1 barreja contingut precís i imprecís"
-   },
-   "inaccurate": {
-      "message": "Imprecís"
-   },
-   "inaccurate__info": {
-      "message": "La $1 és imprecisa"
-   },
-   "error_loading_configuration": {
-      "message": "No s'ha pogut carregar la configuració del plugin"
-   },
-   "checking_tweet_coinform": {
-      "message": "Comprovant la informació del tweet amb Co-Inform"
-   },
-   "detected_misinfo_content": {
-      "message": "S'ha detectat contingut amb desinformació"
-   },
-   "publish_anyway": {
-      "message": "Publicar igualment"
-   },
-   "content_tagged_as": {
-      "message": "Contingut detectat com a $1"
-   },
-   "url_detected_misinformation": {
-      "message": "La següent URL s'ha detectat com a $1:"
-   },
-   "check_content_before_publish": {
-      "message": "Si us plau, comprova el contingut de nou abans de compartir."
-   },
-   "published_in_seconds": {
-      "message": "El Tweet es publicarà en $1 segons"
-   },
-   "why_cant_see": {
-      "message": "Per què no puc veure això?"
-   },
-   "element_tagged_as": {
-      "message": "Aquesta $1 ha estat etiquetada com: $2"
-   },
-   "see_anyway": {
-      "message": "Veure la $1"
-   },
-   "blur_again": {
-      "message": "Difuminar la $1"
-   },
-   "provide_claim_title": {
-      "message": "Ajuda'ns a millorar la IA de Co-Inform"
-   },
-   "provide_claim": {
-      "message": "Si consideres que no és precís, pots enviar una reclamació i un enllaç a un article que ho corrobori."
-   },
-   "provide_claim_text1": {
-      "message": "Basant-nos en les teves contribucions, podem trobar formes de millorar l'alfabetització mediàtica."
-   },
-   "provide_claim_text2": {
-      "message": "Pots ajudar explicant-nos si creus que la $1 és o no precisa, i incloent un enllaç a una font que ho corrobori."
-   },
-   "provide_claim_untagged": {
-      "message": "Si vols pots enviar una reclamació i un enllaç a un article que corrobori la reclamació."
-   },
-   "not_logged": {
-      "message": "Sessió no iniciada"
-   },
-   "provide_feedback_with_login": {
-      "message": "Per enviar la teva avaluació sobre l'etiquetatge de Co-Inform necessites registrar-te / iniciar sessió amb un compte de Co-Inform."
-   },
-   "wait_label_for_feedback": {
-      "message": "La $1 ha d'estar etiquetada per a poder enviar una avaluació sobre l'etiqueta."
-   },
-   "provide_claim_with_login": {
-      "message": "Si creus que no és precís pots enviar una reclamació iniciant sessió amb el teu compte de Co-Inform."
-   },
-   "login_register_instructions": {
-      "message": "Pots clicar en el logo de Co-Inform a la part superior dreta del navegador per obrir la finestra de registre / inici de sessió."
-   },
-   "ok": {
-      "message": "Ok"
-   },
-   "close": {
-      "message": "Tancar"
-   },
-   "submit": {
-      "message": "Enviar"
-   },
-   "url": {
-      "message": "URL"
-   },
-   "comment": {
-      "message": "Comentari"
-   },
-   "choose_claim": {
-      "message": "Escollir una opció"
-   },
-   "make_claim": {
-      "message": "Dóna'ns la teva opinió"
-   },
-   "link_to_claim": {
-      "message": "Enllaç a una font correctiva"
-   },
-   "optional": {
-      "message": "opcional"
-   },
-   "positive_feedback": {
-      "message": "D'acord amb l'etiqueta"
-   },
-   "negative_feedback": {
-      "message": "En desacord amb l'etiqueta"
-   },
-   "additional_info": {
-      "message": "Informació addicional"
-   },
-   "request_factcheck": {
-     "message": "Sol·licitar que es verifiqui la reclamació (fact-check)"
-   },
-   "please_choose_claim": {
-      "message": "Necessites escollir una reclamació"
-   },
-   "invalid_url": {
-      "message": "L'URL introduït no és vàlid"
-   },
-   "provide_url": {
-      "message": "Has de proporcionar un enllaç a un article que corrobori la reclamació"
-   },
-   "provide_additional_info": {
-      "message": "Has de proporcionar informació addicional"
-   },
-   "popup_footer_text": {
-      "message": "Pensa - Comprova - Comparteix"
-   },
-   "sent": {
-      "message": "Enviat!"
-   },
-   "feedback_sent": {
-      "message": "La teva avaluació s'ha enviat"
-   },
-   "error": {
-      "message": "Error!"
-   },
-   "feedback_not_sent": {
-      "message": "No s'ha pogut enviar la teva avaluació"
-   },
-   "popup_plugin_title": {
-      "message": "El Plugin que t'ajuda a Pensar-Comprovar-Compartir a Twitter"
-   },
-   "login_title": {
-      "message": "Iniciar sessió a Co-Inform"
-   },
-   "already_logged": {
-      "message": "Sessió iniciada"
-   },
-   "register_title": {
-      "message": "Registrar-se a Co-Inform"
-   },
-   "provide_mail": {
-      "message": "Has de proporcionar el teu email"
-   },
-   "mail_not_valid": {
-      "message": "El text introduït no és un email vàlid"
-   },
-   "password_not_valid": {
-      "message": "Comprova de nou la contrasenya introduïda"
-   },
-   "password_not_valid_info": {
-      "message": "Comprova de nou la contrasenya introduïda. La longitud mínima és de 6 caràcters, i les 2 contrasenyes han de ser idèntiques"
-   },
-   "mail_password_not_found": {
-      "message": "No s'ha trobat l'email o la contrasenya és incorrecta"
-   },
-   "read_and_answer_participation": {
-     "message": "És necessari llegir i respondre la pregunta sobre la participació en l'avaluació"
-   },
-   "read_and_answer_followup": {
-     "message": "És necessari llegir i respondre la pregunta sobre les comunicacions de seguiment"
-   },
-   "login_ok": {
-      "message": "Usuari identificat correctament"
-   },
-   "login_error": {
-      "message": "Error d'identificació desconegut"
-   },
-   "login_not_valid": {
-      "message": "Identificació no vàlida"
-   },
-   "register_problem": {
-      "message": "Alguna cosa ha fallat en el procés de registre. Torna-ho a provar"
-   },
-   "register_ok": {
-      "message": "Usuari registrat correctament. Rebràs un email amb les instruccions per a validar el teu compte. Necessites validar el compte per a poder iniciar sessió."
-   },
-   "register_error": {
-      "message": "Error desconegut durant el registre"
-   },
-   "register_not_valid": {
-      "message": "Registre invàlid. Comprova les teves dades de nou"
-   },
-   "logout_ok": {
-      "message": "La sessió de l'usuari s'ha tancat"
-   },
-   "logout_problem": {
-      "message": "Ha fallat alguna cosa durant el tancament de la sessió. Torna-ho a provar"
-   },
-   "logout_error": {
-      "message": "Error desconegut durant el tancament de la sessió"
-   },
-   "log_in": {
-      "message": "Iniciar sessió"
-   },
-   "log_out": {
-      "message": "Tancar sessió"
-   },
-   "next": {
-     "message": "Següent"
-   },
-   "consent_participate_summary": {
-     "message": "Accepto participar en l'estudi d'avaluació del Plugin."
-   },
-   "consent_participate_text": {
-     "message": "Vull compartir les meves dades anònimament per a millorar l'experiència del Plugin de Co-Inform."
-   },
-   "consent_followup_summary": {
-     "message": "Accepto rebre comunicacions per part de Co-Inform."
-   },
-   "consent_followup_text": {
-     "message": "Vull rebre futures actualitzacions i informació sobre Co-Inform via email."
-   },
-   "i_agree": {
-     "message": "Accepto"
-   },
-   "i_disagree": {
-     "message": "No accepto"
-   },
-   "register": {
-      "message": "Registre"
-   },
-   "login": {
-      "message": "Login"
-   },
-   "account": {
-      "message": "Compte"
-   },
-   "options": {
-      "message": "Opcions"
-   },
-   "options_test_mode": {
-      "message": "Mode Test"
-   },
-   "options_research_participation": {
-     "message": "Participar en l'estudi d'avaluació"
-   },
-   "options_followup_communications": {
-     "message": "Rebre comunicacions de seguiment"
-   },
-   "change": {
-      "message": "Canviar"
-   },
-   "save": {
-      "message": "Guardar"
-   },
-   "options_save_ok": {
-      "message": "Opcions guardades correctament"
-   },
-   "user_id": {
-     "message": "El teu ID"
-   },
-   "user_mail": {
-      "message": "El teu email"
-   },
-   "password": {
-      "message": "La teva contrasenya"
-   },
-   "retype_password": {
-      "message": "Repeteix la teva contrasenya"
-   },
-   "new_password": {
-      "message": "La teva nova contrasenya"
-   },
-   "retype_new_password": {
-      "message": "Repeteix la teva nova contrasenya"
-   },
-   "misinformation_restriction_level": {
-      "message": "Nivell de restricció de la desinformació"
-   },
-   "low": {
-      "message": "Baix"
-   },
-   "medium": {
-      "message": "Mitjà"
-   },
-   "high": {
-      "message": "Alt"
-   },
-   "change_password_problem": {
-      "message": "Ha fallat alguna cosa en el procés de canvi de contrasenya. Torna-ho a provar"
-   },
-   "change_password_ok": {
-      "message": "S'ha modificat la contrasenya correctament"
-   },
-   "change_password_error": {
-      "message": "Error desconegut durant el procés de canvi de contrasenya"
-   },
-   "forgot_password_ok": {
-      "message": "S'ha enviat un email per a recuperar el compte"
-   },
-   "forgot_password_problem": {
-      "message": "Ha fallat alguna cosa durant el procés de sol·licitud de recuperació del compte. Torna-ho a provar"
-   },
-   "forgot_password_error": {
-      "message": "Error desconegut durant el procés de recuperació del compte"
-   },
-   "change_password_info": {
-      "message": "Aquí pots modificar la teva contrasenya"
-   },
-   "forgot_password_question": {
-      "message": "Has oblidat la teva contrasenya?"
-   },
-   "account_information": {
-      "message": "Informació del compte"
-   },
-   "options_title": {
-      "message": "Opcions del Plugin"
-   },
-   "dont_have_account_question": {
-      "message": "No tens un compte?"
-   },
-   "already_have_account_question": {
-      "message": "Ja estàs registrat?"
-   },
-   "sign_up": {
-      "message": "Registra't"
-   },
-   "content_deemed_due_analysis__html": {
-      "message": "El contingut es considera <b>$1</b>, com a resultat dels següents <b>$2</b> anàlisis:"
-   },
-   "more_analysis_info": {
-      "message": "Per a més informació sobre les anàlisis realitzades pots clicar sobre l'etiqueta de credibilitat"
-   },
-   "module_analysis_long_info__html": {
-      "message": "Una anàlisi anomenada <b>$1</b>, basat en $2, ha generat aquesta valoració:"
-   },
-   "module_analysis_short_info__html": {
-      "message": "L'anàlisi <b>$1</b> ha generat aquesta valoració:"
-   },
-   "module_analysis_result__html": {
-      "message": "<b>$1</b> (amb un valor de credibilitat de <b>$2</b>, i un percentatge de confiança del <b>$3%</b>)"
-   },
-   "module_explainability_text": {
-      "message": "Explicació detallada de l'anàlisi"
-   },
-   "module_explainability_link": {
-      "message": "Per a més informació sobre aquest anàlisi, clicar"
-   },
-   "here": {
-      "message": "aquí"
-   },
-   "processing_labeling": {
-      "message": "Analitzant..."
-   },
-   "labeling_done": {
-      "message": "Anàlisi finalitzat"
-   },
-   "labeling_partly_done": {
-      "message": "Anàlisi interromput"
-   },
-   "labeling_timeout": {
-      "message": "Temps d'espera esgotat"
-   },
-   "labeling_undone": {
-      "message": "Anàlisi no realitzat"
-   },
-   "post": {
-      "message": "publicació"
-   },
-   "content_tagged_with__html": {
-      "message": "El contingut d'aquesta publicació ha estat etiquetat com a <b>$1</b>."
-   },
-   "coinfomr_plugin_check_content_description": {
-      "message": "El plugin de Co-Inform comprova el contingut de cada publicació contrastant-la amb informació verificada i utilitza tres diferents estratègies de detecció de desinformació per a identificar informació potencialment enganyosa."
-   },
-   "modules_check_description": {
-      "message": "Cada un dels mòduls comprova diferents aspectes de la informació, i quan dos dels mòduls coincideixen en el mateix estat de credibilitat, el plugin de Co-Inform l'estableix com l'etiqueta de credibilitat. Si els mòduls assignen diferents estats de credibilitat, l'etiqueta de credibilitat depèn aleshores del valor de confiança assignat per cada mòdul."
-   },
-   "not_verifiable_case_description": {
-      "message": "Les publicacions etiquetades com a \"$1\" fan referència a informació que no ha estat verificada."
-   },
-   "click_label_for_more_info": {
-      "message": "Pots clicar a l'etiqueta de credibilitat per a obtenir més informació sobre el que els nostres mòduls de detecció de desinformació indiquen sobre aquesta publicació."
-   },
-   "content_tagged_by__html": {
-      "message": "Aquest contingut ha estat etiquetat com a <b>$1</b> per <b>$2</b> dels mòduls Co-Inform per a la detecció de desinformació."
-   },
-   "specifically": {
-      "message": "Específicament:"
-   },
-   "claim_similarity": {
-      "message": "Similitud d'Assercions"
-   },
-   "claim_similarity_based_info": {
-      "message": "la comparació d'afirmacions realitzades en la publicació (o en articles referenciats) contrastada amb una base de dades d'afirmacions verificades"
-   },
-   "misinfome": {
-      "message": "Identificació de Desinformació"
-   },
-   "misinfome_based_info": {
-      "message": "la reputació de credibilitat dels comptes, fonts i enllaços involucrats en la publicació i determinat per vàries eines externes de classificació i verificació de la informació"
-   },
-   "content_analysis": {
-      "message": "Postura del Contingut"
-   },
-   "content_analysis_based_info": {
-      "message": "el contingut de la publicació i un informe sobre si les respostes a la publicació donen suport, rebutgen o qüestionen l'afirmació que hi apareix"
-   }
+  "credible": {
+    "message": "Creïble"
+  },
+  "credible__info": {
+    "message": "La $1 sembla ser bastant precisa, d'acord amb les anàlisis realitzades."
+  },
+  "mostly_credible": {
+    "message": "Majorment creïble"
+  },
+  "mostly_credible__info": {
+    "message": "La $1 sembla ser precisa, tot i que pot contenir algunes inexactituds menors, d'acord amb les anàlisis realitzades."
+  },
+  "credibility_uncertain": {
+    "message": "Credibilitat incerta"
+  },
+  "credibility_uncertain__info": {
+    "message": "La $1 probablement barreja continguts precisos i erronis (o no verificables)."
+  },
+  "mostly_not_credible": {
+    "message": "Majorment no creïble"
+  },
+  "mostly_not_credible__info": {
+    "message": "La $1 sembla ser imprecisa, d'acord amb les anàlisis realitzades."
+  },
+  "not_credible": {
+    "message": "No creïble"
+  },
+  "not_credible__info": {
+    "message": "La $1 sembla ser imprecisa, d'acord amb les anàlisis realitzades."
+  },
+  "not_verifiable": {
+    "message": "No verificable"
+  },
+  "not_verifiable__info": {
+    "message": "La $1 no conté contingut verificable (són opinions o especulacions), o no s'han pogut trobar suficients signes a favor/en contra del contingut de la $1."
+  },
+  "tweet_post": {
+    "message": "tweet"
+  },
+  "not_tagged": {
+    "message": "La $1 no té anàlisi"
+  },
+  "not_tagged__info": {
+    "message": "La $1 encara no ha estat analitzada pel sistema."
+  },
+  "accurate": {
+    "message": "Precís"
+  },
+  "accurate__info": {
+    "message": "La $1 és precisa"
+  },
+  "accurate_with_considerations": {
+    "message": "Precís amb consideracions"
+  },
+  "accurate_with_considerations__info": {
+    "message": "La $1 conté algunes imprecisions"
+  },
+  "unsubstantiated": {
+    "message": "No corroborat"
+  },
+  "unsubstantiated__info": {
+    "message": "La $1 no està corroborada"
+  },
+  "inaccurate_with_considerations": {
+    "message": "Imprecís amb consideracions"
+  },
+  "inaccurate_with_considerations__info": {
+    "message": "La $1 barreja contingut precís i imprecís"
+  },
+  "inaccurate": {
+    "message": "Imprecís"
+  },
+  "inaccurate__info": {
+    "message": "La $1 és imprecisa"
+  },
+  "error_loading_configuration": {
+    "message": "No s'ha pogut carregar la configuració del plugin"
+  },
+  "checking_tweet_coinform": {
+    "message": "Comprovant la informació del tweet amb Co-Inform"
+  },
+  "detected_misinfo_content": {
+    "message": "S'ha detectat contingut amb desinformació"
+  },
+  "publish_anyway": {
+    "message": "Publicar igualment"
+  },
+  "content_tagged_as": {
+    "message": "Contingut detectat com a $1"
+  },
+  "url_detected_misinformation": {
+    "message": "La següent URL s'ha detectat com a $1:"
+  },
+  "check_content_before_publish": {
+    "message": "Si us plau, comprova el contingut de nou abans de compartir."
+  },
+  "published_in_seconds": {
+    "message": "El Tweet es publicarà en $1 segons"
+  },
+  "why_cant_see": {
+    "message": "Per què no puc veure això?"
+  },
+  "element_tagged_as": {
+    "message": "Aquesta $1 ha estat etiquetada com: $2"
+  },
+  "see_anyway": {
+    "message": "Veure la $1"
+  },
+  "blur_again": {
+    "message": "Difuminar la $1"
+  },
+  "provide_claim_title": {
+    "message": "Ajuda'ns a millorar la IA de Co-Inform"
+  },
+  "provide_claim": {
+    "message": "Si consideres que no és precís, pots enviar una reclamació i un enllaç a un article que ho corrobori."
+  },
+  "provide_claim_text1": {
+    "message": "Basant-nos en les teves contribucions, podem trobar formes de millorar l'alfabetització mediàtica."
+  },
+  "provide_claim_text2": {
+    "message": "Pots ajudar explicant-nos si creus que la $1 és o no precisa, i incloent un enllaç a una font que ho corrobori."
+  },
+  "provide_claim_untagged": {
+    "message": "Si vols pots enviar una reclamació i un enllaç a un article que corrobori la reclamació."
+  },
+  "not_logged": {
+    "message": "Sessió no iniciada"
+  },
+  "provide_feedback_with_login": {
+    "message": "Per enviar la teva avaluació sobre l'etiquetatge de Co-Inform necessites registrar-te / iniciar sessió amb un compte de Co-Inform."
+  },
+  "wait_label_for_feedback": {
+    "message": "La $1 ha d'estar etiquetada per a poder enviar una avaluació sobre l'etiqueta."
+  },
+  "provide_claim_with_login": {
+    "message": "Si creus que no és precís pots enviar una reclamació iniciant sessió amb el teu compte de Co-Inform."
+  },
+  "login_register_instructions": {
+    "message": "Pots clicar en el logo de Co-Inform a la part superior dreta del navegador per obrir la finestra de registre / inici de sessió."
+  },
+  "ok": {
+    "message": "Ok"
+  },
+  "close": {
+    "message": "Tancar"
+  },
+  "submit": {
+    "message": "Enviar"
+  },
+  "url": {
+    "message": "URL"
+  },
+  "comment": {
+    "message": "Comentari"
+  },
+  "choose_claim": {
+    "message": "Escollir una opció"
+  },
+  "make_claim": {
+    "message": "Dóna'ns la teva opinió"
+  },
+  "link_to_claim": {
+    "message": "Enllaç a una font correctiva"
+  },
+  "optional": {
+    "message": "opcional"
+  },
+  "positive_feedback": {
+    "message": "D'acord amb l'etiqueta"
+  },
+  "negative_feedback": {
+    "message": "En desacord amb l'etiqueta"
+  },
+  "additional_info": {
+    "message": "Informació addicional"
+  },
+  "request_factcheck": {
+    "message": "Sol·licitar que es verifiqui la reclamació (fact-check)"
+  },
+  "please_choose_claim": {
+    "message": "Necessites escollir una reclamació"
+  },
+  "invalid_url": {
+    "message": "L'URL introduït no és vàlid"
+  },
+  "provide_url": {
+    "message": "Has de proporcionar un enllaç a un article que corrobori la reclamació"
+  },
+  "provide_additional_info": {
+    "message": "Has de proporcionar informació addicional"
+  },
+  "popup_footer_text": {
+    "message": "Pensa - Comprova - Comparteix"
+  },
+  "sent": {
+    "message": "Enviat!"
+  },
+  "feedback_sent": {
+    "message": "La teva avaluació s'ha enviat"
+  },
+  "error": {
+    "message": "Error!"
+  },
+  "feedback_not_sent": {
+    "message": "No s'ha pogut enviar la teva avaluació"
+  },
+  "popup_plugin_title": {
+    "message": "El Plugin que t'ajuda a Pensar-Comprovar-Compartir a Twitter"
+  },
+  "already_logged": {
+    "message": "Sessió iniciada"
+  },
+  "provide_mail": {
+    "message": "Has de proporcionar el teu email"
+  },
+  "mail_not_valid": {
+    "message": "El text introduït no és un email vàlid"
+  },
+  "password_not_valid": {
+    "message": "Comprova de nou la contrasenya introduïda"
+  },
+  "password_not_valid_info": {
+    "message": "Comprova de nou la contrasenya introduïda. La longitud mínima és de 6 caràcters, i les 2 contrasenyes han de ser idèntiques"
+  },
+  "mail_password_not_found": {
+    "message": "No s'ha trobat l'email o la contrasenya és incorrecta"
+  },
+  "read_and_answer_participation": {
+    "message": "És necessari llegir i respondre la pregunta sobre la participació en l'avaluació"
+  },
+  "read_and_answer_followup": {
+    "message": "És necessari llegir i respondre la pregunta sobre les comunicacions de seguiment"
+  },
+  "login_ok": {
+    "message": "Usuari identificat correctament"
+  },
+  "login_error": {
+    "message": "Error d'identificació desconegut"
+  },
+  "login_not_valid": {
+    "message": "Identificació no vàlida"
+  },
+  "register_problem": {
+    "message": "Alguna cosa ha fallat en el procés de registre. Torna-ho a provar"
+  },
+  "register_ok": {
+    "message": "Usuari registrat correctament. Rebràs un email amb les instruccions per a validar el teu compte. Necessites validar el compte per a poder iniciar sessió."
+  },
+  "register_error": {
+    "message": "Error desconegut durant el registre"
+  },
+  "register_not_valid": {
+    "message": "Registre invàlid. Comprova les teves dades de nou"
+  },
+  "logout_ok": {
+    "message": "La sessió de l'usuari s'ha tancat"
+  },
+  "logout_problem": {
+    "message": "Ha fallat alguna cosa durant el tancament de la sessió. Torna-ho a provar"
+  },
+  "logout_error": {
+    "message": "Error desconegut durant el tancament de la sessió"
+  },
+  "log_in": {
+    "message": "Iniciar sessió"
+  },
+  "log_out": {
+    "message": "Tancar sessió"
+  },
+  "next": {
+    "message": "Següent"
+  },
+  "consent_participate_summary": {
+    "message": "Accepto participar en l'estudi d'avaluació del Plugin."
+  },
+  "consent_participate_text": {
+    "message": "Vull compartir les meves dades anònimament per a millorar l'experiència del Plugin de Co-Inform."
+  },
+  "consent_followup_summary": {
+    "message": "Accepto rebre comunicacions per part de Co-Inform."
+  },
+  "consent_followup_text": {
+    "message": "Vull rebre futures actualitzacions i informació sobre Co-Inform via email."
+  },
+  "i_agree": {
+    "message": "Accepto"
+  },
+  "i_disagree": {
+    "message": "No accepto"
+  },
+  "register": {
+    "message": "Registre"
+  },
+  "login": {
+    "message": "Login"
+  },
+  "account": {
+    "message": "Compte"
+  },
+  "options": {
+    "message": "Opcions"
+  },
+  "options_test_mode": {
+    "message": "Mode Test"
+  },
+  "options_research_participation": {
+    "message": "Participar en l'estudi d'avaluació"
+  },
+  "options_followup_communications": {
+    "message": "Rebre comunicacions de seguiment"
+  },
+  "change": {
+    "message": "Canviar"
+  },
+  "save": {
+    "message": "Guardar"
+  },
+  "options_save_ok": {
+    "message": "Opcions guardades correctament"
+  },
+  "user_id": {
+    "message": "El teu ID"
+  },
+  "user_mail": {
+    "message": "El teu email"
+  },
+  "password": {
+    "message": "La teva contrasenya"
+  },
+  "retype_password": {
+    "message": "Repeteix la teva contrasenya"
+  },
+  "new_password": {
+    "message": "La teva nova contrasenya"
+  },
+  "retype_new_password": {
+    "message": "Repeteix la teva nova contrasenya"
+  },
+  "misinformation_restriction_level": {
+    "message": "Nivell de restricció de la desinformació"
+  },
+  "low": {
+    "message": "Baix"
+  },
+  "medium": {
+    "message": "Mitjà"
+  },
+  "high": {
+    "message": "Alt"
+  },
+  "change_password_problem": {
+    "message": "Ha fallat alguna cosa en el procés de canvi de contrasenya. Torna-ho a provar"
+  },
+  "change_password_ok": {
+    "message": "S'ha modificat la contrasenya correctament"
+  },
+  "change_password_error": {
+    "message": "Error desconegut durant el procés de canvi de contrasenya"
+  },
+  "forgot_password_ok": {
+    "message": "S'ha enviat un email per a recuperar el compte"
+  },
+  "forgot_password_problem": {
+    "message": "Ha fallat alguna cosa durant el procés de sol·licitud de recuperació del compte. Torna-ho a provar"
+  },
+  "forgot_password_error": {
+    "message": "Error desconegut durant el procés de recuperació del compte"
+  },
+  "change_password_info": {
+    "message": "Aquí pots modificar la teva contrasenya"
+  },
+  "forgot_password_question": {
+    "message": "Has oblidat la teva contrasenya?"
+  },
+  "account_information": {
+    "message": "Informació del compte"
+  },
+  "options_title": {
+    "message": "Opcions del Plugin"
+  },
+  "dont_have_account_question": {
+    "message": "No tens un compte?"
+  },
+  "already_have_account_question": {
+    "message": "Ja estàs registrat?"
+  },
+  "sign_up": {
+    "message": "Registra't"
+  },
+  "content_deemed_due_analysis__html": {
+    "message": "El contingut es considera <b>$1</b>, com a resultat dels següents <b>$2</b> anàlisis:"
+  },
+  "more_analysis_info": {
+    "message": "Per a més informació sobre les anàlisis realitzades pots clicar sobre l'etiqueta de credibilitat"
+  },
+  "module_analysis_long_info__html": {
+    "message": "Una anàlisi anomenada <b>$1</b>, basada en $2, ha generat aquesta valoració:"
+  },
+  "module_analysis_short_info__html": {
+    "message": "L'anàlisi <b>$1</b> ha generat aquesta valoració:"
+  },
+  "module_analysis_result__html": {
+    "message": "<b>$1</b> (amb un valor de credibilitat de <b>$2</b>, i un percentatge de confiança del <b>$3%</b>)"
+  },
+  "module_explainability_text": {
+    "message": "Explicació detallada de l'anàlisi"
+  },
+  "module_explainability_link": {
+    "message": "Per a més informació sobre aquest anàlisi, clicar"
+  },
+  "here": {
+    "message": "aquí"
+  },
+  "processing_labeling": {
+    "message": "Analitzant..."
+  },
+  "labeling_done": {
+    "message": "Anàlisi finalitzat"
+  },
+  "labeling_partly_done": {
+    "message": "Anàlisi interromput"
+  },
+  "labeling_timeout": {
+    "message": "Temps d'espera esgotat"
+  },
+  "labeling_undone": {
+    "message": "Anàlisi no realitzat"
+  },
+  "post": {
+    "message": "publicació"
+  },
+  "content_tagged_with__html": {
+    "message": "El contingut d'aquesta publicació ha estat etiquetat com a <b>$1</b>."
+  },
+  "coinfomr_plugin_check_content_description": {
+    "message": "El plugin de Co-Inform comprova el contingut de cada publicació contrastant-la amb informació verificada i utilitza tres diferents estratègies de detecció de desinformació per a identificar informació potencialment enganyosa."
+  },
+  "modules_check_description": {
+    "message": "Cada un dels mòduls comprova diferents aspectes de la informació, i quan dos dels mòduls coincideixen en el mateix estat de credibilitat, el plugin de Co-Inform l'estableix com l'etiqueta de credibilitat. Si els mòduls assignen diferents estats de credibilitat, l'etiqueta de credibilitat depèn aleshores del valor de confiança assignat per cada mòdul."
+  },
+  "not_verifiable_case_description": {
+    "message": "Les publicacions etiquetades com a \"$1\" fan referència a informació que no ha estat verificada."
+  },
+  "click_label_for_more_info": {
+    "message": "Pots clicar a l'etiqueta de credibilitat per a obtenir més informació sobre el que els nostres mòduls de detecció de desinformació indiquen sobre aquesta publicació."
+  },
+  "content_tagged_by__html": {
+    "message": "Aquest contingut ha estat etiquetat com a <b>$1</b> per <b>$2</b> dels mòduls Co-Inform per a la detecció de desinformació."
+  },
+  "specifically": {
+    "message": "Específicament:"
+  },
+  "claim_similarity": {
+    "message": "Similitud d'Assercions"
+  },
+  "claim_similarity_based_info": {
+    "message": "la comparació d'afirmacions realitzades en la publicació (o en articles referenciats) contrastada amb una base de dades d'afirmacions verificades"
+  },
+  "misinfome": {
+    "message": "Identificació de Desinformació"
+  },
+  "misinfome_based_info": {
+    "message": "la reputació de credibilitat dels comptes, fonts i enllaços involucrats en la publicació i determinat per vàries eines externes de classificació i verificació de la informació"
+  },
+  "content_analysis": {
+    "message": "Postura del Contingut"
+  },
+  "content_analysis_based_info": {
+    "message": "el contingut de la publicació i un informe sobre si les respostes a la publicació donen suport, rebutgen o qüestionen l'afirmació que hi apareix"
+  }
 }

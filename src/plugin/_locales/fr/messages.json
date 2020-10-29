@@ -1,479 +1,473 @@
 {
-   "credible": {
-      "message": "Crédible"
-   },
-   "credible__info": {
-      "message": "Le $1 est probablement exact, suivant les forts signaux decouverts."
-   },
-   "mostly_credible": {
-      "message": "Pour la plupart crédible"
-   },
-   "mostly_credible__info": {
-      "message": "Le $1 est probablement correct mais peut contenir quelques inexactidutes mineures suivant les (forts) signaux decouverts."
-   },
-   "credibility_uncertain": {
-      "message": "Crédibilité incertaine"
-   },
-   "credibility_uncertain__info": {
-      "message": "Le $1 probablement contient quelques revendications exactes et inexactes (ou non verifiables)."
-   },
-   "mostly_not_credible": {
-      "message": "Pour la plupart non credible"
-   },
-   "mostly_not_credible__info": {
-      "message": "Le $1 est probablement inexact, suivant les forts signaux decouverts."
-   },
-   "not_credible": {
-      "message": "Pas crédible"
-   },
-   "not_credible__info": {
-      "message": "Le $1 est probablement inexact, suivant les forts signaux decouverts."
-   },
-   "not_verifiable": {
-      "message": "Non vérifiable"
-   },
-   "not_verifiable__info": {
-      "message": "Le $1 ne contient pas de revendications verifiables (seuelement des opinion et spéculations) ou ce n'etait pas possible de trouver de signaux suffisants soutenant/refutant les revendications dans le $1."
-   },
-   "tweet_post": {
-      "message": "tweet post"
-   },
-   "not_tagged": {
-      "message": "Le $1 n'est pas etiqueté"
-   },
-   "not_tagged__info": {
-      "message": "Le $1 n'a pas encore etiqueté dans le système."
-   },
-   "accurate": {
-      "message": "Exact"
-   },
-   "accurate__info": {
-      "message": "Le $1 est exact"
-   },
-   "accurate_with_considerations": {
-      "message": "Exact avec considérations"
-   },
-   "accurate_with_considerations__info": {
-      "message": "Le $1 contient des inexactitudes mineures"
-   },
-   "unsubstantiated": {
-      "message": "Sans fondement"
-   },
-   "unsubstantiated__info": {
-      "message": "Le $1 est sans fondement"
-   },
-   "inaccurate_with_considerations": {
-      "message": "Inexact avec considérations"
-   },
-   "inaccurate_with_considerations__info": {
-      "message": "Le $1 contient du sous-contenu exact et inexact"
-   },
-   "inaccurate": {
-      "message": "Inexact"
-   },
-   "inaccurate__info": {
-      "message": "Le $1 est inexact"
-   },
-   "error_loading_configuration": {
-      "message": "Impossible de charger la configuration du plugin"
-   },
-   "checking_tweet_coinform": {
-      "message": "Vérification du contenu du tweet avec CoInform"
-   },
-   "detected_misinfo_content": {
-      "message": "De la désinformation a été détectée dans une partie du contenu"
-   },
-   "publish_anyway": {
-      "message": "Publier quand même"
-   },
-   "content_tagged_as": {
-      "message": "Contenu détecté etiqueté comme $1"
-   },
-   "url_detected_misinformation": {
-      "message": "Le URL suivant est détecté comme etant $1:"
-   },
-   "check_content_before_publish": {
-      "message": "S'il vous plait, verifiez le contenu encore une fois avant de le partager"
-   },
-   "published_in_seconds": {
-      "message": "Le tweet sera publié dans $1 secondes"
-   },
-   "why_cant_see": {
-      "message": "Pourquoi ne puis-je voir cela?"
-   },
-   "element_tagged_as": {
-      "message": "Ce $1 a été etiqueté comme: $2."
-   },
-   "see_anyway": {
-      "message": "Voir $1 quand même."
-   },
-   "blur_again": {
-      "message": "Brouiller $1 encore"
-   },
-   "provide_claim_title": {
-      "message": "Aidez-nous à améliorer l'Intelligence Artificielle de CoInform"
-   },
-   "provide_claim": {
-      "message": "Si vous pensez que ceci n'est pas exact s'il vous plait procurez une revendicaion est un lien la soutenant."
-   },
-   "provide_claim_text1": {
-      "message": "En se basant sur vos notes on pourrait suggerer des façons d'améliorer l'éducation aux médias."
-   },
-   "provide_claim_text2": {
-      "message": "Vous pouvez nous aider en nous disant si vous pensez que le $1 est exact ou pas et aussi y inclure une source produisant des preuves."
-   },
-   "provide_claim_untagged": {
-      "message": "Si vous le voulez vous pouvez procurer une revendication et un lien supportant cette revendication."
-   },
-   "not_logged": {
-      "message": "Pas connecté"
-   },
-   "provide_feedback_with_login": {
-      "message": "Pour procurer votre retour d'information sur l'etiquetage de CoInform."
-   },
-   "wait_label_for_feedback": {
-      "message": "Vous devez attendre que $1 soit etiquete avant de fournir votre retour d'information."
-   },
-   "provide_claim_with_login": {
-      "message": "Si vous pensez que ceci n'est pas exact vous pouvez fournir votre revendication en vous connectant avec votre compte CoInform."
-   },
-   "login_register_instructions": {
-      "message": "Cliquez sur le logo CoInform au coin en haut a droite de votre navigateur pour ouvrir le pop-up login/register."
-   },
-   "ok": {
-      "message": "Ok"
-   },
-   "close": {
-      "message": "Fermer"
-   },
-   "submit": {
-      "message": "Soumettre"
-   },
-   "url": {
-      "message": "URL"
-   },
-   "comment": {
-      "message": "Commenter"
-   },
-   "choose_claim": {
-      "message": "Choisissez une revendication"
-   },
-   "make_claim": {
-      "message": "Faire une revendication"
-   },
-   "link_to_claim": {
-      "message": "Lien vers une source corrective"
-   },
-   "optional": {
-      "message": "Optionnel"
-   },
-   "positive_feedback": {
-      "message": "D'accord avec l'etiquette"
-   },
-   "negative_feedback": {
-      "message": "Pas d'accord avec l'etiquette"
-   },
-   "additional_info": {
-      "message": "Info supplementaire"
-   },
-   "request_factcheck": {
-      "message": "Demande de verifier la revendication"
-   },
-   "please_choose_claim": {
-      "message": "S'il vous plait choisissez une revendication"
-   },
-   "invalid_url": {
-      "message": "Le URL introduit n'est pas validé"
-   },
-   "provide_url": {
-      "message": "S'il vous plait pouvez-vous fournir un lien avec votre revendication"
-   },
-   "provide_additional_info": {
-      "message": "S'il vous plait fournissez des informations supplementaires"
-   },
-   "popup_footer_text": {
-      "message": "Think - Check - Share"
-   },
-   "sent": {
-      "message": "Envoyé!"
-   },
-   "feedback_sent": {
-      "message": "Votre retour d'information a été envoyé"
-   },
-   "error": {
-      "message": "Erreur!"
-   },
-   "feedback_not_sent": {
-      "message": "Votre retour d'information n'a pas été envoyé"
-   },
-   "popup_plugin_title": {
-      "message": "The plugin that helps you Think - Check - Share on Twitter"
-   },
-   "login_title": {
-      "message": "Connéxion CoInform"
-   },
-   "already_logged": {
-      "message": "Vous êtes déja connectés"
-   },
-   "register_title": {
-      "message": "Enregistrement CoInform"
-   },
-   "provide_mail": {
-      "message": "Vous devez fournir votre email"
-   },
-   "mail_not_valid": {
-      "message": "Le texte introduit n'est pas un email valide"
-   },
-   "password_not_valid": {
-      "message": "Verifiez encore une fois le mot de passe"
-   },
-   "password_not_valid_info": {
-      "message": "Verifiez encore une fois les mots de passe introduits. La longueur minimum est de 6 characteres et les deux mots de passe doivent coïncider"
-   },
-   "mail_password_not_found": {
-      "message": "Nom de l'utilisateur n'a pas été trouve ou mot de passe erroné"
-   },
-   "read_and_answer_participation": {
-      "message": "Vous devez lire et répondre la question sur votre participation"
-   },
-   "read_and_answer_followup": {
-      "message": "Vous devez lire et répondre a la question qui suit"
-   },
-   "login_ok": {
-      "message": "Utilisateur connecté avec succès"
-   },
-   "login_error": {
-      "message": "Erreur de connéxion inconnue"
-   },
-   "login_not_valid": {
-      "message": "Connéxion non-valide."
-   },
-   "register_problem": {
-      "message": "Erreur pendant l'enregistrement. Essayez encore une fois"
-   },
-   "register_ok": {
-      "message": "Utilisateur enregistré avec succès. Vous recevrez un email avec des instructions pour valider votre compte. Vous devez valider votre compte avant de vous connecter"
-   },
-   "register_error": {
-      "message": "Enregistrez l'erreur inconnue"
-   },
-   "register_not_valid": {
-      "message": "Enregistrement non-valide. Verifiez vos données encore encore une fois"
-   },
-   "logout_ok": {
-      "message": "Utilisateur deconnecté avec succès"
-   },
-   "logout_problem": {
-      "message": "Erreur pendant la déconnexion. Essayez encore"
-   },
-   "logout_error": {
-      "message": "Erreur de déconnexion inconnue"
-   },
-   "log_in": {
-      "message": "Connéxion"
-   },
-   "log_out": {
-      "message": "Déconnexion"
-   },
-   "next": {
-      "message": "Prochain"
-   },
-   "consent_participate_summary": {
-      "message": "J'accepte de participer a l'étude d'évaluation du plugin."
-   },
-   "consent_participate_text": {
-      "message": "Je veux partager mes données anonymement pour l'amelioration du plugin de CoInform."
-   },
-   "consent_followup_summary": {
-      "message": "Je consent a recevoir de futures informations sur CoInform."
-   },
-   "consent_followup_text": {
-      "message": "Je veux recevoir des informations utiles de CoInform."
-   },
-   "i_agree": {
-      "message": "Je suis d'accord."
-   },
-   "i_disagree": {
-      "message": "Je ne suis pas d'accord."
-   },
-   "register": {
-      "message": "Enregistrer"
-   },
-   "login": {
-      "message": "Connéxion"
-   },
-   "account": {
-      "message": "Compte"
-   },
-   "options": {
-      "message": "Options"
-   },
-   "options_test_mode": {
-      "message": "Test Mode"
-   },
-   "options_research_participation": {
-      "message": "Participation à l'étude d'évaluation."
-   },
-   "options_followup_communications": {
-      "message": "Communication de suivi"
-   },
-   "change": {
-      "message": "Changez"
-   },
-   "save": {
-      "message": "Sauvegarder"
-   },
-   "options_save_ok": {
-      "message": "Options sauvegardées OK"
-   },
-   "user_id": {
-      "message": "Votre ID"
-   },
-   "user_mail": {
-      "message": "Votre email"
-   },
-   "password": {
-      "message": "Votre mot de passe."
-   },
-   "retype_password": {
-      "message": "Re-introduisez votre mot de passe."
-   },
-   "new_password": {
-      "message": "Votre nouveau mot de passe."
-   },
-   "retype_new_password": {
-      "message": "Re-introduisez votre nouveau mot de passe."
-   },
-   "misinformation_restriction_level": {
-      "message": "Niveau de restriction de désinformation"
-   },
-   "low": {
-      "message": "Bas"
-   },
-   "medium": {
-      "message": "Medium"
-   },
-   "high": {
-      "message": "Haut"
-   },
-   "change_password_problem": {
-      "message": "Erreur survenue pendant le changement du mot de passe. Essayez encore."
-   },
-   "change_password_ok": {
-      "message": "L'utilisateur a changé de mot de passe avec succès."
-   },
-   "change_password_error": {
-      "message": "Erreur inconnue pendant le changement de mot de passe."
-   },
-   "forgot_password_ok": {
-      "message": "Un email a été envoyé pour recuperer votre mot de passe."
-   },
-   "forgot_password_problem": {
-      "message": "Erreur pendant la requête de mot de passe oublié. Essayez encore."
-   },
-   "forgot_password_error": {
-      "message": "Mot de pass oublié erreur inconnue."
-   },
-   "change_password_info": {
-      "message": "Ici vous pouvez changer votre mot de passe."
-   },
-   "forgot_password_question": {
-      "message": "Avez-vous oublié votre mot de passe?"
-   },
-   "account_information": {
-      "message": "Information sur le compte"
-   },
-   "options_title": {
-      "message": "Options Plugin"
-   },
-   "dont_have_account_question": {
-      "message": "Vous n'avez pas de compte?"
-   },
-   "already_have_account_question": {
-      "message": "Avez-vous déja un compte?"
-   },
-   "sign_up": {
-      "message": "Signez"
-   },
-   "content_deemed_due_analysis__html": {
-      "message": "Ce contenu a été consideré comme <b>$1</b>, à cause du résultat du <b>$2</b> analyse differente:"
-   },
-   "more_analysis_info": {
-      "message": "Pour plus d'information sur l'analyse cliquez sur l'etiquete de credibilité"
-   },
-   "module_analysis_long_info__html": {
-      "message": "Une <b>$1</b>, basée sur $2, a generé cette évaluation:"
-   },
-   "module_analysis_short_info__html": {
-      "message": "Une <b>$1</b> analyse a generé cette évaluation:"
-   },
-   "module_analysis_result__html": {
-      "message": "<b>$1</b> ( avec <b>$2</b> de valeur de credibilite et <b>$3%</b> de confiance)"
-   },
-   "module_explainability_text": {
-      "message": "Explication d'analyse detaillée"
-   },
-   "module_explainability_link": {
-      "message": "Pour plus d'informations sur cette analyse, cliquez"
-   },
-   "here": {
-      "message": "ici"
-   },
-   "processing_labeling": {
-      "message": "Traitement de l'etiquette..."
-   },
-   "labeling_done": {
-      "message": "Etiquettage complété"
-   },
-   "labeling_partly_done": {
-      "message": "Etiquettage partiellement complété"
-   },
-   "labeling_timeout": {
-      "message": "Pause d'etiquettage"
-   },
-   "labeling_undone": {
-      "message": "Etiquettage défait"
-   },
-   "post": {
-      "message": "post"
-   },
-   "content_tagged_with__html": {
-      "message": "Le contenu de ce post a été tagué comme de <b>$1</b>."
-   },
-   "coinfomr_plugin_check_content_description": {
-      "message": "Le plug-in Co-inform vérifie le contenu de chaque post en le comparant avec de l'information verifiée par des fact-checkeurs et utilise trois méthodes différentes de détection de désinformation pour repérer de l'information potentiellement fallacieuse."
-   },
-   "modules_check_description": {
-      "message": "Chacun des modules vérifie différents aspects de l'information, et quand deux des modules s'accordent sur le même statut de crédibilité, le plug-in Co-inform attache celui-ci comme étiquette de crédibilité. Si le module assigne un statut de crédibilité différent, l'etiquette de crédibilité dépend de la valeur de confiance assignée par chaque module."
-   },
-   "not_verifiable_case_description": {
-      "message": "Les posts tagués comme \"$1\"  font réference à de l'information pas encore verifiée."
-   },
-   "click_label_for_more_info": {
-      "message": "Cliquez sur l'étiquette de crédibilité pour en apprendre plus sur ce que notre module de repérage de désinformation indique concernant ce post."
-   },
-   "content_tagged_by__html": {
-      "message": "Ce contenu a été tagué comme étant de <b>$1</b> par <b>$2</b> modules de repérage de désinformation de Co-inform."
-   },
-   "specifically": {
-      "message": "Plus précisement:"
-   },
-   "claim_similarity": {
-      "message": "similarité entre revendications"
-   },
-   "claim_similarity_based_info": {
-      "message": "une comparaison des révendications faites dans le post (ou articles liés) avec les revendications deja verifiées das la base de données"
-   },
-   "misinfome": {
-      "message": "identification de désinformation"
-   },
-   "misinfome_based_info": {
-      "message": "la réputation de crédibilité des comptes, sources et liens associés au post et déterminés par plusieurs instruments de vérification et d'évaluation exterieurs"
-   },
-   "content_analysis": {
-      "message": "position du contenu"
-   },
-   "content_analysis_based_info": {
-      "message": "le contenu du post et un rapport expliquant si les réponses au post supportent, réfutent ou questionnent la revendication qui y apparait"
-   }
+  "credible": {
+    "message": "Crédible"
+  },
+  "credible__info": {
+    "message": "Le $1 est probablement exact, suivant les forts signaux decouverts."
+  },
+  "mostly_credible": {
+    "message": "Pour la plupart crédible"
+  },
+  "mostly_credible__info": {
+    "message": "Le $1 est probablement correct mais peut contenir quelques inexactidutes mineures suivant les (forts) signaux decouverts."
+  },
+  "credibility_uncertain": {
+    "message": "Crédibilité incertaine"
+  },
+  "credibility_uncertain__info": {
+    "message": "Le $1 probablement contient quelques revendications exactes et inexactes (ou non verifiables)."
+  },
+  "mostly_not_credible": {
+    "message": "Pour la plupart non credible"
+  },
+  "mostly_not_credible__info": {
+    "message": "Le $1 est probablement inexact, suivant les forts signaux decouverts."
+  },
+  "not_credible": {
+    "message": "Pas crédible"
+  },
+  "not_credible__info": {
+    "message": "Le $1 est probablement inexact, suivant les forts signaux decouverts."
+  },
+  "not_verifiable": {
+    "message": "Non vérifiable"
+  },
+  "not_verifiable__info": {
+    "message": "Le $1 ne contient pas de revendications verifiables (seuelement des opinion et spéculations) ou ce n'etait pas possible de trouver de signaux suffisants soutenant/refutant les revendications dans le $1."
+  },
+  "tweet_post": {
+    "message": "tweet post"
+  },
+  "not_tagged": {
+    "message": "Le $1 n'est pas etiqueté"
+  },
+  "not_tagged__info": {
+    "message": "Le $1 n'a pas encore etiqueté dans le système."
+  },
+  "accurate": {
+    "message": "Exact"
+  },
+  "accurate__info": {
+    "message": "Le $1 est exact"
+  },
+  "accurate_with_considerations": {
+    "message": "Exact avec considérations"
+  },
+  "accurate_with_considerations__info": {
+    "message": "Le $1 contient des inexactitudes mineures"
+  },
+  "unsubstantiated": {
+    "message": "Sans fondement"
+  },
+  "unsubstantiated__info": {
+    "message": "Le $1 est sans fondement"
+  },
+  "inaccurate_with_considerations": {
+    "message": "Inexact avec considérations"
+  },
+  "inaccurate_with_considerations__info": {
+    "message": "Le $1 contient du sous-contenu exact et inexact"
+  },
+  "inaccurate": {
+    "message": "Inexact"
+  },
+  "inaccurate__info": {
+    "message": "Le $1 est inexact"
+  },
+  "error_loading_configuration": {
+    "message": "Impossible de charger la configuration du plugin"
+  },
+  "checking_tweet_coinform": {
+    "message": "Vérification du contenu du tweet avec CoInform"
+  },
+  "detected_misinfo_content": {
+    "message": "De la désinformation a été détectée dans une partie du contenu"
+  },
+  "publish_anyway": {
+    "message": "Publier quand même"
+  },
+  "content_tagged_as": {
+    "message": "Contenu détecté etiqueté comme $1"
+  },
+  "url_detected_misinformation": {
+    "message": "Le URL suivant est détecté comme etant $1:"
+  },
+  "check_content_before_publish": {
+    "message": "S'il vous plait, verifiez le contenu encore une fois avant de le partager"
+  },
+  "published_in_seconds": {
+    "message": "Le tweet sera publié dans $1 secondes"
+  },
+  "why_cant_see": {
+    "message": "Pourquoi ne puis-je voir cela?"
+  },
+  "element_tagged_as": {
+    "message": "Ce $1 a été etiqueté comme: $2."
+  },
+  "see_anyway": {
+    "message": "Voir $1 quand même."
+  },
+  "blur_again": {
+    "message": "Brouiller $1 encore"
+  },
+  "provide_claim_title": {
+    "message": "Aidez-nous à améliorer l'Intelligence Artificielle de CoInform"
+  },
+  "provide_claim": {
+    "message": "Si vous pensez que ceci n'est pas exact s'il vous plait procurez une revendicaion est un lien la soutenant."
+  },
+  "provide_claim_text1": {
+    "message": "En se basant sur vos notes on pourrait suggerer des façons d'améliorer l'éducation aux médias."
+  },
+  "provide_claim_text2": {
+    "message": "Vous pouvez nous aider en nous disant si vous pensez que le $1 est exact ou pas et aussi y inclure une source produisant des preuves."
+  },
+  "provide_claim_untagged": {
+    "message": "Si vous le voulez vous pouvez procurer une revendication et un lien supportant cette revendication."
+  },
+  "not_logged": {
+    "message": "Pas connecté"
+  },
+  "provide_feedback_with_login": {
+    "message": "Pour procurer votre retour d'information sur l'etiquetage de CoInform."
+  },
+  "wait_label_for_feedback": {
+    "message": "Vous devez attendre que $1 soit etiquete avant de fournir votre retour d'information."
+  },
+  "provide_claim_with_login": {
+    "message": "Si vous pensez que ceci n'est pas exact vous pouvez fournir votre revendication en vous connectant avec votre compte CoInform."
+  },
+  "login_register_instructions": {
+    "message": "Cliquez sur le logo CoInform au coin en haut a droite de votre navigateur pour ouvrir le pop-up login/register."
+  },
+  "ok": {
+    "message": "Ok"
+  },
+  "close": {
+    "message": "Fermer"
+  },
+  "submit": {
+    "message": "Soumettre"
+  },
+  "url": {
+    "message": "URL"
+  },
+  "comment": {
+    "message": "Commenter"
+  },
+  "choose_claim": {
+    "message": "Choisissez une revendication"
+  },
+  "make_claim": {
+    "message": "Faire une revendication"
+  },
+  "link_to_claim": {
+    "message": "Lien vers une source corrective"
+  },
+  "optional": {
+    "message": "Optionnel"
+  },
+  "positive_feedback": {
+    "message": "D'accord avec l'etiquette"
+  },
+  "negative_feedback": {
+    "message": "Pas d'accord avec l'etiquette"
+  },
+  "additional_info": {
+    "message": "Info supplementaire"
+  },
+  "request_factcheck": {
+    "message": "Demande de verifier la revendication"
+  },
+  "please_choose_claim": {
+    "message": "S'il vous plait choisissez une revendication"
+  },
+  "invalid_url": {
+    "message": "Le URL introduit n'est pas validé"
+  },
+  "provide_url": {
+    "message": "S'il vous plait pouvez-vous fournir un lien avec votre revendication"
+  },
+  "provide_additional_info": {
+    "message": "S'il vous plait fournissez des informations supplementaires"
+  },
+  "popup_footer_text": {
+    "message": "Think - Check - Share"
+  },
+  "sent": {
+    "message": "Envoyé!"
+  },
+  "feedback_sent": {
+    "message": "Votre retour d'information a été envoyé"
+  },
+  "error": {
+    "message": "Erreur!"
+  },
+  "feedback_not_sent": {
+    "message": "Votre retour d'information n'a pas été envoyé"
+  },
+  "popup_plugin_title": {
+    "message": "The plugin that helps you Think - Check - Share on Twitter"
+  },
+  "already_logged": {
+    "message": "Vous êtes déja connectés"
+  },
+  "provide_mail": {
+    "message": "Vous devez fournir votre email"
+  },
+  "mail_not_valid": {
+    "message": "Le texte introduit n'est pas un email valide"
+  },
+  "password_not_valid": {
+    "message": "Verifiez encore une fois le mot de passe"
+  },
+  "password_not_valid_info": {
+    "message": "Verifiez encore une fois les mots de passe introduits. La longueur minimum est de 6 characteres et les deux mots de passe doivent coïncider"
+  },
+  "mail_password_not_found": {
+    "message": "Nom de l'utilisateur n'a pas été trouve ou mot de passe erroné"
+  },
+  "read_and_answer_participation": {
+    "message": "Vous devez lire et répondre la question sur votre participation"
+  },
+  "read_and_answer_followup": {
+    "message": "Vous devez lire et répondre a la question qui suit"
+  },
+  "login_ok": {
+    "message": "Utilisateur connecté avec succès"
+  },
+  "login_error": {
+    "message": "Erreur de connéxion inconnue"
+  },
+  "login_not_valid": {
+    "message": "Connéxion non-valide."
+  },
+  "register_problem": {
+    "message": "Erreur pendant l'enregistrement. Essayez encore une fois"
+  },
+  "register_ok": {
+    "message": "Utilisateur enregistré avec succès. Vous recevrez un email avec des instructions pour valider votre compte. Vous devez valider votre compte avant de vous connecter"
+  },
+  "register_error": {
+    "message": "Enregistrez l'erreur inconnue"
+  },
+  "register_not_valid": {
+    "message": "Enregistrement non-valide. Verifiez vos données encore encore une fois"
+  },
+  "logout_ok": {
+    "message": "Utilisateur deconnecté avec succès"
+  },
+  "logout_problem": {
+    "message": "Erreur pendant la déconnexion. Essayez encore"
+  },
+  "logout_error": {
+    "message": "Erreur de déconnexion inconnue"
+  },
+  "log_in": {
+    "message": "Connéxion"
+  },
+  "log_out": {
+    "message": "Déconnexion"
+  },
+  "next": {
+    "message": "Prochain"
+  },
+  "consent_participate_summary": {
+    "message": "J'accepte de participer a l'étude d'évaluation du plugin."
+  },
+  "consent_participate_text": {
+    "message": "Je veux partager mes données anonymement pour l'amelioration du plugin de CoInform."
+  },
+  "consent_followup_summary": {
+    "message": "Je consent a recevoir de futures informations sur CoInform."
+  },
+  "consent_followup_text": {
+    "message": "Je veux recevoir des informations utiles de CoInform."
+  },
+  "i_agree": {
+    "message": "Je suis d'accord."
+  },
+  "i_disagree": {
+    "message": "Je ne suis pas d'accord."
+  },
+  "register": {
+    "message": "Enregistrer"
+  },
+  "login": {
+    "message": "Connéxion"
+  },
+  "account": {
+    "message": "Compte"
+  },
+  "options": {
+    "message": "Options"
+  },
+  "options_test_mode": {
+    "message": "Test Mode"
+  },
+  "options_research_participation": {
+    "message": "Participation à l'étude d'évaluation."
+  },
+  "options_followup_communications": {
+    "message": "Communication de suivi"
+  },
+  "change": {
+    "message": "Changez"
+  },
+  "save": {
+    "message": "Sauvegarder"
+  },
+  "options_save_ok": {
+    "message": "Options sauvegardées OK"
+  },
+  "user_id": {
+    "message": "Votre ID"
+  },
+  "user_mail": {
+    "message": "Votre email"
+  },
+  "password": {
+    "message": "Votre mot de passe."
+  },
+  "retype_password": {
+    "message": "Re-introduisez votre mot de passe."
+  },
+  "new_password": {
+    "message": "Votre nouveau mot de passe."
+  },
+  "retype_new_password": {
+    "message": "Re-introduisez votre nouveau mot de passe."
+  },
+  "misinformation_restriction_level": {
+    "message": "Niveau de restriction de désinformation"
+  },
+  "low": {
+    "message": "Bas"
+  },
+  "medium": {
+    "message": "Medium"
+  },
+  "high": {
+    "message": "Haut"
+  },
+  "change_password_problem": {
+    "message": "Erreur survenue pendant le changement du mot de passe. Essayez encore."
+  },
+  "change_password_ok": {
+    "message": "L'utilisateur a changé de mot de passe avec succès."
+  },
+  "change_password_error": {
+    "message": "Erreur inconnue pendant le changement de mot de passe."
+  },
+  "forgot_password_ok": {
+    "message": "Un email a été envoyé pour recuperer votre mot de passe."
+  },
+  "forgot_password_problem": {
+    "message": "Erreur pendant la requête de mot de passe oublié. Essayez encore."
+  },
+  "forgot_password_error": {
+    "message": "Mot de pass oublié erreur inconnue."
+  },
+  "change_password_info": {
+    "message": "Ici vous pouvez changer votre mot de passe."
+  },
+  "forgot_password_question": {
+    "message": "Avez-vous oublié votre mot de passe?"
+  },
+  "account_information": {
+    "message": "Information sur le compte"
+  },
+  "options_title": {
+    "message": "Options Plugin"
+  },
+  "dont_have_account_question": {
+    "message": "Vous n'avez pas de compte?"
+  },
+  "already_have_account_question": {
+    "message": "Avez-vous déja un compte?"
+  },
+  "sign_up": {
+    "message": "Signez"
+  },
+  "content_deemed_due_analysis__html": {
+    "message": "Ce contenu a été consideré comme <b>$1</b>, à cause du résultat du <b>$2</b> analyse differente:"
+  },
+  "more_analysis_info": {
+    "message": "Pour plus d'information sur l'analyse cliquez sur l'etiquete de credibilité"
+  },
+  "module_analysis_long_info__html": {
+    "message": "Une <b>$1</b>, basée sur $2, a generé cette évaluation:"
+  },
+  "module_analysis_short_info__html": {
+    "message": "Une <b>$1</b> analyse a generé cette évaluation:"
+  },
+  "module_analysis_result__html": {
+    "message": "<b>$1</b> ( avec <b>$2</b> de valeur de credibilite et <b>$3%</b> de confiance)"
+  },
+  "module_explainability_text": {
+    "message": "Explication d'analyse detaillée"
+  },
+  "module_explainability_link": {
+    "message": "Pour plus d'informations sur cette analyse, cliquez"
+  },
+  "here": {
+    "message": "ici"
+  },
+  "processing_labeling": {
+    "message": "Traitement de l'etiquette..."
+  },
+  "labeling_done": {
+    "message": "Etiquettage complété"
+  },
+  "labeling_partly_done": {
+    "message": "Etiquettage partiellement complété"
+  },
+  "labeling_timeout": {
+    "message": "Pause d'etiquettage"
+  },
+  "labeling_undone": {
+    "message": "Etiquettage défait"
+  },
+  "post": {
+    "message": "post"
+  },
+  "content_tagged_with__html": {
+    "message": "Le contenu de ce post a été tagué comme de <b>$1</b>."
+  },
+  "coinfomr_plugin_check_content_description": {
+    "message": "Le plug-in Co-inform vérifie le contenu de chaque post en le comparant avec de l'information verifiée par des fact-checkeurs et utilise trois méthodes différentes de détection de désinformation pour repérer de l'information potentiellement fallacieuse."
+  },
+  "modules_check_description": {
+    "message": "Chacun des modules vérifie différents aspects de l'information, et quand deux des modules s'accordent sur le même statut de crédibilité, le plug-in Co-inform attache celui-ci comme étiquette de crédibilité. Si le module assigne un statut de crédibilité différent, l'etiquette de crédibilité dépend de la valeur de confiance assignée par chaque module."
+  },
+  "not_verifiable_case_description": {
+    "message": "Les posts tagués comme \"$1\"  font réference à de l'information pas encore verifiée."
+  },
+  "click_label_for_more_info": {
+    "message": "Cliquez sur l'étiquette de crédibilité pour en apprendre plus sur ce que notre module de repérage de désinformation indique concernant ce post."
+  },
+  "content_tagged_by__html": {
+    "message": "Ce contenu a été tagué comme étant de <b>$1</b> par <b>$2</b> modules de repérage de désinformation de Co-inform."
+  },
+  "specifically": {
+    "message": "Plus précisement:"
+  },
+  "claim_similarity": {
+    "message": "similarité entre revendications"
+  },
+  "claim_similarity_based_info": {
+    "message": "une comparaison des révendications faites dans le post (ou articles liés) avec les revendications deja verifiées das la base de données"
+  },
+  "misinfome": {
+    "message": "identification de désinformation"
+  },
+  "misinfome_based_info": {
+    "message": "la réputation de crédibilité des comptes, sources et liens associés au post et déterminés par plusieurs instruments de vérification et d'évaluation exterieurs"
+  },
+  "content_analysis": {
+    "message": "position du contenu"
+  },
+  "content_analysis_based_info": {
+    "message": "le contenu du post et un rapport expliquant si les réponses au post supportent, réfutent ou questionnent la revendication qui y apparait"
+  }
 }

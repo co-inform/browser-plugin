@@ -74,7 +74,7 @@
   "inaccurate__info": {
     "message": "The $1 is inaccurate"
   },
-  "error_loading_configuration" : {
+  "error_loading_configuration": {
     "message": "Could not load plugin configuration"
   },
   "checking_tweet_coinform": {
@@ -209,14 +209,8 @@
   "popup_plugin_title": {
     "message": "The plugin that helps you Think - Check - Share on Twitter"
   },
-  "login_title": {
-    "message": "Co-Inform Login"
-  },
   "already_logged": {
     "message": "You are logged in"
-  },
-  "register_title": {
-    "message": "Co-Inform Register"
   },
   "provide_mail": {
     "message": "You must provide your email"

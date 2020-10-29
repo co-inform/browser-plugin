@@ -74,7 +74,7 @@
   "inaccurate__info": {
     "message": "$1 är felaktigt"
   },
-  "error_loading_configuration" : {
+  "error_loading_configuration": {
     "message": "Kunnde inte läsa in konfigurationen för pluginen"
   },
   "checking_tweet_coinform": {
@@ -102,25 +102,25 @@
     "message": "Varför kan jag inte se detta?"
   },
   "element_tagged_as": {
-    "message": "Denna $1 har markerats som: $2"
+    "message": "$1 har taggats som: $2"
   },
   "see_anyway": {
-    "message": "Se $1 ändå"
+    "message": "$1 vill jag se ändå"
   },
   "blur_again": {
-    "message": "Gör $1 suddig igen"
+    "message": "$1 kan göras suddigt igen"
   },
   "provide_claim_title": {
     "message": "Hjälp oss förbättra CoInforms AI"
   },
   "provide_claim": {
-    "message": "Om du tror att detta inte är korrekt vänligen delge ett anspråk och länk till information som stödjer ditt anspråk."
+    "message": "Om du tror att detta inte är korrekt vänligen delge ett anspråk och länk till information som stödjer detta."
   },
   "provide_claim_text1": {
     "message": "Baserat på dina graderingar, kan vi delge sätt att förbättra din mediekunskap."
   },
   "provide_claim_text2": {
-    "message": "Du kan hjälpa oss genom att säga om du tycker att $1 är korrekt eller ej och delge en länk till en källa som bestyrker detta."
+    "message": "$1 kan vara korrekt eller ej i varierande grad. Du kan hjälpa oss genom att säga vad du tycker och delge en länk till en källa som bestyrker detta."
   },
   "provide_claim_untagged": {
     "message": "Om du vill kan du delge ett anspråk och länk till ett inlägg som stödjer detta."
@@ -132,7 +132,7 @@
     "message": "För att delge din feedback till CoInform behöver du vara inloggad som användare av CoInform."
   },
   "wait_label_for_feedback": {
-    "message": "Du måste invänta att $1 har blivit taggat innan du kan delge din feedback."
+    "message": "$1 måste ha blivit taggat innan du kan delge din feedback."
   },
   "provide_claim_with_login": {
     "message": "Om du tycker att detta är felaktigt kan du delge din åsikt genom att logga in som CoInform användare."
@@ -168,10 +168,10 @@
     "message": "frivillig"
   },
   "positive_feedback": {
-    "message": "Jag håller med tweetens märkning"
+    "message": "Taggningen är korrekt"
   },
   "negative_feedback": {
-    "message": "Jag håller inte med tweetens märkning"
+    "message": "Taggningen är inkorrekt"
   },
   "additional_info": {
     "message": "Ytterligare information"
@@ -209,14 +209,8 @@
   "popup_plugin_title": {
     "message": "Pluginen som hjälper dig Tänka - Kontrollera - Dela på Twitter"
   },
-  "login_title": {
-    "message": "Co-Inform Login"
-  },
   "already_logged": {
     "message": "Du är inloggad"
-  },
-  "register_title": {
-    "message": "Co-Inform Registrera"
   },
   "provide_mail": {
     "message": "Du måste delge din email"
@@ -435,28 +429,28 @@
     "message": "Märkning ångrad"
   },
   "post": {
-     "message": "inlägg"
+    "message": "Inlägget"
   },
   "content_tagged_with__html": {
-     "message": "Innehållet i denna post har taggats som <b>$1</b>."
+    "message": "Innehållet i denna post har taggats som <b>$1</b>."
   },
   "coinfomr_plugin_check_content_description": {
-     "message": "Co-Informs plugin kontrollerar innehållet i varje post mot fakta-kontrollerad information samt använder 3 olika ansatser i identifieringen av misinformation för att upptcäka information som kan vara vilseledande."
+    "message": "Co-Informs plugin kontrollerar innehållet i varje post mot fakta-kontrollerad information samt använder 3 olika ansatser i identifieringen av misinformation för att upptäcka information som kan vara vilseledande."
   },
   "modules_check_description": {
-     "message": "Varje enskild modul kontrollerar olika aspekter av informationen, och när två moduler ger samma tillförlitlighetsstaus ges inlägget den nivån på tillförlitlighet. Om modulerna ger olika status beror den slutgiltiga statusen på modulernas konfidensvärde."
+    "message": "Varje enskild modul kontrollerar olika aspekter av informationen, och när två moduler ger samma tillförlitlighetsstaus ges inlägget den nivån på tillförlitlighet. Om modulerna ger olika status beror den slutgiltiga statusen på modulernas konfidensvärde."
   },
   "not_verifiable_case_description": {
-     "message": "Inlägg som märkts med \"$1\" hänvisar till information som inte har faktakontrollerats."
+    "message": "Inlägg som märkts med \"$1\" hänvisar till information som inte har faktakontrollerats."
   },
   "click_label_for_more_info": {
-     "message": "Klicka på inläggets märkning för tillförlitlighet för att få mer information om vad våra olika misinformations moduler har indikerat för detta inlägg."
+    "message": "Klicka på inläggets tagg för att få mer information om vad våra olika misinformations moduler har indikerat för detta inlägg."
   },
   "content_tagged_by__html": {
-     "message": "Detta innehåll har taggats som <b>$1</b> av <b>$2</b> för Co-Informs misinformations moduler."
+    "message": "Detta innehåll har taggats som <b>$1</b> av <b>$2</b> för Co-Informs misinformations moduler."
   },
   "specifically": {
-     "message": "Specifikt:"
+    "message": "Specifikt:"
   },
   "claim_similarity": {
     "message": "Claim Similarity"
