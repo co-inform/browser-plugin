@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 
 const $ = require('jquery');
 const Swal2 = require('sweetalert2');
@@ -1839,11 +1838,11 @@ function log2Server (category, itemUrl, itemData, message) {
     const logTime = new Date().toISOString();
 
     const logData = {
-      log_time: logTime,
-      log_category: category,
-      related_item_url: itemUrl,
-      related_item_data: itemData,
-      log_action: message
+      logTime: logTime,
+      logCategory: category,
+      relatedItemUrl: itemUrl,
+      relatedItemData: itemData,
+      logAction: message
     };
 
     browserAPI.runtime.sendMessage({
