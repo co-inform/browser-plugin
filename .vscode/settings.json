@@ -1,0 +1,40 @@
+{
+  "i18n-ally.localesPaths": "src/plugin/_locales",
+  "i18n-ally.enabledFrameworks": [
+    "chrome-ext"
+  ],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.keysInUse": [
+    "credible.message",
+    "credible__info.message",
+    "mostly_credible.message",
+    "mostly_not_credible.message",
+    "not_credible__info.message",
+    "not_verifiable__info.message",
+    "unsubstantiated__info.message",
+    "credibility_uncertain.message",
+    "mostly_credible__info.message",
+    "mostly_not_credible__info.message",
+    "inaccurate_with_considerations__info.message",
+    "accurate_with_considerations__info.message",
+    "inaccurate_with_considerations.message",
+    "accurate_with_considerations.message",
+    "credibility_uncertain__info.message",
+    "inaccurate__info.message",
+    "unsubstantiated.message",
+    "accurate__info.message",
+    "not_credible.message",
+    "inaccurate.message",
+    "accurate.message",
+    "claim_similarity_based_info.message",
+    "content_analysis_based_info.message",
+    "misinfome_based_info.message",
+    "claim_similarity.message",
+    "content_analysis.message",
+    "misinfome.message"
+  ],
+  "i18n-ally.sortedKeys": false,
+  "i18n-ally.keepFulfilled" : false,
+  "i18n-ally.indent" : 2,
+  "i18n-ally.tabStyle" : "space"
+}
