@@ -171,6 +171,7 @@
   color: black !important;
   width: 100% !important;
   text-align: center;
+  justify-content: center;
 }
 
 .swal2-popup .swal2-header .swal2-pretitle {
