@@ -3,46 +3,46 @@
     "message": "Credible"
   },
   "credible__info": {
-    "message": "The $1 is most likely to be accurate, according to strong signals we found"
+    "message": "The $1 is most likely to be accurate, according to strong signals we found."
   },
   "mostly_credible": {
     "message": "Mostly credible"
   },
   "mostly_credible__info": {
-    "message": "The $1 is likely to be accurate, but may contain some minor inaccuracies, according to the (strong) signals we found"
+    "message": "The $1 is likely to be accurate, but may contain some minor inaccuracies, according to the (strong) signals we found."
   },
   "credibility_uncertain": {
-    "message": "Credibility uncertain"
+    "message": "Uncertain credibility"
   },
   "credibility_uncertain__info": {
-    "message": "The $1 probably mixes some accurate and inaccurate (or not verifiable) claims"
+    "message": "The $1 probably mixes some accurate and inaccurate (or not verifiable) claims."
   },
   "mostly_not_credible": {
     "message": "Mostly not credible"
   },
   "mostly_not_credible__info": {
-    "message": "The $1 is most likely inaccurate, according to strong signals we found"
+    "message": "The $1 is most likely inaccurate, according to strong signals we found."
   },
   "not_credible": {
     "message": "Not credible"
   },
   "not_credible__info": {
-    "message": "The $1 is most likely inaccurate, according to strong signals we found"
+    "message": "The $1 is most likely inaccurate, according to strong signals we found."
   },
   "not_verifiable": {
     "message": "Not verifiable"
   },
   "not_verifiable__info": {
-    "message": "The $1 does not contain verifiable claims (it's all opinions or speculations), or we could not find sufficient signals supporting/refuting the claims in the $1"
+    "message": "The $1 does not contain verifiable claims (it's all opinions or speculations), or we could not find sufficient signals supporting/refuting the claims in the $1."
   },
   "tweet_post": {
-    "message": "Tweet post"
+    "message": "tweet post"
   },
   "not_tagged": {
     "message": "The $1 is not tagged"
   },
   "not_tagged__info": {
-    "message": "The $1 has not yet been tagged by the system"
+    "message": "The $1 has not yet been tagged by the system."
   },
   "accurate": {
     "message": "Accurate"
@@ -74,7 +74,7 @@
   "inaccurate__info": {
     "message": "The $1 is inaccurate"
   },
-  "error_loading_configuration" : {
+  "error_loading_configuration": {
     "message": "Could not load plugin configuration"
   },
   "checking_tweet_coinform": {
@@ -114,31 +114,31 @@
     "message": "Help us improve Co-Inform AI"
   },
   "provide_claim": {
-    "message": "If you think this is not accurate please provide a claim and a link to a post that supports that claim"
+    "message": "If you think this is not accurate please provide a claim and a link to a post that supports that claim."
   },
   "provide_claim_text1": {
-    "message": "Based on your ratings, we may suggest ways to improve media literacy"
+    "message": "Based on your ratings, we may suggest ways to improve media literacy."
   },
   "provide_claim_text2": {
-    "message": "You can help us by telling us whether you think the $1 is accurate or not and include a link to a source providing evidence"
+    "message": "You can help us by telling us whether you think the $1 is accurate or not and include a link to a source providing evidence."
   },
   "provide_claim_untagged": {
-    "message": "If you want you can provide a claim and a link to a post that supports that claim"
+    "message": "If you want you can provide a claim and a link to a post that supports that claim."
   },
   "not_logged": {
     "message": "Not logged in"
   },
   "provide_feedback_with_login": {
-    "message": "To provide your feedback about the Co-Inform labeling you must be a logged in Co-Inform user"
+    "message": "To provide your feedback about the Co-Inform labeling you must be a logged in Co-Inform user."
   },
   "wait_label_for_feedback": {
-    "message": "You must wait for the $1 to be tagged before providing your feedback"
+    "message": "You must wait for the $1 to be tagged before providing your feedback."
   },
   "provide_claim_with_login": {
-    "message": "If you think this is not accurate you can provide a claim by logging in with your Co-Inform user"
+    "message": "If you think this is not accurate you can provide a claim by logging in with your Co-Inform user."
   },
   "login_register_instructions": {
-    "message": "Click on the Co-Inform logo on the top right corner of your browser to open the login/register popup"
+    "message": "Click on the Co-Inform logo on the top right corner of your browser to open the login/register popup."
   },
   "ok": {
     "message": "Ok"
@@ -209,14 +209,8 @@
   "popup_plugin_title": {
     "message": "The plugin that helps you Think - Check - Share on Twitter"
   },
-  "login_title": {
-    "message": "Co-Inform Login"
-  },
   "already_logged": {
     "message": "You are logged in"
-  },
-  "register_title": {
-    "message": "Co-Inform Register"
   },
   "provide_mail": {
     "message": "You must provide your email"
@@ -414,31 +408,13 @@
     "message": "Detailed analysis explanation"
   },
   "module_explainability_link": {
-    "message": "More analysis information"
+    "message": "For more information on this analysis, click"
   },
   "here": {
     "message": "here"
   },
-  "claim_similarity": {
-    "message": "Claim Similarity"
-  },
-  "claim_similarity_based_info": {
-    "message": "similar articles"
-  },
-  "misinfome": {
-    "message": "Misinformation Identification"
-  },
-  "misinfome_based_info": {
-    "message": "the source authour reputation"
-  },
-  "content_analysis": {
-    "message": "Content Stance"
-  },
-  "content_analysis_based_info": {
-    "message": "the tweet content and its replies"
-  },
   "processing_labeling": {
-    "message": "Processing the label.."
+    "message": "Processing the label..."
   },
   "labeling_done": {
     "message": "Labeling done"
@@ -451,5 +427,47 @@
   },
   "labeling_undone": {
     "message": "Labeling undone"
+  },
+  "post": {
+    "message": "post"
+  },
+  "content_tagged_with__html": {
+    "message": "The content of this post has been tagged with <b>$1</b>."
+  },
+  "coinfomr_plugin_check_content_description": {
+    "message": "The Co-Inform plugin checks the content of each post against fact-checked information and uses three different misinformation-detection approaches to spot information that could potentially be misleading."
+  },
+  "modules_check_description": {
+    "message": "Each of the modules checks different information aspects, and when two of the modules agree on the same credibility status, the Co-Inform plugin attaches that as the credibility label. If the modules assign a different credibility status, the credibility label depends on the confidence value assigned by each module."
+  },
+  "not_verifiable_case_description": {
+    "message": "Posts labelled as \"$1\" refer to information that has not been fact-checked."
+  },
+  "click_label_for_more_info": {
+    "message": "Click on the credibility label to find out more about what our misinformation-detection modules indicate for this post."
+  },
+  "content_tagged_by__html": {
+    "message": "This content has been tagged as <b>$1</b> by <b>$2</b> of Co-Inform's misinformation-detection modules."
+  },
+  "specifically": {
+    "message": "Specifically:"
+  },
+  "claim_similarity": {
+    "message": "Claim Similarity"
+  },
+  "claim_similarity_based_info": {
+    "message": "a comparison of claims made in the post (or linked articles) against a database of fact-checked claims"
+  },
+  "misinfome": {
+    "message": "Misinformation Identification"
+  },
+  "misinfome_based_info": {
+    "message": "the credibility reputation of the accounts, sources and links involved in the post and determined from several external rating tools and fact-checks"
+  },
+  "content_analysis": {
+    "message": "Content Stance"
+  },
+  "content_analysis_based_info": {
+    "message": "the post's content and a report on whether replies to the post support, deny or question the claim appearing in it"
   }
 }

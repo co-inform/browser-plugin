@@ -33,7 +33,7 @@ window.addEventListener("load", function(){
       init();
     }
     else {
-      showMessage("err", "error_loading_configuration");
+      showMessage("err", browserAPI.i18n.getMessage("error_loading_configuration"));
     }
   });
 
@@ -428,10 +428,10 @@ const loginAction = (targetButton) => {
   const userPass = document.querySelector('input[name="login-userpass"]').value || null;
 
   if (!userMail || !validateEmail(userMail)) {
-    showMessage("err", "mail_not_valid", 2000);
+    showMessage("err", browserAPI.i18n.getMessage("mail_not_valid"), 2000);
   }
   else if (!userPass || !validatePass(userPass)) {
-    showMessage("err", "password_not_valid", 2000);
+    showMessage("err", browserAPI.i18n.getMessage("password_not_valid"), 2000);
   }
   else {
 
@@ -447,7 +447,7 @@ const loginAction = (targetButton) => {
       // Discard requests with 400 http return codes
       if ((resStatus.localeCompare('401') === 0) || (resStatus.localeCompare('404') === 0)) {
         logger.logMessage(CoInformLogger.logTypes.warning, `Login 401/404 (no such user registered) response`);
-        showMessage("err", "mail_password_not_found", 2000);
+        showMessage("err", browserAPI.i18n.getMessage("mail_password_not_found"), 2000);
         targetButton.disabled = false;
       }
       else if (resStatus.localeCompare('200') === 0) {
@@ -456,7 +456,7 @@ const loginAction = (targetButton) => {
         if (data.token) {
           logger.logMessage(CoInformLogger.logTypes.info, "Login successful");
           // Other login actuations are managed through the userLogin message listener
-          showMessage("ok", "login_ok", 1000);
+          showMessage("ok", browserAPI.i18n.getMessage("login_ok"), 1000);
           setTimeout(function() {
             displayLogout();
             targetButton.disabled = false;
@@ -465,13 +465,13 @@ const loginAction = (targetButton) => {
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, "Login token error");
-          showMessage("err", "login_error", 2000);
+          showMessage("err", browserAPI.i18n.getMessage("login_error"), 2000);
           targetButton.disabled = false;
         }
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, `Login unknown (${resStatus}) response`);
-        showMessage("err", "login_error", 2000);
+        showMessage("err", browserAPI.i18n.getMessage("login_error"), 2000);
         targetButton.disabled = false;
       }
 
@@ -493,10 +493,10 @@ const registerNextAction = (targetButton, step) => {
   const userPass2 = document.querySelector('input[name="register-userpass2"]').value || null;
 
   if (!userMail || !validateEmail(userMail)) {
-    showMessage("err", "mail_not_valid", 2000);
+    showMessage("err", browserAPI.i18n.getMessage("mail_not_valid"), 2000);
   }
   else if (!userPass || !userPass2 || (userPass !== userPass2) || !validatePass(userPass)) {
-    showMessage("err", "password_not_valid_info", 4000);
+    showMessage("err", browserAPI.i18n.getMessage("password_not_valid_info"), 4000);
   }
   else if (step == 1) {
     displayRegisterStep2();
@@ -559,16 +559,16 @@ const registerAction = (targetButton) => {
   const userFollowup = document.querySelector('input[name="register-followup"]:checked').value || null;
 
   if (!userMail || !validateEmail(userMail)) {
-    showMessage("err", "mail_not_valid", 2000);
+    showMessage("err", browserAPI.i18n.getMessage("mail_not_valid"), 2000);
   }
   else if (!userPass || !userPass2 || (userPass !== userPass2) || !validatePass(userPass)) {
-    showMessage("err", "password_not_valid_info", 4000);
+    showMessage("err", browserAPI.i18n.getMessage("password_not_valid_info"), 4000);
   }
   else if (!userParticipation) {
-    showMessage("err", "read_and_answer_participation", 4000);
+    showMessage("err", browserAPI.i18n.getMessage("read_and_answer_participation"), 4000);
   }
   else if (!userFollowup) {
-    showMessage("err", "read_and_answer_followup", 4000);
+    showMessage("err", browserAPI.i18n.getMessage("read_and_answer_followup"), 4000);
   }
   else {
     
@@ -590,12 +590,12 @@ const registerAction = (targetButton) => {
       // Discard requests with 400 http return codes
       if (resStatus.localeCompare('400') === 0) {
         logger.logMessage(CoInformLogger.logTypes.warning, "Register 400 (something went horribly wrong) response");
-        showMessage("err", "register_problem", 2000);
+        showMessage("err", browserAPI.i18n.getMessage("register_problem"), 2000);
         targetButton.disabled = false;
       }
       else if (resStatus.localeCompare('201') === 0) {
         logger.logMessage(CoInformLogger.logTypes.info, "Register successful");
-        showMessage("ok", "register_ok");
+        showMessage("ok", browserAPI.i18n.getMessage("register_ok"));
         setTimeout(function() {
           displayLogin();
           targetButton.disabled = false;
@@ -604,7 +604,7 @@ const registerAction = (targetButton) => {
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, `Register unknown (${resStatus}) response`);
-        showMessage("err", "register_error", 2000);
+        showMessage("err", browserAPI.i18n.getMessage("register_error"), 2000);
         targetButton.disabled = false;
       }
 
@@ -622,7 +622,7 @@ const logoutAction = (targetButton) => {
   }
 
   if (!coinformUserToken) {
-    showMessage("err", "logout_error", 2000);
+    showMessage("err", browserAPI.i18n.getMessage("logout_error"), 2000);
   }
   else {
     
@@ -639,14 +639,14 @@ const logoutAction = (targetButton) => {
       // Discard requests with 400 http return codes
       if (resStatus.localeCompare('401') === 0) {
         logger.logMessage(CoInformLogger.logTypes.warning, "Logout 400 response");
-        showMessage("err", "logout_problem", 2000);
+        showMessage("err", browserAPI.i18n.getMessage("logout_problem"), 2000);
         targetButton.disabled = false;
       }
       else if (resStatus.localeCompare('200') === 0) {
         // The logout response parse and cookies is managed through the background script
         logger.logMessage(CoInformLogger.logTypes.info, "Logout successful");
         // Other logout actuations are managed through the userLogout message listener
-        showMessage("ok", "logout_ok", 1000);
+        showMessage("ok", browserAPI.i18n.getMessage("logout_ok"), 1000);
         setTimeout(function() {
           displayLogin();
           targetButton.disabled = false;
@@ -655,7 +655,7 @@ const logoutAction = (targetButton) => {
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, `Logout unknown (${resStatus}) response`);
-        showMessage("err", "logout_error", 2000);
+        showMessage("err", browserAPI.i18n.getMessage("logout_error"), 2000);
         targetButton.disabled = false;
       }
 
@@ -694,7 +694,7 @@ const optionsSaveAction = (targetButton) => {
   }, function (res) {
 
     logger.logMessage(CoInformLogger.logTypes.info, "Options saved");
-    showMessage("ok", "options_save_ok", 2000);
+    showMessage("ok", browserAPI.i18n.getMessage("options_save_ok"), 2000);
     setTimeout(function() {
       if (coinformUserToken) {
         displayLogout();
@@ -717,7 +717,7 @@ const changePasswordAction = (targetButton) => {
   }
   
   if (!coinformUserToken) {
-    showMessage("err", "change_password_error", 2000);
+    showMessage("err", browserAPI.i18n.getMessage("change_password_error"), 2000);
   }
   else {
 
@@ -726,7 +726,7 @@ const changePasswordAction = (targetButton) => {
     const userNewPass2 = document.querySelector('input[name="account-usernewpass2"]').value || null;
 
     if (!userPass || !userNewPass  || !userNewPass2 || (userNewPass !== userNewPass2) || !validatePass(userPass) || !validatePass(userNewPass)) {
-      showMessage("err", "password_not_valid_info", 4000);
+      showMessage("err", browserAPI.i18n.getMessage("password_not_valid_info"), 4000);
     }
     else {
       
@@ -743,13 +743,13 @@ const changePasswordAction = (targetButton) => {
         // Discard requests with 400 http return codes
         if ((resStatus.localeCompare('401') === 0) || (resStatus.localeCompare('403') === 0)) {
           logger.logMessage(CoInformLogger.logTypes.warning, `ChangePass ${resStatus} response`);
-          showMessage("err", "change_password_problem", 2000);
+          showMessage("err", browserAPI.i18n.getMessage("change_password_problem"), 2000);
           targetButton.disabled = false;
         }
         else if (resStatus.localeCompare('200') === 0) {
           let data = res.data;
           logger.logMessage(CoInformLogger.logTypes.info, "ChangePass successful");
-          showMessage("ok", "change_password_ok", 2000);
+          showMessage("ok", browserAPI.i18n.getMessage("change_password_ok"), 2000);
           setTimeout(function() {
             displayLogout();
             targetButton.disabled = false;
@@ -757,7 +757,7 @@ const changePasswordAction = (targetButton) => {
         }
         else {
           logger.logMessage(CoInformLogger.logTypes.error, `ChangePass unknown (${resStatus}) response`);
-          showMessage("err", "change_password_error", 2000);
+          showMessage("err", browserAPI.i18n.getMessage("change_password_error"), 2000);
           targetButton.disabled = false;
         }
 
@@ -776,10 +776,10 @@ const forgotPasswordAction = (targetButton) => {
   const userMail = document.querySelector('input[name="login-usermail"]').value || null;
 
   if (!userMail) {
-    showMessage("err", "provide_mail", 2000);
+    showMessage("err", browserAPI.i18n.getMessage("provide_mail"), 2000);
   }
   else if (!validateEmail(userMail)) {
-    showMessage("err", "mail_not_valid", 2000);
+    showMessage("err", browserAPI.i18n.getMessage("mail_not_valid"), 2000);
   }
   else {
     
@@ -794,16 +794,16 @@ const forgotPasswordAction = (targetButton) => {
       // Discard requests with 400 http return codes
       if (resStatus.localeCompare('400') === 0) {
         logger.logMessage(CoInformLogger.logTypes.warning, "ForgotPass 400 response");
-        showMessage("err", "forgot_password_problem", 2000);
+        showMessage("err", browserAPI.i18n.getMessage("forgot_password_problem"), 2000);
       }
       else if (resStatus.localeCompare('200') === 0) {
         let data = res.data;
         logger.logMessage(CoInformLogger.logTypes.info, "ForgotPass successful");
-        showMessage("ok", "forgot_password_ok");
+        showMessage("ok", browserAPI.i18n.getMessage("forgot_password_ok"));
       }
       else {
         logger.logMessage(CoInformLogger.logTypes.error, `ForgotPass unknown (${resStatus}) response`);
-        showMessage("err", "forgot_password_error", 2000);
+        showMessage("err", browserAPI.i18n.getMessage("forgot_password_error"), 2000);
       }
       targetButton.disabled = false;
 
@@ -823,34 +823,30 @@ const loginStartAction = () => {
 /**
  * Show a message on the page with a check button for removing it.
  * @param {} type type of message (info/error) changeable through CSS
- * @param {*} label label text of the message, defined in the language file
+ * @param {*} message text of the message
  * @param {*} time optional time for the message, after which it will be automaticly removed
  */
-const showMessage = (type, label, time) => {
-  let span = document.getElementById(label);
-  if (!span) {
-    let msgDiv = document.getElementById('popup-messages');
-    span = document.createElement("SPAN");
-    span.setAttribute("id", label);
-    span.classList.add("popup-message");
-    span.classList.add(type);
-    span.append(document.createTextNode(browserAPI.i18n.getMessage(label)));
-    let auxclose = document.createElement("SPAN");
-    //auxclose.append(document.createTextNode("&times;"));
-    auxclose.classList.add("popup-message-close");
-    auxclose.addEventListener('click', (event) => {
+const showMessage = (type, message, time) => {
+  let msgDiv = document.getElementById('popup-messages');
+  let span = document.createElement("SPAN");
+  span.classList.add("popup-message");
+  span.classList.add(type);
+  span.append(document.createTextNode(message));
+  let auxclose = document.createElement("SPAN");
+  //auxclose.append(document.createTextNode("&times;"));
+  auxclose.classList.add("popup-message-close");
+  auxclose.addEventListener('click', (event) => {
+    clearMessage(span);
+  });
+  span.append(auxclose);
+  $(span).hide();
+  msgDiv.append(span);
+  $(span).fadeIn(500);
+  // if time is defined we remove the message after that time
+  if (time && Number.isInteger(time)) {
+    setTimeout(function() {
       clearMessage(span);
-    });
-    span.append(auxclose);
-    $(span).hide();
-    msgDiv.append(span);
-    $(span).fadeIn(500);
-    // if time is defined we remove the message after that time
-    if (time && Number.isInteger(time)) {
-      setTimeout(function() {
-        clearMessage(span);
-      }, time);
-    }
+    }, time);
   }
   return span;
 };
@@ -879,11 +875,11 @@ function log2Server (category, itemUrl, itemData, message) {
     const logTime = new Date().toISOString();
 
     const logData = {
-      log_time: logTime,
-      log_category: category,
-      related_item_url: itemUrl,
-      related_item_data: itemData,
-      log_action: message
+      logTime: logTime,
+      logCategory: category,
+      relatedItemUrl: itemUrl,
+      relatedItemData: itemData,
+      logAction: message
     };
 
     browserAPI.runtime.sendMessage({

@@ -77,11 +77,11 @@ function postUserLog2Server(path, logData, userToken) {
 
   const data = [
     {
-      log_time: logData.log_time,
-      log_category: logData.log_category,
-      related_item_url: logData.related_item_url,
-      related_item_data: logData.related_item_data,
-      log_action: logData.log_action
+      log_time: logData.logTime,
+      log_category: logData.logCategory,
+      related_item_url: logData.relatedItemUrl,
+      related_item_data: logData.relatedItemData,
+      log_action: logData.logAction
     }
   ];
 

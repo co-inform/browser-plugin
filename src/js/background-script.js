@@ -175,7 +175,7 @@ const sendLog2Server = function(request, scriptId, logCallback) {
 
     let logData = request.logData;
 
-    logger.logMessage(CoInformLogger.logTypes.debug, `New Server Log: ${logData.log_time} | ${logData.log_category} | ${logData.log_action}`, scriptId);
+    logger.logMessage(CoInformLogger.logTypes.debug, `New Server Log: ${logData.logTime} | ${logData.logCategory} | ${logData.logAction}`, scriptId);
 
     client.postLog2Server(request.logData, request.userToken).then(res => {
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');

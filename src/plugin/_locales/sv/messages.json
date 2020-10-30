@@ -3,46 +3,46 @@
     "message": "Trovärdig"
   },
   "credible__info": {
-    "message": "$1 är mycket troligt korrekt, enligt mycket övertyggande signaler vi hittat"
+    "message": "$1 är mycket troligt korrekt, enligt mycket övertyggande signaler vi hittat."
   },
   "mostly_credible": {
     "message": "Övervägande trovärdig"
   },
   "mostly_credible__info": {
-    "message": "$1 är sannolikt korrekt, men kan innehålla mindre felaktigheter, enligt övertygande signaler vi hittat"
+    "message": "$1 är sannolikt korrekt, men kan innehålla mindre felaktigheter, enligt övertygande signaler vi hittat."
   },
   "credibility_uncertain": {
     "message": "Osäker trovärdighet"
   },
   "credibility_uncertain__info": {
-    "message": "$1 blandar förmodligen både korrekta och inkorrekta (eller ej verifierbara) anspråk"
+    "message": "$1 blandar förmodligen både korrekta och inkorrekta (eller ej verifierbara) anspråk."
   },
   "mostly_not_credible": {
     "message": "Övervägande låg trovärdighet"
   },
   "mostly_not_credible__info": {
-    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat"
+    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat."
   },
   "not_credible": {
     "message": "Inte trovärdigt"
   },
   "not_credible__info": {
-    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat"
+    "message": "$1 är förmodligen övervägande felaktig, enligt övertygande signaler vi hittat."
   },
   "not_verifiable": {
     "message": "Ej verifierbart"
   },
   "not_verifiable__info": {
-    "message": "$1 innehåller inga verifierbara anspråk (det är bara åsikter eller spekuleringar), eller så kunde vi inte hitta tillräckliga signaler som stödjer/motsäger anspråken i $1"
+    "message": "$1 innehåller inga verifierbara anspråk (det är bara åsikter eller spekuleringar), eller så kunde vi inte hitta tillräckliga signaler som stödjer/motsäger anspråken i $1."
   },
   "tweet_post": {
-    "message": "Tweet meddelande"
+    "message": "tweet meddelande"
   },
   "not_tagged": {
     "message": "$1 är ej taggat"
   },
   "not_tagged__info": {
-    "message": "$1 har ännu inte taggats av systemet"
+    "message": "$1 har ännu inte taggats av systemet."
   },
   "accurate": {
     "message": "Korrekt"
@@ -74,7 +74,7 @@
   "inaccurate__info": {
     "message": "$1 är felaktigt"
   },
-  "error_loading_configuration" : {
+  "error_loading_configuration": {
     "message": "Kunnde inte läsa in konfigurationen för pluginen"
   },
   "checking_tweet_coinform": {
@@ -102,43 +102,43 @@
     "message": "Varför kan jag inte se detta?"
   },
   "element_tagged_as": {
-    "message": "Denna $1 har markerats som: $2"
+    "message": "$1 har taggats som: $2"
   },
   "see_anyway": {
-    "message": "Se $1 ändå"
+    "message": "$1 vill jag se ändå"
   },
   "blur_again": {
-    "message": "Gör $1 suddig igen"
+    "message": "$1 kan göras suddigt igen"
   },
   "provide_claim_title": {
     "message": "Hjälp oss förbättra CoInforms AI"
   },
   "provide_claim": {
-    "message": "Om du tror att detta inte är korrekt vänligen delge ett anspråk och länk till information som stödjer ditt anspråk"
+    "message": "Om du tror att detta inte är korrekt vänligen delge ett anspråk och länk till information som stödjer detta."
   },
   "provide_claim_text1": {
-    "message": "Baserat på dina graderingar, kan vi delge sätt att förbättra din mediekunskap"
+    "message": "Baserat på dina graderingar, kan vi delge sätt att förbättra din mediekunskap."
   },
   "provide_claim_text2": {
-    "message": "Du kan hjälpa oss genom att säga om du tycker att $1 är korrekt eller ej och delge en länk till en källa som bestyrker detta"
+    "message": "$1 kan vara korrekt eller ej i varierande grad. Du kan hjälpa oss genom att säga vad du tycker och delge en länk till en källa som bestyrker detta."
   },
   "provide_claim_untagged": {
-    "message": "Om du vill kan du delge ett anspråk och länk till ett inlägg som stödjer detta"
+    "message": "Om du vill kan du delge ett anspråk och länk till ett inlägg som stödjer detta."
   },
   "not_logged": {
     "message": "Ej inloggad"
   },
   "provide_feedback_with_login": {
-    "message": "För att delge din feedback till CoInform behöver du vara inloggad som användare av CoInform"
+    "message": "För att delge din feedback till CoInform behöver du vara inloggad som användare av CoInform."
   },
   "wait_label_for_feedback": {
-    "message": "Du måste invänta att $1 har blivit taggat innan du kan delge din feedback"
+    "message": "$1 måste ha blivit taggat innan du kan delge din feedback."
   },
   "provide_claim_with_login": {
-    "message": "Om du tycker att detta är felaktigt kan du delge din åsikt genom att logga in som CoInform användare"
+    "message": "Om du tycker att detta är felaktigt kan du delge din åsikt genom att logga in som CoInform användare."
   },
   "login_register_instructions": {
-    "message": "Klicka på CoInform loggam uppe till höger i din browser för att öpnna login/registrera vyn"
+    "message": "Klicka på CoInform loggam uppe till höger i din browser för att öpnna login/registrera vyn."
   },
   "ok": {
     "message": "Ok"
@@ -168,10 +168,10 @@
     "message": "frivillig"
   },
   "positive_feedback": {
-    "message": "Jag håller med tweetens märkning"
+    "message": "Taggningen är korrekt"
   },
   "negative_feedback": {
-    "message": "Jag håller inte med tweetens märkning"
+    "message": "Taggningen är inkorrekt"
   },
   "additional_info": {
     "message": "Ytterligare information"
@@ -209,14 +209,8 @@
   "popup_plugin_title": {
     "message": "Pluginen som hjälper dig Tänka - Kontrollera - Dela på Twitter"
   },
-  "login_title": {
-    "message": "Co-Inform Login"
-  },
   "already_logged": {
     "message": "Du är inloggad"
-  },
-  "register_title": {
-    "message": "Co-Inform Registrera"
   },
   "provide_mail": {
     "message": "Du måste delge din email"
@@ -414,28 +408,10 @@
     "message": "Detaljerad förklaring av analysen"
   },
   "module_explainability_link": {
-    "message": "Mer information om analysen"
+    "message": "För mer information om denna analys, klicka"
   },
   "here": {
     "message": "här"
-  },
-  "claim_similarity": {
-    "message": "Claim Similarity"
-  },
-  "claim_similarity_based_info": {
-    "message": "liknande artiklar"
-  },
-  "misinfome": {
-    "message": "Misinformation Identification"
-  },
-  "misinfome_based_info": {
-    "message": "Renomme för källans författare"
-  },
-  "content_analysis": {
-    "message": "Content Stance"
-  },
-  "content_analysis_based_info": {
-    "message": "tweetens svar sam dess nnehåll"
   },
   "processing_labeling": {
     "message": "Processar taggen..."
@@ -451,5 +427,47 @@
   },
   "labeling_undone": {
     "message": "Märkning ångrad"
+  },
+  "post": {
+    "message": "Inlägget"
+  },
+  "content_tagged_with__html": {
+    "message": "Innehållet i denna post har taggats som <b>$1</b>."
+  },
+  "coinfomr_plugin_check_content_description": {
+    "message": "Co-Informs plugin kontrollerar innehållet i varje post mot fakta-kontrollerad information samt använder 3 olika ansatser i identifieringen av misinformation för att upptäcka information som kan vara vilseledande."
+  },
+  "modules_check_description": {
+    "message": "Varje enskild modul kontrollerar olika aspekter av informationen, och när två moduler ger samma tillförlitlighetsstaus ges inlägget den nivån på tillförlitlighet. Om modulerna ger olika status beror den slutgiltiga statusen på modulernas konfidensvärde."
+  },
+  "not_verifiable_case_description": {
+    "message": "Inlägg som märkts med \"$1\" hänvisar till information som inte har faktakontrollerats."
+  },
+  "click_label_for_more_info": {
+    "message": "Klicka på inläggets tagg för att få mer information om vad våra olika misinformations moduler har indikerat för detta inlägg."
+  },
+  "content_tagged_by__html": {
+    "message": "Detta innehåll har taggats som <b>$1</b> av <b>$2</b> för Co-Informs misinformations moduler."
+  },
+  "specifically": {
+    "message": "Specifikt:"
+  },
+  "claim_similarity": {
+    "message": "Claim Similarity"
+  },
+  "claim_similarity_based_info": {
+    "message": "en jämförelse av anspråk gjorda i inlägget (eller länkade artiklar) mot en databas av faktakontrollerade anspråk"
+  },
+  "misinfome": {
+    "message": "Misinformation Identification"
+  },
+  "misinfome_based_info": {
+    "message": "kontonas, källornas och länkarnas anseende i inlägget bedömt av flertalet externa verktyg och faktakontroller"
+  },
+  "content_analysis": {
+    "message": "Content Stance"
+  },
+  "content_analysis_based_info": {
+    "message": "Inläggets innehåll samt en rapport om svaren på inlägget stödjer, bestrider eller ifrågasätter anspråk som gjorts i inlägget"
   }
 }
