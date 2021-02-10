@@ -379,7 +379,7 @@ const displayAccount = () => {
     messageId: "GetSession"
   }, function(res) {
     if (res.token) {
-      refreshDisplayedAccount(res.userMail, user.userID);
+      refreshDisplayedAccount(res.userMail, res.userID);
     }
     else {
       displayLogin();
