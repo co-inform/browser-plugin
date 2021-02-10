@@ -26,6 +26,7 @@ To install the plugin on your web browser from the distributed packed ZIP you ca
 5. Navigate to the folder where you unzipped the plugin release
 6. Click the `Select Folder` button (without selecting any file)
 7. At this point the plugin should be already installed and you should see it listed in the `Extensions` page
+8. For easier access to the plugin register and login interface, you may need to pin the extension to the browser toolbar, by clicking the browser extensions logo, on the top right corner
 
 Chrome installation exemple animation:
 ![alt text](https://github.com/co-inform/browser-plugin/blob/master/doc/coinform_plugin_install.gif?raw=true)
