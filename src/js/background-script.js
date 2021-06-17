@@ -30,7 +30,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   .then(res => {
 
     configuration = res;
-    configuration.coinform.defaultOptions = Object.assign({}, configuration.coinform.options);
+    configuration.coinform.defaultOptions = JSON.parse(JSON.stringify(configuration.coinform.options));
     logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
     client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
@@ -261,6 +261,9 @@ const checkAndSaveToken = function(token, scriptId) {
   if (tokenDecoded.user && tokenDecoded.user.communication) {
     configuration.coinform.options.followup = tokenDecoded.user.communication;
   }
+  if (tokenDecoded.user && tokenDecoded.user.config) {
+    configuration.coinform.options.config = tokenDecoded.user.config;
+  }
   if (tokenDecoded.exp < secondsSinceEpoch) {
     logger.logMessage(CoInformLogger.logTypes.warning, `JWT expiring time passed`, scriptId);
   }
@@ -406,6 +409,10 @@ const logOutActions = function(scriptId) {
   coinformUserToken = null;
   coinformUserMail = null;
   coinformUserID = null;
+  configuration.coinform.options = null;
+  if (configuration.coinform.defaultOptions) {
+    configuration.coinform.options = JSON.parse(JSON.stringify(configuration.coinform.defaultOptions));
+  }
 
   removeCookie("userToken");
   removeCookie("userMail");

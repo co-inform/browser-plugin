@@ -38,7 +38,11 @@
       "inaccurate": ""
     },
     "options": {
-      "testMode": "false"
+      "testMode": "false",
+      "config": {
+        "blur": "true",
+        "await": "true"
+      }
     }
   }
 }

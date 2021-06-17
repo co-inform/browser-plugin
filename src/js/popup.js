@@ -67,9 +67,26 @@ window.addEventListener("load", function(){
   document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("options_title");
   document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
+
   document.getElementById('options-test-mode-label').innerHTML = browserAPI.i18n.getMessage("options_test_mode");
   document.getElementById('options-research-participation-label').innerHTML = browserAPI.i18n.getMessage("options_research_participation");
   document.getElementById('options-followup-communications-label').innerHTML = browserAPI.i18n.getMessage("options_followup_communications");
+  document.getElementById('options-nudging-all-label').innerHTML = browserAPI.i18n.getMessage("options_nudging_all");
+  document.getElementById('options-nudging-blur-label').innerHTML = browserAPI.i18n.getMessage("options_nudging_blur");
+  document.getElementById('options-nudging-await-label').innerHTML = browserAPI.i18n.getMessage("options_nudging_await");
+  
+  let nungingOptionsAll = document.getElementById('options-nudging-all');
+  nungingOptionsAll.addEventListener('change', (event) => {
+    optionsNudgingChangeAction(nungingOptionsAll);
+  });
+  let nungingOptionsBlur = document.getElementById('options-nudging-blur');
+  nungingOptionsBlur.addEventListener('change', (event) => {
+    optionsNudgingChangeAction(nungingOptionsBlur);
+  });
+  let nungingOptionsAwait = document.getElementById('options-nudging-await');
+  nungingOptionsAwait.addEventListener('change', (event) => {
+    optionsNudgingChangeAction(nungingOptionsAwait);
+  });
 
   document.getElementById('register-participation-input').querySelector('.consent-text details summary').innerHTML = browserAPI.i18n.getMessage("consent_participate_summary");
   document.getElementById('register-participation-input').querySelector('.consent-text details p').innerHTML = browserAPI.i18n.getMessage("consent_participate_text");
@@ -414,6 +431,17 @@ const refreshDisplayedOptions = (options) => {
     let valCheckbox = (options.followup.localeCompare("true") === 0);
     document.querySelector('input[name="options-followup-communications"]').checked = valCheckbox;
   }
+  document.querySelector('input[name="options-nudging-all"]').checked = true;
+  document.querySelector('input[name="options-nudging-blur"]').checked = true;
+  if (options.config.blur !== undefined) {
+    let valCheckbox = (options.config.blur.localeCompare("false") !== 0);
+    document.querySelector('input[name="options-nudging-blur"]').checked = valCheckbox;
+  }
+  document.querySelector('input[name="options-nudging-await"]').checked = true;
+  if (options.config.await !== undefined) {
+    let valCheckbox = (options.config.await.localeCompare("false") !== 0);
+    document.querySelector('input[name="options-nudging-await"]').checked = valCheckbox;
+  }
 };
 
 
@@ -665,6 +693,36 @@ const logoutAction = (targetButton) => {
 
 };
 
+// Action on nudging startegy checkboxes change
+const optionsNudgingChangeAction = (targetCheckbox) => {
+
+  if (targetCheckbox.classList.contains("nudging-options-all")) {
+    if (targetCheckbox.checked) {
+      document.querySelectorAll("input.nudging-options-elem").forEach(el => el.checked = "true");
+    }
+    else {
+      document.querySelectorAll("input.nudging-options-elem").forEach(el => el.checked = null);
+    }
+  }
+  else {
+    if (targetCheckbox.checked) {
+      document.querySelector('input.nudging-options-all').checked = "true";
+    }
+    else {
+      let allFalse = true;
+      document.querySelectorAll('input.nudging-options-elem').forEach(function(elem) {
+        if (elem.checked) {
+          allFalse = false;
+        }
+      });
+      if (allFalse) {
+        document.querySelector('input.nudging-options-all').checked = null;
+      }
+    }
+  }
+
+}
+
 // Parse Options form, and do the appropriate actions
 const optionsSaveAction = (targetButton) => {
   
@@ -675,7 +733,8 @@ const optionsSaveAction = (targetButton) => {
   targetButton.disabled = true;
 
   let optionsObj = {
-    testMode: "false"
+    testMode: "false",
+    config: {}
   };
 
   let auxInput = document.querySelector('input[name="options-test-mode"]:checked');
@@ -686,6 +745,12 @@ const optionsSaveAction = (targetButton) => {
 
   auxInput = document.querySelector('input[name="options-followup-communications"]:checked');
   optionsObj.followup = (auxInput && auxInput.value) ? auxInput.value : "false";
+
+  auxInput = document.querySelector('input[name="options-nudging-blur"]:checked');
+  optionsObj.config.blur = (auxInput && auxInput.value) ? auxInput.value : "false";
+
+  auxInput = document.querySelector('input[name="options-nudging-await"]:checked');
+  optionsObj.config.await = (auxInput && auxInput.value) ? auxInput.value : "false";
 
   browserAPI.runtime.sendMessage({
     messageId: "OptionsChange",

@@ -195,7 +195,10 @@ const publishTweetCallback = (clickEvent, targetButton) => {
   //get urls from text
   let urls = null;
   if (tweetText) {
-    urls = tweetText.match(/((ftp|https?):\/\/([^\s]+)([^.,;:\s]))/g);
+    // check user option that disables await nudging action is not set to false
+    if (!(configuration.coinform.options.config && configuration.coinform.options.config.await && (configuration.coinform.options.config.await.localeCompare("false") === 0))) {
+      urls = tweetText.match(/((ftp|https?):\/\/([^\s]+)([^.,;:\s]))/g);
+    }
   }
 
   if (urls) {
@@ -398,8 +401,14 @@ const retweetTweetCallback = (clickEvent, targetButton) => {
 
   let isMisinfo = checkLabelMisinfo(tweet.coInformLabel);
   if (isMisinfo) {
-    targetButton.foundMisinfo = true;
-    retweetTweetAlertMisinfo(tweet, tweet.coInformLabel);
+    // check user option that disables await nudging action is not set to false
+    if (!(configuration.coinform.options.config && configuration.coinform.options.config.await && (configuration.coinform.options.config.await.localeCompare("false") === 0))) {
+      targetButton.foundMisinfo = true;
+      retweetTweetAlertMisinfo(tweet, tweet.coInformLabel);
+    }
+    else {
+      targetButton.click();
+    }
   }
   else {
     targetButton.click();
@@ -987,7 +996,10 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${credibilityLabel}`, tweet.id);
     }
     else if (newCategory.action.localeCompare("blur") === 0) {
-      createTweetBlurry(tweet);
+      // check user option that disables blur nudging action is not set to false
+      if (!(configuration.coinform.options.config && configuration.coinform.options.config.blur && (configuration.coinform.options.config.blur.localeCompare("false") === 0))) {
+        createTweetBlurry(tweet);
+      }
     }
 
   }

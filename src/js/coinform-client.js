@@ -376,7 +376,11 @@ function postChangePass(path, password, newpassword, userToken) {
 
 function postChangeSettings(path, settings, userToken) {
 
-  const data = {research: settings.participation, communication: settings.followup};
+  const data = {
+    research: settings.participation,
+    communication: settings.followup,
+    config: settings.config
+  };
 
   return new Promise((resolve, reject) => {
     f(path, {

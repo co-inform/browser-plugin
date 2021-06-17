@@ -469,5 +469,14 @@
   },
   "content_analysis_based_info": {
     "message": "the post's content and a report on whether replies to the post support, deny or question the claim appearing in it"
+  },
+  "options_nudging_all": {
+    "message": "Nudging strategies"
+  },
+  "options_nudging_blur": {
+    "message": "Blur nudging action"
+  },
+  "options_nudging_await": {
+    "message": "Await nudging action"
   }
 }
