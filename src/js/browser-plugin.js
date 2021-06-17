@@ -1,5 +1,6 @@
 
 const $ = require('jquery');
+const CoinformConstants = require('./coinform-constants');
 const Swal2 = require('sweetalert2');
 const ShowDown = require('showdown');
 const TweetParser = require('./tweet-parser');
@@ -20,16 +21,11 @@ let disagreeURL = "/resources/disagree.png";
 let agreeURL = "/resources/agree.png";
 let minlogoURL = "/resources/coinform_biglogo.png";
 let imgsPath = "/resources/";
-const mainColor = "#693c5e"; // coinform color (violet)
-const buttonColor = "#62B9AF"; // coinform green color (old: #3085d6)
 
-// Hack to force a misinformation url detection, and a missinformation user tweets detection
-// Active only in test use mode
-const misInfoUrlRegExpTest = new RegExp("https://www\.breitbart\.com.*");
-const misInfoTestTweetUser = "BreitbartNews";
+let darkMode = false;
 
 const TIME_PUBLISH_AWAIT = 10;
-const MAX_RETRIES = 10;
+const MAX_RETRIES = 12;
 let configuration;
 let logger;
 let parser;
@@ -62,7 +58,7 @@ browserAPI.runtime.sendMessage({
       logger.logMessage(CoInformLogger.logTypes.debug, `Url opened: ${window.location.href}`);
       log2Server('page', window.location.href, null, `Opened User Page Url`);
       
-      setTimeout(start, 1000);
+      setTimeout(start, 2000);
     });
 
   }
@@ -117,6 +113,12 @@ const start = () => {
   infoLogoURL = browserAPI.extension.getURL(infoLogoURL);
   disagreeURL = browserAPI.extension.getURL(disagreeURL);
   agreeURL = browserAPI.extension.getURL(agreeURL);
+
+  darkMode = false;
+  let bodyColor = document.body.style.backgroundColor;
+  if (bodyColor && ((bodyColor.indexOf("#FFFFFF") < 0) && (bodyColor.indexOf("rgb(255, 255, 255)") < 0 ))) {
+    darkMode = true;
+  }
 
   if (window.location.hostname.indexOf('twitter.com') >= 0) {
     parser = new TweetParser();
@@ -240,7 +242,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
         // Hack to force a misinformation url detection, and a missinformation user tweets detection
         // Active only in test use mode
-        if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(misInfoUrlRegExpTest)) {
+        if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(new RegExp(CoinformConstants.MISINFO_TEST_URL_REGEXP))) {
           targetButton.foundMisinfo = true; 
           publishTweetAlertMisinfo("not_credible", urls[i], tweetText);
         }
@@ -322,7 +324,7 @@ const publishTweetAlertMisinfo = (label, url, tweetText) => {
     showCloseButton: true,
     showCancelButton: false,
     showConfirmButton: true,
-    confirmButtonColor: buttonColor,
+    confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: popupButtonText,
     html:
       '<span>' + browserAPI.i18n.getMessage('url_detected_misinformation', auxlabel) + '</span><br/>'+
@@ -419,7 +421,7 @@ const retweetTweetAlertMisinfo = (tweet, label) => {
     title: popupTitle,
     showCloseButton: true,
     showCancelButton: false,
-    confirmButtonColor: buttonColor,
+    confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: popupButtonText,
     html:
       '<span>' + browserAPI.i18n.getMessage('content_tagged_as', auxlabel) + '</span><br/>'+
@@ -486,7 +488,7 @@ const checkLabelMisinfo = (label) => {
     if (!labelCategory) {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
     }
-    else if (labelCategory.localeCompare("blur") === 0) {
+    else if (labelCategory.action.localeCompare("blur") === 0) {
       misInfo = true;
     }
   }
@@ -563,7 +565,7 @@ const newTweetCallback = (tweetInfo) => {
     
     // Hack to force a misinformation url detection, and a missinformation user tweets detection
     // Active only in test use mode
-    if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.localeCompare(misInfoTestTweetUser) === 0)) {
+    if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.toLowerCase().localeCompare(CoinformConstants.MISINFO_TEST_TW_USERNAME.toLowerCase()) === 0)) {
       parseApiResponse({
         status: "done",
         query_id: -1,
@@ -594,6 +596,10 @@ const createToolbar = (tweetInfo) => {
 
   let tbl = document.createElement('table');
   tbl.classList.add("coinformToolbar");
+
+  if (darkMode) {
+    tbl.classList.add("darkMode");
+  }
   
   tbl.addEventListener('click', (event) => { 
     // prevent opening the tweet
@@ -624,6 +630,10 @@ const createToolbar = (tweetInfo) => {
   tooltipStatus.classList.add("coinformStatusTooltip");
   tooltipStatus.textContent = browserAPI.i18n.getMessage("processing_labeling");
   statusContent.appendChild(tooltipStatus);
+
+  let arrowContent = document.createElement("DIV");
+  arrowContent.classList.add("coinformRelationArrow");
+  td2.appendChild(arrowContent);
 
   let td3 = tr.insertCell();
   td3.setAttribute("id", `coinformToolbarFeedback-${tweetInfo.id}`);
@@ -782,7 +792,13 @@ const retryTweetQuery = (tweetInfo, queryId) => {
     tweetInfo.domObject.coInfoCounter = 0;
   }
 
-  if (tweetInfo.domObject.coInfoCounter > MAX_RETRIES) {
+  if (tweetInfo.domObject.offsetParent === null) {
+
+    logger.logMessage(CoInformLogger.logTypes.debug, `Tweet DOM obj disapeared. Stop requests.`, tweetInfo.id);
+    return false;
+    
+  }
+  else if (tweetInfo.domObject.coInfoCounter > MAX_RETRIES) {
 
     logger.logMessage(CoInformLogger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet.`, tweetInfo.id);
     if ((tweetInfo.domObject.queryStatus.localeCompare('done') === 0) || (tweetInfo.domObject.queryStatus.localeCompare('partly_done') === 0)) {
@@ -870,10 +886,10 @@ const parseApiResponse = (data, tweetInfo) => {
   else {
     // If the result status has not reached the 'done' status then make a second API call to retrieve the 
     // result with a maximum of 10 retries
-    // Call retry in random (between 0.5 and 2.5) seconds
+    // Call retry in random (between 1 and 2.5) seconds
     setTimeout(function() {
       retryTweetQuery(tweetInfo, data.query_id);
-    }, randomInt(500, 2500));
+    }, randomInt(1000, 2500));
   }
   
 };
@@ -911,7 +927,7 @@ const newFacebookPostCallback = (post) => {
     client.getTwitterUserScore(post.username)
       .then(res => {
 
-        classifyPost(post, res);
+        classifyFbPost(post, res);
 
       })
       .catch(err => {
@@ -922,7 +938,7 @@ const newFacebookPostCallback = (post) => {
 
 };
 
-const classifyPost = (post, score) => {
+const classifyFbPost = (post, score) => {
 
   /*const misinformationScore = score.misinformationScore;
   const dom = post.domObject;
@@ -938,12 +954,12 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
 
   if (!node.coInformLabel || (node.coInformLabel.localeCompare(credibilityLabel) !== 0)) {
 
+    removeTweetLabel(tweet);
     if (node.coInformLabel) {
       logger.logMessage(CoInformLogger.logTypes.info, `ReClassifying Tweet Label: ${node.coInformLabel} -> ${credibilityLabel}`, tweet.id);
-      removeTweetLabel(tweet);
       // check if it was blurred
       let previousCategory = configuration.coinform.categories[node.coInformLabel];
-      if (previousCategory && (previousCategory.localeCompare("blur") === 0)) {
+      if (previousCategory && (previousCategory.action.localeCompare("blur") === 0)) {
         removeTweetBlurry(tweet);
       }
       // remove feedback as label changed
@@ -970,7 +986,7 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
     if (!newCategory) {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${credibilityLabel}`, tweet.id);
     }
-    else if (newCategory.localeCompare("blur") === 0) {
+    else if (newCategory.action.localeCompare("blur") === 0) {
       createTweetBlurry(tweet);
     }
 
@@ -1061,6 +1077,10 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   if (!auxLabel) auxLabel = label;
   let txt = document.createTextNode(auxLabel);
   labelcat.append(txt);
+  let labelCategory = configuration.coinform.categories[label];
+  if (labelCategory && labelCategory.labelColor) {
+    labelcat.style.color = labelCategory.labelColor;
+  }
 
   labelcat.addEventListener('click', (event) => {
     event.preventDefault();
@@ -1108,6 +1128,10 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   });
 
   toolbarNode.append(infoContent);
+  
+  let arrowContent = document.createElement("DIV");
+  arrowContent.classList.add("coinformRelationArrow");
+  toolbarNode.appendChild(arrowContent);
 
 };
 
@@ -1128,50 +1152,6 @@ const createModulesCredibilityScoresLog = (modules) => {
   return resTxt;
 };
 
-/*const createLabelModulesInfoContent_old = (label, modules) => {
-
-  let shortInfoContent = document.createElement("DIV");
-  shortInfoContent.setAttribute("class", "coinformAnalysisExplainability");
-  let shortInfoText = document.createElement("SPAN");
-  let auxLabel = browserAPI.i18n.getMessage(label);
-  if (!auxLabel) auxLabel = label;
-  let textHtml = null;
-  if (Object.keys(modules).length > 1) textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel, Object.keys(modules).length]);
-  else textHtml = browserAPI.i18n.getMessage('content_deemed_due_analysis__html', [auxLabel]);
-  shortInfoText.innerHTML = textHtml;
-  shortInfoContent.append(shortInfoText);
-  let shortInfoList = document.createElement("UL");
-  if (modules) {
-    for (let [key, value] of Object.entries(modules)) {
-      let shortInfoListItem = document.createElement("LI");
-      shortInfoListItem.setAttribute("class", "coinformAnalysisModuleInfo");
-
-      let moduleName = browserAPI.i18n.getMessage(key);
-      let moduleAnalysisInfoHtml = browserAPI.i18n.getMessage('module_analysis_short_info__html', moduleName);
-
-      let moduleLabelTxt = browserAPI.i18n.getMessage(modules[key].label);
-      let moduleCredibility = '?';
-      if (modules[key].credibility != null) moduleCredibility = modules[key].credibility;
-      let moduleConfidence = '?';
-      if (modules[key].confidence != null) moduleConfidence = Math.round(parseFloat(modules[key].confidence) * 100);
-      let moduleAnalysisValuesHtml = browserAPI.i18n.getMessage('module_analysis_result__html', [moduleLabelTxt, moduleCredibility, moduleConfidence]);
-
-      shortInfoListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
-      shortInfoList.append(shortInfoListItem);
-    }
-  }
-  shortInfoContent.append(shortInfoList);
-  
-  let shortInfoMoreinfo = document.createElement("SPAN");
-  shortInfoMoreinfo.setAttribute("class", "coinformAnalysisPopupInfo");
-  let moreinfoTxt = document.createTextNode(browserAPI.i18n.getMessage('more_analysis_info'));
-  shortInfoMoreinfo.append(moreinfoTxt);
-  shortInfoContent.append(shortInfoMoreinfo);
-
-  return shortInfoContent;
-
-};*/
-
 const createLabelTooltipInfoContent = (label) => {
 
   let shortInfoContent = document.createElement("DIV");
@@ -1187,16 +1167,6 @@ const createLabelTooltipInfoContent = (label) => {
   let shortInfoPart2Txt = document.createTextNode(browserAPI.i18n.getMessage('coinfomr_plugin_check_content_description'));
   shortInfoPart2.append(shortInfoPart2Txt);
   shortInfoContent.append(shortInfoPart2);
-
-  let shortInfoPart3 = document.createElement("SPAN");
-  let shortInfoPart3Txt1 = document.createTextNode(browserAPI.i18n.getMessage('modules_check_description'));
-  shortInfoPart3.append(shortInfoPart3Txt1);
-  let spaceTxt = document.createTextNode(" ");
-  let notVerifiableTxt = browserAPI.i18n.getMessage('not_verifiable');
-  let shortInfoPart3Txt2 = document.createTextNode(browserAPI.i18n.getMessage('not_verifiable_case_description', notVerifiableTxt));
-  shortInfoPart3.append(spaceTxt);
-  shortInfoPart3.append(shortInfoPart3Txt2);
-  shortInfoContent.append(shortInfoPart3);
   
   let shortInfoMoreinfo = document.createElement("SPAN");
   shortInfoMoreinfo.setAttribute("class", "coinformAnalysisPopupInfo");
@@ -1217,11 +1187,24 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
   if (!auxLabel) auxLabel = label;
   let textHtml = browserAPI.i18n.getMessage('content_tagged_by__html', [auxLabel, Object.keys(modules).length]);
   explainInfoText.innerHTML = textHtml;
-  let spaceTxt = document.createTextNode(" ");
-  explainInfoText.append(spaceTxt);
-  let specificallyTxt = document.createTextNode(browserAPI.i18n.getMessage('specifically'));
-  explainInfoText.append(specificallyTxt);
   explainInfoContent.append(explainInfoText);
+
+  let explainInfoPart2 = document.createElement("SPAN");
+  let explainInfoPart2Txt1 = document.createTextNode(browserAPI.i18n.getMessage('modules_check_description'));
+  explainInfoPart2.append(explainInfoPart2Txt1)
+  let notVerifiableTxt = browserAPI.i18n.getMessage('not_verifiable');
+  let explainInfoPart2Txt2 = document.createTextNode(browserAPI.i18n.getMessage('not_verifiable_case_description', notVerifiableTxt));
+  explainInfoPart2.append(document.createTextNode(" "));
+  explainInfoPart2.append(explainInfoPart2Txt2);
+  explainInfoContent.append(document.createElement("BR"));
+  explainInfoContent.append(explainInfoPart2);
+
+  let explainInfoPart3 = document.createElement("SPAN");
+  let specificallyTxt = document.createTextNode(browserAPI.i18n.getMessage('specifically'));
+  explainInfoPart3.append(specificallyTxt);
+  explainInfoContent.append(document.createElement("BR"));
+  explainInfoContent.append(explainInfoPart3);
+
   let explainInfoList = document.createElement("UL");
   if (modules) {
     for (let [key, value] of Object.entries(modules)) {
@@ -1274,6 +1257,7 @@ const removeTweetLabel = (tweet) => {
   let labelNode = node.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
   labelNode.querySelectorAll('.coinformToolbarLabel').forEach(n => n.remove());
   labelNode.querySelectorAll('.coinformLabelInfoContent').forEach(n => n.remove());
+  labelNode.querySelectorAll('.coinformRelationArrow').forEach(n => n.remove());
 
 };
 
@@ -1380,7 +1364,7 @@ function openLabelPopup(tweet) {
     moreInfo.append(auxContent);
 
     let category = configuration.coinform.categories[node.coInformLabel];
-    if (category && (category.localeCompare("blur") === 0)) {
+    if (category && (category.action.localeCompare("blur") === 0)) {
       nodeBlurrable = true;
     }
   }
@@ -1411,8 +1395,8 @@ function openLabelPopup(tweet) {
     showCancelButton: showCancel,
     showCloseButton: true,
     showConfirmButton: true,
-    cancelButtonColor: buttonColor,
-    confirmButtonColor: buttonColor,
+    cancelButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
+    confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: browserAPI.i18n.getMessage('ok'),
     cancelButtonText: buttonText,
     reverseButtons: true,
@@ -1531,11 +1515,11 @@ function updateLabelEvaluation(targetButton, tweetInfo, agreement) {
 function updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, operation, num) {
   let totalNum = 0;
   if (pluginCache[tweetInfo.id].feedback[`total_${agreement}`] != undefined) {
-    totalNum = pluginCache[tweetInfo.id].feedback[`total_${agreement}`];
+    totalNum = parseInt(pluginCache[tweetInfo.id].feedback[`total_${agreement}`]);
   }
-  if (operation == 'add') totalNum = totalNum + num;
-  else if (operation == 'remove') totalNum = totalNum - num;
-  else if (operation == 'update') totalNum = num;
+  if (operation == 'add') totalNum = totalNum + parseInt(num);
+  else if (operation == 'remove') totalNum = totalNum - parseInt(num);
+  else if (operation == 'update') totalNum = parseInt(num);
   if (totalNum >= 1) {
     let numTxt = totalNum;
     if (totalNum > 999999) {
@@ -1612,7 +1596,7 @@ function openClaimPopup(tweet) {
       '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
     showCloseButton: true,
     showCancelButton: false,
-    confirmButtonColor: buttonColor,
+    confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: browserAPI.i18n.getMessage('submit'),
     focusConfirm: true,
     preConfirm: () => {
@@ -1738,7 +1722,7 @@ function openNotTaggedFeedbackPopup(tweet) {
     title: popupTitle,
     showCloseButton: true,
     showCancelButton: false,
-    confirmButtonColor: buttonColor,
+    confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: popupButtonText,
     html:
       '<span>' + browserAPI.i18n.getMessage('wait_label_for_feedback', elementTxt) + '</span>',
@@ -1763,7 +1747,7 @@ function openNotLoggedFeedbackPopup(tweet) {
     title: popupTitle,
     showCloseButton: true,
     showCancelButton: false,
-    confirmButtonColor: buttonColor,
+    confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: popupButtonText,
     html:
       '<span>' + browserAPI.i18n.getMessage('provide_feedback_with_login') + '</span><br/>' +
@@ -1808,7 +1792,7 @@ function openNotLoggedClaimPopup(tweet) {
       '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
     showCloseButton: true,
     showCancelButton: false,
-    confirmButtonColor: buttonColor,
+    confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: popupButtonText,
     html:
       '<span>' + browserAPI.i18n.getMessage('provide_claim_with_login') + '</span><br/>' +
