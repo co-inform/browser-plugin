@@ -1,8 +1,9 @@
 
-const jwtDecode = require('jwt-decode');
+const CoinformConstants = require('./coinform-constants');
 const CoinformClient = require('./coinform-client');
 const CoInformLogger = require('./coinform-logger');
 const browserAPI = chrome || browser;
+const jwtDecode = require('jwt-decode');
 
 // Retry a total of 6 times (6 * 5sec = 30sec)
 const MAX_TOKEN_RENEW_RETRIES = 6;
@@ -84,6 +85,13 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   .catch(err => {
     console.error('Could not load plugin configuration', err);
   });
+
+browserAPI.runtime.onInstalled.addListener(function (object) {
+  if (browserAPI.runtime.OnInstalledReason.INSTALL === object.reason)
+    browserAPI.tabs.create({url: CoinformConstants.WELCOME_URL}, function (tab) {
+      logger.logMessage(CoInformLogger.logTypes.debug, `Installation finished. Opened co-inform url`);
+    });
+});
 
 browserAPI.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (changeInfo.url) {
