@@ -89,7 +89,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
 browserAPI.runtime.onInstalled.addListener(function (object) {
   if (browserAPI.runtime.OnInstalledReason.INSTALL === object.reason)
     browserAPI.tabs.create({url: CoinformConstants.WELCOME_URL}, function (tab) {
-      logger.logMessage(CoInformLogger.logTypes.debug, `Installation finished. Opened co-inform url`);
+      //logger.logMessage(CoInformLogger.logTypes.debug, `Installation finished. Opened co-inform url`);
     });
 });
 
