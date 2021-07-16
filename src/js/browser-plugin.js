@@ -242,12 +242,13 @@ const publishTweetCallback = (clickEvent, targetButton) => {
       }, function(res) {
         
         let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
+        let assessments = null;
 
         // Hack to force a misinformation url detection, and a missinformation user tweets detection
         // Active only in test use mode
         if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(new RegExp(CoinformConstants.MISINFO_TEST_URL_REGEXP))) {
           targetButton.foundMisinfo = true; 
-          publishTweetAlertMisinfo("not_credible", urls[i], tweetText);
+          publishTweetAlertMisinfo("not_credible", urls[i], tweetText, assessments);
         }
 
         else if ((resStatus.localeCompare('400') === 0)) {
@@ -257,9 +258,12 @@ const publishTweetCallback = (clickEvent, targetButton) => {
           let data = res.data;
           let accuracyLabel = JSON.stringify(data.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
           let isMisinfo = checkLabelMisinfo(accuracyLabel);
+          if (data.assessments) {
+            assessments = data.assessments;
+          }
           if (isMisinfo) {
             targetButton.foundMisinfo = true; 
-            publishTweetAlertMisinfo(accuracyLabel, urls[i], tweetText);
+            publishTweetAlertMisinfo(accuracyLabel, urls[i], tweetText, assessments);
           }
         }
         else {
@@ -312,7 +316,7 @@ const publishTweetPostAction = (targetButton) => {
   }
 };
 
-const publishTweetAlertMisinfo = (label, url, tweetText) => {
+const publishTweetAlertMisinfo = (label, url, tweetText, assessments) => {
 
   let auxlabel = browserAPI.i18n.getMessage(label);
   if (!auxlabel) auxlabel = label;
@@ -321,7 +325,25 @@ const publishTweetAlertMisinfo = (label, url, tweetText) => {
   
   log2Server('publish tweet', null, `Tweet content: ${tweetText}\nContent label: ${label}`, `Opened Await misinformation popup when publishing new tweet`);
 
-  return Swal2.fire({
+  let assessmentsHtml = "";
+  if (assessments) {
+    for (let [key, value] of Object.entries(assessments)) {
+      if (value.url) {
+        if (!assessmentsHtml) {
+          assessmentsHtml += '<span>' + browserAPI.i18n.getMessage('check_assessments_before_publish') + '</span>';
+          assessmentsHtml += "<span><ul>";
+        }
+        assessmentsHtml += '<li><a href="' + value.url + '" target="_blank">' + value.url + '</a></li>'
+      }
+    }
+  }
+  if (assessmentsHtml) {
+    assessmentsHtml += "</ul></span>";
+  }
+  else {
+    assessmentsHtml = '<span>' + browserAPI.i18n.getMessage('check_content_before_publish') + '</span>';
+  }
+  Swal2.fire({
     type: 'info',
     title: popupTitle,
     showCloseButton: true,
@@ -330,9 +352,9 @@ const publishTweetAlertMisinfo = (label, url, tweetText) => {
     confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: popupButtonText,
     html:
-      '<span>' + browserAPI.i18n.getMessage('url_detected_misinformation', auxlabel) + '</span><br/>'+
-      '<a href="' + url + '">' + url + '</a><br/><br/>'+
-      '<span>' + browserAPI.i18n.getMessage('check_content_before_publish') + '</span>',
+      '<span>' + browserAPI.i18n.getMessage('url_detected_misinformation', auxlabel) + '</span><br/>' +
+      '<a href="' + url + '" target="_blank">' + url + '</a><br/><br/>' +
+      assessmentsHtml,
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
@@ -425,7 +447,7 @@ const retweetTweetAlertMisinfo = (tweet, label) => {
   
   log2Server('retweet', tweet.coInformTweetUrl, `Tweet id: ${tweet.coInformTweetId}\nTweet label: ${tweet.coInformLabel}`, `Retweet misinformation popup opened`);
 
-  return Swal2.fire({
+  Swal2.fire({
     type: 'info',
     title: popupTitle,
     showCloseButton: true,
@@ -1203,7 +1225,7 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
 
   let explainInfoPart2 = document.createElement("SPAN");
   let explainInfoPart2Txt1 = document.createTextNode(browserAPI.i18n.getMessage('modules_check_description'));
-  explainInfoPart2.append(explainInfoPart2Txt1)
+  explainInfoPart2.append(explainInfoPart2Txt1);
   let notVerifiableTxt = browserAPI.i18n.getMessage('not_verifiable');
   let explainInfoPart2Txt2 = document.createTextNode(browserAPI.i18n.getMessage('not_verifiable_case_description', notVerifiableTxt));
   explainInfoPart2.append(document.createTextNode(" "));
@@ -1212,20 +1234,34 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
   explainInfoContent.append(explainInfoPart2);
 
   let explainInfoPart3 = document.createElement("SPAN");
-  let specificallyTxt = document.createTextNode(browserAPI.i18n.getMessage('specifically'));
-  explainInfoPart3.append(specificallyTxt);
+  let explainInfoPart3Txt = browserAPI.i18n.getMessage('more_generic_analysis_info__html', CoinformConstants.ANALYSIS_INFO_URL);
+  explainInfoPart3.innerHTML = explainInfoPart3Txt;
   explainInfoContent.append(document.createElement("BR"));
   explainInfoContent.append(explainInfoPart3);
 
-  let explainInfoList = document.createElement("UL");
-  if (modules) {
+  if (modules && (Object.keys(modules).length > 0)) {
+
+    let explainInfoPart4 = document.createElement("SPAN");
+    let specificallyTxt = document.createTextNode(browserAPI.i18n.getMessage('specifically'));
+    explainInfoPart4.append(specificallyTxt);
+    explainInfoContent.append(document.createElement("BR"));
+    explainInfoContent.append(explainInfoPart4);
+
+    let explainInfoList = document.createElement("UL");
+
     for (let [key, value] of Object.entries(modules)) {
       let explainInfoListItem = document.createElement("LI");
       explainInfoListItem.setAttribute("class", "coinformAnalysisModuleInfo");
+      let explainInfoItemContent = document.createElement("SPAN");
 
       let moduleName = browserAPI.i18n.getMessage(key);
       let moduleBased = browserAPI.i18n.getMessage(`${key}_based_info`);
-      let moduleAnalysisInfoHtml = browserAPI.i18n.getMessage('module_analysis_long_info__html', [moduleName, moduleBased]);
+      let clickMoreInfo = browserAPI.i18n.getMessage(`click_more_info`);
+      let moduleUrl = "#";
+      if (CoinformConstants.MODULES_INFO_URLS[key.toUpperCase()]) {
+        moduleUrl = CoinformConstants.MODULES_INFO_URLS[key.toUpperCase()];
+      }
+      let moduleAnalysisInfoHtml = browserAPI.i18n.getMessage('module_analysis_long_info__html', [moduleName, moduleBased, moduleUrl, clickMoreInfo]);
 
       let moduleLabelTxt = browserAPI.i18n.getMessage(modules[key].label);
       let moduleCredibility = '?';
@@ -1249,15 +1285,17 @@ const createLabelModulesExplainabilityContent = (label, modules) => {
         }
       }
 
-      explainInfoListItem.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
+      explainInfoItemContent.innerHTML = `${moduleAnalysisInfoHtml}<br>${moduleAnalysisValuesHtml}`;
       if (moduleExplainabilityHtml) {
-        explainInfoListItem.innerHTML = explainInfoListItem.innerHTML + moduleExplainabilityHtml;
+        explainInfoItemContent.innerHTML = explainInfoItemContent.innerHTML + moduleExplainabilityHtml;
       }
 
+      explainInfoListItem.append(explainInfoItemContent);
       explainInfoList.append(explainInfoListItem);
     }
+
+    explainInfoContent.append(explainInfoList);
   }
-  explainInfoContent.append(explainInfoList);
 
   return explainInfoContent;
 
@@ -1347,8 +1385,8 @@ function openLabelPopup(tweet) {
   let node = tweet.domObject;
   let nodeBlurred = isBlurred(tweet);
   let nodeBlurrable = false;
-  let showCancel = false;
   let buttonText = "";
+  let buttonHtml = "";
 
   let popupPreTitle = '';
   let popupTitle = browserAPI.i18n.getMessage('not_tagged', elementTxt);
@@ -1387,34 +1425,34 @@ function openLabelPopup(tweet) {
   }
 
   if (nodeBlurred) {
-    showCancel = true;
     buttonText = browserAPI.i18n.getMessage('see_anyway', elementTxt);
+    buttonHtml = '<div class="blur-actions">' +
+      '<button type="button" id="blur-unblur-'+tweet.id+'" class="blur-unblur-button swal2-styled">'+buttonText+'</button>' +
+    '</div>';
   }
   else if (nodeBlurrable) {
-    showCancel = true;
-    buttonText = browserAPI.i18n.getMessage('blur_again', elementTxt);
+    buttonText = browserAPI.i18n.getMessage('blur_elem', elementTxt);
+    buttonHtml = '<div class="blur-actions">' +
+      '<button type="button" id="blur-unblur-'+tweet.id+'" class="blur-unblur-button swal2-styled">'+buttonText+'</button>' +
+    '</div>';
   }
 
   let auxPopupTime = Date.now();
 
-  return Swal2.fire({
+  Swal2.fire({
     type: (meterLogoSrc ? null : 'question'),
     width: 500,
     imageUrl: meterLogoSrc,
     imageHeight: 100,
     title: '<h3 id="swal2-pretitle" class="swal2-title swal2-pretitle">' + popupPreTitle + '</h3>' + 
       '<h2 id="swal2-title" class="swal2-title">' + popupTitle + '</h2>',
-    showCancelButton: showCancel,
     showCloseButton: true,
     showConfirmButton: true,
-    cancelButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonColor: CoinformConstants.COINFORM_BUTTON_COLOR,
     confirmButtonText: browserAPI.i18n.getMessage('ok'),
-    cancelButtonText: buttonText,
-    reverseButtons: true,
-    focusCancel: true,
     html:
-      '<span>' + moreInfo.outerHTML + '</span>',
+      buttonHtml +
+      moreInfo.outerHTML,
     footer:
       `<img class="coinformPopupLogo" src="${minlogoURL}"/>` +
       '<span>' + browserAPI.i18n.getMessage('popup_footer_text') + '</span>',
@@ -1429,19 +1467,30 @@ function openLabelPopup(tweet) {
 
     if (result.value) {      
       log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on explainability popup "ok" button\nPopup time spent: ${auxPopupSpentTime} sec`);
-    } else if (result.dismiss == 'cancel') {
-      if (nodeBlurred) {
-        removeTweetBlurry(tweet);
-        log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on "See tweet post anyway" to unblur tweet\nPopup time spent: ${auxPopupSpentTime} sec`);
-      }
-      else if (nodeBlurrable) {
-        createTweetBlurry(tweet);
-        log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on "Blur tweet post again"\nPopup time spent: ${auxPopupSpentTime} sec`);
-      }
-    } else if (result.dismiss) {
+    } else {
       log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on explainability popup "close" button\nPopup time spent: ${auxPopupSpentTime} sec`);
     } 
-  })
+  });
+  
+  $(document).on('click', '#blur-unblur-'+tweet.id, function() {
+
+    let auxPopupSpentTime = "?";
+    if (auxPopupTime) {
+      auxPopupSpentTime = Math.round((Date.now() - auxPopupTime) / 1000);
+    }
+    auxPopupTime = null;
+    
+    if (nodeBlurred) {
+      removeTweetBlurry(tweet);
+      log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on "See tweet post anyway" to unblur tweet\nPopup time spent: ${auxPopupSpentTime} sec`);
+    }
+    else if (nodeBlurrable) {
+      createTweetBlurry(tweet);
+      log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on "Blur tweet post again"\nPopup time spent: ${auxPopupSpentTime} sec`);
+    }
+    
+    Swal2.clickConfirm();
+  });
 }
 
 function feedbackClickAction(targetButton, tweet, agreement) {
@@ -1600,7 +1649,7 @@ function openClaimPopup(tweet) {
 
   log2Server('claim', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Open claim popup for a "${node.coInformLabel}" tweet`);
 
-  return Swal2.fire({
+  Swal2.fire({
     type: (meterLogoSrc ? null : 'question'),
     imageUrl: meterLogoSrc,
     imageHeight: 100,
@@ -1729,7 +1778,7 @@ function openNotTaggedFeedbackPopup(tweet) {
   //let meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter.png");
   let meterLogoSrc = null;
   
-  return Swal2.fire({
+  Swal2.fire({
     type: 'warning',
     title: popupTitle,
     showCloseButton: true,
@@ -1754,7 +1803,7 @@ function openNotLoggedFeedbackPopup(tweet) {
   let popupTitle = browserAPI.i18n.getMessage('not_logged');
   let popupButtonText = browserAPI.i18n.getMessage('ok');
   
-  return Swal2.fire({
+  Swal2.fire({
     type: 'warning',
     title: popupTitle,
     showCloseButton: true,
@@ -1796,7 +1845,7 @@ function openNotLoggedClaimPopup(tweet) {
     meterLogoSrc = browserAPI.extension.getURL(imgsPath + "meter_" + node.coInformLabel + ".png");
   }
   
-  return Swal2.fire({
+  Swal2.fire({
     type: (meterLogoSrc ? null : 'question'),
     imageUrl: meterLogoSrc,
     imageHeight: 100,

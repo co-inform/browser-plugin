@@ -188,6 +188,30 @@
   margin-right: 8px;
 }
 
+.swal2-popup .blur-actions {
+  clear: both;
+  display: flex;
+  z-index: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1em;
+}
+
+.swal2-popup .blur-actions button {
+  display: inline-block;
+  background: initial;
+  border: 0;
+  border-radius: .25em;
+  color: #fff;
+  font-size: 1.0625em;
+  cursor: pointer;
+  background-color: rgb(98, 185, 175);
+  border-left-color: rgb(98, 185, 175);
+  border-right-color: rgb(98, 185, 175);
+}
+
+
 .coinform-padding-top-10 {
   padding-top: 10px;
 }
