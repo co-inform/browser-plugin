@@ -1,5 +1,6 @@
 
 const $ = require('jquery');
+const CoinformConstants = require('./coinform-constants');
 const CoInformLogger = require('./coinform-logger');
 
 let browserAPI = chrome || browser;
@@ -67,6 +68,34 @@ window.addEventListener("load", function(){
   document.getElementById('options-title').innerHTML = browserAPI.i18n.getMessage("options_title");
   document.getElementById('login-question').innerHTML = browserAPI.i18n.getMessage("dont_have_account_question");
   document.getElementById('register-login-question').innerHTML = browserAPI.i18n.getMessage("already_have_account_question");
+  
+  document.getElementById('about-title').innerHTML = browserAPI.i18n.getMessage("about_title");
+  document.getElementById('about-text1').innerHTML = browserAPI.i18n.getMessage("about_text1__html");
+  document.getElementById('about-text2').innerHTML = browserAPI.i18n.getMessage("about_text2__html");
+  document.getElementById('about-links-pretext').innerHTML = browserAPI.i18n.getMessage("about_links_pretext");
+  document.getElementById('about-links-andtxt').innerHTML = browserAPI.i18n.getMessage("about_links_andtxt");
+  document.getElementById('about-links-midtext').innerHTML = browserAPI.i18n.getMessage("about_links_midtext");
+  document.getElementById('about-contact-pretext').innerHTML = browserAPI.i18n.getMessage("about_contact_pretext");
+
+  let projectLink = document.getElementById('about-link-project-page');
+  projectLink.innerHTML = browserAPI.i18n.getMessage("about_link_project_page");
+  projectLink.href = CoinformConstants.PROJECT_URL;
+  let teamLink = document.getElementById('about-link-team-page');
+  teamLink.innerHTML = browserAPI.i18n.getMessage("about_link_team_page");
+  teamLink.href = CoinformConstants.TEAM_URL;
+  let tutorialLink = document.getElementById('about-link-plugin-page');
+  tutorialLink.innerHTML = browserAPI.i18n.getMessage("about_link_plugin_page");
+  tutorialLink.href = CoinformConstants.TUTORIAL_URL;
+  let websiteLink = document.getElementById('about-link-website');
+  websiteLink.innerHTML = browserAPI.i18n.getMessage("about_link_website");
+  websiteLink.href = CoinformConstants.WEBSITE_URL;
+  let contactLink = document.getElementById('about-contact-link');
+  contactLink.innerHTML = browserAPI.i18n.getMessage("about_contact_link");
+  contactLink.href = CoinformConstants.CONTACT_URL;
+
+  document.getElementById('options-user-data-text').innerHTML = browserAPI.i18n.getMessage("options_user_data_group");
+  document.getElementById('options-nudging-text').innerHTML = browserAPI.i18n.getMessage("options_nudging_group");
+  document.getElementById('options-dev-text').innerHTML = browserAPI.i18n.getMessage("options_dev_group");
 
   document.getElementById('options-test-mode-label').innerHTML = browserAPI.i18n.getMessage("options_test_mode");
   document.getElementById('options-research-participation-label').innerHTML = browserAPI.i18n.getMessage("options_research_participation");
@@ -205,6 +234,22 @@ window.addEventListener("load", function(){
     loginStartAction();
   });
   
+  let aboutTabButton = document.getElementById('menu-about');
+  aboutTabButton.querySelector("span").title = browserAPI.i18n.getMessage("about");
+  aboutTabButton.addEventListener('click', (event) => {
+    if (isAboutDisplayed()) {
+      if (coinformUserToken) {
+        displayLogout();
+      }
+      else {
+        displayLogin();
+      }
+    }
+    else {
+      displayAbout();
+    }
+  });
+  
   let accountTabButton = document.getElementById('menu-account');
   accountTabButton.querySelector("span").title = browserAPI.i18n.getMessage("account");
   accountTabButton.addEventListener('click', (event) => {
@@ -309,9 +354,13 @@ const init = () => {
 
 // Functions for changing through interface displayed
 const resetAllDisplays = () => {
-  document.querySelectorAll("#popup-menu > .menu-toolbar").forEach(el => el.classList.add("hidden"));
-  document.querySelectorAll("#popup-menu > .menu-toolbar > .menu-item").forEach(el => el.classList.remove("actual"));
-  document.querySelectorAll(".form-control-group").forEach(el => el.classList.add("hidden"));
+  document.querySelectorAll("#popup-menu > .menu-group").forEach(el => el.classList.add("hidden"));
+  resetDisplays();
+};
+
+const resetDisplays= () => {
+  document.querySelectorAll("#popup-menu .menu-item").forEach(el => el.classList.remove("actual"));
+  document.querySelectorAll(".popup-div-group").forEach(el => el.classList.add("hidden"));
 };
 
 const displayLogin = () => {
@@ -385,6 +434,13 @@ const displayOptions = () => {
   });
 };
 
+const displayAbout = () => {
+  resetDisplays();
+  document.getElementById('menu-about').classList.add("actual");
+  document.getElementById('about-div').classList.remove("hidden");
+
+};
+
 const displayAccount = () => {
   resetAllDisplays();
   document.getElementById('menu-logged').classList.remove("hidden");
@@ -407,6 +463,10 @@ const displayAccount = () => {
 
 const isOptionsDisplayed = () => {
   return (document.getElementById('menu-options').classList.contains("actual"));
+};
+
+const isAboutDisplayed = () => {
+  return (document.getElementById('menu-about').classList.contains("actual"));
 };
 
 const isAccountDisplayed = () => {
