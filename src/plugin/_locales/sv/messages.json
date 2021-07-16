@@ -110,6 +110,9 @@
   "blur_again": {
     "message": "$1 kan göras suddigt igen"
   },
+  "blur_elem": {
+    "message": "$1 kan göras suddigt"
+  },
   "provide_claim_title": {
     "message": "Hjälp oss förbättra CoInforms AI"
   },
@@ -396,7 +399,7 @@
     "message": "För mer information om analysen klicka på trovärdighets taggen"
   },
   "module_analysis_long_info__html": {
-    "message": "En <b>$1</b> analys, baserad på $2, genererade detta svar:"
+    "message": "En <b><a href=\"$3\" title=\"$4\" target=\"_blank\">$1</a></b> analys, baserad på $2, genererade detta svar:"
   },
   "module_analysis_short_info__html": {
     "message": "En <b>$1</b> analys genererade denna bedömning:"
@@ -469,5 +472,71 @@
   },
   "content_analysis_based_info": {
     "message": "Inläggets innehåll samt en rapport om svaren på inlägget stödjer, bestrider eller ifrågasätter anspråk som gjorts i inlägget"
+  },
+  "more_generic_analysis_info__html": {
+     "message": "Ytterligare information om co-informs analys hittar du <a href=\"$1\">här</a>."
+  },
+  "options_nudging_all": {
+     "message": "Nudging strategier"
+  },
+  "options_nudging_blur": {
+     "message": "Gör suddigt nudging"
+  },
+  "options_nudging_await": {
+     "message": "Betänketid nudging"
+  },
+  "options_user_data_group": {
+     "message": "Ställ in följande användardatainställningar"
+  },
+  "options_nudging_group": {
+     "message": "Välj aktiverade nudging strategier"
+  },
+  "options_dev_group": {
+     "message": "Andra utvecklings- och testningsalternativ"
+  },
+  "about": {
+     "message": "Om"
+  },
+  "about_title": {
+     "message": "Om Co-inform webbläsar-plugin"
+  },
+  "about_text1__html": {
+     "message": "Misinformation på internet skapar missupfattningar. Genom att sätta ihop ett multidisiplinärt team av forskare, experter inom datavetenskap, betendevetenskap och sämhällsvetenskap siktar Co-Inform på att engagera alla berörda parter i kampen mot missinformation genom att ge dem verktyg för att identifiera 'fake news' på internet, förstå dess spridning och förse dem granskad information."
+  },
+  "about_text2__html": {
+     "message": "För att åstadkomma detta har Co-Inform tagit fram en webbläsar-plugin, ett verktyg för att höja medborjares medvetenhet om missinformation, om kopplade granskade articklar och rättelser. Co-Informs webbläsar-plugin utväcklades som ett \"proof of concept\" riktat mot twitter flöden. "
+  },
+  "about_links_pretext": {
+     "message": "Mer information om"
+  },
+  "about_link_project_page": {
+     "message": "projektet"
+  },
+  "about_link_team_page": {
+     "message": "teamet"
+  },
+  "about_links_andtxt": {
+     "message": "och"
+  },
+  "about_link_plugin_page": {
+     "message": "webbläsar-pluginen"
+  },
+  "about_links_midtext": {
+     "message": "kan hittas på"
+  },
+  "about_link_website": {
+     "message": "Co-informs hemsida"
+  },
+  "about_contact_pretext": {
+     "message": "Du kan kontakta oss genom vårt"
+  },
+  "about_contact_link": {
+     "message": "kontaktformulär"
+  },
+  "click_more_info": {
+     "message": "Klicka för mer information om analysen."
+  },
+  "check_assessments_before_publish": {
+    "message": "Vänligen, kontrollera följade material innan du delar länken:"
   }
 }

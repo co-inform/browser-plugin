@@ -110,6 +110,9 @@
   "blur_again": {
     "message": "Nascondi il $1 di nuovo"
   },
+  "blur_elem": {
+    "message": "Nascondi il $1"
+  },
   "provide_claim_title": {
     "message": "Aiutaci ad aiutare l'AI di Co-Inform"
   },
@@ -396,7 +399,7 @@
     "message": "Per più informazioni sull'analisi, clicca sull'etichetta di credibilità"
   },
   "module_analysis_long_info__html": {
-    "message": "Una analisi di <b>$1</b>, basata $2, ha generato questa valutazione:"
+    "message": "Una analisi di <b><a href=\"$3\" title=\"$4\" target=\"_blank\">$1</a></b>, basata $2, ha generato questa valutazione:"
   },
   "module_analysis_short_info__html": {
     "message": "Una analisi di <b>$1</b> ha generato questa valutazione:"
@@ -469,5 +472,71 @@
   },
   "content_analysis_based_info": {
     "message": "sul contenuto del post e una analisi di come le risposte al post supportano, negano o mettono in dubbio l'affermazione contenuta in esso"
+  },
+  "more_generic_analysis_info__html": {
+     "message": "Altre informazioni generiche a riguardo dell'analisi di co-inform sono disponibili <a href=\"$1\">qui</a>."
+  },
+  "options_nudging_all": {
+     "message": "Strategie di nudging"
+  },
+  "options_nudging_blur": {
+     "message": "Azione di sfocatura"
+  },
+  "options_nudging_await": {
+     "message": "Azione di attesa"
+  },
+  "options_user_data_group": {
+     "message": "Attiva o disattiva le seguenti opzioni sui dati di utilizzo"
+  },
+  "options_nudging_group": {
+     "message": "Attiva o disattiva le seguenti azioni di nudging del plugin"
+  },
+  "options_dev_group": {
+     "message": "Altre opzioni di sviluppo e di test"
+  },
+  "about": {
+     "message": "Info"
+  },
+  "about_title": {
+     "message": "Informazioni sul browser plugin Co-Inform"
+  },
+  "about_text1__html": {
+     "message": "La misinformazione online genera percezioni errate. Riunendo un team multidisciplinare di ricercatori ed esperti in informatica, scienze comportamentali e scienze sociali, Co-Inform mira a coinvolgere tutte le parti interessate nella lotta alla disinformazione fornendo loro gli strumenti per identificare le \"notizie false\" online, capire come si diffondono e fornire loro informazioni verificate."
+  },
+  "about_text2__html": {
+     "message": "A tal fine, Co-Inform ha sviluppato il Browser Plugin, uno strumento per sensibilizzare i cittadini sui contenuti disinformanti, sui relativi articoli di fact-checking e sulle informazioni correttive. Come prova di concetto, il plug-in Co-Inform è stato sviluppato come estensione del browser incentrata sui contenuti di Twitter."
+  },
+  "about_links_pretext": {
+     "message": "Sono disponibili più informazioni a riguardo del"
+  },
+  "about_link_project_page": {
+     "message": "progetto"
+  },
+  "about_link_team_page": {
+     "message": "team"
+  },
+  "about_links_andtxt": {
+     "message": "e del"
+  },
+  "about_link_plugin_page": {
+     "message": "plugin"
+  },
+  "about_links_midtext": {
+     "message": "sul"
+  },
+  "about_link_website": {
+     "message": "sito di Co-Inform"
+  },
+  "about_contact_pretext": {
+     "message": "Puoi contattarci utilizzando il seguente"
+  },
+  "about_contact_link": {
+     "message": "form di contatto"
+  },
+  "click_more_info": {
+     "message": "Clicca per maggiori informazioni generiche a riguardo dell'analisi"
+  },
+  "check_assessments_before_publish": {
+    "message": "Si prega di controllare il seguente contenuto prima di condividerlo:"
   }
 }

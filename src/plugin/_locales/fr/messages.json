@@ -93,7 +93,7 @@
     "message": "Le URL suivant est détecté comme etant $1:"
   },
   "check_content_before_publish": {
-    "message": "S'il vous plait, verifiez le contenu encore une fois avant de le partager"
+    "message": "S'il vous plait, verifiez le contenu encore une fois avant de le partager."
   },
   "published_in_seconds": {
     "message": "Le tweet sera publié dans $1 secondes"
@@ -109,6 +109,9 @@
   },
   "blur_again": {
     "message": "Brouiller $1 encore"
+  },
+  "blur_elem": {
+    "message": "Brouiller $1"
   },
   "provide_claim_title": {
     "message": "Aidez-nous à améliorer l'Intelligence Artificielle de CoInform"
@@ -396,7 +399,7 @@
     "message": "Pour plus d'information sur l'analyse cliquez sur l'etiquete de credibilité"
   },
   "module_analysis_long_info__html": {
-    "message": "Une <b>$1</b>, basée sur $2, a generé cette évaluation:"
+    "message": "Une <b><a href=\"$3\" title=\"$4\" target=\"_blank\">$1</a></b>, basée sur $2, a generé cette évaluation:"
   },
   "module_analysis_short_info__html": {
     "message": "Une <b>$1</b> analyse a generé cette évaluation:"
@@ -469,5 +472,71 @@
   },
   "content_analysis_based_info": {
     "message": "le contenu du post et un rapport expliquant si les réponses au post supportent, réfutent ou questionnent la revendication qui y apparait"
+  },
+  "more_generic_analysis_info__html": {
+     "message": "Des informations génériques supplémentaires sur l'analyse de co-inform peuvent etre trouvées <a href=\"$1\">ici</a>."
+  },
+  "options_nudging_all": {
+     "message": "Stratégies de nudging"
+  },
+  "options_nudging_blur": {
+     "message": "Action de brouillement"
+  },
+  "options_nudging_await": {
+     "message": "Action d'attente"
+  },
+  "options_user_data_group": {
+     "message": "Activer ou désactiver les options de données d'utilisateurs"
+  },
+  "options_nudging_group": {
+     "message": "Activer ou désactiver les actions nudging du plugin suivantes"
+  },
+  "options_dev_group": {
+     "message": "Autres options de développement et de tests"
+  },
+  "about": {
+     "message": "À propos"
+  },
+  "about_title": {
+     "message": "À propos du Browser Plugin Co-inform"
+  },
+  "about_text1__html": {
+     "message": "La désinformation en ligne génère de fausses perceptions. Co-inform a créé une équipe de chercheurs multidisciplinaire avec des experts en informatique, science du comportement, science sociale avec le but d'engager toutes les parties interéssées a la lutte contre la désinformation en leur offrant les instruments pour identifier les 'fake news' en ligne, comprendre comment ils se répandent, et ensuite fournir les informations verifiées. "
+  },
+  "about_text2__html": {
+     "message": "Pour cette raison, Co-Inform a dévelopé le Browser Plugin, un instrument pour sensibiliser les citoyens sur le faux contenu mais aussi sur l'existence d'articles vérificateurs et d'informations correctives. Comme preuve de concept, le plugin Co-inform a été développé comme une extension pour browser ciblant le contenu Twiter.  "
+  },
+  "about_links_pretext": {
+     "message": "Plus d'informations sur"
+  },
+  "about_link_project_page": {
+     "message": "le projet"
+  },
+  "about_link_team_page": {
+     "message": "l'équipe"
+  },
+  "about_links_andtxt": {
+     "message": "et"
+  },
+  "about_link_plugin_page": {
+     "message": "le plugin"
+  },
+  "about_links_midtext": {
+     "message": "peuvent etre trouvées au"
+  },
+  "about_link_website": {
+     "message": "site de Co-inform"
+  },
+  "about_contact_pretext": {
+     "message": "Vous pouvez nous contacter via "
+  },
+  "about_contact_link": {
+     "message": "la forme de contact suivante"
+  },
+  "click_more_info": {
+     "message": "Cliquez pour plus d'analyse d'information générique"
+  },
+  "check_assessments_before_publish": {
+    "message": "S'il vous plait, verifiez le contenu suivant avant de le partager:"
   }
 }

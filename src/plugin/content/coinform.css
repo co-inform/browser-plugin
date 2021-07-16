@@ -188,6 +188,30 @@
   margin-right: 8px;
 }
 
+.swal2-popup .blur-actions {
+  clear: both;
+  display: flex;
+  z-index: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1em;
+}
+
+.swal2-popup .blur-actions button {
+  display: inline-block;
+  background: initial;
+  border: 0;
+  border-radius: .25em;
+  color: #fff;
+  font-size: 1.0625em;
+  cursor: pointer;
+  background-color: rgb(98, 185, 175);
+  border-left-color: rgb(98, 185, 175);
+  border-right-color: rgb(98, 185, 175);
+}
+
+
 .coinform-padding-top-10 {
   padding-top: 10px;
 }
@@ -232,14 +256,18 @@ article[coinform-parsed] {
   color: #e6e0e0;
   font-weight: bold;
   align-self: flex-start;
-  box-shadow: 3px 3px;
+  box-shadow: 5px 5px 5px;
   cursor: auto;
-  margin-top: 10px;
+  margin-top: 20px; /*10px;*/
   margin-left: 10px;
   margin-right: 10px;
   border: 2px;
   border-radius: 3px;
   white-space: nowrap;
+}
+
+.coinformToolbar.darkMode{
+  box-shadow: 5px 5px 5px rgb(0 0 0);
 }
 
 .coinformToolbarLogoContent {
@@ -296,7 +324,7 @@ article[coinform-parsed] {
   float: left;
   display: block;
   z-index: 9999;
-  width: 400px;
+  width: 350px;
   padding: 10px;
   background-color: white;
   color: #3b444b;
@@ -500,6 +528,29 @@ article[coinform-parsed] {
   50% { opacity: 0; }
 }
 
+.coinformToolbar .coinformRelationArrow {
+  position: relative;
+  display: inline-block;
+  align-self: flex-start;
+  margin-left: 8px;
+  margin-right: 0px;
+
+	/* -moz-transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  transform: scale(-1, 1); */
+}
+
+.coinformToolbar .coinformRelationArrow::before {
+  content: "\2935"; /*2193, 21D3, 21E3, 21E9, 21B4, 2935*/
+  color: #6c3b5d;
+  position: relative;
+  top: 7px;
+	font-size: 20px;
+  font-weight: 900;
+}
+
 .coinformToolbar .coinformToolbarLabelContent .coinformStatus {
   position: relative;
   display: inline-block;
@@ -521,9 +572,6 @@ article[coinform-parsed] {
 }
 
 .coinformToolbar .coinformToolbarLabelContent .coinformStatus .coinformStatusDone {
-  position: relative;
-  display: inline-block;
-  align-self: flex-start;
   height: 15px;
 }
 
@@ -533,9 +581,6 @@ article[coinform-parsed] {
 }
 
 .coinformToolbar .coinformToolbarLabelContent .coinformStatus .coinformStatusUnDone {
-  position: relative;
-  display: inline-block;
-  align-self: flex-start;
   height: 15px;
 }
 
