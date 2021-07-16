@@ -110,6 +110,9 @@
   "blur_again": {
     "message": "Difuminar la $1"
   },
+  "blur_elem": {
+    "message": "Difuminar la $1"
+  },
   "provide_claim_title": {
     "message": "Ajuda'ns a millorar la IA de Co-Inform"
   },
@@ -396,7 +399,7 @@
     "message": "Per a més informació sobre les anàlisis realitzades pots clicar sobre l'etiqueta de credibilitat"
   },
   "module_analysis_long_info__html": {
-    "message": "Una anàlisi anomenada <b>$1</b>, basada en $2, ha generat aquesta valoració:"
+    "message": "Una anàlisi anomenada <b><a href=\"$3\" title=\"$4\" target=\"_blank\">$1</a></b>, basada en $2, ha generat aquesta valoració:"
   },
   "module_analysis_short_info__html": {
     "message": "L'anàlisi <b>$1</b> ha generat aquesta valoració:"
@@ -449,6 +452,9 @@
   "content_tagged_by__html": {
     "message": "Aquest contingut ha estat etiquetat com a <b>$1</b> per <b>$2</b> dels mòduls Co-Inform per a la detecció de desinformació."
   },
+  "more_generic_analysis_info__html": {
+    "message": "Per obtenir més informació genèrica sobre les anàlisis de co-inform clica <a href=\"$1\" target=\"_blank\">aquí</a>."
+  },
   "specifically": {
     "message": "Específicament:"
   },
@@ -469,5 +475,68 @@
   },
   "content_analysis_based_info": {
     "message": "el contingut de la publicació i un informe sobre si les respostes a la publicació donen suport, rebutgen o qüestionen l'afirmació que hi apareix"
+  },
+  "options_nudging_all": {
+    "message": "Totes"
+  },
+  "options_nudging_blur": {
+    "message": "Acció de difuminat"
+  },
+  "options_nudging_await": {
+    "message": "Acció d'alerta de publicació"
+  },
+  "options_user_data_group": {
+    "message": "Activa o desactiva les següents opcions relatives a les dades d'usuari"
+  },
+  "options_nudging_group": {
+    "message": "Activa o desactiva les següents accions del plugin"
+  },
+  "options_dev_group": {
+    "message": "Altres opcions de desenvolupament i testeig"
+  },
+  "about": {
+    "message": "Sobre Co-inform"
+  },
+  "about_title": {
+    "message": "Sobre el Plugin de Co-inform"
+  },
+  "about_text1__html": {
+    "message": "La desinformació a la web genera percepcions equivocades. En reunir a un equip multidisciplinari d'investigadors i experts en informàtica, ciències conductuals i ciències socials, Co-Inform pretén implicar a totes les parts interessades en la lluita contra la desinformació, proporcionant-los les eines necessàries per a identificar les 'notícies falses' a la web, entendre com es propaguen i proporcionar-los informació verificada."
+  },
+  "about_text2__html": {
+    "message": "Amb aquest objectiu, Co-Inform ha desenvolupat el Plugin, una eina orientada a conscienciar als ciutadans de continguts desinformatius, d'articles de fact-checking relacionats, i de la informació correctiva. Com a prova de concepte, el Plugin de Co-Inform s'ha desenvolupat en forma d'extensió de navegador web centrada en els continguts de Twitter."
+  },
+  "about_links_pretext": {
+    "message": "Per obtenir més informació sobre"
+  },
+  "about_link_project_page": {
+    "message": "el projecte"
+  },
+  "about_link_team_page": {
+    "message": "l'equip"
+  },
+  "about_links_andtxt": {
+    "message": "i"
+  },
+  "about_link_plugin_page": {
+    "message": "l'eina Plugin"
+  },
+  "about_links_midtext": {
+    "message": "pots accedir a"
+  },
+  "about_link_website": {
+    "message": "la web de Co-inform"
+  },
+  "about_contact_pretext": {
+    "message": "Pots contactar amb nosaltres mitjançant el següent"
+  },
+  "about_contact_link": {
+    "message": "formulari de contacte"
+  },
+  "click_more_info": {
+    "message": "Clica per a més informació genèrica sobre l'anàlisi"
+  },
+  "check_assessments_before_publish": {
+    "message": "Si us plau, comprova el següent contingut abans de compartir:"
   }
 }
