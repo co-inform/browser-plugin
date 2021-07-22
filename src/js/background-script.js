@@ -60,7 +60,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
 
       if (coinformUserToken) {
         let res = checkAndSaveToken(coinformUserToken);
-        if (res.ok) {
+        if (res.isOk) {
           sendMessageToAllScripts({
             messageId: "renewUserToken",
             userMail: res.userMail,
@@ -213,7 +213,7 @@ const logInAPI = function(request, scriptId, loginCallback) {
       if (data.token) {
         let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
         let res = checkAndSaveToken(resToken, scriptId);
-        if (res.ok) {
+        if (res.isOk) {
           logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${res.userMail}`, scriptId);
           sendMessageToAllScripts({
             messageId: "userLogin",
@@ -242,7 +242,7 @@ const logInAPI = function(request, scriptId, loginCallback) {
 const checkAndSaveToken = function(token, scriptId) {
 
   let res = {
-    ok: false
+    isOk: false
   };
   const tokenDecoded = jwtDecode(token);
   const now = new Date();
@@ -268,7 +268,7 @@ const checkAndSaveToken = function(token, scriptId) {
     logger.logMessage(CoInformLogger.logTypes.warning, `JWT expiring time passed`, scriptId);
   }
   else {
-    res.ok = true;
+    res.isOk = true;
     res.userMail = userMail;
     res.userID = userID;
     res.token = token;
@@ -339,7 +339,7 @@ const renewUserToken = function(retryNum = 0) {
         //renewTokenOKactions(data.token);
         let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
         let res = checkAndSaveToken(resToken);
-        if (res.ok) {
+        if (res.isOk) {
           logger.logMessage(CoInformLogger.logTypes.info, `User Token Renewed: ${res.userMail}`);
           sendMessageToAllScripts({
             messageId: "renewUserToken",
@@ -535,7 +535,7 @@ const changePass = function(request, scriptId, changePassCallback) {
       if (data.token) {
         let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
         let res = checkAndSaveToken(resToken);
-        if (res.ok) {
+        if (res.isOk) {
           logger.logMessage(CoInformLogger.logTypes.info, `ChangePass Token Renewed: ${res.userMail}`);
           sendMessageToAllScripts({
             messageId: "renewUserToken",

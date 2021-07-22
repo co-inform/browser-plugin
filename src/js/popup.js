@@ -769,13 +769,13 @@ const optionsNudgingChangeAction = (targetCheckbox) => {
       document.querySelector('input.nudging-options-all').checked = "true";
     }
     else {
-      let allFalse = true;
+      let areAllFalse = true;
       document.querySelectorAll('input.nudging-options-elem').forEach(function(elem) {
         if (elem.checked) {
-          allFalse = false;
+          areAllFalse = false;
         }
       });
-      if (allFalse) {
+      if (areAllFalse) {
         document.querySelector('input.nudging-options-all').checked = null;
       }
     }

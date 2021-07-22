@@ -18,7 +18,7 @@ let claimIconPath;
 let disagreeIconPath;
 let agreeIconPath;
 
-let darkMode = false;
+let inDarkMode = false;
 
 let configuration;
 let logger;
@@ -125,10 +125,10 @@ const start = () => {
   disagreeIconPath = browserAPI.extension.getURL(CoinformConstants.IMAGES_PATH + CoinformConstants.DISAGREE_ICON_NAME);
   agreeIconPath = browserAPI.extension.getURL(CoinformConstants.IMAGES_PATH + CoinformConstants.AGREE_ICON_NAME);
 
-  darkMode = false;
+  inDarkMode = false;
   let bodyColor = document.body.style.backgroundColor;
   if (bodyColor && ((bodyColor.indexOf("#FFFFFF") < 0) && (bodyColor.indexOf("rgb(255, 255, 255)") < 0 ))) {
-    darkMode = true;
+    inDarkMode = true;
   }
 
   if (window.location.hostname.indexOf('twitter.com') >= 0) {
@@ -164,7 +164,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
   // click situation when we already procesed the tweet and the await time has finished
   if (targetButton.coInformed) {
-    if (targetButton.foundMisinfo) {
+    if (targetButton.hasMisinfo) {
 
       // if the content is missinfo, put a timer of 5 or 10 seconds before publishing it, and then set the CoInformed property to false and raise the click event again
       targetButton.setAttribute("disabled", "");
@@ -243,7 +243,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
       toolBar.offsetParent.append(loadingMessage);
     }
 
-    targetButton.foundMisinfo = false;
+    targetButton.hasMisinfo = false;
 
     for (let i = 0; i < urls.length; i++) {
 
@@ -258,7 +258,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         // Hack to force a misinformation url detection, and a missinformation user tweets detection
         // Active only in test use mode
         if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(new RegExp(CoinformConstants.MISINFO_TEST_URL_REGEXP))) {
-          targetButton.foundMisinfo = true; 
+          targetButton.hasMisinfo = true; 
           publishTweetAlertMisinfo("not_credible", urls[i], tweetText, assessments);
         }
 
@@ -268,12 +268,11 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         else if (resStatus.localeCompare('200') === 0) {
           let data = res.data;
           let accuracyLabel = JSON.stringify(data.final_credibility).replace(/['"]+/g, '').replace(/\s+/g,'_');
-          let isMisinfo = checkLabelMisinfo(accuracyLabel);
+          targetButton.hasMisinfo = checkLabelMisinfo(accuracyLabel);
           if (data.assessments) {
             assessments = data.assessments;
           }
-          if (isMisinfo) {
-            targetButton.foundMisinfo = true; 
+          if (targetButton.hasMisinfo) {
             publishTweetAlertMisinfo(accuracyLabel, urls[i], tweetText, assessments);
           }
         }
@@ -306,7 +305,7 @@ const publishTweetPostAction = (targetButton) => {
   targetButton.coInformed = true;
   let msg = document.getElementById("coinformPublishMessages");
   // Only re-do the clicking if we do not detected misinformation
-  if (!targetButton.foundMisinfo) {
+  if (!targetButton.hasMisinfo) {
     if (msg) msg.parentNode.removeChild(msg);
     targetButton.click();
   }
@@ -393,7 +392,7 @@ const publishTweetCountdown = (targetButton, iteration, tweetText) => {
       }, 1000);
     }
     else {
-      targetButton.foundMisinfo = false;
+      targetButton.hasMisinfo = false;
       targetButton.removeAttribute("disabled");
       targetButton.removeAttribute("aria-disabled");
       msg.parentNode.removeChild(msg);
@@ -432,11 +431,10 @@ const retweetTweetCallback = (clickEvent, targetButton) => {
     logger.logMessage(CoInformLogger.logTypes.info, `Retweet Tweet Label: ${tweet.coInformLabel}`);
   }
 
-  let isMisinfo = checkLabelMisinfo(tweet.coInformLabel);
-  if (isMisinfo) {
+  targetButton.isMisinfo = checkLabelMisinfo(tweet.coInformLabel);
+  if (targetButton.isMisinfo) {
     // check user option that disables await nudging action is not set to false
     if (!(configuration.coinform.options.config && configuration.coinform.options.config.await && (configuration.coinform.options.config.await.localeCompare("false") === 0))) {
-      targetButton.foundMisinfo = true;
       retweetTweetAlertMisinfo(tweet, tweet.coInformLabel);
     }
     else {
@@ -524,17 +522,17 @@ const unlikeTweetCallback = (clickEvent, targetButton) => {
 };
 
 const checkLabelMisinfo = (label) => {
-  let misInfo = false;
+  let isMisInfo = false;
   if (label) {
     let labelCategory = configuration.coinform.categories[label];
     if (!labelCategory) {
       logger.logMessage(CoInformLogger.logTypes.warning, `Unexpected Label: ${label}`);
     }
     else if (labelCategory.action.localeCompare("blur") === 0) {
-      misInfo = true;
+      isMisInfo = true;
     }
   }
-  return misInfo;
+  return isMisInfo;
 };
 
 const newTweetCallback = (tweetInfo) => {
@@ -564,10 +562,10 @@ const newTweetCallback = (tweetInfo) => {
 
   }
 
-  if (!tweetInfo.domObject.toolBar) {
+  if (!tweetInfo.domObject.hasToolbar) {
     let toolbar = createToolbar(tweetInfo);
     tweetInfo.domObject.prepend(toolbar);
-    tweetInfo.domObject.toolBar = true;
+    tweetInfo.domObject.hasToolbar = true;
   } else {
     logger.logMessage(CoInformLogger.logTypes.debug, `Toolbar already inserted`, tweetInfo.id);
   }
@@ -629,7 +627,7 @@ const createToolbar = (tweetInfo) => {
   let tbl = document.createElement('table');
   tbl.classList.add("coinformToolbar");
 
-  if (darkMode) {
+  if (inDarkMode) {
     tbl.classList.add("darkMode");
   }
   
@@ -1137,20 +1135,17 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   infoLogo.setAttribute("src", infoIconPath);
   infoContent.append(infoLogo);
   
-  let auxHoover = true;
   let auxHoverTime = null;
   //let auxScoresLog = createModulesCredibilityScoresLog(modules);
 
   infoLogo.addEventListener("mouseenter", (event) => {
     openLabelInfoTooltip(event, tweet, label, modules);
-    auxHoover = true;
     auxHoverTime = Date.now();
     log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${label}`, 'Opened explainability tooltip on hover');
   });
 
   infoLogo.addEventListener("mouseleave", (event) => {
     closeLabelInfoTooltip(event, tweet);
-    auxHoover = false;
     let auxHoverSpentTime = "?";
     if (auxHoverTime) {
       auxHoverSpentTime = Math.round((Date.now() - auxHoverTime) / 1000);
@@ -1386,8 +1381,8 @@ function openLabelPopup(tweet) {
   const elementTxt = browserAPI.i18n.getMessage('post');
 
   let node = tweet.domObject;
-  let nodeBlurred = isBlurred(tweet);
-  let nodeBlurrable = false;
+  let isBlurred = isBlurred(tweet);
+  let isBlurrable = false;
   let buttonText = "";
   let buttonHtml = "";
 
@@ -1417,9 +1412,7 @@ function openLabelPopup(tweet) {
     moreInfo.append(auxContent);
 
     let category = configuration.coinform.categories[node.coInformLabel];
-    if (category && (category.action.localeCompare("blur") === 0)) {
-      nodeBlurrable = true;
-    }
+    isBlurrable = (category && (category.action.localeCompare("blur") === 0));
   }
   else {
     let auxText = document.createElement('SPAN');
@@ -1427,13 +1420,13 @@ function openLabelPopup(tweet) {
     moreInfo.append(auxText);
   }
 
-  if (nodeBlurred) {
+  if (isBlurred) {
     buttonText = browserAPI.i18n.getMessage('see_anyway', elementTxt);
     buttonHtml = '<div class="blur-actions">' +
       '<button type="button" id="blur-unblur-'+tweet.id+'" class="blur-unblur-button swal2-styled">'+buttonText+'</button>' +
     '</div>';
   }
-  else if (nodeBlurrable) {
+  else if (isBlurrable) {
     buttonText = browserAPI.i18n.getMessage('blur_elem', elementTxt);
     buttonHtml = '<div class="blur-actions">' +
       '<button type="button" id="blur-unblur-'+tweet.id+'" class="blur-unblur-button swal2-styled">'+buttonText+'</button>' +
@@ -1483,11 +1476,11 @@ function openLabelPopup(tweet) {
     }
     auxPopupTime = null;
     
-    if (nodeBlurred) {
+    if (isBlurred) {
       removeTweetBlurry(tweet);
       log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on "See tweet post anyway" to unblur tweet\nPopup time spent: ${auxPopupSpentTime} sec`);
     }
-    else if (nodeBlurrable) {
+    else if (isBlurrable) {
       createTweetBlurry(tweet);
       log2Server('blur', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${node.coInformLabel}`, `Click on "Blur tweet post again"\nPopup time spent: ${auxPopupSpentTime} sec`);
     }
@@ -1733,17 +1726,17 @@ function openClaimPopup(tweet) {
       let claimAccuracyLabel = result.value[0];
       let claimUrl = result.value[1];
       let claimComment = result.value[2];
-      let claimCheck = result.value[3];
+      let claimToFactCheck = result.value[3];
 
       let evaluation = {
         'label': claimAccuracyLabel, 
         'url': claimUrl, 
         'comment': claimComment,
-        'factcheck': claimCheck
+        'factcheck': claimToFactCheck
       };
       
       let logMessage = `Click on "submit" claim button`;
-      if (claimCheck == "true") {
+      if (claimToFactCheck == "true") {
         logMessage = logMessage + " with request to Fact-Check"
       }
       logMessage = logMessage + `\nAccuracy: ${claimAccuracyLabel}\nUser claim: ${claimUrl}\nAdditional info: ${claimComment}\nPopup time spent: ${auxPopupSpentTime} sec`;
