@@ -13,6 +13,7 @@ module.exports.logTypes = logTypes;
 const logLabels = ['', 'Err', 'Warn', 'Info', 'Dbg', 'All'];
 
 function CoInformLogger(logSet = logTypes.error) {
+  this.initialLogLevel = logSet;
   this.logLevel = logSet;
 }
 
@@ -32,6 +33,9 @@ CoInformLogger.prototype = {
       }
     }
     
+  },
+  resetLogLevel: function () {
+    this.logLevel = this.initialLogLevel;
   }
 
 };

@@ -572,6 +572,13 @@ const changeOptions = function (request, scriptId, changeOptionsCallback) {
   if (request.options !== undefined) {
 
     logger.logMessage(CoInformLogger.logTypes.debug, `Requesting Settings Change`, scriptId);
+
+    if (request.options.testMode.localeCompare('true') === 0) {
+      logger.setLogLevel(CoInformLogger.logTypes['all']);
+    }
+    else {
+      logger.resetLogLevel();
+    }
   
     client.postUserChangeSettings(request.options, request.userToken).then(res => {
       

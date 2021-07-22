@@ -111,6 +111,12 @@ browserAPI.runtime.onMessage.addListener(function(request, sender, sendResponse)
   else if (request.messageId === "OptionsChange") {
     if (request.options !== undefined) {
       configuration.coinform.options = request.options;
+      if (request.options.testMode.localeCompare('true') === 0) {
+        logger.setLogLevel(CoInformLogger.logTypes['all']);
+      }
+      else {
+        logger.resetLogLevel();
+      }
     }
   }
 });
@@ -1091,7 +1097,7 @@ const removeTweetBlurry = (tweet) => {
 
 };
 
-const isBlurred = (tweet) => {
+const checkIfBlurred = (tweet) => {
 
   let node = tweet.domObject;
   let attrVal = node.getAttribute(parser.untrustedAttribute);
@@ -1381,7 +1387,7 @@ function openLabelPopup(tweet) {
   const elementTxt = browserAPI.i18n.getMessage('post');
 
   let node = tweet.domObject;
-  let isBlurred = isBlurred(tweet);
+  let isBlurred = checkIfBlurred(tweet);
   let isBlurrable = false;
   let buttonText = "";
   let buttonHtml = "";
