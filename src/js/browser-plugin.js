@@ -1582,8 +1582,8 @@ function updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, operation,
   if (pluginCache[tweetInfo.id].feedback[`total_${agreement}`] != undefined) {
     totalNum = parseInt(pluginCache[tweetInfo.id].feedback[`total_${agreement}`]);
   }
-  if (operation == 'add') totalNum = totalNum + parseInt(num);
-  else if (operation == 'remove') totalNum = totalNum - parseInt(num);
+  if (operation == 'add') totalNum += parseInt(num);
+  else if (operation == 'remove') totalNum -= parseInt(num);
   else if (operation == 'update') totalNum = parseInt(num);
   pluginCache[tweetInfo.id].feedback[`total_${agreement}`] = totalNum;
 
