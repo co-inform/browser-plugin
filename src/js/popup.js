@@ -812,6 +812,13 @@ const optionsSaveAction = (targetButton) => {
   auxInput = document.querySelector('input[name="options-nudging-await"]:checked');
   optionsObj.config.await = (auxInput && auxInput.value) ? auxInput.value : "false";
 
+  if (optionsObj.testMode.localeCompare('true') === 0) {
+    logger.setLogLevel(CoInformLogger.logTypes['all']);
+  }
+  else {
+    logger.resetLogLevel();
+  }
+
   browserAPI.runtime.sendMessage({
     messageId: "OptionsChange",
     options: optionsObj,
