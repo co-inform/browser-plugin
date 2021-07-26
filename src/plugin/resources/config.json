@@ -1,16 +1,34 @@
 {
   "coinform": {
     "apiUrl": "https://api.coinform.eu",
-    "logLevel": "info",
+    "logLevel": "error",
     "evaluationLogs": "false",
     "hideThreshold": 5,
     "categories": {
-      "credible": "label", 
-      "mostly_credible": "label", 
-      "credibility_uncertain": "label", 
-      "mostly_not_credible": "blur", 
-      "not_credible": "blur", 
-      "not_verifiable": "label"
+      "credible": {
+        "action": "label",
+        "labelColor": "#3b444b"
+      },
+      "mostly_credible": {
+        "action": "label",
+        "labelColor": "#3b444b"
+      },
+      "credibility_uncertain": {
+        "action": "label",
+        "labelColor": "#3b444b"
+      },
+      "mostly_not_credible": {
+        "action": "blur",
+        "labelColor": "#3b444b"
+      },
+      "not_credible": {
+        "action": "blur",
+        "labelColor": "#3b444b"
+      },
+      "not_verifiable": {
+        "action": "label",
+        "labelColor": "#3b444b"
+      }
     },
     "accuracy": {
       "accurate": "", 
@@ -20,7 +38,11 @@
       "inaccurate": ""
     },
     "options": {
-      "testMode": "false"
+      "testMode": "false",
+      "config": {
+        "blur": "true",
+        "await": "true"
+      }
     }
   }
 }

@@ -61,11 +61,18 @@ body {
   justify-content: space-between;
 }
 
-#popup-menu > div > div {
-  padding: 0.5em;
+#popup-menu div {
   display: inline-block;
   background-color: #693c5e;
   color: white;
+}
+
+#popup-menu .menu-item {
+  padding: 0.5em;
+}
+
+#popup-menu .menu-text {
+  display: inline-block;
 }
 
 #popup-menu .menu-item {
@@ -73,13 +80,8 @@ body {
   cursor: pointer;
 }
 
-#popup-menu .menu-tabs {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
 #popup-menu .menu-tabs .menu-item {
-  width: 40%;
+  width: 35%;
 }
 
 #popup-menu .menu-item span {
@@ -111,26 +113,48 @@ body {
   content: "\f007";
 }
 
+#menu-about > span::before {
+  margin-right: 0px;
+  content: "\f05a";
+}
+
 #menu-options > span::before {
   margin-right: 0px;
   content: "\f013";
-}
-
-#menu-options {
-  margin-right: 15px;
 }
 
 #popup-menu .menu-item.actual, #popup-menu .menu-item:hover {
   background-color: #8f6384;
 }
 
-#menu-logged {
-  display: inline-block;
-  width: 100%;
+#popup-menu > .menu-item {
+  float: right;
 }
 
-#menu-logged .menu-item {
+#popup-menu > .menu-group > .menu-item {
+  margin-right: 15px;
+}
+
+#popup-menu > .menu-group {
+  padding-left: 20px;
+  display: inline-block;
+  width: 85%;
+}
+
+#popup-menu > .menu-group > .menu-text {
+  display: inline-block;
+  width: 68%;
+  position: relative;
+  top: 8px;
+  font-weight: 600;
+}
+
+#menu-logged > .menu-item {
   float: right;
+}
+
+.form-control.subelem {
+  padding-left: 30px;
 }
 
 .form-control label::before {
@@ -162,18 +186,18 @@ body {
   width: 250px;
 }
 
-.form-control-group {
+.popup-div-group {
   display: grid;
   clear: both;
   margin: 1em 2em 1em;
 }
 
-.form-control-group label {
+.form-control label {
   float: left;
   margin-right: 5px;
 }
 
-.form-control-group input[type="email"], .form-control-group input[type="password"] {
+.form-control input[type="email"], .form-control input[type="password"] {
   float: left;
   width: 90%;
   outline: 0;
@@ -242,7 +266,7 @@ body {
   white-space: nowrap;
 }
 
-.form-control-group input.input-checkbox {
+.form-control input.input-checkbox {
   width: auto;
   float: right;
 }
@@ -259,7 +283,12 @@ body {
   margin-bottom: 1em;
 }
 
+.form-title {
+  margin-bottom: 1em;
+}
+
 .form-info-text {
+  margin-top: 0.5em;
   margin-bottom: 1em;
 }
 
@@ -441,6 +470,23 @@ body {
 
 .consent-text summary:focus{
   outline: none;
+}
+
+#options-form label, #options-form span {
+  font-size: 0.8em;
+}
+
+#options-form .form-title {
+  font-size: 1em;
+  font-weight: 600;
+}
+
+#about-div #about-content h3:first-child {
+  margin-top: 0px;
+}
+
+#about-div #about-content p {
+  font-size: 0.8em;
 }
 
 .hidden {

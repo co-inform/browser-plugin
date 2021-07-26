@@ -17,7 +17,7 @@
     <h1 id="popup-title">Co-Inform</h1>
   </div>
   <div id="popup-menu">
-    <div id="menu-notlogged" class="menu-toolbar menu-tabs hidden">
+    <div id="menu-notlogged" class="menu-group menu-tabs hidden">
       <div class="menu-item" id="menu-login">
         <span>Login</span>
       </div>
@@ -25,8 +25,8 @@
         <span>Register</span>
       </div>
     </div>
-    <div id="menu-logged" class="menu-toolbar hidden">
-      <div id="logged-text">
+    <div id="menu-logged" class="menu-group hidden">
+      <div id="logged-text" class="menu-text">
         <span>You are already logged</span>
       </div>
       <div class="menu-item" id="menu-account" title="Account">
@@ -36,9 +36,12 @@
         <span></span>
       </div>
     </div>
+    <div class="menu-item" id="menu-about" title="About">
+        <span></span>
+    </div>
   </div>
 
-  <div class="form-control-group" id="login-form" class="hidden">
+  <div class="popup-div-group" id="login-form" class="hidden">
 
     <div class="form-control">
       <label id="login-mail-label" class="mail_label" for="login-auth-mail"></label>
@@ -63,7 +66,7 @@
 
   </div>
 
-  <div class="form-control-group" id="register-form" class="hidden">
+  <div class="popup-div-group" id="register-form" class="hidden">
 
     <div class="form-control">
       <label id="register-mail-label" class="mail_label" for="register-auth-mail"></label>
@@ -115,7 +118,7 @@
 
   </div>
 
-  <div class="form-control-group" id="register-form-step2" class="hidden">
+  <div class="popup-div-group" id="register-form-step2" class="hidden">
 
     <div class="form-control">
       <div id="register-step2-text">
@@ -132,7 +135,7 @@
 
   </div>
 
-  <div class="form-control-group" id="register-form-step3" class="hidden">
+  <div class="popup-div-group" id="register-form-step3" class="hidden">
 
     <div class="form-control">
       <div id="register-step3-text">
@@ -149,7 +152,7 @@
 
   </div>
 
-  <div class="form-control-group" id="register-form-step2" class="hidden">
+  <div class="popup-div-group" id="register-form-step2" class="hidden">
 
     <div class="form-control">
       <div id="register-step2-text">
@@ -166,7 +169,7 @@
 
   </div>
 
-  <div class="form-control-group" id="register-form-step3" class="hidden">
+  <div class="popup-div-group" id="register-form-step3" class="hidden">
 
     <div class="form-control">
       <div id="register-step3-text">
@@ -183,7 +186,20 @@
 
   </div>
 
-  <div class="form-control-group" id="registered-div" class="hidden">
+  <div class="popup-div-group" id="about-div" class="hidden">
+    <div id="about-content">
+      <h3 id="about-title">About the Co-Inform Browser Plugin</h3>
+      <p id="about-text1">Misinformation online generates misperceptions. 
+         By bringing together a multidisciplinary team of researchers and experts in computer science, behavioural science, and social science, Co-Inform aims at engaging all stakeholders in fighting misinformation by providing them with the tools to identify ‘fake news’ online, understand how they spread, and provide them with verified information.</p>
+      <p id="about-text2">To this end, Co-Inform has developed the Browser Plugin, a tool to raise citizens’ awareness of misinforming content, of related fact-checking articles and corrective information. 
+         As a proof of concept, the Co-Inform plugin has been developed as a browser extension focused on Twitter content.</p>
+      <p id="about-links"><span id="about-links-pretext">More information about</span> <a id="about-link-project-page" target="_blank" href="https://coinform.eu/about/the-project/">the project</a>, <a id="about-link-team-page" target="_blank" href="https://coinform.eu/about/the-consortium/">the team</a>, <span id="about-links-andtxt">and</span> <a id="about-link-plugin-page" target="_blank" href="https://coinform.eu/tools/plugin-tutorial/">the tool</a> <span id="about-links-midtext">can be found on the</span> <a id="about-link-website" target="_blank" href="https://coinform.eu/">Co-Inform web site</a>.</p>
+      <p id="about-contact"><span id="about-contact-pretext">You can contact us through the following</span> <a id="about-contact-link" target="_blank" href="https://coinform.eu/42-2/">contact form</a>.</p>
+    </div>
+
+  </div>
+
+  <div class="popup-div-group" id="registered-div" class="hidden">
 
     <div class="form-buttons">
       <button class="coinform-button coinform-button-secondary" type="button" id="logout-button">Log out</button>
@@ -192,7 +208,7 @@
 
   </div>
 
-  <div class="form-control-group" id="account-form" class="hidden">
+  <div class="popup-div-group" id="account-form" class="hidden">
 
     <div class="form-info-text">
       <span id="account-info-title">Account information</span>:
@@ -234,18 +250,14 @@
 
   </div>
 
-  <div class="form-control-group" id="options-form" class="hidden">
+  <div class="popup-div-group" id="options-form" class="hidden">
 
-    <div class="form-info-text">
+    <div class="form-title">
       <span id="options-title">Options</span>
     </div>
 
-    <div class="form-control">
-      <label class="coinform-switch">
-        <input type="checkbox" class="input-checkbox-switch" id="options-test-mode" name="options-test-mode" value="true">
-        <span class="coinform-switch-slider"></span>
-      </label>
-      <label id="options-test-mode-label" class="testmode_label" for="options-test-mode">Test Mode</label>
+    <div class="form-info-text">
+      <span id="options-user-data-text">Enable or disable the following user data options</span>:
     </div>
 
     <div class="form-control">
@@ -262,6 +274,45 @@
         <span class="coinform-switch-slider"></span>
       </label>
       <label id="options-followup-communications-label" class="followup_label" for="options-followup-communications">Follow-up communications</label>
+    </div>
+
+    <div class="form-info-text">
+      <span id="options-nudging-text">Enable or disable the following plugin nudging actions</span>:
+    </div>
+
+    <div class="form-control">
+      <label class="coinform-switch">
+        <input type="checkbox" class="input-checkbox-switch nudging-options-all" id="options-nudging-all" name="options-nudging-all" value="true">
+        <span class="coinform-switch-slider"></span>
+      </label>
+      <label id="options-nudging-all-label" class="followup_label" for="options-nudging-all">Nudging strategies</label>
+    </div>
+
+      <div class="form-control subelem">
+        <label class="coinform-switch">
+          <input type="checkbox" class="input-checkbox-switch nudging-options-elem" id="options-nudging-blur" name="options-nudging-blur" value="true">
+          <span class="coinform-switch-slider"></span>
+        </label>
+        <label id="options-nudging-blur-label" class="followup_label" for="options-nudging-blur">Blur nudging action</label>
+      </div>
+      <div class="form-control subelem">
+        <label class="coinform-switch">
+          <input type="checkbox" class="input-checkbox-switch nudging-options-elem" id="options-nudging-await" name="options-nudging-await" value="true">
+          <span class="coinform-switch-slider"></span>
+        </label>
+        <label id="options-nudging-await-label" class="followup_label" for="options-nudging-await">Await nudging action</label>
+      </div>
+
+    <div class="form-info-text">
+      <span id="options-dev-text">Other development or testing options</span>:
+    </div>
+
+    <div class="form-control">
+      <label class="coinform-switch">
+        <input type="checkbox" class="input-checkbox-switch" id="options-test-mode" name="options-test-mode" value="true">
+        <span class="coinform-switch-slider"></span>
+      </label>
+      <label id="options-test-mode-label" class="testmode_label" for="options-test-mode">Test Mode</label>
     </div>
 
     <div class="form-buttons">

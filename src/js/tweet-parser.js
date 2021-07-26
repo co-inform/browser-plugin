@@ -294,10 +294,7 @@ const getTweetInfo = (tweet, num) => {
     text: text,
     id: tweetid,
     url: tweetUrl,
-    domObject: tweet,
-    analyzed: false,
-    logo: false,
-    toolbar: false
+    domObject: tweet
   };
 
 };

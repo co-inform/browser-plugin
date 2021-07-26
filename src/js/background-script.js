@@ -1,8 +1,9 @@
 
-const jwtDecode = require('jwt-decode');
+const CoinformConstants = require('./coinform-constants');
 const CoinformClient = require('./coinform-client');
 const CoInformLogger = require('./coinform-logger');
 const browserAPI = chrome || browser;
+const jwtDecode = require('jwt-decode');
 
 // Retry a total of 6 times (6 * 5sec = 30sec)
 const MAX_TOKEN_RENEW_RETRIES = 6;
@@ -29,7 +30,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   .then(res => {
 
     configuration = res;
-    configuration.coinform.defaultOptions = Object.assign({}, configuration.coinform.options);
+    configuration.coinform.defaultOptions = JSON.parse(JSON.stringify(configuration.coinform.options));
     logger = new CoInformLogger(CoInformLogger.logTypes[configuration.coinform.logLevel]);
     client = new CoinformClient(fetch, configuration.coinform.apiUrl);
 
@@ -59,7 +60,7 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
 
       if (coinformUserToken) {
         let res = checkAndSaveToken(coinformUserToken);
-        if (res.ok) {
+        if (res.isOk) {
           sendMessageToAllScripts({
             messageId: "renewUserToken",
             userMail: res.userMail,
@@ -84,6 +85,13 @@ fetch(browserAPI.runtime.getURL('../resources/config.json'), {
   .catch(err => {
     console.error('Could not load plugin configuration', err);
   });
+
+browserAPI.runtime.onInstalled.addListener(function (object) {
+  if (browserAPI.runtime.OnInstalledReason.INSTALL === object.reason)
+    browserAPI.tabs.create({url: CoinformConstants.WELCOME_URL}, function (tab) {
+      //logger.logMessage(CoInformLogger.logTypes.debug, `Installation finished. Opened co-inform url`);
+    });
+});
 
 browserAPI.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (changeInfo.url) {
@@ -205,7 +213,7 @@ const logInAPI = function(request, scriptId, loginCallback) {
       if (data.token) {
         let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
         let res = checkAndSaveToken(resToken, scriptId);
-        if (res.ok) {
+        if (res.isOk) {
           logger.logMessage(CoInformLogger.logTypes.info, `User logged in: ${res.userMail}`, scriptId);
           sendMessageToAllScripts({
             messageId: "userLogin",
@@ -234,7 +242,7 @@ const logInAPI = function(request, scriptId, loginCallback) {
 const checkAndSaveToken = function(token, scriptId) {
 
   let res = {
-    ok: false
+    isOk: false
   };
   const tokenDecoded = jwtDecode(token);
   const now = new Date();
@@ -253,11 +261,14 @@ const checkAndSaveToken = function(token, scriptId) {
   if (tokenDecoded.user && tokenDecoded.user.communication) {
     configuration.coinform.options.followup = tokenDecoded.user.communication;
   }
+  if (tokenDecoded.user && tokenDecoded.user.config) {
+    configuration.coinform.options.config = tokenDecoded.user.config;
+  }
   if (tokenDecoded.exp < secondsSinceEpoch) {
     logger.logMessage(CoInformLogger.logTypes.warning, `JWT expiring time passed`, scriptId);
   }
   else {
-    res.ok = true;
+    res.isOk = true;
     res.userMail = userMail;
     res.userID = userID;
     res.token = token;
@@ -328,7 +339,7 @@ const renewUserToken = function(retryNum = 0) {
         //renewTokenOKactions(data.token);
         let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
         let res = checkAndSaveToken(resToken);
-        if (res.ok) {
+        if (res.isOk) {
           logger.logMessage(CoInformLogger.logTypes.info, `User Token Renewed: ${res.userMail}`);
           sendMessageToAllScripts({
             messageId: "renewUserToken",
@@ -398,6 +409,10 @@ const logOutActions = function(scriptId) {
   coinformUserToken = null;
   coinformUserMail = null;
   coinformUserID = null;
+  configuration.coinform.options = null;
+  if (configuration.coinform.defaultOptions) {
+    configuration.coinform.options = JSON.parse(JSON.stringify(configuration.coinform.defaultOptions));
+  }
 
   removeCookie("userToken");
   removeCookie("userMail");
@@ -520,7 +535,7 @@ const changePass = function(request, scriptId, changePassCallback) {
       if (data.token) {
         let resToken = JSON.stringify(data.token).replace(/['"]+/g, '');
         let res = checkAndSaveToken(resToken);
-        if (res.ok) {
+        if (res.isOk) {
           logger.logMessage(CoInformLogger.logTypes.info, `ChangePass Token Renewed: ${res.userMail}`);
           sendMessageToAllScripts({
             messageId: "renewUserToken",
@@ -557,6 +572,13 @@ const changeOptions = function (request, scriptId, changeOptionsCallback) {
   if (request.options !== undefined) {
 
     logger.logMessage(CoInformLogger.logTypes.debug, `Requesting Settings Change`, scriptId);
+
+    if (request.options.testMode.localeCompare('true') === 0) {
+      logger.setLogLevel(CoInformLogger.logTypes['all']);
+    }
+    else {
+      logger.resetLogLevel();
+    }
   
     client.postUserChangeSettings(request.options, request.userToken).then(res => {
       
