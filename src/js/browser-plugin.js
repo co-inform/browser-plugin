@@ -178,18 +178,18 @@ const publishTweetCallback = (clickEvent, targetButton) => {
   if (targetButton.coInformed) {
     if (targetButton.hasMisinfo) {
 
-      // if the content is missinfo, put a timer of 5 or 10 seconds before publishing it, and then set the CoInformed property to false and raise the click event again
+      // if the content is missinfo, put a timer (10 seconds) before publishing it, and then set the CoInformed property to false and raise the click event again
       targetButton.setAttribute("disabled", "");
       targetButton.setAttribute("aria-disabled", "true");
       let msg = document.getElementById("coinformPublishMessages");
       let txtContent = document.createElement("SPAN");
       txtContent.classList.add("blink_me");
-      let txt = document.createTextNode(browserAPI.i18n.getMessage("published_in_seconds", `${CoinformConstants.TIME_PUBLISH_AWAIT}`));
+      let txt = document.createTextNode(browserAPI.i18n.getMessage("published_in_seconds", `${configuration.awaitPublishTime}`));
       txtContent.append(txt);
       msg.append(document.createTextNode(". "));
       msg.append(txtContent);
       setTimeout(function() {
-        publishTweetCountdown(targetButton, (CoinformConstants.TIME_PUBLISH_AWAIT - 1), tweetText);
+        publishTweetCountdown(targetButton, (configuration.awaitPublishTime - 1), tweetText);
       }, 1000);
       log2Server('publish tweet', null, `Tweet content: ${tweetText}`, `Click on publish tweet anyway`);
     }
@@ -269,7 +269,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
         // Hack to force a misinformation url detection, and a missinformation user tweets detection
         // Active only in test use mode
-        if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(new RegExp(CoinformConstants.MISINFO_TEST_URL_REGEXP))) {
+        if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(new RegExp(configuration.testModeMisinfoUrl))) {
           targetButton.hasMisinfo = true; 
           publishTweetAlertMisinfo("not_credible", urls[i], tweetText, assessments);
         }
@@ -617,7 +617,7 @@ const newTweetCallback = (tweetInfo) => {
     
     // Hack to force misinformation tweet detection
     // Active only in test use mode
-    if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.toLowerCase().localeCompare(CoinformConstants.MISINFO_TEST_TW_USERNAME.toLowerCase()) === 0)) {
+    if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.toLowerCase().localeCompare(configuration.testModeMisinfoUser.toLowerCase()) === 0)) {
       parseApiResponse(misinfoApiQueryResp, tweetInfo);
     }
 
@@ -855,13 +855,15 @@ const retryTweetQuery = (tweetInfo, queryId) => {
     tweetInfo.domObject.coInfoCounter = 0;
   }
 
+  // Check if the Tweet DOM object is still on the page
   if (tweetInfo.domObject.offsetParent === null) {
 
     logger.logMessage(CoInformLogger.logTypes.debug, `Tweet DOM obj disapeared. Stop requests.`, tweetInfo.id);
     return false;
     
   }
-  else if (tweetInfo.domObject.coInfoCounter > CoinformConstants.MAX_RETRIES) {
+  // Check if retries timed out for the post credibility query
+  else if (tweetInfo.domObject.coInfoCounter > configuration.maxQueryRetries) {
 
     logger.logMessage(CoInformLogger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet.`, tweetInfo.id);
     if ((tweetInfo.domObject.queryStatus.localeCompare('done') === 0) || (tweetInfo.domObject.queryStatus.localeCompare('partly_done') === 0)) {
@@ -1631,7 +1633,8 @@ function updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, operation,
   let totalNumAgree = (pluginCache[tweetInfo.id].feedback[`total_agree`] != undefined) ? parseInt(pluginCache[tweetInfo.id].feedback[`total_agree`]) : 0;
   let totalNumDisagree = (pluginCache[tweetInfo.id].feedback[`total_disagree`] != undefined) ? parseInt(pluginCache[tweetInfo.id].feedback[`total_disagree`]) : 0;
 
-  if ((totalNumAgree < CoinformConstants.FEEDBACK_NUM_SHOW_THRESHOLD) && (totalNumDisagree < CoinformConstants.FEEDBACK_NUM_SHOW_THRESHOLD)) {
+  // Threshold applied to the label feedback aggregated numbers (when lower, not shown)
+  if ((totalNumAgree < configuration.feedbacksHideThreshold) && (totalNumDisagree < configuration.feedbacksHideThreshold)) {
     targetButton.querySelector(".coinformFeedbackAgg").innerHTML = '';
   }
   else if (totalNum >= 1) {

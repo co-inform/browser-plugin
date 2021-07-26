@@ -5,11 +5,6 @@ const CoInformLogger = require('./coinform-logger');
 const browserAPI = chrome || browser;
 const jwtDecode = require('jwt-decode');
 
-// Retry a total of 6 times (6 * 5sec = 30sec)
-const MAX_TOKEN_RENEW_RETRIES = 6;
-const TOKEN_RENEW_RETRY_TIME = 5000;
-const TOKEN_RENEW_BEFORE_TIME = 30000;
-
 let configuration;
 let client;
 let logger;
@@ -19,7 +14,7 @@ let coinformUserMail = null;
 let coinformUserID = null;
 
 //Read the configuration file and if it was successful, start
-fetch(browserAPI.runtime.getURL('../resources/config.json'), {
+fetch(browserAPI.runtime.getURL(CoinformConstants.CONFIG_FILE_PATH), {
   mode: 'cors',
   header: {
     'Accept': 'application/json',
@@ -291,7 +286,7 @@ const checkAndSaveToken = function(token, scriptId) {
       expirationDate: tokenDecoded.exp
     });
     // set timer to renew the token, TOKEN_RENEW_BEFORE_TIME before expiring time
-    let timeToRenew = ((tokenDecoded.exp - secondsSinceEpoch) * 1000) - TOKEN_RENEW_BEFORE_TIME;
+    let timeToRenew = ((tokenDecoded.exp - secondsSinceEpoch) * 1000) - CoinformConstants.TOKEN_RENEW_BEFORE_TIME;
     setTimeout(function() {
       renewUserToken();
     }, timeToRenew);
@@ -373,11 +368,11 @@ const renewUserToken = function(retryNum = 0) {
 
 const retryRenewVsLogout = function (retryNum) {
   // check if we did retried a total of MAX_TOKEN_RENEW_RETRIES times
-  if (retryNum < MAX_TOKEN_RENEW_RETRIES) {
+  if (retryNum < CoinformConstants.MAX_TOKEN_RENEW_RETRIES) {
     logger.logMessage(CoInformLogger.logTypes.debug, `Retrying again in short time..`);
     setTimeout(function() {
       renewUserToken(retryNum + 1);
-    }, TOKEN_RENEW_RETRY_TIME);
+    }, CoinformConstants.TOKEN_RENEW_RETRY_TIME);
   }
   else {
     // if it failed MAX_TOKEN_RENEW_RETRIES times, we do the log out
