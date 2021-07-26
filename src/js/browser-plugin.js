@@ -137,8 +137,14 @@ const start = () => {
     inDarkMode = true;
   }
 
-  if (window.location.hostname.indexOf('twitter.com') >= 0) {
-    parser = new TweetParser();
+  if (window.location.hostname.indexOf('tweetdeck.twitter.com') >= 0) {
+    parser = new TweetParser('tweetDeck');
+    parser.initContext();
+    parser.listenForMainChanges(newTweetCallback);
+    parser.triggerFirstTweetBatch(newTweetCallback);
+  }
+  else if (window.location.hostname.indexOf('twitter.com') >= 0) {
+    parser = new TweetParser('twitter');
     parser.initContext();
     parser.listenForMainChanges(newTweetCallback);
     parser.listenPublishTweet(publishTweetCallback);
@@ -632,6 +638,9 @@ const createToolbar = (tweetInfo) => {
 
   let tbl = document.createElement('table');
   tbl.classList.add("coinformToolbar");
+  if (parser.siteCase.localeCompare("tweetDeck") === 0) {
+    tbl.classList.add("tweetDeck");
+  }
 
   if (inDarkMode) {
     tbl.classList.add("darkMode");
@@ -667,9 +676,11 @@ const createToolbar = (tweetInfo) => {
   tooltipStatus.textContent = browserAPI.i18n.getMessage("processing_labeling");
   statusContent.appendChild(tooltipStatus);
 
-  let arrowContent = document.createElement("DIV");
-  arrowContent.classList.add("coinformRelationArrow");
-  td2.appendChild(arrowContent);
+  if (parser.siteCase.localeCompare("tweetDeck") !== 0) {
+    let arrowContent = document.createElement("DIV");
+    arrowContent.classList.add("coinformRelationArrow");
+    td2.appendChild(arrowContent);
+  }
 
   let td3 = tr.insertCell();
   td3.setAttribute("id", `coinformToolbarFeedback-${tweetInfo.id}`);
@@ -680,11 +691,16 @@ const createToolbar = (tweetInfo) => {
   td3.classList.add("coinformToolbarButton");
   td3.classList.add("coinformToolbarClaim");
   
-  let claimDescription = document.createElement("SPAN");
-  claimDescription.classList.add("coinformToolbarButtonDescription");
-  let claimText = document.createTextNode(browserAPI.i18n.getMessage('make_claim'));
-  claimDescription.append(claimText);
-  td3.appendChild(claimDescription);
+  if (parser.siteCase.localeCompare("tweetDeck") === 0) {
+    td3.title = browserAPI.i18n.getMessage('make_claim');
+  }
+  else {
+    let claimDescription = document.createElement("SPAN");
+    claimDescription.classList.add("coinformToolbarButtonDescription");
+    let claimText = document.createTextNode(browserAPI.i18n.getMessage('make_claim'));
+    claimDescription.append(claimText);
+    td3.appendChild(claimDescription);
+  }
   
   td3.addEventListener('click', (event) => { 
     // prevent opening the tweet
@@ -705,11 +721,17 @@ const createToolbar = (tweetInfo) => {
   negativeFeedbackAgg.classList.add("coinformFeedbackAgg");
   td4.appendChild(negativeFeedbackAgg);
 
-  let negativeFeedbackDescription = document.createElement("SPAN");
-  negativeFeedbackDescription.classList.add("coinformToolbarButtonDescription");
-  let negativeFeedbackText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
-  negativeFeedbackDescription.append(negativeFeedbackText);
-  td4.appendChild(negativeFeedbackDescription);
+  if (parser.siteCase.localeCompare("tweetDeck") === 0) {
+    td4.title = browserAPI.i18n.getMessage('negative_feedback');
+  }
+  else {
+    let negativeFeedbackDescription = document.createElement("SPAN");
+    negativeFeedbackDescription.classList.add("coinformToolbarButtonDescription");
+    let negativeFeedbackText = document.createTextNode(browserAPI.i18n.getMessage('negative_feedback'));
+    negativeFeedbackDescription.append(negativeFeedbackText);
+    td4.appendChild(negativeFeedbackDescription);
+  }
+
   td4.classList.add("coinformToolbarButton");
   td4.classList.add("coinformToolbarFeedbackNegative");
 
@@ -732,11 +754,16 @@ const createToolbar = (tweetInfo) => {
   positiveFeedbackAgg.classList.add("coinformFeedbackAgg");
   td5.appendChild(positiveFeedbackAgg);
 
-  let positiveFeedbackDescription = document.createElement("SPAN");
-  positiveFeedbackDescription.classList.add("coinformToolbarButtonDescription");
-  let positiveFeedbackText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
-  positiveFeedbackDescription.append(positiveFeedbackText);
-  td5.appendChild(positiveFeedbackDescription);
+  if (parser.siteCase.localeCompare("tweetDeck") === 0) {
+    td5.title = browserAPI.i18n.getMessage('positive_feedback');
+  }
+  else {
+    let positiveFeedbackDescription = document.createElement("SPAN");
+    positiveFeedbackDescription.classList.add("coinformToolbarButtonDescription");
+    let positiveFeedbackText = document.createTextNode(browserAPI.i18n.getMessage('positive_feedback'));
+    positiveFeedbackDescription.append(positiveFeedbackText);
+    td5.appendChild(positiveFeedbackDescription);
+  }
   td5.classList.add("coinformToolbarButton");
   td5.classList.add("coinformToolbarFeedbackPositive");
 
@@ -1167,9 +1194,11 @@ const createTweetLabel = (tweet, label, modules, callback) => {
 
   toolbarNode.append(infoContent);
   
-  let arrowContent = document.createElement("DIV");
-  arrowContent.classList.add("coinformRelationArrow");
-  toolbarNode.appendChild(arrowContent);
+  if (parser.siteCase.localeCompare("tweetDeck") !== 0) {
+    let arrowContent = document.createElement("DIV");
+    arrowContent.classList.add("coinformRelationArrow");
+    toolbarNode.appendChild(arrowContent);
+  }
 
 };
 
@@ -1347,6 +1376,9 @@ function openLabelInfoTooltip(event, tweet, label, modules) {
   if (!layersDiv) {
     layersDiv = document.querySelector("main");
   }
+  if (!layersDiv) {
+    layersDiv = document.querySelector("body");
+  }
   
   let oldInfoTooltip = document.getElementById(`coinformLabelInfoTooltip-${tweet.id}`);
   if (oldInfoTooltip) {
@@ -1373,6 +1405,9 @@ function closeLabelInfoTooltip(event, tweet) {
   let layersDiv = document.querySelector('#layers');
   if (!layersDiv) {
     layersDiv = document.querySelector("main");
+  }
+  if (!layersDiv) {
+    layersDiv = document.querySelector("body");
   }
   
   let infoTooltip = document.getElementById(`coinformLabelInfoTooltip-${tweet.id}`);

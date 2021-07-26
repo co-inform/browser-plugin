@@ -18,6 +18,12 @@
   opacity: .6;
   position: relative;
 }
+/* Case for when we are on tweetDeck */
+[coinform-untrusted] div.tweet div.tweet-body {
+  filter: blur(4px);
+  opacity: .6;
+  position: relative;
+}
 
 .coinform-button-container {
   position: relative;
@@ -281,6 +287,15 @@ article[coinform-parsed] {
   align-self: flex-start;
 }
 
+.coinformToolbar.tweetDeck .coinformToolbarLogoContent {
+  width: 28px;
+}
+
+.coinformToolbar.tweetDeck img.coinformToolbarLogo{
+  margin-left: 5px;
+  width: 20px;
+}
+
 .coinformClaimLogo {
   padding-top: 2px;
   width: 25px;
@@ -288,6 +303,12 @@ article[coinform-parsed] {
   border-radius: 3px;
   border-radius: 20%;
   background-clip: content-box;
+}
+
+.coinformToolbar.tweetDeck .coinformClaimLogo {
+  padding-top: 4px;
+  width: 20px;
+  height: 20px;
 }
 
 .coinformToolbarLabelContent {
@@ -309,6 +330,10 @@ article[coinform-parsed] {
   width: fit-content;
 }
 
+.coinformToolbar.tweetDeck .coinformToolbarLabel {
+  font-size: 0.8em;
+}
+
 .coinformLabelInfoContent {
   position: relative;
   display: inline-block;
@@ -317,6 +342,11 @@ article[coinform-parsed] {
 
 .coinformLabelInfoLogo {
   width: 15px;
+}
+
+.coinformToolbar.tweetDeck .coinformLabelInfoLogo {
+  padding-top: 2px;
+  width: 12px;
 }
 
 .coinformLabelInfoTooltip {
@@ -478,6 +508,12 @@ article[coinform-parsed] {
   background-clip: content-box;
 }
 
+.coinformToolbar.tweetDeck .coinformFeedbackLogo {
+  padding-top: 4px;
+  width: 18px;
+  height: 18px;
+}
+
 .coinformToolbarButton > span.coinformFeedbackAgg {
   position: absolute;
   float: left;
@@ -573,6 +609,11 @@ article[coinform-parsed] {
 
 .coinformToolbar .coinformToolbarLabelContent .coinformStatus .coinformStatusDone {
   height: 15px;
+}
+
+.coinformToolbar.tweetDeck .coinformToolbarLabelContent .coinformStatus .coinformStatusLoading {
+  width: 12px;
+  height: 12px;
 }
 
 .coinformToolbar .coinformToolbarLabelContent .coinformStatus .coinformStatusDone::before {
