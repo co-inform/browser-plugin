@@ -184,12 +184,12 @@ const publishTweetCallback = (clickEvent, targetButton) => {
       let msg = document.getElementById("coinformPublishMessages");
       let txtContent = document.createElement("SPAN");
       txtContent.classList.add("blink_me");
-      let txt = document.createTextNode(browserAPI.i18n.getMessage("published_in_seconds", `${configuration.awaitPublishTime}`));
+      let txt = document.createTextNode(browserAPI.i18n.getMessage("published_in_seconds", `${configuration.coinform.awaitPublishTime}`));
       txtContent.append(txt);
       msg.append(document.createTextNode(". "));
       msg.append(txtContent);
       setTimeout(function() {
-        publishTweetCountdown(targetButton, (configuration.awaitPublishTime - 1), tweetText);
+        publishTweetCountdown(targetButton, (configuration.coinform.awaitPublishTime - 1), tweetText);
       }, 1000);
       log2Server('publish tweet', null, `Tweet content: ${tweetText}`, `Click on publish tweet anyway`);
     }
@@ -269,7 +269,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
 
         // Hack to force a misinformation url detection, and a missinformation user tweets detection
         // Active only in test use mode
-        if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(new RegExp(configuration.testModeMisinfoUrl))) {
+        if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(new RegExp(configuration.coinform.testModeMisinfoUrl))) {
           targetButton.hasMisinfo = true; 
           publishTweetAlertMisinfo("not_credible", urls[i], tweetText, assessments);
         }
@@ -617,7 +617,7 @@ const newTweetCallback = (tweetInfo) => {
     
     // Hack to force misinformation tweet detection
     // Active only in test use mode
-    if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.toLowerCase().localeCompare(configuration.testModeMisinfoUser.toLowerCase()) === 0)) {
+    if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.toLowerCase().localeCompare(configuration.coinform.testModeMisinfoUser.toLowerCase()) === 0)) {
       parseApiResponse(misinfoApiQueryResp, tweetInfo);
     }
 
@@ -863,7 +863,7 @@ const retryTweetQuery = (tweetInfo, queryId) => {
     
   }
   // Check if retries timed out for the post credibility query
-  else if (tweetInfo.domObject.coInfoCounter > configuration.maxQueryRetries) {
+  else if (tweetInfo.domObject.coInfoCounter > configuration.coinform.maxQueryRetries) {
 
     logger.logMessage(CoInformLogger.logTypes.warning, `MAX retries situation (${tweetInfo.domObject.coInfoCounter}). Giving up on tweet.`, tweetInfo.id);
     if ((tweetInfo.domObject.queryStatus.localeCompare('done') === 0) || (tweetInfo.domObject.queryStatus.localeCompare('partly_done') === 0)) {
@@ -1634,7 +1634,7 @@ function updateLabelEvaluationAgg(targetButton, tweetInfo, agreement, operation,
   let totalNumDisagree = (pluginCache[tweetInfo.id].feedback[`total_disagree`] != undefined) ? parseInt(pluginCache[tweetInfo.id].feedback[`total_disagree`]) : 0;
 
   // Threshold applied to the label feedback aggregated numbers (when lower, not shown)
-  if ((totalNumAgree < configuration.feedbacksHideThreshold) && (totalNumDisagree < configuration.feedbacksHideThreshold)) {
+  if ((totalNumAgree < configuration.coinform.feedbacksHideThreshold) && (totalNumDisagree < configuration.coinform.feedbacksHideThreshold)) {
     targetButton.querySelector(".coinformFeedbackAgg").innerHTML = '';
   }
   else if (totalNum >= 1) {
