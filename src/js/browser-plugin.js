@@ -1017,8 +1017,12 @@ const classifyFbPost = (post, score) => {
 const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
 
   const node = tweet.domObject;
+  const prevLabel = node.coInformLabel;
 
-  if (!node.coInformLabel || (node.coInformLabel.localeCompare(credibilityLabel) !== 0)) {
+  node.coInformLabel = credibilityLabel;
+  node.coInformModules = credibilityModules;
+
+  if (!prevLabel || (prevLabel.localeCompare(credibilityLabel) !== 0)) {
 
     removeTweetLabel(tweet);
     if (node.coInformLabel) {
@@ -1040,12 +1044,9 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
       logger.logMessage(CoInformLogger.logTypes.info, `Classifying Tweet label: ${credibilityLabel}`, tweet.id);
     }
 
-    node.coInformLabel = credibilityLabel;
-    node.coInformModules = credibilityModules;
-
-    createTweetLabel(tweet, credibilityLabel, credibilityModules, function() {
+    createTweetLabel(tweet, credibilityLabel, function() {
       openLabelPopup(tweet);
-      let auxScoresLog = createModulesCredibilityScoresLog(credibilityModules);
+      let auxScoresLog = createModulesCredibilityScoresLog(node.coInformModules);
       log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${credibilityLabel}\nCredibility Scores: ${auxScoresLog}`, 'Opened explainability popup through label click');
     });
 
@@ -1134,7 +1135,7 @@ const checkIfBlurred = (tweet) => {
 
 };
 
-const createTweetLabel = (tweet, label, modules, callback) => {
+const createTweetLabel = (tweet, label, callback) => {
 
   let node = tweet.domObject;
   let toolbarNode = node.querySelector(`#coinformToolbarLabelContent-${tweet.id}`);
@@ -1174,7 +1175,7 @@ const createTweetLabel = (tweet, label, modules, callback) => {
   //let auxScoresLog = createModulesCredibilityScoresLog(modules);
 
   infoLogo.addEventListener("mouseenter", (event) => {
-    openLabelInfoTooltip(event, tweet, label, modules);
+    openLabelInfoTooltip(event, tweet);
     auxHoverTime = Date.now();
     log2Server('explainability', tweet.url, `Tweet id: ${tweet.id}\nTweet label: ${label}`, 'Opened explainability tooltip on hover');
   });
@@ -1372,7 +1373,7 @@ const createCannotSeeTweetButton = (tweet, callback) => {
 
 };
 
-function openLabelInfoTooltip(event, tweet, label, modules) {
+function openLabelInfoTooltip(event, tweet) {
 
   let layersDiv = document.querySelector('#layers');
   if (!layersDiv) {
@@ -1386,13 +1387,15 @@ function openLabelInfoTooltip(event, tweet, label, modules) {
   if (oldInfoTooltip) {
     layersDiv.removeChild(oldInfoTooltip);
   }
+
+  let node = tweet.domObject;
   
   // create tooltip div with detailed modules info
   let infoTooltip = document.createElement("DIV");
   infoTooltip.setAttribute("id", `coinformLabelInfoTooltip-${tweet.id}`);
   infoTooltip.setAttribute("class", "coinformLabelInfoTooltip");
-  //let infoTooltipContent = createLabelModulesInfoContent(label, modules);
-  let infoTooltipContent = createLabelTooltipInfoContent(label);
+  //let infoTooltipContent = createLabelModulesInfoContent(node.coInformLabel, node.coInformModules);
+  let infoTooltipContent = createLabelTooltipInfoContent(node.coInformLabel);
   infoTooltip.append(infoTooltipContent);
 
   infoTooltip.style.left = (event.pageX + 8) + 'px';
@@ -1450,8 +1453,7 @@ function openLabelPopup(tweet) {
     meterLogoSrc = browserAPI.extension.getURL(CoinformConstants.IMAGES_PATH + CoinformConstants.METER_LABEL_ICON_PREFIX + node.coInformLabel + CoinformConstants.METER_LABEL_ICON_EXTENSION);
     moreInfo.append(document.createElement('BR'));
 
-    let auxModules = node.coInformModules;
-    let auxContent = createLabelModulesExplainabilityContent(node.coInformLabel, auxModules);
+    let auxContent = createLabelModulesExplainabilityContent(node.coInformLabel, node.coInformModules);
     moreInfo.append(auxContent);
 
     let category = configuration.coinform.categories[node.coInformLabel];
