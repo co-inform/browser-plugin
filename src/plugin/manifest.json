@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
     "name": "Co-Inform",
-    "version": "4.3.0",
-    "version_name": "4.3.0 beta",
+    "version": "5.0.0",
+    "version_name": "5.0 beta",
     "default_locale": "en",
     "description": "Context matters. Your sources too.",
     "homepage_url": "https://coinform.eu/",
@@ -30,7 +30,6 @@
       }
     ],
     "web_accessible_resources": [
-      "resources/config.json",
       "resources/*.png"
     ],
     "permissions": [

@@ -9,7 +9,7 @@ The plugin interface automatically uses the user browser configured language, an
 - English, Swedish, Greek, Spanish, French, Italian, Catalan
 
 ## 1. Download ZIP packed release
-The last version of the Co-Inform Plugin Extension is the [4.2.0 RV](https://github.com/co-inform/browser-plugin/raw/master/release/coinform-extension-v4_2_0_rv.zip). It can be downloaded by clicking the previous version link.
+The last version of the Co-Inform Plugin Extension is the [5.0 beta](https://github.com/co-inform/browser-plugin/raw/master/release/coinform-extension-v5_0_beta.zip). It can be downloaded by clicking the previous version link.
 
 ## 2. Install from ZIP
 The distributed packed plugin is a ZIP compresed file containing the content of the build folder.

@@ -2,8 +2,11 @@
   "coinform": {
     "apiUrl": "https://api.coinform.eu",
     "logLevel": "error",
-    "evaluationLogs": "false",
-    "hideThreshold": 5,
+    "maxQueryRetries": 12,
+    "feedbacksHideThreshold": 5,
+    "awaitPublishTime": 10,
+    "testModeMisinfoUser": "co_inform",
+    "testModeMisinfoUrl": "https://coinform\\.eu.*",
     "categories": {
       "credible": {
         "action": "label",
@@ -39,6 +42,7 @@
     },
     "options": {
       "testMode": "false",
+      "participation": "false",
       "config": {
         "blur": "true",
         "await": "true"
