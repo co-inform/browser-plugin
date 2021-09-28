@@ -28,23 +28,6 @@ let coinformUserToken = null;
 let coinformUserMail = null;
 let coinformUserID = null;
 
-const misinfoApiQueryResp = {
-  status: "done",
-  // eslint-disable-next-line camelcase
-  query_id: -1,
-  response: {
-    // eslint-disable-next-line camelcase
-    rule_engine: {
-      // eslint-disable-next-line camelcase
-      final_credibility: "not_credible",
-      // eslint-disable-next-line camelcase
-      module_labels: [],
-      // eslint-disable-next-line camelcase
-      module_values: []
-    }
-  }
-};
-
 // Read the configuration file and if it was successful, start
 browserAPI.runtime.sendMessage({
   messageId: "GetConfig"
@@ -618,7 +601,14 @@ const newTweetCallback = (tweetInfo) => {
     // Hack to force misinformation tweet detection
     // Active only in test use mode
     if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.toLowerCase().localeCompare(configuration.coinform.testModeMisinfoUser.toLowerCase()) === 0)) {
-      parseApiResponse(misinfoApiQueryResp, tweetInfo);
+      let newRes = Object.assign({}, res.data);
+      if (!newRes.response) newRes.response = {};
+      if (!newRes.response.rule_engine) newRes.response.rule_engine = {};
+      newRes.response.rule_engine.final_credibility = configuration.coinform.testModeFinalLabel;
+      if (!newRes.status || !newRes.status.localeCompare('done')) {
+        newRes.status = 'partly_done';
+      }
+      parseApiResponse(newRes, tweetInfo);
     }
 
     else if ((resStatus.localeCompare('400') === 0)) {
@@ -887,7 +877,18 @@ const retryTweetQuery = (tweetInfo, queryId) => {
 
       let resStatus = JSON.stringify(res.status).replace(/['"]+/g, '');
 
-      if ((resStatus.localeCompare('404') === 0)) {
+      if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && (tweetInfo.username.toLowerCase().localeCompare(configuration.coinform.testModeMisinfoUser.toLowerCase()) === 0)) {
+        let newRes = Object.assign({}, res.data);
+        if (!newRes.response) newRes.response = {};
+        if (!newRes.response.rule_engine) newRes.response.rule_engine = {};
+        newRes.response.rule_engine.final_credibility = configuration.coinform.testModeFinalLabel;
+        if (!newRes.status || !newRes.status.localeCompare('done')) {
+          newRes.status = 'partly_done';
+        }
+        parseApiResponse(newRes, tweetInfo);
+      }
+
+      else if ((resStatus.localeCompare('404') === 0)) {
         logger.logMessage(CoInformLogger.logTypes.error, `Request 404 (no such query) response (${tweetInfo.domObject.coInfoCounter})`, tweetInfo.id);
       }
       else if (resStatus.localeCompare('200') === 0) {
