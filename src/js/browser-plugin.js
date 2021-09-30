@@ -254,7 +254,7 @@ const publishTweetCallback = (clickEvent, targetButton) => {
         // Active only in test use mode
         if ((configuration.coinform.options.testMode.localeCompare("true") === 0) && urls[i].match(new RegExp(configuration.coinform.testModeMisinfoUrl))) {
           targetButton.hasMisinfo = true; 
-          publishTweetAlertMisinfo("not_credible", urls[i], tweetText, assessments);
+          publishTweetAlertMisinfo(configuration.coinform.testModeFinalLabel, urls[i], tweetText, assessments);
         }
 
         else if ((resStatus.localeCompare('400') === 0)) {
@@ -1038,7 +1038,7 @@ const classifyTweet = (tweet, credibilityLabel, credibilityModules) => {
       if (auxPrevious || pluginCache[tweet.id].feedback.user_feedback) {
         // eslint-disable-next-line camelcase
         pluginCache[tweet.id].feedback.user_feedback = null;
-        auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
+        if (auxPrevious && auxPrevious.classList) auxPrevious.classList.remove("coinformToolbarFeedbackAfterClick");
       }
     }
     else {
