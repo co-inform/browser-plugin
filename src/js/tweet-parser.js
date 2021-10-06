@@ -35,7 +35,7 @@ const tweetSelectors = {
 const usernameSelectors = {
   "user-logged": "[data-testid='tweet'] a[href^='/'] span",
   "not-user-logged": "[data-testid='tweet'] a[href^='/'] span",
-  "tweetDeck": "header.tweet-header span.account-inline span.username"
+  "tweetDeck": "div.tweet header.tweet-header span.account-inline span.username"
 };
 
 // selectors for tweet id
@@ -44,9 +44,9 @@ const usernameSelectors = {
 const tweetIdSelectors = {
   "user-logged": "[data-testid='tweet'] a[href*='/status/'] > time",
   "not-user-logged": "[data-testid='tweet'] a[href*='/status/'] > time",
-  "tweetDeck": "header.tweet-header time.tweet-timestamp"
+  "tweetDeck": "div.tweet header.tweet-header time.tweet-timestamp"
 };
-// const tweetIdAttribute = "data-tweet-id";
+const tweetIdAttribute = "data-tweet-id";
 
 // selectors for tweet text
 // for different page cases: tweet-page-main-tweet case, tweet-page-response-tweet case, and tweet-default (home and user page) case
@@ -54,11 +54,12 @@ const textSelectors = {
   "tweet-default": "[data-testid='tweet'] div[lang]",
   "tweet-page-main-tweet": "article div[lang]",
   "tweet-page-response-tweet": "[data-testid='tweet'] div[lang]",
-  "tweetDeck": "div.tweet-body p.tweet-text"
+  "tweetDeck": "div.tweet div.tweet-body p.tweet-text"
 };
 
 // selector for publish tweet button
-const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetButton']"; // we detected 2 cases for the second data-testid (tweetButton and tweetButtonInline)
+// we detected 2 cases for the second data-testid (tweetButton and tweetButtonInline)
+const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetButton']";
 
 const retweetTweetButtonSelector = "[role='group'] [data-testid='retweet']";
 
@@ -74,8 +75,6 @@ const userloggedSelector = {
   "twitter": "header[role='banner'] nav[role='navigation']",
   "tweetDeck": "header.app-header div.js-account-summary span.username"
 };
-
-// [data-testid='tweet'] > div:nth-child(2)
 
 const $ = jQuery;
 
@@ -133,7 +132,7 @@ TweetParser.prototype = {
 
       mainObserver.listenSubtree(true);
       mainObserver.listenChildList(true);
-      mainObserver.setAttributeFilter(['data-testid', 'data-tweet-id', 'role']);
+      mainObserver.setAttributeFilter(['data-testid', tweetIdAttribute, 'role']);
       mainObserver.observe();
     }
 
@@ -272,29 +271,34 @@ function getTweetInfo(thatParser, tweet) {
   // Trying to see if we can check the kind of tweet (main page tweet) from it's style
   //let tweetStyles = getComputedStyle(tweet);
 
-  // Get the tweet Id (normally found on a link on the tweet time div)
-  let timeNode = tweet.querySelector(tweetIdSelectors[selectorUserCase]) ? tweet.querySelector(tweetIdSelectors[selectorUserCase]) : null;
-  if (timeNode) {
-    let link = timeNode.parentNode;
-    if (!link || (link.tagName.toUpperCase().localeCompare("A") !== 0)) {
-      link = timeNode.querySelector("a");
-    }
-    if (link && (link.tagName.toUpperCase().localeCompare("A") === 0) && link.href.match(/\d+\b/g)) {
-      tweetUrl = link.href;
-      let auxMatch = link.href.match(/\d+\b/g);
-      if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
-    }
+  if (tweet.getAttribute(tweetIdAttribute)) {
+    tweetid = tweet.getAttribute(tweetIdAttribute);
   }
-  //  Special case when we are in a Tweet Page, since and we do not have the tweet link to parse the id, we 
-  //  get the id from the url. Sometimes this main Tweet is not located at the top of the page, that's why we need 
-  //  to check and retrieve this main Tweet's id from the url
-  else if ( (thatParser.pageCase === "tweet") && (timeNode === null) && !thatParser.mainTweetPageFound) {
-    tweetUrl = window.location.href;
-    let auxMatch = tweetUrl.match(/\d+\b/g);
-    if (auxMatch.length > 0) {
-      tweetid = auxMatch[auxMatch.length - 1];
+  else {
+    // Get the tweet Id (normally found on a link on the tweet time div)
+    let timeNode = tweet.querySelector(tweetIdSelectors[selectorUserCase]) ? tweet.querySelector(tweetIdSelectors[selectorUserCase]) : null;
+    if (timeNode) {
+      let link = timeNode.parentNode;
+      if (!link || (link.tagName.toUpperCase().localeCompare("A") !== 0)) {
+        link = timeNode.querySelector("a");
+      }
+      if (link && (link.tagName.toUpperCase().localeCompare("A") === 0) && link.href.match(/\d+\b/g)) {
+        tweetUrl = link.href;
+        let auxMatch = link.href.match(/\d+\b/g);
+        if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
+      }
     }
-    thatParser.mainTweetPageFound = true;
+    //  Special case when we are in a Tweet Page, since and we do not have the tweet link to parse the id, we 
+    //  get the id from the url. Sometimes this main Tweet is not located at the top of the page, that's why we need 
+    //  to check and retrieve this main Tweet's id from the url
+    else if ( (thatParser.pageCase === "tweet") && (timeNode === null) && !thatParser.mainTweetPageFound) {
+      tweetUrl = window.location.href;
+      let auxMatch = tweetUrl.match(/\d+\b/g);
+      if (auxMatch.length > 0) {
+        tweetid = auxMatch[auxMatch.length - 1];
+      }
+      thatParser.mainTweetPageFound = true;
+    }
   }
   if (!tweetid) {
     // Detected tweet id NULL case when the Tweet is advertisment, or promoted
