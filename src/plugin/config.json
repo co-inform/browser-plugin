@@ -7,6 +7,7 @@
     "awaitPublishTime": 10,
     "testModeMisinfoUser": "co_inform",
     "testModeMisinfoUrl": "https://coinform\\.eu.*",
+    "testModeFinalLabel": "not_credible",
     "categories": {
       "credible": {
         "action": "label",

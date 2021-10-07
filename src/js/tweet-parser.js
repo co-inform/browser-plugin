@@ -17,46 +17,49 @@ const tweetDeckMainWrapperId = "container";
 // for different user cases: user-logged and not-user-logged cases
 const sectionSelectors = {
   "user-logged": "[role='main'] [data-testid='primaryColumn'] section",
-  "not-user-logged": "[role='main'] [data-testid='primaryColumn'] section"
+  "not-user-logged": "[role='main'] [data-testid='primaryColumn'] section",
+  "tweetDeck": "#container section"
 };
 
 // selectors for tweets divs
 // for different user cases: user-logged and not-user-logged cases
 const tweetSelectors = {
   "user-logged": "article",
-  "not-user-logged": "article"
+  "not-user-logged": "article",
+  "tweetDeck": "article"
 };
 
 // selectors for tweet username
 // for different user cases: user-logged and not-user-logged cases
 // _Note: the id is dynamically removed, so we can not use it ("[data-testid='tweet'] div#tweet-user-screen-name")
 const usernameSelectors = {
-  "user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href^='/'] span",
-  "not-user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href^='/'] span",
-  "tweetDeck": "header.tweet-header span.account-inline span.username"
+  "user-logged": "[data-testid='tweet'] a[href^='/'] span",
+  "not-user-logged": "[data-testid='tweet'] a[href^='/'] span",
+  "tweetDeck": "div.tweet header.tweet-header span.account-inline span.username"
 };
 
 // selectors for tweet id
 // for different user cases: user-logged and not-user-logged cases
 // _Note: the id is dynamically removed, so we can not use it ("[data-testid='tweet'] a#tweet-timestamp")
 const tweetIdSelectors = {
-  "user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href*='/status/'] > time",
-  "not-user-logged": "[data-testid='tweet'] > div:nth-child(2) > div:first-child a[href*='/status/'] > time",
-  "tweetDeck": "header.tweet-header time.tweet-timestamp"
+  "user-logged": "[data-testid='tweet'] a[href*='/status/'] > time",
+  "not-user-logged": "[data-testid='tweet'] a[href*='/status/'] > time",
+  "tweetDeck": "div.tweet header.tweet-header time.tweet-timestamp"
 };
-// const tweetIdAttribute = "data-tweet-id";
+const tweetIdAttribute = "data-tweet-id";
 
 // selectors for tweet text
 // for different page cases: tweet-page-main-tweet case, tweet-page-response-tweet case, and tweet-default (home and user page) case
 const textSelectors = {
-  "tweet-default": "[data-testid='tweet'] > div:nth-child(2) > div:nth-child(2) div[lang]",
-  "tweet-page-main-tweet": "article > div:first-child div[lang]",
-  "tweet-page-response-tweet": "[data-testid='tweet'] > div:nth-child(2) > div:nth-child(2) div[lang]",
-  "tweetDeck": "div.tweet-body p.tweet-text"
+  "tweet-default": "[data-testid='tweet'] div[lang]",
+  "tweet-page-main-tweet": "article div[lang]",
+  "tweet-page-response-tweet": "[data-testid='tweet'] div[lang]",
+  "tweetDeck": "div.tweet div.tweet-body p.tweet-text"
 };
 
 // selector for publish tweet button
-const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetButton']"; // we detected 2 cases for the second data-testid (tweetButton and tweetButtonInline)
+// we detected 2 cases for the second data-testid (tweetButton and tweetButtonInline)
+const publisTweetButtonSelector = "[data-testid='toolBar'] [data-testid^='tweetButton']";
 
 const retweetTweetButtonSelector = "[role='group'] [data-testid='retweet']";
 
@@ -65,15 +68,13 @@ const likeTweetButtonSelector = "[role='group'] [data-testid='like']";
 const unlikeTweetButtonSelector = "[role='group'] [data-testid='unlike']";
 
 // selector for user presentation menu item
-const userPresentationSelector = "header[role='banner'] a[role='link'] div[role='presentation']";
+const userPresentationSelector = "header[role='banner'] div[role='presentation']";
 
 // Selector for the currently logged user
-const userlogged = {
-  "twitter": "header[role='banner'] > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > nav",
-  "tweetDeck": "header.app-header div.js-accout-summary span.username"
+const userloggedSelector = {
+  "twitter": "header[role='banner'] nav[role='navigation']",
+  "tweetDeck": "header.app-header div.js-account-summary span.username"
 };
-
-// [data-testid='tweet'] > div:nth-child(2)
 
 const $ = jQuery;
 
@@ -131,7 +132,7 @@ TweetParser.prototype = {
 
       mainObserver.listenSubtree(true);
       mainObserver.listenChildList(true);
-      mainObserver.setAttributeFilter(['data-testid', 'data-tweet-id', 'role']);
+      mainObserver.setAttributeFilter(['data-testid', tweetIdAttribute, 'role']);
       mainObserver.observe();
     }
 
@@ -222,38 +223,34 @@ function checkPageCase(thatParser) {
 function checkUserCase(thatParser) {
 
   let userName = null;
-  if (this.siteCase == 'tweetDeck') {
-    let user = document.querySelector(userlogged['tweetDeck']);
-    if (user && user[0]) {
-      userName = user[0].textContent;
+  if (thatParser.siteCase == 'tweetDeck') {
+    let user = document.querySelector(userloggedSelector['tweetDeck']);
+    if (user && user.textContent) {
+      userName = user.textContent.trim().replace(/\@/, '');
     }
   }
   else {
-    let user = document.querySelector(userlogged['twitter']);
-    if (user) {
-      let childs = user.childNodes;
-      if (childs && childs[6]) {
-        if (childs[6].getAttribute("href")) {
-          userName = childs[6].getAttribute("href").replace(/[^\w\s]/gi, '');
+
+    // Check if we are in the User logged case or not
+    let presentationNode = document.querySelector(userPresentationSelector);
+    if (presentationNode && presentationNode.parentNode && presentationNode.parentNode.parentNode) {
+      let userNameSpan = querySelectorContains(presentationNode.parentNode.parentNode, 'span', /^\@/);;
+      if (userNameSpan && userNameSpan.length) {
+        userName = userNameSpan[0].textContent.replace(/\@/, '');
+      }
+    }
+    if (!userName) {
+      let user = document.querySelector(userloggedSelector['twitter']);
+      if (user) {
+        let childs = user.childNodes;
+        if (childs && childs[6]) {
+          if (childs[6].getAttribute("href")) {
+            userName = childs[6].getAttribute("href").replace(/[^\w\s]/gi, '');
+          }
         }
       }
     }
   }
-
-  // Check if we are in the User logged case or not
-  /*let presentationNode = document.querySelector(userlogged);
-  if (presentationNode) {
-    let userMenuLink = presentationNode.offsetParent;
-    for ( ; userMenuLink && userMenuLink !== document; userMenuLink = userMenuLink.parentNode ) {
-      if ( userMenuLink.matches("[role='link']") ) break;
-    }
-    if (userMenuLink) {
-      userName = userMenuLink.getAttribute("href");
-      if (userName) {
-        userCase = userName;
-      }
-    }
-  }*/
 
   if (userName) {
     thatParser.userCase = userName;
@@ -274,29 +271,34 @@ function getTweetInfo(thatParser, tweet) {
   // Trying to see if we can check the kind of tweet (main page tweet) from it's style
   //let tweetStyles = getComputedStyle(tweet);
 
-  // Get the tweet Id (normally found on a link on the tweet time div)
-  let timeNode = tweet.querySelector(tweetIdSelectors[selectorUserCase]) ? tweet.querySelector(tweetIdSelectors[selectorUserCase]) : null;
-  if (timeNode) {
-    let link = timeNode.parentNode;
-    if (!link || (link.tagName.toUpperCase().localeCompare("A") !== 0)) {
-      link = timeNode.querySelector("a");
-    }
-    if (link && (link.tagName.toUpperCase().localeCompare("A") === 0) && link.href.match(/\d+\b/g)) {
-      tweetUrl = link.href;
-      let auxMatch = link.href.match(/\d+\b/g);
-      if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
-    }
+  if (tweet.getAttribute(tweetIdAttribute)) {
+    tweetid = tweet.getAttribute(tweetIdAttribute);
   }
-  //  Special case when we are in a Tweet Page, since and we do not have the tweet link to parse the id, we 
-  //  get the id from the url. Sometimes this main Tweet is not located at the top of the page, that's why we need 
-  //  to check and retrieve this main Tweet's id from the url
-  else if ( (thatParser.pageCase === "tweet") && (timeNode === null) && !thatParser.mainTweetPageFound) {
-    tweetUrl = window.location.href;
-    let auxMatch = tweetUrl.match(/\d+\b/g);
-    if (auxMatch.length > 0) {
-      tweetid = auxMatch[auxMatch.length - 1];
+  else {
+    // Get the tweet Id (normally found on a link on the tweet time div)
+    let timeNode = tweet.querySelector(tweetIdSelectors[selectorUserCase]) ? tweet.querySelector(tweetIdSelectors[selectorUserCase]) : null;
+    if (timeNode) {
+      let link = timeNode.parentNode;
+      if (!link || (link.tagName.toUpperCase().localeCompare("A") !== 0)) {
+        link = timeNode.querySelector("a");
+      }
+      if (link && (link.tagName.toUpperCase().localeCompare("A") === 0) && link.href.match(/\d+\b/g)) {
+        tweetUrl = link.href;
+        let auxMatch = link.href.match(/\d+\b/g);
+        if (auxMatch.length > 0) tweetid = auxMatch[auxMatch.length - 1];
+      }
     }
-    thatParser.mainTweetPageFound = true;
+    //  Special case when we are in a Tweet Page, since and we do not have the tweet link to parse the id, we 
+    //  get the id from the url. Sometimes this main Tweet is not located at the top of the page, that's why we need 
+    //  to check and retrieve this main Tweet's id from the url
+    else if ( (thatParser.pageCase === "tweet") && (timeNode === null) && !thatParser.mainTweetPageFound) {
+      tweetUrl = window.location.href;
+      let auxMatch = tweetUrl.match(/\d+\b/g);
+      if (auxMatch.length > 0) {
+        tweetid = auxMatch[auxMatch.length - 1];
+      }
+      thatParser.mainTweetPageFound = true;
+    }
   }
   if (!tweetid) {
     // Detected tweet id NULL case when the Tweet is advertisment, or promoted
@@ -376,6 +378,7 @@ function mainChangeCallback(thatParser, newNode, callback) {
     // we have to check if there was a new tweet, or a new section
     // to check it we have to consider whick user case we are in (logged / not logged)
     let selectorCase = (thatParser.userCase === null) ? "not-user-logged" : "user-logged";
+    if (thatParser.pageCase == "tweetDeck") selectorCase = "tweetDeck";
     // we check if the new node is a new tweet itself
     if (newNode.matches(tweetSelectors[selectorCase])) {
       newTweetNode = newNode;
@@ -417,6 +420,7 @@ function mainChangeCallback(thatParser, newNode, callback) {
 function getTweetsList(thatParser) {
 
   let selectorCase = (thatParser.userCase === null) ? "not-user-logged" : "user-logged";
+  if (thatParser.pageCase == "tweetDeck") selectorCase = "tweetDeck";
   return document.querySelectorAll(tweetSelectors[selectorCase]);
 
 }
