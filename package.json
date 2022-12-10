@@ -30,7 +30,7 @@
     "browserify": "^16.2.3",
     "cheerio": "^1.0.0-rc.2",
     "eslint": "^5.15.3",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "fs": "0.0.1-security",
     "jasmine": "^3.5.0",
     "jshint": "^2.10.3",
